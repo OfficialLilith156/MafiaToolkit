@@ -57,7 +57,7 @@ namespace Utils.Settings
 
         // Update vars
         public static float CurrentVersion = 1.0f;
-        public static readonly float Version = 2.35f;
+        public static readonly float Version = 2.40f;
 
         public static void ReadINI()
         {
@@ -77,14 +77,14 @@ namespace Utils.Settings
             int.TryParse(ReadKey("SerializeOption", "SDS", "0"), out SerializeSDSOption);
             bool.TryParse(ReadKey("UseOodleCompression", "SDS", "1"), out bUseOodleCompression);
             float.TryParse(ReadKey("CompressionRatio", "SDS", "0.9"), out CompressionRatio);
-            bool.TryParse(ReadKey("VSync", "ModelViewer", "True"), out VSync);
-            bool.TryParse(ReadKey("UseMIPS", "ModelViewer", "True"), out UseMIPS);
+            bool.TryParse(ReadKey("VSync", "ModelViewer", "False"), out VSync);
+            bool.TryParse(ReadKey("UseMIPS", "ModelViewer", "False"), out UseMIPS);
             float.TryParse(ReadKey("ScreenDepth", "ModelViewer", "10000"), out ScreenDepth);
             float.TryParse(ReadKey("ScreenNear", "ModelViewer", "1"), out ScreenNear);
-            float.TryParse(ReadKey("CameraSpeed", "ModelViewer", "100"), out CameraSpeed);
-            bool.TryParse(ReadKey("EnableExperimental", "ModelViewer", "0"), out Experimental);
+            float.TryParse(ReadKey("CameraSpeed", "ModelViewer", "15"), out CameraSpeed);
+            bool.TryParse(ReadKey("EnableExperimental", "ModelViewer", "1"), out Experimental);
             bool.TryParse(ReadKey("EnableNavigation", "ModelViewer", "0"), out bNavigation);
-            bool.TryParse(ReadKey("EnableTranslokator", "ModelViewer", "1"), out bTranslokatorTint);
+            bool.TryParse(ReadKey("EnableTranslokator", "ModelViewer", "0"), out bTranslokatorTint);
             float.TryParse(ReadKey("FieldOfView", "ModelViewer", "60"), out FieldOfView);
             bool.TryParse(ReadKey("Logging", "Misc", "True"), out LoggingEnabled);
             int.TryParse(ReadKey("Language", "Misc", "0"), out Language);

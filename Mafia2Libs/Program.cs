@@ -36,7 +36,7 @@ namespace Mafia2Tool
             // Load INI
             CheckINIExists();
             ToolkitSettings.ReadINI();
-            CheckIfNewUpdate();
+            //CheckIfNewUpdate();
 
             GameStorage.Instance.InitStorage();
             Language.ReadLanguageXML();
@@ -120,25 +120,25 @@ namespace Mafia2Tool
             }
         }
 
-        private static void CheckIfNewUpdate()
-        {
-            if (ToolkitSettings.CurrentVersion != ToolkitSettings.Version)
-            {
-                string UpdateMessage = string.Format("Welcome to update {0}! \nPress 'Ok' to visit the changelist on the wiki. \nPress 'Cancel' to continue.", ToolkitSettings.Version);
-                if (MessageBox.Show(UpdateMessage, "Toolkit", MessageBoxButtons.OKCancel, MessageBoxIcon.Information) == DialogResult.OK)
-                {
-                    ProcessStartInfo StartInfo = new ProcessStartInfo();
-                    StartInfo.UseShellExecute = true;
-                    StartInfo.FileName = "https://github.com/Greavesy1899/MafiaToolkit/wiki/Toolkit-Changelist";
+        //private static void CheckIfNewUpdate()
+        //{
+        //    if (ToolkitSettings.CurrentVersion != ToolkitSettings.Version)
+        //    {
+        //        string UpdateMessage = string.Format("Welcome to update {0}! \nPress 'Ok' to visit the changelist on the wiki. \nPress 'Cancel' to continue.", ToolkitSettings.Version);
+        //        if (MessageBox.Show(UpdateMessage, "Toolkit", MessageBoxButtons.OKCancel, MessageBoxIcon.Information) == DialogResult.OK)
+        //        {
+        //            ProcessStartInfo StartInfo = new ProcessStartInfo();
+        //            StartInfo.UseShellExecute = true;
+        //            StartInfo.FileName = "https://github.com/Greavesy1899/MafiaToolkit/wiki/Toolkit-Changelist";
 
-                    Process.Start(StartInfo);
-                }
+        //            Process.Start(StartInfo);
+        //        }
 
-                // Write new version
-                ToolkitSettings.CurrentVersion = ToolkitSettings.Version;
-                ToolkitSettings.WriteKey("CurrentVersion", "Update", ToolkitSettings.CurrentVersion.ToString());
-            }
-        }
+        //        // Write new version
+        //        ToolkitSettings.CurrentVersion = ToolkitSettings.Version;
+        //        ToolkitSettings.WriteKey("CurrentVersion", "Update", ToolkitSettings.CurrentVersion.ToString());
+        //    }
+        //}
 
         private static void CheckINIExists()
         {
