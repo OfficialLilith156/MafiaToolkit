@@ -235,7 +235,7 @@
 
         #endregion
 
-        private System.Windows.Forms.PropertyGrid Grid_AnimSet;
+        private System.Windows.Forms.PropertyGrid Grid_AnimSet; 
         private System.Windows.Forms.ToolStrip ToolStrip_Top;
         private System.Windows.Forms.ToolStripDropDownButton Button_File;
         private System.Windows.Forms.ToolStripMenuItem Button_Save;

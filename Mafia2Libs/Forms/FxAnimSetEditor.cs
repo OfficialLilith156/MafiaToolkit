@@ -244,7 +244,7 @@ namespace Toolkit.Forms
             }
         }
 
-        private void RunSearch(string query)
+        private void RunSearch(string query) 
         {
             query = query.Trim().ToLower();
             if (string.IsNullOrWhiteSpace(query))
