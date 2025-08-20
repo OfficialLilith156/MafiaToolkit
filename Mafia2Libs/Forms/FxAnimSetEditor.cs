@@ -31,6 +31,9 @@ namespace Toolkit.Forms
             Show();
 
             ToolkitSettings.UpdateRichPresence("Using the FxAnimSet editor.");
+
+
+            SearchBox.KeyDown += SearchBox_KeyDown;
         }
 
         private void Localise()
@@ -229,6 +232,50 @@ namespace Toolkit.Forms
                     e.Cancel = true;
                 }
             }
+        }
+
+        //Search FX ANIM
+        private void SearchBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.SuppressKeyPress = true;
+                RunSearch(SearchBox.Text);
+            }
+        }
+
+        private void RunSearch(string query)
+        {
+            query = query.Trim().ToLower();
+            if (string.IsNullOrWhiteSpace(query))
+                return;
+
+            TreeNode foundNode = FindNode(TreeView_FxAnimSets.Nodes, query);
+
+            if (foundNode != null)
+            {
+                TreeView_FxAnimSets.SelectedNode = foundNode;
+                TreeView_FxAnimSets.Focus();
+                foundNode.EnsureVisible();
+            }
+            else
+            {
+                //MessageBox.Show("Ничего не найдено.");
+            }
+        }
+
+        private TreeNode FindNode(TreeNodeCollection nodes, string query)
+        {
+            foreach (TreeNode node in nodes)
+            {
+                if (node.Text.ToLower().Contains(query))
+                    return node;
+
+                TreeNode child = FindNode(node.Nodes, query);
+                if (child != null)
+                    return child;
+            }
+            return null;
         }
 
         private void Button_Exit_Click(object sender, System.EventArgs e) => Close();
