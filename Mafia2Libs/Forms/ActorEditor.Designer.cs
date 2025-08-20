@@ -31,11 +31,12 @@
             components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ActorEditor));
             ActorGrid = new System.Windows.Forms.PropertyGrid();
-            ActorTreeView = new Controls.MTreeView();
             ActorContext = new System.Windows.Forms.ContextMenuStrip(components);
             ContextDelete = new System.Windows.Forms.ToolStripMenuItem();
             ContextCopy = new System.Windows.Forms.ToolStripMenuItem();
             ContextPaste = new System.Windows.Forms.ToolStripMenuItem();
+            Button_MoveUp = new System.Windows.Forms.ToolStripMenuItem();
+            Button_MoveDown = new System.Windows.Forms.ToolStripMenuItem();
             toolStrip1 = new System.Windows.Forms.ToolStrip();
             FileButton = new System.Windows.Forms.ToolStripDropDownButton();
             SaveButton = new System.Windows.Forms.ToolStripMenuItem();
@@ -44,9 +45,8 @@
             EditButton = new System.Windows.Forms.ToolStripDropDownButton();
             AddItemButton = new System.Windows.Forms.ToolStripMenuItem();
             AddDefinitionButton = new System.Windows.Forms.ToolStripMenuItem();
-            Button_MoveUp = new System.Windows.Forms.ToolStripMenuItem();
-            Button_MoveDown = new System.Windows.Forms.ToolStripMenuItem();
             SearchBox = new System.Windows.Forms.TextBox();
+            ActorTreeView = new Mafia2Tool.Controls.MTreeView();
             ActorContext.SuspendLayout();
             toolStrip1.SuspendLayout();
             SuspendLayout();
@@ -62,23 +62,11 @@
             ActorGrid.TabIndex = 10;
             ActorGrid.PropertyValueChanged += ActorGrid_OnPropertyValueChanged;
             // 
-            // ActorTreeView
-            // 
-            ActorTreeView.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            ActorTreeView.ContextMenuStrip = ActorContext;
-            ActorTreeView.Location = new System.Drawing.Point(14, 32);
-            ActorTreeView.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            ActorTreeView.Name = "ActorTreeView";
-            ActorTreeView.Size = new System.Drawing.Size(429, 472);
-            ActorTreeView.TabIndex = 11;
-            ActorTreeView.AfterSelect += OnNodeSelectSelect;
-            ActorTreeView.KeyUp += ActorTreeView_OnKeyUp;
-            // 
             // ActorContext
             // 
             ActorContext.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { ContextDelete, ContextCopy, ContextPaste, Button_MoveUp, Button_MoveDown });
             ActorContext.Name = "SDSContext";
-            ActorContext.Size = new System.Drawing.Size(261, 136);
+            ActorContext.Size = new System.Drawing.Size(261, 114);
             ActorContext.Opening += ContextMenu_OnOpening;
             // 
             // ContextDelete
@@ -104,6 +92,22 @@
             ContextPaste.Size = new System.Drawing.Size(260, 22);
             ContextPaste.Text = "$PASTE";
             ContextPaste.Click += ContextPaste_Click;
+            // 
+            // Button_MoveUp
+            // 
+            Button_MoveUp.Name = "Button_MoveUp";
+            Button_MoveUp.ShortcutKeyDisplayString = "CTRL + PageUp";
+            Button_MoveUp.Size = new System.Drawing.Size(260, 22);
+            Button_MoveUp.Text = "$MOVE_UP";
+            Button_MoveUp.Click += Button_MoveUp_Clicked;
+            // 
+            // Button_MoveDown
+            // 
+            Button_MoveDown.Name = "Button_MoveDown";
+            Button_MoveDown.ShortcutKeyDisplayString = "CTRL + PageDown";
+            Button_MoveDown.Size = new System.Drawing.Size(260, 22);
+            Button_MoveDown.Text = "$MOVE_DOWN";
+            Button_MoveDown.Click += Button_MoveDown_Clicked;
             // 
             // toolStrip1
             // 
@@ -171,37 +175,32 @@
             AddDefinitionButton.Text = "$ADD_DEFINITION";
             AddDefinitionButton.Click += AddDefinitionButton_Click;
             // 
-            // Button_MoveUp
-            // 
-            Button_MoveUp.Name = "Button_MoveUp";
-            Button_MoveUp.ShortcutKeyDisplayString = "CTRL + PageUp";
-            Button_MoveUp.Size = new System.Drawing.Size(260, 22);
-            Button_MoveUp.Text = "$MOVE_UP";
-            Button_MoveUp.Click += Button_MoveUp_Clicked;
-            // 
-            // Button_MoveDown
-            // 
-            Button_MoveDown.Name = "Button_MoveDown";
-            Button_MoveDown.ShortcutKeyDisplayString = "CTRL + PageDown";
-            Button_MoveDown.Size = new System.Drawing.Size(260, 22);
-            Button_MoveDown.Text = "$MOVE_DOWN";
-            Button_MoveDown.Click += Button_MoveDown_Clicked;
-            // 
             // SearchBox
             // 
-            SearchBox.Location = new System.Drawing.Point(254, 4);
+            SearchBox.Location = new System.Drawing.Point(290, 7);
             SearchBox.Name = "SearchBox";
-            SearchBox.Size = new System.Drawing.Size(189, 23);
+            SearchBox.Size = new System.Drawing.Size(152, 23);
             SearchBox.TabIndex = 16;
+            // 
+            // ActorTreeView
+            // 
+            ActorTreeView.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            ActorTreeView.ContextMenuStrip = ActorContext;
+            ActorTreeView.Location = new System.Drawing.Point(13, 35);
+            ActorTreeView.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            ActorTreeView.Name = "ActorTreeView";
+            ActorTreeView.Size = new System.Drawing.Size(429, 472);
+            ActorTreeView.TabIndex = 17;
             // 
             // ActorEditor
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(933, 519);
+            Controls.Add(ActorTreeView);
+            Controls.Add(SearchBox);
             Controls.Add(toolStrip1);
             Controls.Add(ActorGrid);
-            Controls.Add(ActorTreeView);
             Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             Name = "ActorEditor";
