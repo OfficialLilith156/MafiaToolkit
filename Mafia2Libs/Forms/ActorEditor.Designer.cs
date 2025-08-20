@@ -191,6 +191,8 @@
             ActorTreeView.Name = "ActorTreeView";
             ActorTreeView.Size = new System.Drawing.Size(429, 472);
             ActorTreeView.TabIndex = 17;
+            ActorTreeView.AfterSelect += OnNodeSelectSelect;
+            ActorTreeView.KeyUp += SearchBox_KeyDown;
             // 
             // ActorEditor
             // 

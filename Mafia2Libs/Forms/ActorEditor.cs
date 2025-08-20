@@ -20,6 +20,7 @@ namespace Mafia2Tool
         private TreeNode items;
 
         private object clipboard;
+        private static ActorExtraData globalClipboard;
 
         private bool bIsFileEdited = false;
 
@@ -123,43 +124,81 @@ namespace Mafia2Tool
         private void Copy()
         {
             TreeNode SelectedNode = ActorTreeView.SelectedNode;
-            if (ActorTreeView.SelectedNode.Text.Equals("Extra Data"))
+            if (SelectedNode != null && SelectedNode.Text.Equals("Extra Data"))
             {
                 ActorExtraData ExtraData = (SelectedNode.Tag as ActorExtraData);
-                clipboard = ExtraData;
+                if (ExtraData != null && ExtraData.Data != null)
+                {
+                    globalClipboard = ExtraData;
+                }
+                else
+                {
+                    MessageBox.Show("Cannot copy: Selected extra data is empty.");
+                }
             }
         }
 
         private void Paste()
         {
             TreeNode SelectedNode = ActorTreeView.SelectedNode;
-            if (!ActorTreeView.SelectedNode.Text.Equals("Extra Data"))
+            if (globalClipboard == null || SelectedNode == null || !SelectedNode.Text.Equals("Extra Data"))
             {
-                // Not on the correct node type
                 return;
             }
 
-            ActorExtraData ExtraDataToCopy = (clipboard as ActorExtraData);
-            ActorExtraData ExtaDataToEdit = (SelectedNode.Tag as ActorExtraData);
-            if (ExtraDataToCopy.BufferType != ExtaDataToEdit.BufferType)
+            ActorExtraData ExtraDataToPaste = globalClipboard;
+            ActorExtraData ExtraDataTarget = (SelectedNode.Tag as ActorExtraData);
+
+            if (ExtraDataToPaste == null || ExtraDataTarget == null)
             {
-                // Dont accept if types are not the same.
-                // Do not allow replacement of types.
+                MessageBox.Show("Cannot paste: Source or target data is null.");
                 return;
             }
 
-            // Copy contents and then assign the new pasted data into the selected extra data.
-            object ObjectToCopy = ExtraDataToCopy.Data;
-            object NewObject = Activator.CreateInstance(ObjectToCopy.GetType());
-            ReflectionHelpers.Copy(ObjectToCopy, ref NewObject);
-            ExtaDataToEdit.Data = (NewObject as IActorExtraDataInterface);
+            if (ExtraDataToPaste.BufferType != ExtraDataTarget.BufferType)
+            {
+                MessageBox.Show("Cannot paste: Buffer types do not match.");
+                return;
+            }
 
-            // Force reload
-            ActorGrid.SelectedObject = SelectedNode.Tag;
+            if (ExtraDataToPaste.Data == null)
+            {
+                MessageBox.Show("Cannot paste: Source data is empty.");
+                return;
+            }
 
-            // Mark as edited
-            Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
-            bIsFileEdited = true;
+            try
+            {
+                Type dataType = ExtraDataToPaste.Data.GetType();
+                object clonedData = null;
+
+                var copyConstructor = dataType.GetConstructor(new Type[] { dataType });
+                if (copyConstructor != null)
+                {
+                    clonedData = copyConstructor.Invoke(new object[] { ExtraDataToPaste.Data });
+                }
+                else
+                {
+                    clonedData = Activator.CreateInstance(dataType);
+                    ReflectionHelpers.Copy(ExtraDataToPaste.Data, ref clonedData);
+                }
+
+                if (clonedData != null)
+                {
+                    ExtraDataTarget.Data = clonedData as IActorExtraDataInterface;
+                    ActorGrid.SelectedObject = SelectedNode.Tag;
+                    Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
+                    bIsFileEdited = true;
+                }
+                else
+                {
+                    MessageBox.Show("Cannot paste: Failed to create copy of data.");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error during paste operation: {ex.Message}");
+            }
         }
 
         private bool IsTypeofInterface(object ObjectToCheck, Type InterfaceType)

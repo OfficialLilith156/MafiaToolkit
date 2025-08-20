@@ -319,6 +319,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="DockPanelSuite" Version="3.1.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4-beta1" />
     <PackageReference Include="Octokit" Version="8.0.1" />
     <PackageReference Include="SharpGLTF.Core" Version="1.0.3" />
     <PackageReference Include="SharpGLTF.Toolkit" Version="1.0.3" />
