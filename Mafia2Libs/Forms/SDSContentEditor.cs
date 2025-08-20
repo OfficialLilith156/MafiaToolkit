@@ -97,8 +97,8 @@ namespace Mafia2Tool
 
         private void Button_AutoAdd_Click(object sender, EventArgs e)
         {
-            DialogResult result = MessageBox.Show("This will only automatically add any buffer pools or textures into the SDSContent.xml. Are you sure you want to do this?", "Toolkit", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-            if (result == DialogResult.Yes)
+            //DialogResult result = MessageBox.Show("This will only automatically add any buffer pools or textures into the SDSContent.xml. Are you sure you want to do this?", "Toolkit", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+            //if (result == DialogResult.Yes)
             {
                 file.CreateFileFromFolder();
                 PopulateTree();
