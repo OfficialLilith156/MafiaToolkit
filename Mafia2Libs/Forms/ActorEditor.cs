@@ -32,6 +32,7 @@ namespace Mafia2Tool
             BuildData();
             Show();
             ToolkitSettings.UpdateRichPresence("Using the Actor editor.");
+            SearchBox.KeyDown += SearchBox_KeyDown;
         }
 
         private void Localise()
@@ -403,6 +404,49 @@ namespace Mafia2Tool
             // Update UI
             Text = Language.GetString("$STREAM_EDITOR_TITLE") + "*";
             bIsFileEdited = true;
+        }
+        
+        private void SearchBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.SuppressKeyPress = true; 
+                RunSearch(SearchBox.Text);
+            }
+        }
+        
+        private void RunSearch(string query)
+        {
+            query = query.Trim().ToLower();
+            if (string.IsNullOrWhiteSpace(query))
+                return;
+
+            TreeNode foundNode = FindNode(ActorTreeView.Nodes, query);
+
+            if (foundNode != null)
+            {
+                ActorTreeView.SelectedNode = foundNode;
+                ActorTreeView.Focus();
+                foundNode.EnsureVisible();
+            }
+            else
+            {
+                //MessageBox.Show("Ничего не найдено.");
+            }
+        }
+
+        private TreeNode FindNode(TreeNodeCollection nodes, string query)
+        {
+            foreach (TreeNode node in nodes)
+            {
+                if (node.Text.ToLower().Contains(query))
+                    return node;
+
+                TreeNode child = FindNode(node.Nodes, query);
+                if (child != null)
+                    return child;
+            }
+            return null;
         }
     }
 }
