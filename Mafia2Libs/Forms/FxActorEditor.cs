@@ -31,6 +31,8 @@ namespace Toolkit.Forms
             Show();
 
             ToolkitSettings.UpdateRichPresence("Using the FxActor editor.");
+
+            SearchBox.KeyDown += SearchBox_KeyDown;
         }
 
         private void Localise()
@@ -231,6 +233,49 @@ namespace Toolkit.Forms
                 }
             }
         }
+        //Search FX AE
+        private void SearchBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.SuppressKeyPress = true;
+                RunSearch(SearchBox.Text);
+            }
+        }
+
+        private void RunSearch(string query)
+        {
+            query = query.Trim().ToLower();
+            if (string.IsNullOrWhiteSpace(query))
+                return;
+
+            TreeNode foundNode = FindNode(TreeView_FxActors.Nodes, query);
+
+            if (foundNode != null)
+            {
+                TreeView_FxActors.SelectedNode = foundNode;
+                TreeView_FxActors.Focus();
+                foundNode.EnsureVisible();
+            }
+            else
+            {
+                //MessageBox.Show("Ничего не найдено.");
+            }
+        }
+
+        private TreeNode FindNode(TreeNodeCollection nodes, string query)
+        {
+            foreach (TreeNode node in nodes)
+            {
+                if (node.Text.ToLower().Contains(query))
+                    return node;
+
+                TreeNode child = FindNode(node.Nodes, query);
+                if (child != null)
+                    return child;
+            }
+            return null;
+        }
 
         private void Button_Exit_Click(object sender, System.EventArgs e) => Close();
         private void Button_Save_Click(object sender, System.EventArgs e) => Save();
@@ -245,4 +290,5 @@ namespace Toolkit.Forms
         private void Context_Delete_Click(object sender, System.EventArgs e) => Delete();
         private void Context_Export_Click(object sender, System.EventArgs e) => Export();
     }
+
 }
