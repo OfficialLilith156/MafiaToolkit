@@ -348,7 +348,7 @@ namespace ResourceTypes.ModelHelpers.ModelExporter
             // TODO: as a test we're only doing 1 LOD
             for(int i = 0; i < 1; i++)
             {
-                MT_Lod CurrentLod = NewObject.Lods[i];
+                //MT_Lod CurrentLod = NewObject.Lods[i]; //Fixed a bug when importing collisions!!!
                 //NewObject.Skeleton.GenerateRuntimeDataFromLod(i, CurrentLod);  //Causes an error when importing a model!!!
             }
 
