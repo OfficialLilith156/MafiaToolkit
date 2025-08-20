@@ -30,7 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SpeechEditor));
             Grid_Speech = new System.Windows.Forms.PropertyGrid();
-            TreeView_Speech = new Controls.MTreeView();
+            TreeView_Speech = new Mafia2Tool.Controls.MTreeView();
             FileOpenDialog_SelectXML = new System.Windows.Forms.OpenFileDialog();
             Tool_Strip = new System.Windows.Forms.ToolStrip();
             Button_File = new System.Windows.Forms.ToolStripDropDownButton();
@@ -41,6 +41,7 @@
             Button_SaveToXML = new System.Windows.Forms.ToolStripMenuItem();
             Button_LoadFromXML = new System.Windows.Forms.ToolStripMenuItem();
             FileSaveDialog_SelectXML = new System.Windows.Forms.SaveFileDialog();
+            SearchBox = new System.Windows.Forms.TextBox();
             Tool_Strip.SuspendLayout();
             SuspendLayout();
             // 
@@ -125,14 +126,14 @@
             // Button_SaveToXML
             // 
             Button_SaveToXML.Name = "Button_SaveToXML";
-            Button_SaveToXML.Size = new System.Drawing.Size(180, 22);
+            Button_SaveToXML.Size = new System.Drawing.Size(178, 22);
             Button_SaveToXML.Text = "$SAVE_TO_XML";
             Button_SaveToXML.Click += OnSaveToXMLClicked;
             // 
             // Button_LoadFromXML
             // 
             Button_LoadFromXML.Name = "Button_LoadFromXML";
-            Button_LoadFromXML.Size = new System.Drawing.Size(180, 22);
+            Button_LoadFromXML.Size = new System.Drawing.Size(178, 22);
             Button_LoadFromXML.Text = "$LOAD_FROM_XML";
             Button_LoadFromXML.Click += OnLoadFromXMLClicked;
             // 
@@ -140,11 +141,19 @@
             // 
             FileSaveDialog_SelectXML.Filter = "XML File|*.xml";
             // 
+            // SearchBox
+            // 
+            SearchBox.Location = new System.Drawing.Point(291, 5);
+            SearchBox.Name = "SearchBox";
+            SearchBox.Size = new System.Drawing.Size(152, 23);
+            SearchBox.TabIndex = 17;
+            // 
             // SpeechEditor
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(933, 519);
+            Controls.Add(SearchBox);
             Controls.Add(Tool_Strip);
             Controls.Add(Grid_Speech);
             Controls.Add(TreeView_Speech);
@@ -177,5 +186,6 @@
         private System.Windows.Forms.ToolStripMenuItem Button_SaveToXML;
         private System.Windows.Forms.ToolStripMenuItem Button_LoadFromXML;
         private System.Windows.Forms.SaveFileDialog FileSaveDialog_SelectXML;
+        private System.Windows.Forms.TextBox SearchBox;
     }
 }
