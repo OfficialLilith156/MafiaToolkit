@@ -46,13 +46,13 @@ namespace Mafia2Tool
                 case 1:
                     SwapOptionControls(new SDSOptions());
                     break;
+                //case 2:
+                //    SwapOptionControls(new ModelOptions());
+                //    break;
                 case 2:
-                    SwapOptionControls(new ModelOptions());
-                    break;
-                case 3:
                     SwapOptionControls(new MTLOptions());
                     break;
-                case 4:
+                case 3:
                     SwapOptionControls(new RenderOptions());
                     break;
             }

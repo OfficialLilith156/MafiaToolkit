@@ -28,109 +28,118 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.labelInfo = new System.Windows.Forms.Label();
-            this.SearchBox = new System.Windows.Forms.TextBox();
-            this.listBox1 = new System.Windows.Forms.ListBox();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
-            this.splitContainer1.Panel1.SuspendLayout();
-            this.splitContainer1.Panel2.SuspendLayout();
-            this.splitContainer1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
-            this.splitContainer2.Panel1.SuspendLayout();
-            this.splitContainer2.Panel2.SuspendLayout();
-            this.splitContainer2.SuspendLayout();
-            this.SuspendLayout();
+            splitContainer1 = new System.Windows.Forms.SplitContainer();
+            splitContainer2 = new System.Windows.Forms.SplitContainer();
+            labelInfo = new System.Windows.Forms.Label();
+            SearchBox = new System.Windows.Forms.TextBox();
+            listBox1 = new System.Windows.Forms.ListBox();
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
+            splitContainer1.Panel1.SuspendLayout();
+            splitContainer1.Panel2.SuspendLayout();
+            splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer2).BeginInit();
+            splitContainer2.Panel1.SuspendLayout();
+            splitContainer2.Panel2.SuspendLayout();
+            splitContainer2.SuspendLayout();
+            SuspendLayout();
             // 
             // splitContainer1
             // 
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer1.Name = "splitContainer1";
-            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            splitContainer1.Location = new System.Drawing.Point(0, 0);
+            splitContainer1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            splitContainer1.Name = "splitContainer1";
+            splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.splitContainer2);
+            splitContainer1.Panel1.Controls.Add(splitContainer2);
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.listBox1);
-            this.splitContainer1.Size = new System.Drawing.Size(334, 388);
-            this.splitContainer1.SplitterDistance = 70;
-            this.splitContainer1.TabIndex = 0;
+            splitContainer1.Panel2.Controls.Add(listBox1);
+            splitContainer1.Size = new System.Drawing.Size(390, 448);
+            splitContainer1.SplitterDistance = 80;
+            splitContainer1.SplitterWidth = 5;
+            splitContainer1.TabIndex = 0;
             // 
             // splitContainer2
             // 
-            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer2.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer2.Name = "splitContainer2";
-            this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
+            splitContainer2.Location = new System.Drawing.Point(0, 0);
+            splitContainer2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            splitContainer2.Name = "splitContainer2";
+            splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
             // splitContainer2.Panel1
             // 
-            this.splitContainer2.Panel1.Controls.Add(this.labelInfo);
-            this.splitContainer2.Panel1.Padding = new System.Windows.Forms.Padding(5);
+            splitContainer2.Panel1.Controls.Add(labelInfo);
+            splitContainer2.Panel1.Padding = new System.Windows.Forms.Padding(6);
             // 
             // splitContainer2.Panel2
             // 
-            this.splitContainer2.Panel2.Controls.Add(this.SearchBox);
-            this.splitContainer2.Panel2.Padding = new System.Windows.Forms.Padding(5);
-            this.splitContainer2.Size = new System.Drawing.Size(334, 70);
-            this.splitContainer2.SplitterDistance = 39;
-            this.splitContainer2.TabIndex = 0;
+            splitContainer2.Panel2.Controls.Add(SearchBox);
+            splitContainer2.Panel2.Padding = new System.Windows.Forms.Padding(6);
+            splitContainer2.Size = new System.Drawing.Size(390, 80);
+            splitContainer2.SplitterDistance = 44;
+            splitContainer2.SplitterWidth = 5;
+            splitContainer2.TabIndex = 0;
             // 
             // labelInfo
             // 
-            this.labelInfo.AutoSize = true;
-            this.labelInfo.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.labelInfo.Location = new System.Drawing.Point(5, 5);
-            this.labelInfo.Name = "labelInfo";
-            this.labelInfo.Size = new System.Drawing.Size(147, 26);
-            this.labelInfo.TabIndex = 0;
-            this.labelInfo.Text = "Double click on item to copy..\r\nSearch Help here";
+            labelInfo.AutoSize = true;
+            labelInfo.Dock = System.Windows.Forms.DockStyle.Fill;
+            labelInfo.Location = new System.Drawing.Point(6, 6);
+            labelInfo.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            labelInfo.Name = "labelInfo";
+            labelInfo.Size = new System.Drawing.Size(165, 30);
+            labelInfo.TabIndex = 0;
+            labelInfo.Text = "Double click on item to copy..\r\nSearch Help here";
             // 
             // SearchBox
             // 
-            this.SearchBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SearchBox.Location = new System.Drawing.Point(5, 5);
-            this.SearchBox.Name = "SearchBox";
-            this.SearchBox.Size = new System.Drawing.Size(324, 20);
-            this.SearchBox.TabIndex = 0;
-            this.SearchBox.Text = "Search items..";
-            this.SearchBox.Click += new System.EventHandler(this.SearchOnClick);
-            this.SearchBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.SearchOnKeyPress);
+            SearchBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            SearchBox.Location = new System.Drawing.Point(6, 6);
+            SearchBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            SearchBox.Name = "SearchBox";
+            SearchBox.Size = new System.Drawing.Size(378, 23);
+            SearchBox.TabIndex = 0;
+            SearchBox.Text = "Search items..";
+            SearchBox.Click += SearchOnClick;
+            SearchBox.KeyPress += SearchOnKeyPress;
             // 
             // listBox1
             // 
-            this.listBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(0, 0);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(334, 314);
-            this.listBox1.TabIndex = 0;
-            this.listBox1.DoubleClick += new System.EventHandler(this.OnItemSelect);
+            listBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            listBox1.FormattingEnabled = true;
+            listBox1.ItemHeight = 15;
+            listBox1.Location = new System.Drawing.Point(0, 0);
+            listBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            listBox1.Name = "listBox1";
+            listBox1.Size = new System.Drawing.Size(390, 363);
+            listBox1.TabIndex = 0;
+            listBox1.DoubleClick += OnItemSelect;
             // 
             // ListWindow
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(334, 388);
-            this.Controls.Add(this.splitContainer1);
-            this.Name = "ListWindow";
-            this.Text = "ListWindow";
-            this.splitContainer1.Panel1.ResumeLayout(false);
-            this.splitContainer1.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
-            this.splitContainer1.ResumeLayout(false);
-            this.splitContainer2.Panel1.ResumeLayout(false);
-            this.splitContainer2.Panel1.PerformLayout();
-            this.splitContainer2.Panel2.ResumeLayout(false);
-            this.splitContainer2.Panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
-            this.splitContainer2.ResumeLayout(false);
-            this.ResumeLayout(false);
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(390, 448);
+            Controls.Add(splitContainer1);
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Name = "ListWindow";
+            Text = "ListWindow";
+            splitContainer1.Panel1.ResumeLayout(false);
+            splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
+            splitContainer1.ResumeLayout(false);
+            splitContainer2.Panel1.ResumeLayout(false);
+            splitContainer2.Panel1.PerformLayout();
+            splitContainer2.Panel2.ResumeLayout(false);
+            splitContainer2.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer2).EndInit();
+            splitContainer2.ResumeLayout(false);
+            ResumeLayout(false);
 
         }
 

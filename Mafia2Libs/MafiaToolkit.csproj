@@ -140,9 +140,7 @@
     <Compile Update="Controls\MaterialAddOption.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Controls\ModelOptions.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Controls\ModelOptions.cs" />
     <Compile Update="Controls\MTLOptions.cs">
       <SubType>UserControl</SubType>
     </Compile>
