@@ -24,6 +24,7 @@ namespace Mafia2Tool
             menuFile = file;
             BuildData(true);
             Show();
+            SearchBox.KeyDown += SearchBox_KeyDown;
         }
 
         private void Localise()
@@ -329,7 +330,48 @@ namespace Mafia2Tool
                 }
             }
         }
+        private void SearchBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.SuppressKeyPress = true;
+                RunSearch(SearchBox.Text);
+            }
+        }
 
+        private void RunSearch(string query)
+        {
+            query = query.Trim().ToLower();
+            if (string.IsNullOrWhiteSpace(query))
+                return;
+
+            TreeNode foundNode = FindNode(TreeView_ShopMenu2.Nodes, query);
+
+            if (foundNode != null)
+            {
+                TreeView_ShopMenu2.SelectedNode = foundNode;
+                TreeView_ShopMenu2.Focus();
+                foundNode.EnsureVisible();
+            }
+            else
+            {
+                //MessageBox.Show("Ничего не найдено.");
+            }
+        }
+
+        private TreeNode FindNode(TreeNodeCollection nodes, string query)
+        {
+            foreach (TreeNode node in nodes)
+            {
+                if (node.Text.ToLower().Contains(query))
+                    return node;
+
+                TreeNode child = FindNode(node.Nodes, query);
+                if (child != null)
+                    return child;
+            }
+            return null;
+        }
         private void Context_Delete_OnClick(object sender, System.EventArgs e) => Delete();
         private void Context_AddType_OnClick(object sender, System.EventArgs e) => AddType();
         private void Context_AddMetaInfo_OnClick(object sender, System.EventArgs e) => AddMetaInfo();
