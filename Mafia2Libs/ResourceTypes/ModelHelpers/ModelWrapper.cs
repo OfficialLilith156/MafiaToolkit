@@ -133,20 +133,78 @@ namespace Utils.Models
         /// <summary>
         /// Update decompression offset and position.
         /// </summary>
-        public void CalculateDecompression()
+        public bool CalculateDecompression(out string? error)
         {
-            FrameGeometry frameGeometry = frameMesh.Geometry;
-            frameGeometry.DecompressionFactor = 1.525879E-05f;
-            frameGeometry.DecompressionOffset = Vector3.Zero;
+            error = null;
+
+            if (frameMesh == null || frameMesh.Geometry == null)
+            {
+                error = "frameMesh/Geometry == null";
+                return false;
+            }
+
+            var frameGeometry = frameMesh.Geometry;
+
+            Vector3 min = frameMesh.Boundings.Min;
+            Vector3 max = frameMesh.Boundings.Max;
+
+            if (!IsFinite(min) || !IsFinite(max))
+            {
+                min = new Vector3(-0.5f);
+                max = new Vector3(0.5f);
+            }
+
+            EnsureMinMax(ref min, ref max);
+            ExpandDegenerate(ref min, ref max, 1e-4f);
 
             BoundingBox bounds = new BoundingBox();
-            bounds.SetMinimum(frameMesh.Boundings.Min);
-            bounds.SetMaximum(frameMesh.Boundings.Max);
+            bounds.SetMinimum(min);
+            bounds.SetMaximum(max);
 
-            (float, Vector3) Values = GetDecompFactor(bounds);
-            frameGeometry.DecompressionFactor = Values.Item1;
-            frameGeometry.DecompressionOffset = Values.Item2;
+            float factor;
+            Vector3 offset;
+
+            try
+            {
+                (float f, Vector3 o) = GetDecompFactor(bounds);
+                factor = ClampSafe(f, 1e-9f, 1e6f);
+                offset = IsFinite(o) ? o : min;
+            }
+            catch
+            {
+
+                Vector3 size = max - min;
+                float maxExtent = Math.Max(size.X, Math.Max(size.Y, size.Z));
+                factor = ClampSafe(maxExtent > 0 ? (maxExtent / 65535f) : (1f / 65535f), 1e-9f, 1e6f);
+                offset = min;
+            }
+
+            frameGeometry.DecompressionFactor = factor;
+            frameGeometry.DecompressionOffset = offset;
+
+            return true;
         }
+        private static bool IsFinite(Vector3 v) =>
+            IsFinite(v.X) && IsFinite(v.Y) && IsFinite(v.Z);
+        private static bool IsFinite(float x) =>
+            !float.IsNaN(x) && !float.IsInfinity(x);
+
+        private static void EnsureMinMax(ref Vector3 min, ref Vector3 max)
+        {
+            if (min.X > max.X) (min.X, max.X) = (max.X, min.X);
+            if (min.Y > max.Y) (min.Y, max.Y) = (max.Y, min.Y);
+            if (min.Z > max.Z) (min.Z, max.Z) = (max.Z, min.Z);
+        }
+
+        private static void ExpandDegenerate(ref Vector3 min, ref Vector3 max, float eps)
+        {
+            if (Math.Abs(max.X - min.X) < eps) max.X = min.X + eps;
+            if (Math.Abs(max.Y - min.Y) < eps) max.Y = min.Y + eps;
+            if (Math.Abs(max.Z - min.Z) < eps) max.Z = min.Z + eps;
+        }
+
+        private static float ClampSafe(float v, float lo, float hi) =>
+            v < lo ? lo : (v > hi ? hi : v);
 
         public void BuildIndexBuffer()
         {
@@ -387,7 +445,7 @@ namespace Utils.Models
             frameMesh.Boundings = NewBounds;
             frameMaterial.Bounds = NewBounds;
 
-            CalculateDecompression();
+            CalculateDecompression(out string? error);
             UpdateObjectsFromModel();
             BuildIndexBuffer();
             BuildVertexBuffer();
