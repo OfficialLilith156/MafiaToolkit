@@ -16,7 +16,7 @@ namespace Mafia2Tool
     {
         private FileInfo file;
         private StreamMapLoader stream;
-        private object clipboard;
+        private static object clipboard;
 
         private bool bIsFileEdited = false;
 
@@ -506,31 +506,49 @@ namespace Mafia2Tool
 
         private void Paste()
         {
-            var data = clipboard;
-            if (data != null)
+            if (clipboard == null)
             {
-                if (linesTree.SelectedNode != null && linesTree.SelectedNode.Tag != null)
-                {
-                    var tag = linesTree.SelectedNode.Tag;
-                    if (tag is StreamLine && data is StreamLine)
-                    {
-                        StreamLine newData = new StreamLine(data as StreamLine);
-                        linesTree.SelectedNode.Tag = newData;
-                        linesTree.SelectedNode.Text = newData.Name;
-                    }
-
-                    Text = Language.GetString("$STREAM_EDITOR_TITLE") + "*";
-                    bIsFileEdited = true;
-                }
+                //MessageBox.Show("Буфер пуст. Сначала скопируйте узел (Ctrl+C).", "Вставка",
+                //MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
             }
-            PropertyGrid_Stream.SelectedObject = linesTree?.SelectedNode.Tag;
+
+            if (linesTree.SelectedNode?.Tag is not StreamLine targetLine)
+            {
+                //MessageBox.Show("Выберите строку (StreamLine) для замены.", "Ошибка",
+                //MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (clipboard is not StreamLine sourceLine)
+            {
+                //MessageBox.Show("Буфер содержит несовместимый тип данных.", "Ошибка",
+                //MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            targetLine.Name = sourceLine.Name;
+            targetLine.Flags = sourceLine.Flags;
+            targetLine.loadList = sourceLine.loadList?.ToArray();
+
+            linesTree.SelectedNode.Text = targetLine.Name;
+
+            PropertyGrid_Stream.SelectedObject = targetLine;
+
+            if (!bIsFileEdited)
+            {
+                Text = Language.GetString("$STREAM_EDITOR_TITLE") + "*";
+                bIsFileEdited = true;
+            }
+
         }
 
         private void Copy()
         {
-            if (linesTree.SelectedNode != null && linesTree.SelectedNode.Tag != null)
+            if (linesTree.SelectedNode?.Tag is StreamLine or StreamHeaderGroup)
             {
                 clipboard = linesTree.SelectedNode.Tag;
+
             }
         }
 
