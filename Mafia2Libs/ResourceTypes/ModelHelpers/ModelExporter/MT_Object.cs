@@ -349,7 +349,7 @@ namespace ResourceTypes.ModelHelpers.ModelExporter
             for(int i = 0; i < 1; i++)
             {
                 MT_Lod CurrentLod = NewObject.Lods[i];
-                NewObject.Skeleton.GenerateRuntimeDataFromLod(i, CurrentLod);
+                //NewObject.Skeleton.GenerateRuntimeDataFromLod(i, CurrentLod);  //Causes an error when importing a model
             }
 
             Logger.WriteInfo("Created MT_Object [{0}], type [{1}], from node [{2}]", NewObject.ObjectName, NewObject.ObjectType, CurrentNode.Name);
