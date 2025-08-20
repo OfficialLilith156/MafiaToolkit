@@ -44,8 +44,8 @@ namespace ResourceTypes.ModelHelpers.ModelExporter
 
     public class MT_Object : IValidator
     {
-        private const string PROP_OBJECT_TYPE_ID = "MT_OBJECT_TYPE";
-        private const string PROP_OBJECT_NAME = "MT_OBJECT_NAME";
+        private const string PROP_OBJECT_TYPE_ID = "TYPE"; //1 - model, 7 - collision
+        private const string PROP_OBJECT_NAME = "NAME"; //Name Model
         private const string PROP_OBJECT_ON_FRT = "MT_ON_NAME_TABLE";
         private const string PROP_OBJECT_FRT_FLAGS = "MT_NAME_TABLE_FLAGS";
 
