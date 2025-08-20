@@ -15,6 +15,7 @@ namespace Mafia2Tool
 {
     public partial class PrefabEditor : Form
     {
+
         private FileInfo prefabFile;
         private PrefabLoader prefabs;
 
@@ -27,6 +28,7 @@ namespace Mafia2Tool
             InitializeComponent();
             Localise();
             prefabFile = file;
+            SearchBox.KeyDown += SearchBox_KeyDown;
         }
 
         private void Localise()
@@ -291,6 +293,49 @@ namespace Mafia2Tool
 
                 Cursor.Current = Cursors.Default;
             }
+        }
+        //Search FX ANIM
+        private void SearchBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.SuppressKeyPress = true;
+                RunSearch(SearchBox.Text);
+            }
+        }
+
+        private void RunSearch(string query)
+        {
+            query = query.Trim().ToLower();
+            if (string.IsNullOrWhiteSpace(query))
+                return;
+
+            TreeNode foundNode = FindNode(TreeView_Prefabs.Nodes, query);
+
+            if (foundNode != null)
+            {
+                TreeView_Prefabs.SelectedNode = foundNode;
+                TreeView_Prefabs.Focus();
+                foundNode.EnsureVisible();
+            }
+            else
+            {
+                //MessageBox.Show("Ничего не найдено.");
+            }
+        }
+
+        private TreeNode FindNode(TreeNodeCollection nodes, string query)
+        {
+            foreach (TreeNode node in nodes)
+            {
+                if (node.Text.ToLower().Contains(query))
+                    return node;
+
+                TreeNode child = FindNode(node.Nodes, query);
+                if (child != null)
+                    return child;
+            }
+            return null;
         }
     }
 }
