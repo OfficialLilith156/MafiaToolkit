@@ -46,6 +46,7 @@
             AddDefinitionButton = new System.Windows.Forms.ToolStripMenuItem();
             Button_MoveUp = new System.Windows.Forms.ToolStripMenuItem();
             Button_MoveDown = new System.Windows.Forms.ToolStripMenuItem();
+            SearchBox = new System.Windows.Forms.TextBox();
             ActorContext.SuspendLayout();
             toolStrip1.SuspendLayout();
             SuspendLayout();
@@ -186,6 +187,13 @@
             Button_MoveDown.Text = "$MOVE_DOWN";
             Button_MoveDown.Click += Button_MoveDown_Clicked;
             // 
+            // SearchBox
+            // 
+            SearchBox.Location = new System.Drawing.Point(254, 4);
+            SearchBox.Name = "SearchBox";
+            SearchBox.Size = new System.Drawing.Size(189, 23);
+            SearchBox.TabIndex = 16;
+            // 
             // ActorEditor
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -224,5 +232,6 @@
         private Mafia2Tool.Controls.MTreeView ActorTreeView;
         private System.Windows.Forms.ToolStripMenuItem Button_MoveUp;
         private System.Windows.Forms.ToolStripMenuItem Button_MoveDown;
+        private System.Windows.Forms.TextBox SearchBox;
     }
 }
