@@ -610,6 +610,9 @@ namespace Gibbed.Mafia2.FileFormats
                     case "FxActor":
                         saveName = ReadBasicEntry(resourceXML, name);
                         break;
+                    case "Animated Texture":
+                        saveName = ReadBasicEntry(resourceXML, name);
+                        break;
                     case "Sound":
                         ReadSoundEntry(entry, resourceXML, name, finalPath);
                         saveName = name + ".fsb";

@@ -146,7 +146,7 @@ namespace Gibbed.Mafia2.FileFormats
                         resourceXML.WriteEndElement();
                         continue;
                     case "Animated Texture":
-                        saveName = ReadBasicEntry(resourceXML, itemNames[i]);
+                        saveName = ReadBasicEntry(resourceXML, itemNames[i] + ".ifl");
                         break;
                     default:
                         MessageBox.Show("Found unknown type: " + ResourceTypes[entry.TypeId].Name);
