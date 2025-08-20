@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using Utils.Language;
 using Utils.Settings;
@@ -46,10 +48,16 @@ namespace Forms.OptionControls
 
         private void RemoveSelected_Click(object sender, EventArgs e)
         {
-            if (MTLListBox.SelectedItem == null && MTLListBox.SelectedIndex > 0)
+            if (MTLListBox.SelectedItems.Count == 0)
                 return;
 
-            MTLListBox.Items.Remove(MTLListBox.SelectedItem);
+            var itemsToRemove = new List<object>(MTLListBox.SelectedItems.Cast<object>());
+
+            foreach (var item in itemsToRemove)
+            {
+                MTLListBox.Items.Remove(item);
+            }
+
             UpdateINIKey();
         }
 

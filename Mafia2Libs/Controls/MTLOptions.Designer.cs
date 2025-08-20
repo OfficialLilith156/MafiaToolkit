@@ -28,85 +28,94 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.groupMTL = new System.Windows.Forms.GroupBox();
-            this.removeSelectedButton = new System.Windows.Forms.Button();
-            this.addLibraryButton = new System.Windows.Forms.Button();
-            this.MTLListBox = new System.Windows.Forms.ListBox();
-            this.MTLsToLoadText = new System.Windows.Forms.Label();
-            this.MTLBrowser = new System.Windows.Forms.OpenFileDialog();
-            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-            this.groupMTL.SuspendLayout();
-            this.SuspendLayout();
+            groupMTL = new System.Windows.Forms.GroupBox();
+            removeSelectedButton = new System.Windows.Forms.Button();
+            addLibraryButton = new System.Windows.Forms.Button();
+            MTLListBox = new System.Windows.Forms.ListBox();
+            MTLsToLoadText = new System.Windows.Forms.Label();
+            MTLBrowser = new System.Windows.Forms.OpenFileDialog();
+            backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            groupMTL.SuspendLayout();
+            SuspendLayout();
             // 
             // groupMTL
             // 
-            this.groupMTL.AutoSize = true;
-            this.groupMTL.Controls.Add(this.removeSelectedButton);
-            this.groupMTL.Controls.Add(this.addLibraryButton);
-            this.groupMTL.Controls.Add(this.MTLListBox);
-            this.groupMTL.Controls.Add(this.MTLsToLoadText);
-            this.groupMTL.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupMTL.Location = new System.Drawing.Point(0, 0);
-            this.groupMTL.Name = "groupMTL";
-            this.groupMTL.Size = new System.Drawing.Size(443, 357);
-            this.groupMTL.TabIndex = 0;
-            this.groupMTL.TabStop = false;
-            this.groupMTL.Text = "$MATERIAL_LIBS";
+            groupMTL.AutoSize = true;
+            groupMTL.Controls.Add(removeSelectedButton);
+            groupMTL.Controls.Add(addLibraryButton);
+            groupMTL.Controls.Add(MTLListBox);
+            groupMTL.Controls.Add(MTLsToLoadText);
+            groupMTL.Dock = System.Windows.Forms.DockStyle.Fill;
+            groupMTL.Location = new System.Drawing.Point(0, 0);
+            groupMTL.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            groupMTL.Name = "groupMTL";
+            groupMTL.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            groupMTL.Size = new System.Drawing.Size(517, 412);
+            groupMTL.TabIndex = 0;
+            groupMTL.TabStop = false;
+            groupMTL.Text = "$MATERIAL_LIBS";
             // 
             // removeSelectedButton
             // 
-            this.removeSelectedButton.Location = new System.Drawing.Point(99, 218);
-            this.removeSelectedButton.Name = "removeSelectedButton";
-            this.removeSelectedButton.Size = new System.Drawing.Size(103, 23);
-            this.removeSelectedButton.TabIndex = 3;
-            this.removeSelectedButton.Text = "$MATERIAL_LIB_REMOVE";
-            this.removeSelectedButton.UseVisualStyleBackColor = true;
-            this.removeSelectedButton.Click += new System.EventHandler(this.RemoveSelected_Click);
+            removeSelectedButton.Location = new System.Drawing.Point(115, 252);
+            removeSelectedButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            removeSelectedButton.Name = "removeSelectedButton";
+            removeSelectedButton.Size = new System.Drawing.Size(120, 27);
+            removeSelectedButton.TabIndex = 3;
+            removeSelectedButton.Text = "$MATERIAL_LIB_REMOVE";
+            removeSelectedButton.UseVisualStyleBackColor = true;
+            removeSelectedButton.Click += RemoveSelected_Click;
             // 
             // addLibraryButton
             // 
-            this.addLibraryButton.Location = new System.Drawing.Point(10, 218);
-            this.addLibraryButton.Name = "addLibraryButton";
-            this.addLibraryButton.Size = new System.Drawing.Size(83, 23);
-            this.addLibraryButton.TabIndex = 2;
-            this.addLibraryButton.Text = "$MATERIAL_LIB_ADD";
-            this.addLibraryButton.UseVisualStyleBackColor = true;
-            this.addLibraryButton.Click += new System.EventHandler(this.AddLibrary_Click);
+            addLibraryButton.Location = new System.Drawing.Point(12, 252);
+            addLibraryButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            addLibraryButton.Name = "addLibraryButton";
+            addLibraryButton.Size = new System.Drawing.Size(97, 27);
+            addLibraryButton.TabIndex = 2;
+            addLibraryButton.Text = "$MATERIAL_LIB_ADD";
+            addLibraryButton.UseVisualStyleBackColor = true;
+            addLibraryButton.Click += AddLibrary_Click;
             // 
             // MTLListBox
             // 
-            this.MTLListBox.FormattingEnabled = true;
-            this.MTLListBox.HorizontalScrollbar = true;
-            this.MTLListBox.Location = new System.Drawing.Point(10, 37);
-            this.MTLListBox.Name = "MTLListBox";
-            this.MTLListBox.Size = new System.Drawing.Size(411, 173);
-            this.MTLListBox.TabIndex = 1;
+            MTLListBox.FormattingEnabled = true;
+            MTLListBox.HorizontalScrollbar = true;
+            MTLListBox.ItemHeight = 15;
+            MTLListBox.Location = new System.Drawing.Point(12, 43);
+            MTLListBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            MTLListBox.Name = "MTLListBox";
+            MTLListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            MTLListBox.Size = new System.Drawing.Size(479, 199);
+            MTLListBox.TabIndex = 1;
             // 
             // MTLsToLoadText
             // 
-            this.MTLsToLoadText.AutoSize = true;
-            this.MTLsToLoadText.Location = new System.Drawing.Point(7, 20);
-            this.MTLsToLoadText.Name = "MTLsToLoadText";
-            this.MTLsToLoadText.Size = new System.Drawing.Size(151, 13);
-            this.MTLsToLoadText.TabIndex = 0;
-            this.MTLsToLoadText.Text = "$MATERIAL_LIB_SELECTED";
+            MTLsToLoadText.AutoSize = true;
+            MTLsToLoadText.Location = new System.Drawing.Point(8, 23);
+            MTLsToLoadText.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            MTLsToLoadText.Name = "MTLsToLoadText";
+            MTLsToLoadText.Size = new System.Drawing.Size(145, 15);
+            MTLsToLoadText.TabIndex = 0;
+            MTLsToLoadText.Text = "$MATERIAL_LIB_SELECTED";
             // 
             // MTLBrowser
             // 
-            this.MTLBrowser.Filter = "MTL Files|*.mtl|All files|*.*";
-            this.MTLBrowser.Multiselect = true;
+            MTLBrowser.Filter = "MTL Files|*.mtl|All files|*.*";
+            MTLBrowser.Multiselect = true;
             // 
             // MTLOptions
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.groupMTL);
-            this.Name = "MTLOptions";
-            this.Size = new System.Drawing.Size(443, 357);
-            this.groupMTL.ResumeLayout(false);
-            this.groupMTL.PerformLayout();
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            Controls.Add(groupMTL);
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Name = "MTLOptions";
+            Size = new System.Drawing.Size(517, 412);
+            groupMTL.ResumeLayout(false);
+            groupMTL.PerformLayout();
+            ResumeLayout(false);
+            PerformLayout();
 
         }
 
