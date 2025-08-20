@@ -28,224 +28,215 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TranslokatorEditor));
-            this.PropertyGrid = new System.Windows.Forms.PropertyGrid();
-            this.TranslokatorTree = new Mafia2Tool.Controls.MTreeView();
-            this.TranslokatorContext = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.AddInstance = new System.Windows.Forms.ToolStripMenuItem();
-            this.AddGroup = new System.Windows.Forms.ToolStripMenuItem();
-            this.AddObject = new System.Windows.Forms.ToolStripMenuItem();
-            this.Delete = new System.Windows.Forms.ToolStripMenuItem();
-            this.CopyButton = new System.Windows.Forms.ToolStripMenuItem();
-            this.PasteButton = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.fileToolButton = new System.Windows.Forms.ToolStripDropDownButton();
-            this.SaveToolButton = new System.Windows.Forms.ToolStripMenuItem();
-            this.ReloadButton = new System.Windows.Forms.ToolStripMenuItem();
-            this.ExitButton = new System.Windows.Forms.ToolStripMenuItem();
-            this.Button_ExportXml = new System.Windows.Forms.ToolStripMenuItem();
-            this.Button_ImportXml = new System.Windows.Forms.ToolStripMenuItem();
-            this.ToolsButton = new System.Windows.Forms.ToolStripDropDownButton();
-            this.ViewNumInstButton = new System.Windows.Forms.ToolStripMenuItem();
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.TranslokatorContext.SuspendLayout();
-            this.toolStrip1.SuspendLayout();
-            this.SuspendLayout();
+            PropertyGrid = new System.Windows.Forms.PropertyGrid();
+            TranslokatorTree = new Mafia2Tool.Controls.MTreeView();
+            TranslokatorContext = new System.Windows.Forms.ContextMenuStrip(components);
+            AddInstance = new System.Windows.Forms.ToolStripMenuItem();
+            AddGroup = new System.Windows.Forms.ToolStripMenuItem();
+            AddObject = new System.Windows.Forms.ToolStripMenuItem();
+            Delete = new System.Windows.Forms.ToolStripMenuItem();
+            CopyButton = new System.Windows.Forms.ToolStripMenuItem();
+            PasteButton = new System.Windows.Forms.ToolStripMenuItem();
+            toolStrip1 = new System.Windows.Forms.ToolStrip();
+            fileToolButton = new System.Windows.Forms.ToolStripDropDownButton();
+            SaveToolButton = new System.Windows.Forms.ToolStripMenuItem();
+            ReloadButton = new System.Windows.Forms.ToolStripMenuItem();
+            ExitButton = new System.Windows.Forms.ToolStripMenuItem();
+            ToolsButton = new System.Windows.Forms.ToolStripDropDownButton();
+            ViewNumInstButton = new System.Windows.Forms.ToolStripMenuItem();
+            Button_ExportXml = new System.Windows.Forms.ToolStripMenuItem();
+            Button_ImportXml = new System.Windows.Forms.ToolStripMenuItem();
+            openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            SearchBox = new System.Windows.Forms.TextBox();
+            TranslokatorContext.SuspendLayout();
+            toolStrip1.SuspendLayout();
+            SuspendLayout();
             // 
             // PropertyGrid
             // 
-            this.PropertyGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.PropertyGrid.Location = new System.Drawing.Point(451, 32);
-            this.PropertyGrid.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.PropertyGrid.Name = "PropertyGrid";
-            this.PropertyGrid.PropertySort = System.Windows.Forms.PropertySort.Categorized;
-            this.PropertyGrid.Size = new System.Drawing.Size(468, 480);
-            this.PropertyGrid.TabIndex = 16;
-            this.PropertyGrid.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.PropertyGrid_PropertyValueChanged);
+            PropertyGrid.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            PropertyGrid.Location = new System.Drawing.Point(451, 32);
+            PropertyGrid.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            PropertyGrid.Name = "PropertyGrid";
+            PropertyGrid.PropertySort = System.Windows.Forms.PropertySort.Categorized;
+            PropertyGrid.Size = new System.Drawing.Size(468, 480);
+            PropertyGrid.TabIndex = 16;
+            PropertyGrid.PropertyValueChanged += PropertyGrid_PropertyValueChanged;
             // 
             // TranslokatorTree
             // 
-            this.TranslokatorTree.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.TranslokatorTree.ContextMenuStrip = this.TranslokatorContext;
-            this.TranslokatorTree.HideSelection = false;
-            this.TranslokatorTree.Location = new System.Drawing.Point(14, 32);
-            this.TranslokatorTree.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.TranslokatorTree.Name = "TranslokatorTree";
-            this.TranslokatorTree.Size = new System.Drawing.Size(429, 479);
-            this.TranslokatorTree.TabIndex = 17;
-            this.TranslokatorTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.TranslokatorTree_AfterSelect);
-            this.TranslokatorTree.KeyUp += new System.Windows.Forms.KeyEventHandler(this.OnKeyUp);
+            TranslokatorTree.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            TranslokatorTree.ContextMenuStrip = TranslokatorContext;
+            TranslokatorTree.HideSelection = false;
+            TranslokatorTree.Location = new System.Drawing.Point(14, 32);
+            TranslokatorTree.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            TranslokatorTree.Name = "TranslokatorTree";
+            TranslokatorTree.Size = new System.Drawing.Size(429, 479);
+            TranslokatorTree.TabIndex = 17;
+            TranslokatorTree.AfterSelect += TranslokatorTree_AfterSelect;
+            TranslokatorTree.KeyUp += OnKeyUp;
             // 
             // TranslokatorContext
             // 
-            this.TranslokatorContext.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.AddInstance,
-            this.AddGroup,
-            this.AddObject,
-            this.Delete,
-            this.CopyButton,
-            this.PasteButton});
-            this.TranslokatorContext.Name = "SDSContext";
-            this.TranslokatorContext.Size = new System.Drawing.Size(212, 136);
-            this.TranslokatorContext.Opening += new System.ComponentModel.CancelEventHandler(this.TranslokatorContext_Opening);
+            TranslokatorContext.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { AddInstance, AddGroup, AddObject, Delete, CopyButton, PasteButton });
+            TranslokatorContext.Name = "SDSContext";
+            TranslokatorContext.Size = new System.Drawing.Size(212, 136);
+            TranslokatorContext.Opening += TranslokatorContext_Opening;
             // 
             // AddInstance
             // 
-            this.AddInstance.Name = "AddInstance";
-            this.AddInstance.ShortcutKeyDisplayString = "Ctrl + A";
-            this.AddInstance.Size = new System.Drawing.Size(211, 22);
-            this.AddInstance.Text = "$ADD_INSTANCE";
-            this.AddInstance.Click += new System.EventHandler(this.AddInstance_Click);
+            AddInstance.Name = "AddInstance";
+            AddInstance.ShortcutKeyDisplayString = "Ctrl + A";
+            AddInstance.Size = new System.Drawing.Size(211, 22);
+            AddInstance.Text = "$ADD_INSTANCE";
+            AddInstance.Click += AddInstance_Click;
             // 
             // AddGroup
             // 
-            this.AddGroup.Name = "AddGroup";
-            this.AddGroup.ShortcutKeyDisplayString = "Ctrl + A";
-            this.AddGroup.Size = new System.Drawing.Size(211, 22);
-            this.AddGroup.Text = "$ADD_GROUP";
-            this.AddGroup.Click += new System.EventHandler(this.OnAddGroupPressed);
+            AddGroup.Name = "AddGroup";
+            AddGroup.ShortcutKeyDisplayString = "Ctrl + A";
+            AddGroup.Size = new System.Drawing.Size(211, 22);
+            AddGroup.Text = "$ADD_GROUP";
+            AddGroup.Click += OnAddGroupPressed;
             // 
             // AddObject
             // 
-            this.AddObject.Name = "AddObject";
-            this.AddObject.ShortcutKeyDisplayString = "Ctrl + A";
-            this.AddObject.Size = new System.Drawing.Size(211, 22);
-            this.AddObject.Text = "$ADD_OBJECT";
-            this.AddObject.Click += new System.EventHandler(this.AddObjectOnClick);
+            AddObject.Name = "AddObject";
+            AddObject.ShortcutKeyDisplayString = "Ctrl + A";
+            AddObject.Size = new System.Drawing.Size(211, 22);
+            AddObject.Text = "$ADD_OBJECT";
+            AddObject.Click += AddObjectOnClick;
             // 
             // Delete
             // 
-            this.Delete.Name = "Delete";
-            this.Delete.ShortcutKeyDisplayString = "";
-            this.Delete.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Delete)));
-            this.Delete.Size = new System.Drawing.Size(211, 22);
-            this.Delete.Text = "$DELETE";
-            this.Delete.Click += new System.EventHandler(this.Delete_Click);
+            Delete.Name = "Delete";
+            Delete.ShortcutKeyDisplayString = "";
+            Delete.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Delete;
+            Delete.Size = new System.Drawing.Size(211, 22);
+            Delete.Text = "$DELETE";
+            Delete.Click += Delete_Click;
             // 
             // CopyButton
             // 
-            this.CopyButton.Name = "CopyButton";
-            this.CopyButton.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
-            this.CopyButton.Size = new System.Drawing.Size(211, 22);
-            this.CopyButton.Text = "$COPY";
-            this.CopyButton.Click += new System.EventHandler(this.CopyButton_Click);
+            CopyButton.Name = "CopyButton";
+            CopyButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C;
+            CopyButton.Size = new System.Drawing.Size(211, 22);
+            CopyButton.Text = "$COPY";
+            CopyButton.Click += CopyButton_Click;
             // 
             // PasteButton
             // 
-            this.PasteButton.Name = "PasteButton";
-            this.PasteButton.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
-            this.PasteButton.Size = new System.Drawing.Size(211, 22);
-            this.PasteButton.Text = "$PASTE";
-            this.PasteButton.Click += new System.EventHandler(this.PasteButton_Click);
+            PasteButton.Name = "PasteButton";
+            PasteButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V;
+            PasteButton.Size = new System.Drawing.Size(211, 22);
+            PasteButton.Text = "$PASTE";
+            PasteButton.Click += PasteButton_Click;
             // 
             // toolStrip1
             // 
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolButton,
-            this.ToolsButton});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(933, 25);
-            this.toolStrip1.TabIndex = 18;
-            this.toolStrip1.Text = "toolStrip1";
+            toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { fileToolButton, ToolsButton });
+            toolStrip1.Location = new System.Drawing.Point(0, 0);
+            toolStrip1.Name = "toolStrip1";
+            toolStrip1.Size = new System.Drawing.Size(933, 25);
+            toolStrip1.TabIndex = 18;
+            toolStrip1.Text = "toolStrip1";
             // 
             // fileToolButton
             // 
-            this.fileToolButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.fileToolButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.SaveToolButton,
-            this.ReloadButton,
-            this.ExitButton});
-            this.fileToolButton.Image = ((System.Drawing.Image)(resources.GetObject("fileToolButton.Image")));
-            this.fileToolButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.fileToolButton.Name = "fileToolButton";
-            this.fileToolButton.Size = new System.Drawing.Size(47, 22);
-            this.fileToolButton.Text = "$FILE";
+            fileToolButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            fileToolButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { SaveToolButton, ReloadButton, ExitButton });
+            fileToolButton.Image = (System.Drawing.Image)resources.GetObject("fileToolButton.Image");
+            fileToolButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            fileToolButton.Name = "fileToolButton";
+            fileToolButton.Size = new System.Drawing.Size(47, 22);
+            fileToolButton.Text = "$FILE";
             // 
             // SaveToolButton
             // 
-            this.SaveToolButton.Name = "SaveToolButton";
-            this.SaveToolButton.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.SaveToolButton.Size = new System.Drawing.Size(165, 22);
-            this.SaveToolButton.Text = "$SAVE";
-            this.SaveToolButton.Click += new System.EventHandler(this.SaveToolButton_Click);
+            SaveToolButton.Name = "SaveToolButton";
+            SaveToolButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S;
+            SaveToolButton.Size = new System.Drawing.Size(165, 22);
+            SaveToolButton.Text = "$SAVE";
+            SaveToolButton.Click += SaveToolButton_Click;
             // 
             // ReloadButton
             // 
-            this.ReloadButton.Name = "ReloadButton";
-            this.ReloadButton.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
-            this.ReloadButton.Size = new System.Drawing.Size(165, 22);
-            this.ReloadButton.Text = "$RELOAD";
-            this.ReloadButton.Click += new System.EventHandler(this.ReloadButton_Click);
+            ReloadButton.Name = "ReloadButton";
+            ReloadButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R;
+            ReloadButton.Size = new System.Drawing.Size(165, 22);
+            ReloadButton.Text = "$RELOAD";
+            ReloadButton.Click += ReloadButton_Click;
             // 
             // ExitButton
             // 
-            this.ExitButton.Name = "ExitButton";
-            this.ExitButton.Size = new System.Drawing.Size(165, 22);
-            this.ExitButton.Text = "$EXIT";
-            this.ExitButton.Click += new System.EventHandler(this.ExitButton_Click);
+            ExitButton.Name = "ExitButton";
+            ExitButton.Size = new System.Drawing.Size(165, 22);
+            ExitButton.Text = "$EXIT";
+            ExitButton.Click += ExitButton_Click;
             // 
             // ToolsButton
             // 
-            this.ToolsButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.ToolsButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ViewNumInstButton,
-            this.Button_ExportXml,
-            this.Button_ImportXml});
-            this.ToolsButton.Image = ((System.Drawing.Image)(resources.GetObject("ToolsButton.Image")));
-            this.ToolsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.ToolsButton.Name = "ToolsButton";
-            this.ToolsButton.Size = new System.Drawing.Size(61, 22);
-            this.ToolsButton.Text = "$TOOLS";
+            ToolsButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            ToolsButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { ViewNumInstButton, Button_ExportXml, Button_ImportXml });
+            ToolsButton.Image = (System.Drawing.Image)resources.GetObject("ToolsButton.Image");
+            ToolsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            ToolsButton.Name = "ToolsButton";
+            ToolsButton.Size = new System.Drawing.Size(61, 22);
+            ToolsButton.Text = "$TOOLS";
             // 
             // ViewNumInstButton
             // 
-            this.ViewNumInstButton.Name = "ViewNumInstButton";
-            this.ViewNumInstButton.Size = new System.Drawing.Size(180, 22);
-            this.ViewNumInstButton.Text = "$VIEW_NUM_INST";
-            this.ViewNumInstButton.Click += new System.EventHandler(this.ViewNumInstButton_Click);
-            //
+            ViewNumInstButton.Name = "ViewNumInstButton";
+            ViewNumInstButton.Size = new System.Drawing.Size(169, 22);
+            ViewNumInstButton.Text = "$VIEW_NUM_INST";
+            ViewNumInstButton.Click += ViewNumInstButton_Click;
             // 
             // Button_ExportXml
             // 
-            this.Button_ExportXml.Name = "Button_ExportXml";
-            this.Button_ExportXml.Size = new System.Drawing.Size(180, 22);
-            this.Button_ExportXml.Text = "$EXPORT_XML";
-            this.Button_ExportXml.Click += new System.EventHandler(this.Button_ExportXml_OnClick);
-            //
-            // Button_ExportXml
+            Button_ExportXml.Name = "Button_ExportXml";
+            Button_ExportXml.Size = new System.Drawing.Size(169, 22);
+            Button_ExportXml.Text = "$EXPORT_XML";
+            Button_ExportXml.Click += Button_ExportXml_OnClick;
             // 
-            this.Button_ImportXml.Name = "Button_ImportXml";
-            this.Button_ImportXml.Size = new System.Drawing.Size(180, 22);
-            this.Button_ImportXml.Text = "$IMPORT_XML";
-            this.Button_ImportXml.Click += new System.EventHandler(this.Button_ImportXml_OnClick);
+            // Button_ImportXml
+            // 
+            Button_ImportXml.Name = "Button_ImportXml";
+            Button_ImportXml.Size = new System.Drawing.Size(169, 22);
+            Button_ImportXml.Text = "$IMPORT_XML";
+            Button_ImportXml.Click += Button_ImportXml_OnClick;
             // 
             // openFileDialog1
             // 
-            this.openFileDialog1.FileName = "openFileDialog1";
+            openFileDialog1.FileName = "openFileDialog1";
+            // 
+            // SearchBox
+            // 
+            SearchBox.Location = new System.Drawing.Point(291, 5);
+            SearchBox.Name = "SearchBox";
+            SearchBox.Size = new System.Drawing.Size(152, 23);
+            SearchBox.TabIndex = 19;
             // 
             // TranslokatorEditor
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(933, 519);
-            this.Controls.Add(this.PropertyGrid);
-            this.Controls.Add(this.TranslokatorTree);
-            this.Controls.Add(this.toolStrip1);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.Name = "TranslokatorEditor";
-            this.Text = "$TRANSLOKATOR_EDITOR";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.TranslocatorEditor_Closing);
-            this.TranslokatorContext.ResumeLayout(false);
-            this.toolStrip1.ResumeLayout(false);
-            this.toolStrip1.PerformLayout();
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(933, 519);
+            Controls.Add(SearchBox);
+            Controls.Add(PropertyGrid);
+            Controls.Add(TranslokatorTree);
+            Controls.Add(toolStrip1);
+            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Name = "TranslokatorEditor";
+            Text = "$TRANSLOKATOR_EDITOR";
+            FormClosing += TranslocatorEditor_Closing;
+            TranslokatorContext.ResumeLayout(false);
+            toolStrip1.ResumeLayout(false);
+            toolStrip1.PerformLayout();
+            ResumeLayout(false);
+            PerformLayout();
 
         }
 
@@ -270,5 +261,6 @@
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private Controls.MTreeView TranslokatorTree;
         private System.Windows.Forms.ToolStripMenuItem AddGroup;
+        private System.Windows.Forms.TextBox SearchBox;
     }
 }
