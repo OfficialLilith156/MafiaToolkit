@@ -124,6 +124,10 @@ namespace Mafia2Tool
             AddSceneFolderButton.Text = Language.GetString("$ADD_SCENE_FOLDER");
             SaveButton.Text = Language.GetString("$SAVE");
             ExitButton.Text = Language.GetString("$EXIT");
+            Button_TestConvert32.Text = Language.GetString("$TEST_CONVERT_32BIT");
+            Button_TestConvert16.Text = Language.GetString("$TEST_CONVERT_16BIT");
+            Button_DumpTexture.Text = Language.GetString("$DUMP_TEXTURES");
+
         }
 
         private void InitDockingControls()
