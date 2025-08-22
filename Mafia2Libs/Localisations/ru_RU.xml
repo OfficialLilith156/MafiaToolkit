@@ -7,7 +7,7 @@
 	<String ID="$ENTRY_NAME">Наименование записи</String>
 
 	<!-- Game Explorer Strings -->
-	<String ID="$ABOUT">About</String>
+	<String ID="$ABOUT">О нас</String>
 	<String ID="$THANKS">Особая благодарность</String>
 	<String ID="$VIEW">Вид</String>
 	<String ID="$FILE">Файл</String>
@@ -24,9 +24,9 @@
 	<String ID="$TILE">Плитка</String>
 	<String ID="$MII_TK_GAME_EXPLORER">Mafia II Toolkit: проводник по игровым файлам</String>
 	<String ID="$UNPACK_ALL_SDS">Распаковать все SDS</String>
-	<String ID="$DELETE_SELECTED_OBJECTS">Delete Selected Files and Folders</String>
-	<String ID="$UNPACK_SELECTED_SDS">Unpack Selected SDS's</String>
-	<String ID="$PACK_SELECTED_SDS">Pack Selected SDS's</String>
+	<String ID="$DELETE_SELECTED_OBJECTS">Удалить выбранные папки и файлы</String>
+	<String ID="$UNPACK_SELECTED_SDS">Распаковать выбранные SDS</String>
+	<String ID="$PACK_SELECTED_SDS">Запаковать выбранные SDS</String>
 	<String ID="$OPEN_FOLDER_EXPLORER">Открыть папку в Проводнике</String>
 	<String ID="$PACK">Запаковать</String>
 	<String ID="$UNPACK">Распаковать</String>
@@ -40,7 +40,7 @@
 	<String ID="$FOLDER_PATH_TOOLTIP">Путь к папке </String>
 	<String ID="$UP_TOOLTIP">Вверх</String>
 	<String ID="$M1DE_OODLEERROR">Не удалось найти библиотеку Oodle, необходимую для сжатия/распаковки архивов. Пожалуйста, убедитесь, что файл 'oo2core_8_win64.dll' присутствует в игровой директории.</String>
-	<String ID="$OPEN_MAP_EDITOR">Open Map Editor</String>
+	<String ID="$OPEN_MAP_EDITOR">Открыть Редактор Карт</String>
 
 	<!-- Game Selector -->
 	<String ID="$START_TOOLKIT">Запуск Toolkit</String>
@@ -50,9 +50,13 @@
 	<String ID="$SELECT_GAME">Выбранная Игра </String>
 
 	<!-- Map Editor -->
-	<String ID="$NO_COL_FILE_CREATE_NEW">No Collision file is present. Create new Collision File?</String>
-	<String ID="$CANNOT_CREATE_COL">Cannot add a collision. No Collision file is present!</String>
-	<String ID="$ADD_COLLISION">Add Collision</String>
+	<String ID="$NO_COL_FILE_CREATE_NEW">Файл Коллизий отсутствует. Создать новый файл Коллизий?</String>
+	<String ID="$CANNOT_CREATE_COL">Невозможно добавить Коллизию. Файл Коллизии отсутствует!</String>
+	<String ID="$ADD_COLLISION">Добавить Коллизию</String>
+	<String ID="$TEST_CONVERT_32BIT">Конвертировать в 32 бит</String> 
+	<String ID="$TEST_CONVERT_16BIT">Конвертировать в 16 бит</String>
+	<String ID="$DUMP_TEXTURES">Дамб Текстур</String>
+	<String ID="$VIEW_UTILITIES">Утилита</String>
 
 	<!-- Main Options Strings-->
 	<String ID="$GENERAL">Общие</String>
@@ -92,11 +96,11 @@
 	<String ID="$SDS_UNCOMPRESSED">Несжатый</String>
 	<String ID="$SDS_COMPRESSED">Сжатый</String>
 	<String ID="$SDS_ONEBLOCK">Один блок</String>
-	<String ID="$ADD_TIME_DATE_BACKUP">Add time and date to backups.</String>
-	<String ID="$DECOMPILE_LUA_UNPACK">Decompile lua when unpacking.</String>
-	<String ID="$USE_SDS_TOOL_FORMAT">Use SDS Tool GUI Format when unpacking.</String>
-	<String ID="$COOK_COLLISIONS">Cook collisions when saving.</String>
-	<String ID="$BACKUP_SDS_LABEL">Create SDS Backups when unpacking.</String>
+	<String ID="$ADD_TIME_DATE_BACKUP">Добавлять время и дату к резервным копиям.</String>
+	<String ID="$DECOMPILE_LUA_UNPACK">Декомпилировать lua при распаковке.</String>
+	<String ID="$USE_SDS_TOOL_FORMAT">Использовать SDS Tool Gui.</String>
+	<String ID="$COOK_COLLISIONS">Заготовить столкновения при сохранении.</String>
+	<String ID="$BACKUP_SDS_LABEL">Создать копию SDS при распаковке.</String>
 	<String ID="$VERTEX_BUFFER_SIZE_LABEL">Vertex Buffer Limit</String>
 	<String ID="$INDEX_BUFFER_SIZE_LABEL">Index Buffer Limit</String>
 
@@ -126,17 +130,17 @@
 	<String ID="$MATERIAL_EDITOR_TITLE">Редактор Библиотеки Материалов.</String>
 	<String ID="$OPEN">Открыть</String>
 	<String ID="$QUESTION_NAME_OF_MAT">Пожалуйста, введите название материала:</String>
-	<String ID="$EXPORT_MATS">Export Selected Materials</String>
-	<String ID="$LABEL_SEARCHTYPE">Type of Search:</String>
-	<String ID="$LABEL_MATERIALNAME">Material Name</String>
-	<String ID="$LABEL_TEXTURENAME">Texture Name</String>
-	<String ID="$LABEL_MATERIALHASH">Material Hash</String>
-	<String ID="$LABEL_SHADERID">Shader ID</String>
-	<String ID="$LABEL_SHADERHASH">Shader Hash</String>
+	<String ID="$EXPORT_MATS">Экспортировать выбранные материалы</String>
+	<String ID="$LABEL_SEARCHTYPE">Тип поиска:</String>
+	<String ID="$LABEL_MATERIALNAME">Название материала</String>
+	<String ID="$LABEL_TEXTURENAME">Название текстуры</String>
+	<String ID="$LABEL_MATERIALHASH">Хэш материала</String>
+	<String ID="$LABEL_SHADERID">Шейдер ID</String>
+	<String ID="$LABEL_SHADERHASH">Шейдер Хэш</String>
 	<String ID="$SEARCH">Поиск</String>
-	<String ID="$LABEL_SEARCHBAR">Search for a Material:</String>
-	<String ID="$LABEL_SELECTMATLIBRARY">Select Material Library:</String>
-	<String ID="$TITLE_MATERIALBROWSER">Material Browser</String>
+	<String ID="$LABEL_SEARCHBAR">Поиск материала</String>
+	<String ID="$LABEL_SELECTMATLIBRARY">Библеотека материалов</String>
+	<String ID="$TITLE_MATERIALBROWSER">Обозреватель материалов</String>
 
 	<!-- FrameResource Editor Form Strings-->
 	<String ID="$FRAME_EDITOR_EXPORT_BTN">Экспортируем модели....</String>
@@ -156,44 +160,44 @@
 	<String ID="$QUESTION_FRADD">Введите имя и тип кадра.</String>
 
 	<!-- Scene Outliner Dock Strings-->
-	<String ID="$SCENE_OUTLINER_FORMNAME">Scene Outliner</String>
-	<String ID="$SCENE_OUTLINER_EXPLORER">Explorer</String>
-	<String ID="$SCENE_OUTLINER_SEARCHER">Search</String>
+	<String ID="$SCENE_OUTLINER_FORMNAME">Планировщик сцены</String>
+	<String ID="$SCENE_OUTLINER_EXPLORER">Исследователь</String>
+	<String ID="$SCENE_OUTLINER_SEARCHER">Поиск</String>
 
 	<!-- Actor Editor -->
-	<String ID="$ACTOR_EDITOR_TITLE">Actor Editor</String>
-	<String ID="$ADD_ITEM">Add Item</String>
-	<String ID="$ADD_DEFINITION">Add Definition</String>
+	<String ID="$ACTOR_EDITOR_TITLE">Редактор Актора</String>
+	<String ID="$ADD_ITEM">Добавить объект</String>
+	<String ID="$ADD_DEFINITION">Добавить определение</String>
 
 	<!-- EntityDataStorage Editor -->
-	<String ID="$EDS_EDITOR_TITLE">EntityDataStorage Editor</String>
-	<String ID="$SAVE_TITLE">Save File</String>
-	<String ID="$OPEN_TITLE">Open File</String>
-	<String ID="$EXPORT_XML">Export To XML</String>
-	<String ID="$IMPORT_XML">Import From XML</String>
-	<String ID="$PHYSICS_RB">Physics/Rigidbody</String>
-	<String ID="$MOTOR_TORQUE">Motor/Torque</String>
-	<String ID="$FUEL">Fuel</String>
-	<String ID="$GEARBOX">Gearbox</String>
-	<String ID="$STEERING">Steering</String>
-	<String ID="$DIFFERENTIAL">Differential</String>
-	<String ID="$BRAKES">Brakes</String>
-	<String ID="$AERODYNAMICS">Aerodynamics</String>
-	<String ID="$EFFECTS">Effects</String>
-	<String ID="$ENGINE">Engine</String>
-	<String ID="$ENVIRONMENT">Environment</String>
-	<String ID="$AIR_PUMP">Air Pump</String>
-	<String ID="$DOORS">Doors</String>
-	<String ID="$BONNET_TRUNK">Bonnet/Trunk</String>
-	<String ID="$WHEELS">Wheels</String>
-	<String ID="$HORN_SIREN">Horn/Siren</String>
-	<String ID="$GLASS_BREAK">Glass Effects</String>
+	<String ID="$EDS_EDITOR_TITLE">Редактор Entity Data Storage</String>
+	<String ID="$SAVE_TITLE">Сохранить файл</String>
+	<String ID="$OPEN_TITLE">Открыть файл</String>
+	<String ID="$EXPORT_XML">Экспортировать XML</String>
+	<String ID="$IMPORT_XML">Импортировать XML</String>
+	<String ID="$PHYSICS_RB">Физика/Твердое тело</String>
+	<String ID="$MOTOR_TORQUE">Двигатель/Крутящий момент</String>
+	<String ID="$FUEL">Топливо</String>
+	<String ID="$GEARBOX">Коробка передач</String>
+	<String ID="$STEERING">Рулевое управление</String>
+	<String ID="$DIFFERENTIAL">Дифференциал</String>
+	<String ID="$BRAKES">Тормоза</String>
+	<String ID="$AERODYNAMICS">Аэродинамика</String>
+	<String ID="$EFFECTS">Эффекты</String>
+	<String ID="$ENGINE">Двигатель</String>
+	<String ID="$ENVIRONMENT">Окружение/Среда</String>
+	<String ID="$AIR_PUMP">Воздушный насос</String>
+	<String ID="$DOORS">Двери</String>
+	<String ID="$BONNET_TRUNK">Капот/Багажник</String>
+	<String ID="$WHEELS">Колеса</String>
+	<String ID="$HORN_SIREN">Гудок</String>
+	<String ID="$GLASS_BREAK">Стеклянные эффекты</String>
 	<String ID="$EXPLOSION">Explosion Effects</String>
-	<String ID="$FIRE">Fire Effects</String>
-	<String ID="$RAIN_CONTACT">Rain Effects</String>
-	<String ID="$HEDGE_CONTACT">Hedge Collision Effects</String>
-	<String ID="$SKIDDING_SLIDING">Powersliding/Skidding</String>
-	<String ID="$ROLL">Rolling (Car Flipping, Upside down, etc)</String>
+	<String ID="$FIRE">Эффекты взрыва</String>
+	<String ID="$RAIN_CONTACT">Эффекты дождя</String>
+	<String ID="$HEDGE_CONTACT">Эффекты столкновения живых???</String>
+	<String ID="$SKIDDING_SLIDING">Силовое скольжение/Занос</String>
+	<String ID="$ROLL">Роллинг (Переворот автомобиля, С ног на голову, и т.д)</String>
 
 	<!-- NewObjForm Form Strings-->
 	<String ID="$NEWOBJFORM_TITLE">Ввод имени</String>
@@ -213,7 +217,7 @@
 	<String ID="$AREA_1">Область 1</String>
 	<String ID="$AREA_NAME">Название Области</String>
 	<String ID="$AREA_2">Область 2</String>
-	<String ID="$UNK_BYTE">Unk Байт</String>
+	<String ID="$UNK_BYTE">Неизвестный Байт</String>
 	<String ID="$SAVE_AREA">Сохранение Области!</String>
 	<String ID="$RELOAD_AREA">Обновить область..</String>
 
@@ -237,7 +241,7 @@
 	<String ID="$TOGGLE_MODELS">Переключение моделей  </String>
 	<String ID="$TOGGLE_COLLISIONS">Переключение Коллизий</String>
 	<String ID="$TOGGLE_BOXES">Переключение Боксов </String>
-	<String ID="$ADD">Добавление..</String>
+	<String ID="$ADD">Добавление...</String>
 	<String ID="$ADD_SCENE_FOLDER">Добавить Папку Сцены</String>
 	<String ID="$ADD_ROAD_SPLINE">Добавить Дорожный Сплайн</String>
 	<String ID="$VISIBLE">Видимый</String>
@@ -254,16 +258,16 @@
 	<String ID="$ROTATION_Z">Вращение Z</String>
 
 	<!-- Property Descriptions Strings-->
-	<String ID="$XBIN_PROP_DESC_NAME_UNSTORED">Note: This is NOT stored in the file and taken from the 'Hash' value.</String>
+	<String ID="$XBIN_PROP_DESC_NAME_UNSTORED">Примечание: Это НЕ сохраняется в файле, а берется из значения «Хэш».</String>
 
 	<!-- XBIN Editor Strings-->
-	<String ID="$XBIN_EDITOR_TITLE">XBIN Editor</String>
-	<String ID="$IMPORT_XBIN">Import from .xml</String>
-	<String ID="$EXPORT_XBIN">Export to .xml</String>
+	<String ID="$XBIN_EDITOR_TITLE">XBIN Редактор</String>
+	<String ID="$IMPORT_XBIN">Импортировать XML</String>
+	<String ID="$EXPORT_XBIN">Экспортировать XML</String>
 
 	<!-- Exception Form-->
-	<String ID="$EXCEPTION_LABEL">Unhandled exception has occurred in your application. If you click continue [ENTER], the application will ignore this error and attempt to continue. If you click Quit [ESC], the application will close immediatly.</String>
-	<String ID="$EXCEPTION_CONTINUE">Continue</String>
-	<String ID="$EXCEPTION_QUIT">Quit</String>
+	<String ID="$EXCEPTION_LABEL">В вашем приложении произошло необработанное исключение. Если вы нажмёте «Продолжить» [ENTER], приложение проигнорирует эту ошибку и попытается продолжить работу. Если вы нажмёте «Выйти» [ESC], приложение немедленно закроется.</String>
+	<String ID="$EXCEPTION_CONTINUE">Продолжить</String>
+	<String ID="$EXCEPTION_QUIT">Выйти</String>
 
 </Localisation>

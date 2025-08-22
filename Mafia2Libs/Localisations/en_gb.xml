@@ -115,7 +115,7 @@
 	<String ID="$CANNOT_CREATE_COL">Cannot add a collision. No Collision file is present!</String>
 	<String ID="$ADD_COLLISION">Add Collision</String>
 	<String ID="$TOOLTIP">Drag with Left Mouse Button to set Parent1|Drag with Right Mouse Button to set Parent2|Drag with Middle Mouse Button to switch frames</String>
-	<String ID="$TEST_CONVERT_32BIT">Convert and save to 32 bit</String> $DUMP_TEXTURES
+	<String ID="$TEST_CONVERT_32BIT">Convert and save to 32 bit</String>
 	<String ID="$TEST_CONVERT_16BIT">Convert and save to 16 bit</String>
 	<String ID="$DUMP_TEXTURES">Dump Textures</String>
 	<String ID="$VIEW_UTILITIES">View Utilities</String>
