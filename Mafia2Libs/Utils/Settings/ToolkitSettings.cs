@@ -82,7 +82,7 @@ namespace Utils.Settings
             float.TryParse(ReadKey("ScreenDepth", "ModelViewer", "10000"), out ScreenDepth);
             float.TryParse(ReadKey("ScreenNear", "ModelViewer", "1"), out ScreenNear);
             float.TryParse(ReadKey("CameraSpeed", "ModelViewer", "15"), out CameraSpeed);
-            bool.TryParse(ReadKey("EnableExperimental", "ModelViewer", "1"), out Experimental);
+            bool.TryParse(ReadKey("EnableExperimental", "ModelViewer", "True"), out Experimental);
             bool.TryParse(ReadKey("EnableNavigation", "ModelViewer", "0"), out bNavigation);
             bool.TryParse(ReadKey("EnableTranslokator", "ModelViewer", "0"), out bTranslokatorTint);
             float.TryParse(ReadKey("FieldOfView", "ModelViewer", "60"), out FieldOfView);
