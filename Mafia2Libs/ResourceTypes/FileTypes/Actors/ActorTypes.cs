@@ -3,6 +3,9 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Numerics;
+using System.Security.Policy;
+//using System.Windows.Media.Media3D;
+using UnluacNET;
 using Utils.Extensions;
 using Utils.Logging;
 using Utils.Types;
@@ -687,16 +690,16 @@ namespace ResourceTypes.Actors
         HashName[] frameLinks;
         int[] frameIdxLinks;
         int flags;
-        float[] unkFloat1 = new float[7];
+        private UnkFloat1Data unkFloat1 = new UnkFloat1Data(); // NEW SYSTEM
         int unk_int;
-        float[] unkFloat2 = new float[5];
+        private UnkFloat2Data unkFloat2 = new UnkFloat2Data(); // NEW SYSTEM
         byte unk_byte1;
-        float[] unkFloat3 = new float[17];
+        private UnkFloat3Data unkFloat3 = new UnkFloat3Data(); // NEW SYSTEM
         byte unk_byte2;
-        float[] unkFloat4 = new float[5];
+        private UnkFloat4Data unkFloat4 = new UnkFloat4Data(); // NEW SYSTEM
         HashName nameLight;
         int unk_int2;
-        float[] unkFloat5 = new float[20];
+        private UnkFloat5Data unkFloat5 = new UnkFloat5Data(); // NEW SYSTEM
         HashName[] names = new HashName[4];
         BoundingBox boundingBox;
         byte unk_byte3;
@@ -761,34 +764,203 @@ namespace ResourceTypes.Actors
             get { return frameIdxLinks; }
             set { frameIdxLinks = value; }
         }
-        public float[] UnkFloats1 {
+
+
+        //-------------------------------
+        //NEW SYSTEM DATA
+        [TypeConverter(typeof(ExpandableObjectConverter))]   // NEW SYSTEM
+        public class UnkFloat1Data
+        {
+            public float Сone_of_light { get; set; }
+            public float Displaying_light_on_the_player { get; set; }
+            public float Light_intensity { get; set; }
+            public float Cone_narrowing { get; set; }
+            public float UNK { get; set; }
+            public float Brightness_Light { get; set; }
+            public float Cone_blur { get; set; }
+            
+
+            public float[] ToArray()
+            {
+                return new float[] { Сone_of_light, Displaying_light_on_the_player, UNK, Light_intensity, Cone_narrowing, Brightness_Light, Cone_blur };
+            }
+
+            public void FromArray(float[] arr1)
+            {
+                if (arr1 == null || arr1.Length < 7)
+                    throw new ArgumentException("Array must have 5 элементов");
+                Сone_of_light = arr1[0];
+                Displaying_light_on_the_player = arr1[1];
+                Light_intensity = arr1[2];
+                Cone_narrowing = arr1[3];
+                UNK = arr1[4];
+                Brightness_Light = arr1[5];
+                Cone_blur = arr1[6];
+            }
+        }
+
+        public UnkFloat1Data Lighting
+        {
             get { return unkFloat1; }
             set { unkFloat1 = value; }
         }
+        //-------------------------------
+
+
         public int UnkInt1 {
             get { return unk_int; }
             set { unk_int = value; }
         }
-        public float[] UnkFloats2 {
+
+
+        //-------------------------------
+        //NEW SYSTEM DATA
+        [TypeConverter(typeof(ExpandableObjectConverter))]    // NEW SYSTEM
+        public class UnkFloat2Data
+        {
+            public float Red { get; set; }
+            public float Green { get; set; }
+            public float Blue { get; set; }
+            public float UNK { get; set; }
+            public float UNK1 { get; set; }
+
+
+            public float[] ToArray()
+            {
+                return new float[] { Red, Green, Blue, UNK, UNK1 };
+            }
+
+            public void FromArray(float[] arr2)
+            {
+                if (arr2 == null || arr2.Length < 5)
+                    throw new ArgumentException("Array must have 5 элементов");
+                Red = arr2[0];
+                Green = arr2[1];
+                Blue = arr2[2];
+                UNK = arr2[3];
+                UNK1 = arr2[4];
+            }
+        }
+        //-------------------------------
+
+
+        public UnkFloat2Data Rgb
+        {
             get { return unkFloat2; }
             set { unkFloat2 = value; }
         }
+
+
         public byte UnkByte1 {
             get { return unk_byte1; }
             set { unk_byte1 = value; }
         }
-        public float[] UnkFloats3 {
+
+
+        //-------------------------------
+        //NEW SYSTEM DATA
+        [TypeConverter(typeof(ExpandableObjectConverter))]   // NEW SYSTEM
+        public class UnkFloat3Data
+        {
+            public float UNK01 { get; set; }
+            public float UNK02 { get; set; }
+            public float Normal_map { get; set; }
+            public float UNK03 { get; set; }
+            public float UNK04 { get; set; }
+            public float UNK05 { get; set; }
+            public float UNK06 { get; set; }
+            public float UNK07 { get; set; }
+            public float UNK08 { get; set; }
+            public float UNK09 { get; set; }
+            public float UNK10 { get; set; }
+            public float UNK11 { get; set; }
+            public float UNK12 { get; set; }
+            public float UNK13 { get; set; }
+            public float UNK14 { get; set; }
+            public float UNK15 { get; set; }
+            public float UNK16 { get; set; }
+
+
+            public float[] ToArray()
+            {
+                return new float[] { UNK01, UNK02, Normal_map, UNK03, UNK04, UNK05, UNK06, UNK07, UNK08, UNK09, UNK10, UNK11, UNK12, UNK13, UNK14, UNK15, UNK16 };
+            }
+
+            public void FromArray(float[] arr3)
+            {
+                if (arr3 == null || arr3.Length < 17)
+                    throw new ArgumentException("Array must have 5 элементов");
+                UNK01 = arr3[0];
+                UNK02 = arr3[1];
+                Normal_map = arr3[2];
+                UNK03 = arr3[3];
+                UNK04 = arr3[4];
+                UNK05 = arr3[5];
+                UNK06 = arr3[6];
+                UNK07 = arr3[7];
+                UNK08 = arr3[8];
+                UNK09 = arr3[9];
+                UNK10 = arr3[10];
+                UNK11 = arr3[11];
+                UNK12 = arr3[12];
+                UNK13 = arr3[13];
+                UNK14 = arr3[14];
+                UNK15 = arr3[15];
+                UNK16 = arr3[16];
+            }
+        }
+
+        public UnkFloat3Data Texture
+        {
             get { return unkFloat3; }
             set { unkFloat3 = value; }
         }
+        //-------------------------------
+
+
         public byte UnkByte2 {
             get { return unk_byte2; }
             set { unk_byte2 = value; }
         }
-        public float[] UnkFloats4 {
+
+
+        //-------------------------------
+        //NEW SYSTEM DATA
+        [TypeConverter(typeof(ExpandableObjectConverter))]   // NEW SYSTEM
+        public class UnkFloat4Data
+        {
+            public float UNK01 { get; set; }
+            public float UNK02 { get; set; }
+            public float UNK03 { get; set; }
+            public float UNK04 { get; set; }
+            public float UNK05 { get; set; }
+
+            public float[] ToArray()
+            {
+                return new float[] { UNK01, UNK02, UNK03, UNK04, UNK05 };
+            }
+
+            public void FromArray(float[] arr4)
+            {
+                if (arr4 == null || arr4.Length < 5)
+                    throw new ArgumentException("Array must have 5 элементов");
+                UNK01 = arr4[0];
+                UNK02 = arr4[1];
+                UNK03 = arr4[2];
+                UNK04 = arr4[3];
+                UNK05 = arr4[4];
+
+            }
+        }
+
+        public UnkFloat4Data UNK04FLOATS
+        {
             get { return unkFloat4; }
             set { unkFloat4 = value; }
         }
+        //-------------------------------
+
+
         public HashName NameLight {
             get { return nameLight; }
             set { nameLight = value; }
@@ -797,10 +969,76 @@ namespace ResourceTypes.Actors
             get { return unk_int2; }
             set { unk_int2 = value; }
         }
-        public float[] UnkFloats5 {
+
+
+        //-------------------------------
+        //NEW SYSTEM DATA
+        [TypeConverter(typeof(ExpandableObjectConverter))]   // NEW SYSTEM +
+        public class UnkFloat5Data
+        {
+            public float UNK01 { get; set; }
+            public float UNK02 { get; set; }
+            public float UNK03 { get; set; }
+            public float UNK04 { get; set; }
+            public float UNK05 { get; set; }
+            public float UNK06 { get; set; }
+            public float UNK07 { get; set; }
+            public float UNK08 { get; set; }
+            public float UNK09 { get; set; }
+            public float UNK10 { get; set; }
+            public float UNK11 { get; set; }
+            public float UNK12 { get; set; }
+            public float UNK13 { get; set; }
+            public float UNK14 { get; set; }
+            public float UNK15 { get; set; }
+            public float UNK16 { get; set; }
+            public float UNK17 { get; set; }
+            public float UNK18 { get; set; }
+            public float UNK19 { get; set; }
+
+
+
+
+            public float[] ToArray()
+            {
+                return new float[] { UNK01, UNK02, UNK03, UNK04, UNK05, UNK06, UNK07, UNK08, UNK09, UNK10, UNK11, UNK12, UNK13, UNK14, UNK15, UNK16, UNK17, UNK18, UNK19 };
+            }
+
+            public void FromArray(float[] arr5)
+            {
+                if (arr5 == null || arr5.Length < 20)
+                    throw new ArgumentException("Array must have 20 элементов");
+                UNK01 = arr5[0];
+                UNK02 = arr5[1];
+                UNK03 = arr5[2];
+                UNK04 = arr5[3];
+                UNK04 = arr5[4];
+                UNK05 = arr5[5];
+                UNK06 = arr5[6];
+                UNK07 = arr5[7];
+                UNK08 = arr5[8];
+                UNK09 = arr5[9];
+                UNK10 = arr5[10];
+                UNK11 = arr5[11];
+                UNK12 = arr5[12];
+                UNK13 = arr5[13];
+                UNK14 = arr5[14];
+                UNK15 = arr5[15];
+                UNK16 = arr5[16];
+                UNK17 = arr5[17];
+                UNK18 = arr5[18];
+                UNK19 = arr5[19];
+            }
+        }
+
+        public UnkFloat5Data UNK05FLOATS //WORK IN
+        {
             get { return unkFloat5; }
             set { unkFloat5 = value; }
         }
+        //-------------------------------
+
+
         public HashName[] UnkHashes {
             get { return names; }
             set { names = value; }
@@ -854,11 +1092,8 @@ namespace ResourceTypes.Actors
             frameLinks = new HashName[0];
             sceneLinks = new HashName[0];
             frameIdxLinks = new int[0];
-            unkFloat1 = new float[7];
-            unkFloat2 = new float[5];
-            unkFloat3 = new float[17];
-            unkFloat4 = new float[5];
-            unkFloat5 = new float[20];
+           
+
             names = new HashName[4];
             for (int i = 0; i < 4; i++)
             {
@@ -895,40 +1130,76 @@ namespace ResourceTypes.Actors
                     frameIdxLinks[i] = stream.ReadInt32(isBigEndian);
                 }
 
+
+                //-------------------------------
+                //NEW SYSTEM DATA
+                float[] tmp1 = new float[7]; //NEW SYSTEM
                 for (int i = 0; i < 7; i++)
                 {
-                    unkFloat1[i] = stream.ReadSingle(isBigEndian);
+                    tmp1[i] = stream.ReadSingle(isBigEndian);
                 }
+                unkFloat1.FromArray(tmp1);
+                //-------------------------------
+
 
                 unk_int = stream.ReadInt32(isBigEndian);
 
+
+                //-------------------------------
+                //NEW SYSTEM DATA
+                float[] tmp2 = new float[5]; //NEW SYSTEM
                 for (int i = 0; i < 5; i++)
                 {
-                    unkFloat2[i] = stream.ReadSingle(isBigEndian);
+                    tmp2[i] = stream.ReadSingle(isBigEndian);
                 }
+                unkFloat2.FromArray(tmp2);
+                //-------------------------------
+
 
                 unk_byte1 = stream.ReadByte8();
 
+
+                //-------------------------------
+                //NEW SYSTEM DATA
+                float[] tmp3 = new float[17]; //NEW SYSTEM
                 for (int i = 0; i < 17; i++)
                 {
-                    unkFloat3[i] = stream.ReadSingle(isBigEndian);
+                    tmp3[i] = stream.ReadSingle(isBigEndian);
                 }
+                unkFloat3.FromArray(tmp3);
+                //-------------------------------
+
 
                 unk_byte2 = stream.ReadByte8();
 
+
+                //-------------------------------
+                //NEW SYSTEM DATA
+                float[] tmp4 = new float[5]; //NEW SYSTEM
                 for (int i = 0; i < 5; i++)
                 {
-                    unkFloat4[i] = stream.ReadSingle(isBigEndian);
+                    tmp4[i] = stream.ReadSingle(isBigEndian);
                 }
+                unkFloat4.FromArray(tmp4);
+                //-------------------------------
+
 
                 nameLight = new HashName(stream, isBigEndian);
 
-                unk_int2 = stream.ReadInt32(isBigEndian);
 
+                //-------------------------------
+                //NEW SYSTEM DATA
+                float[] tmp5 = new float[20]; //NEW SYSTEM +
                 for (int i = 0; i < 20; i++)
                 {
-                    unkFloat5[i] = stream.ReadSingle(isBigEndian);
+                    tmp5[i] = stream.ReadSingle(isBigEndian);
                 }
+                unkFloat5.FromArray(tmp5);
+                //-------------------------------
+
+
+                unk_int2 = stream.ReadInt32(isBigEndian);
+
 
                 for (int i = 0; i < 4; i++)
                 {
@@ -980,40 +1251,70 @@ namespace ResourceTypes.Actors
                 writer.Write(frameIdxLinks[i], isBigEndian);
             }
 
+
+            //-------------------------------
+            //NEW SYSTEM DATA
+            float[] arr1 = unkFloat1.ToArray(); //NEW SYSTEM
             for (int i = 0; i < 7; i++)
             {
-                writer.Write(unkFloat1[i], isBigEndian);
+                writer.Write(arr1[i], isBigEndian);
             }
+            //-------------------------------
 
+            
             writer.Write(unk_int, isBigEndian);
 
+            
+            //-------------------------------
+            //NEW SYSTEM DATA
+            float[] arr2 = unkFloat2.ToArray(); 
             for (int i = 0; i < 5; i++)
             {
-                writer.Write(unkFloat2[i], isBigEndian);
+                writer.Write(arr2[i], isBigEndian);
             }
-
+            //-------------------------------
+            
+            
             writer.WriteByte(unk_byte1);
 
+
+            //-------------------------------
+            //NEW SYSTEM DATA
+            float[] arr3 = unkFloat3.ToArray();  //NEW SYSTEM
             for (int i = 0; i < 17; i++)
             {
-                writer.Write(unkFloat3[i], isBigEndian);
+                writer.Write(arr3[i], isBigEndian);
             }
+            //-------------------------------
+
 
             writer.WriteByte(unk_byte2);
 
+
+            //-------------------------------
+            //NEW SYSTEM DATA
+            float[] arr4 = unkFloat4.ToArray();  //NEW SYSTEM
             for (int i = 0; i < 5; i++)
             {
-                writer.Write(unkFloat4[i], isBigEndian);
+                writer.Write(arr4[i], isBigEndian);
             }
+            //-------------------------------
+
 
             nameLight.WriteToFile(writer, isBigEndian);
 
             writer.Write(unk_int2, isBigEndian);
 
-            for (int i = 0; i != 20; i++)
+
+            //-------------------------------
+            //NEW SYSTEM DATA
+            float[] arr5 = unkFloat5.ToArray();  //NEW SYSTEM +
+            for (int i = 0; i < 20; i++)
             {
-                writer.Write(unkFloat5[i], isBigEndian);
+                writer.Write(arr5[i], isBigEndian);
             }
+            //-------------------------------
+
 
             for (int i = 0; i != 4; i++)
             {
