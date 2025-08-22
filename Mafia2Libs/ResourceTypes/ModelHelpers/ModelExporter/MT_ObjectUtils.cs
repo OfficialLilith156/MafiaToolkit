@@ -21,7 +21,7 @@ namespace ResourceTypes.ModelHelpers.ModelExporter
             {
                 return MT_ObjectType.RiggedMesh;
             }
-            else if (FrameType == typeof(FrameObjectPoint))
+            else if (FrameType == typeof(FrameObjectJoint))
             {
                 return MT_ObjectType.Point;
             }

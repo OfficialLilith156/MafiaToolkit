@@ -266,7 +266,7 @@ namespace Forms.Docking
                 return;
             }
 
-            if (node.Tag.GetType() == typeof(FrameObjectPoint))
+            if (node.Tag.GetType() == typeof(FrameObjectJoint))
                 node.SelectedImageIndex = node.ImageIndex = 7;
             else if (node.Tag.GetType() == typeof(FrameObjectSingleMesh))
                 node.SelectedImageIndex = node.ImageIndex = 6;

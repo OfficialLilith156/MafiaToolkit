@@ -273,7 +273,7 @@ namespace ResourceTypes.FrameResource
             foreach (var FObject in frameObjects.Values)
             {
                 FrameObjectBase entry = (FObject as FrameObjectBase);
-                if (entry.GetType() == typeof(FrameObjectPoint))
+                if (entry.GetType() == typeof(FrameObjectJoint))
                     writer.Write((int)FrameResourceObjectType.Point);
                 else if (entry.GetType() == typeof(FrameObjectSingleMesh))
                     writer.Write((int)FrameResourceObjectType.SingleMesh);
@@ -826,7 +826,7 @@ namespace ResourceTypes.FrameResource
 
         public static bool IsFrameType(object entry)
         {
-            if (entry.GetType() == typeof(FrameObjectPoint) ||
+            if (entry.GetType() == typeof(FrameObjectJoint) ||
                 entry.GetType() == typeof(FrameObjectSingleMesh) ||
                 entry.GetType() == typeof(FrameObjectFrame) ||
                 entry.GetType() == typeof(FrameObjectLight) ||

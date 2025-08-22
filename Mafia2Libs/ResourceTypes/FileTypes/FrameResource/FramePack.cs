@@ -72,10 +72,10 @@ namespace ResourceTypes.FrameResource
                 writer.Write((ushort)FrameResourceObjectType.Frame);
                 (frame as FrameObjectFrame).WriteToFile(writer);
             }
-            else if (frame.GetType() == typeof(FrameObjectPoint))
+            else if (frame.GetType() == typeof(FrameObjectJoint))
             {
                 writer.Write((ushort)FrameResourceObjectType.Point);
-                (frame as FrameObjectPoint).WriteToFile(writer);
+                (frame as FrameObjectJoint).WriteToFile(writer);
             }
             else if (frame.GetType() == typeof(FrameObjectLight))
             {
