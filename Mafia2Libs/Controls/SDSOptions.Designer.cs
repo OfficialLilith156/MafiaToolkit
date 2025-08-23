@@ -78,7 +78,7 @@
             groupSDS.Size = new System.Drawing.Size(393, 272);
             groupSDS.TabIndex = 0;
             groupSDS.TabStop = false;
-            groupSDS.Text = "SDS Options";
+            groupSDS.Text = "$SDSOptions";
             // 
             // Checkbox_EnableLuaHelper
             // 
@@ -86,9 +86,9 @@
             Checkbox_EnableLuaHelper.Location = new System.Drawing.Point(260, 70);
             Checkbox_EnableLuaHelper.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             Checkbox_EnableLuaHelper.Name = "Checkbox_EnableLuaHelper";
-            Checkbox_EnableLuaHelper.Size = new System.Drawing.Size(163, 19);
+            Checkbox_EnableLuaHelper.Size = new System.Drawing.Size(123, 19);
             Checkbox_EnableLuaHelper.TabIndex = 18;
-            Checkbox_EnableLuaHelper.Text = "Lua Decompile Assistance";
+            Checkbox_EnableLuaHelper.Text = "$LUA_DECOMPILE";
             Checkbox_EnableLuaHelper.UseVisualStyleBackColor = true;
             Checkbox_EnableLuaHelper.CheckedChanged += Checkbox_EnableLuaHelper_CheckedChanged;
             // 
@@ -182,9 +182,9 @@
             CheckBox_UseOodle.Location = new System.Drawing.Point(126, 43);
             CheckBox_UseOodle.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             CheckBox_UseOodle.Name = "CheckBox_UseOodle";
-            CheckBox_UseOodle.Size = new System.Drawing.Size(80, 19);
+            CheckBox_UseOodle.Size = new System.Drawing.Size(88, 19);
             CheckBox_UseOodle.TabIndex = 8;
-            CheckBox_UseOodle.Text = "Use Oodle";
+            CheckBox_UseOodle.Text = "$Use_Oodle";
             CheckBox_UseOodle.UseVisualStyleBackColor = true;
             CheckBox_UseOodle.CheckedChanged += CheckBox_UseOodle_CheckedChanged;
             // 

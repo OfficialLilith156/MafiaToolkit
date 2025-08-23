@@ -25,7 +25,10 @@ namespace Forms.OptionControls
             TexBrowser.Description = Language.GetString("$SELECT_TEX_FOLDER");
             ExperimentalBox.Text = Language.GetString("$ENABLE_EXPERIMENTAL");
             Checkbox_EnableNavigation.Text = Language.GetString("$ENABLE_NAVIGATION");
+            ExperimentalBox.Text = Language.GetString("$ENABLE_EXPERIMENTAL");
             Checkbox_EnableTranslokatorTint.Text = Language.GetString("$TOGGLE_TRANSLOKATOR_TINT");
+            CheckBox_VSync.Text = Language.GetString("$VSync");
+            UseMIPsBox.Text = Language.GetString("$USE_MIPS");
         }
 
         private void LoadSettings()

@@ -74,7 +74,7 @@
             ContextDelete.Name = "ContextDelete";
             ContextDelete.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Delete;
             ContextDelete.Size = new System.Drawing.Size(260, 22);
-            ContextDelete.Text = "Delete";
+            ContextDelete.Text = "$DELETE";
             ContextDelete.Click += ContextDelete_Click;
             // 
             // ContextCopy

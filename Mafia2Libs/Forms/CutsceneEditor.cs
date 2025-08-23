@@ -34,11 +34,16 @@ namespace Mafia2Tool.Forms
 
         public void Localise()
         {
-            Text = Language.GetString("$CUTSCENE_EDITOR");
+            Text = Language.GetString("$CUTSCENE_EDITOR"); 
             Button_File.Text = Language.GetString("$FILE");
             Button_Save.Text = Language.GetString("$SAVE");
             Button_Reload.Text = Language.GetString("$RELOAD");
             Button_Exit.Text = Language.GetString("$EXIT");
+            ContextMenu_Import.Text = Language.GetString("$CUTSCENE_IMPORT_ENTITY");
+            ContextMenu_Export.Text = Language.GetString("$CUTSCENE_EXPORT_ENTITY");
+            ContextMenu_Duplicate.Text = Language.GetString("$CUTSCENE_DUPLICATE_ENTITY");
+            ContextMenu_Delete.Text = Language.GetString("$CUTSCENE_DELETE_ENTITY");
+            Button_Edit.Text = Language.GetString("$EDIT");
         }
 
         private void AddCutsceneToTreeView(CutsceneLoader.Cutscene Cutscene)

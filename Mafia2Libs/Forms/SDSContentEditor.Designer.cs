@@ -144,7 +144,7 @@
             // 
             Button_BatchImportTextures.Name = "Button_BatchImportTextures";
             Button_BatchImportTextures.Size = new System.Drawing.Size(213, 22);
-            Button_BatchImportTextures.Text = "$BATCH_IMPORT_TEX";
+            Button_BatchImportTextures.Text = "$IMPORT_TXT";
             Button_BatchImportTextures.Click += Button_BatchImportTextures_Click;
             // 
             // FileDialog_Generic

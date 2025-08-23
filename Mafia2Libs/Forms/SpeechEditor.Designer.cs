@@ -94,7 +94,7 @@
             // 
             Button_Save.Name = "Button_Save";
             Button_Save.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S;
-            Button_Save.Size = new System.Drawing.Size(165, 22);
+            Button_Save.Size = new System.Drawing.Size(180, 22);
             Button_Save.Text = "$SAVE";
             Button_Save.Click += Button_Save_Click;
             // 
@@ -102,14 +102,14 @@
             // 
             Button_Reload.Name = "Button_Reload";
             Button_Reload.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R;
-            Button_Reload.Size = new System.Drawing.Size(165, 22);
+            Button_Reload.Size = new System.Drawing.Size(180, 22);
             Button_Reload.Text = "$RELOAD";
             Button_Reload.Click += Button_Reload_Click;
             // 
             // Button_Exit
             // 
             Button_Exit.Name = "Button_Exit";
-            Button_Exit.Size = new System.Drawing.Size(165, 22);
+            Button_Exit.Size = new System.Drawing.Size(180, 22);
             Button_Exit.Text = "$EXIT";
             Button_Exit.Click += Button_Exit_Click;
             // 
@@ -126,15 +126,15 @@
             // Button_SaveToXML
             // 
             Button_SaveToXML.Name = "Button_SaveToXML";
-            Button_SaveToXML.Size = new System.Drawing.Size(178, 22);
-            Button_SaveToXML.Text = "$SAVE_TO_XML";
+            Button_SaveToXML.Size = new System.Drawing.Size(180, 22);
+            Button_SaveToXML.Text = "$EXPORT_XML";
             Button_SaveToXML.Click += OnSaveToXMLClicked;
             // 
             // Button_LoadFromXML
             // 
             Button_LoadFromXML.Name = "Button_LoadFromXML";
-            Button_LoadFromXML.Size = new System.Drawing.Size(178, 22);
-            Button_LoadFromXML.Text = "$LOAD_FROM_XML";
+            Button_LoadFromXML.Size = new System.Drawing.Size(180, 22);
+            Button_LoadFromXML.Text = "$IMPORT_XML";
             Button_LoadFromXML.Click += OnLoadFromXMLClicked;
             // 
             // FileSaveDialog_SelectXML

@@ -35,6 +35,7 @@ namespace Mafia2Tool
             Text = Language.GetString("$STREAM_EDITOR_TITLE");
             fileToolButton.Text = Language.GetString("$FILE");
             saveToolStripMenuItem.Text = Language.GetString("$SAVE");
+            Button_Tools.Text = Language.GetString("$TOOLS");
             reloadToolStripMenuItem.Text = Language.GetString("$RELOAD");
             exitToolStripMenuItem.Text = Language.GetString("$EXIT");
             AddLineButton.Text = Language.GetString("$ADD_LINE");

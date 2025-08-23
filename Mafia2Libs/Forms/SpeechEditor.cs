@@ -35,6 +35,9 @@ namespace Mafia2Tool
             Button_Save.Text = Language.GetString("$SAVE");
             Button_Reload.Text = Language.GetString("$RELOAD");
             Button_Exit.Text = Language.GetString("$EXIT");
+            Button_SaveToXML.Text = Language.GetString("$EXPORT_XML");
+            Button_LoadFromXML.Text = Language.GetString("$IMPORT_XML");
+            Button_Edit.Text = Language.GetString("$EDIT");
         }
 
         private void BuildData()

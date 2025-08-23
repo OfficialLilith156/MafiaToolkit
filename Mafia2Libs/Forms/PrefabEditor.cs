@@ -33,10 +33,10 @@ namespace Mafia2Tool
 
         private void Localise()
         {
-            Text = Language.GetString("PREFAB_EDITOR_TITLE");
+            Text = Language.GetString("$PREFAB_EDITOR_TITLE");
             Button_File.Text = Language.GetString("$FILE");
             Button_Save.Text = Language.GetString("$SAVE");
-            Button_Reload.Text = Language.GetString("$RELOAD");
+            Button_Reload.Text = Language.GetString("$RELOAD"); 
             Button_Exit.Text = Language.GetString("$EXIT");
             Button_Import.Text = Language.GetString("$IMPORT_PREFAB");
             Button_Export.Text = Language.GetString("$EXPORT_PREFAB");

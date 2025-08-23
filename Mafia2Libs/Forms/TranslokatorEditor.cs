@@ -37,7 +37,7 @@ namespace Mafia2Tool.Forms
             CopyButton.Text = Language.GetString("$COPY");
             PasteButton.Text = Language.GetString("$PASTE");
             ToolsButton.Text = Language.GetString("$TOOLS");
-            ViewNumInstButton.Text = Language.GetString("$VIEW_NUM_INST");
+
         }
 
         private void LoadFile()

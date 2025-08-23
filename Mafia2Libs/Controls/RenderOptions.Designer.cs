@@ -99,7 +99,7 @@
             Checkbox_EnableTranslokatorTint.Location = new System.Drawing.Point(274, 124);
             Checkbox_EnableTranslokatorTint.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             Checkbox_EnableTranslokatorTint.Name = "Checkbox_EnableTranslokatorTint";
-            Checkbox_EnableTranslokatorTint.Size = new System.Drawing.Size(147, 19);
+            Checkbox_EnableTranslokatorTint.Size = new System.Drawing.Size(194, 19);
             Checkbox_EnableTranslokatorTint.TabIndex = 16;
             Checkbox_EnableTranslokatorTint.Text = "$TOGGLE_TRANSLOKATOR_TINT";
             Checkbox_EnableTranslokatorTint.UseVisualStyleBackColor = true;
@@ -111,9 +111,9 @@
             CheckBox_VSync.Location = new System.Drawing.Point(274, 97);
             CheckBox_VSync.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             CheckBox_VSync.Name = "CheckBox_VSync";
-            CheckBox_VSync.Size = new System.Drawing.Size(58, 19);
+            CheckBox_VSync.Size = new System.Drawing.Size(64, 19);
             CheckBox_VSync.TabIndex = 14;
-            CheckBox_VSync.Text = "VSync";
+            CheckBox_VSync.Text = "$VSync";
             CheckBox_VSync.UseVisualStyleBackColor = true;
             CheckBox_VSync.CheckedChanged += CheckBox_VSync_OnChecked;
             // 
@@ -147,9 +147,9 @@
             UseMIPsBox.Location = new System.Drawing.Point(274, 70);
             UseMIPsBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             UseMIPsBox.Name = "UseMIPsBox";
-            UseMIPsBox.Size = new System.Drawing.Size(74, 19);
+            UseMIPsBox.Size = new System.Drawing.Size(84, 19);
             UseMIPsBox.TabIndex = 11;
-            UseMIPsBox.Text = "Use MIPs";
+            UseMIPsBox.Text = "$USE_MIPS";
             UseMIPsBox.UseVisualStyleBackColor = true;
             UseMIPsBox.CheckedChanged += UseMIPsBox_CheckedChanged;
             // 
@@ -159,9 +159,9 @@
             ExperimentalBox.Location = new System.Drawing.Point(274, 44);
             ExperimentalBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             ExperimentalBox.Name = "ExperimentalBox";
-            ExperimentalBox.Size = new System.Drawing.Size(95, 19);
+            ExperimentalBox.Size = new System.Drawing.Size(160, 19);
             ExperimentalBox.TabIndex = 10;
-            ExperimentalBox.Text = "Experimental";
+            ExperimentalBox.Text = "$ENABLE_EXPERIMENTAL";
             ExperimentalBox.UseVisualStyleBackColor = true;
             ExperimentalBox.CheckedChanged += ExperimentalBox_CheckedChanged;
             // 

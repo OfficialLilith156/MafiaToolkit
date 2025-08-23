@@ -34,12 +34,15 @@ namespace Mafia2Tool
         private void Localise()
         {
             Text = Language.GetString("$SDSCONTENT_EDITOR_TITLE");
+            Button_Tools.Text = Language.GetString("$TOOLS");
             Button_File.Text = Language.GetString("$FILE");
             Button_Save.Text = Language.GetString("$SAVE");
             Button_Reload.Text = Language.GetString("$RELOAD");
             Button_Exit.Text = Language.GetString("$EXIT");
             Button_Delete.Text = Language.GetString("$DELETE");
             Context_Delete.Text = Language.GetString("$DELETE");
+            Button_BatchImportTextures.Text = Language.GetString("$IMPORT_TXT");
+            Button_AutoAdd.Text = Language.GetString("$AUTO-ADD_FILES");
         }
 
         private void PopulateTree()

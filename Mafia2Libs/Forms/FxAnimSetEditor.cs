@@ -52,6 +52,7 @@ namespace Toolkit.Forms
             Context_Paste.Text = Language.GetString("$PASTE");
             Context_Delete.Text = Language.GetString("$DELETE");
             Context_Export.Text = Language.GetString("$EXPORT");
+            Button_Tools.Text = Language.GetString("$TOOLS");
         }
 
         private void BuildData()

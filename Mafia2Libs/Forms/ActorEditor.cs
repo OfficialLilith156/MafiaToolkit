@@ -50,6 +50,7 @@ namespace Mafia2Tool
             ContextPaste.Text = Language.GetString("$PASTE");
             Button_MoveDown.Text = Language.GetString("$MOVE_DOWN");
             Button_MoveUp.Text = Language.GetString("$MOVE_UP");
+            ContextDelete.Text = Language.GetString("$DELETE");
         }
 
         private void BuildData()

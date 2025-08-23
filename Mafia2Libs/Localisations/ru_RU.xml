@@ -3,7 +3,7 @@
 	<String ID="$CONTINUE">Продолжить</String>
 	<String ID="$CANCEL">Отмена</String>
 	<String ID="$EDIT">Редактировать</String>
-	<String ID="$INDEX">Индекс</String>
+	<String ID="$INDEX">Индекс</String> 
 	<String ID="$ENTRY_NAME">Наименование записи</String>
 
 	<!-- Game Explorer Strings -->
@@ -80,6 +80,8 @@
 	<String ID="$LANGUAGE_OPTION">Язык</String>
 	<String ID="$LANGUAGE_ARABIC">اللغة العربية</String>
 	<String ID="$SAVE_PROMPT">Сохранить перед закрытием?</String>
+	<String ID="$DISCORD_STATE_CUSTOM">Описание в дискорд.</String>
+	
 
 	<!-- Model/Exporting Option Strings-->
 	<String ID="$EXPORT_PATH_TITLE">Путь</String>
@@ -102,8 +104,15 @@
 	<String ID="$COOK_COLLISIONS">Заготовить столкновения при сохранении.</String>
 	<String ID="$BACKUP_SDS_LABEL">Создать копию SDS при распаковке.</String>
 	<String ID="$VERTEX_BUFFER_SIZE_LABEL">Vertex Buffer Limit</String>
-	<String ID="$INDEX_BUFFER_SIZE_LABEL">Index Buffer Limit</String>
-
+	<String ID="$INDEX_BUFFER_SIZE_LABEL">Index Buffer Limit</String> 
+	<String ID="$SDS_COMPRESSION_RATIO">Параметры сжатия</String>
+	<String ID="$LUA_DECOMPILE">Помощник Скриптов</String>
+	<String ID="$SDSOptions">Параметры SDS</String>
+	<String ID="$Use_Oodle">Использовать Oodle</String>
+	<String ID="$SDS_TOOLTIP_USE_OODLE">Система сжатия Oodle для Mafia Definitive Editon</String>
+	
+	
+	
 	<!-- Render Options -->
 	<String ID="$RENDER">Рендеринг</String>
 	<String ID="$RENDER_OPTIONS">Настройки рендера</String>
@@ -112,6 +121,12 @@
 	<String ID="$RENDER_CAMERASPEED">Скорость камеры </String>
 	<String ID="$TEXTURE_DIRECTORY">Каталог Текстур </String>
 	<String ID="$SELECT_TEX_FOLDER">Выберите папку, содержащую текстуры.</String>
+	<String ID="$CHECK_FOR_UPDATES">Проверить обновления</String>
+	<String ID="$ENABLE_EXPERIMENTAL">Экспериментальный режим</String>
+	<String ID="$ENABLE_NAVIGATION">Навигационный режим</String>
+	<String ID="$TOGGLE_TRANSLOKATOR_TINT">Подсветка сити краша</String>
+	<String ID="$VSync">Вертикальная синхронизация</String>
+	<String ID="$USE_MIPS">Мип карты</String>
 
 	<!-- Collision Editor Form Strings-->
 	<String ID="$SAVE">Сохранить</String>
@@ -139,7 +154,7 @@
 	<String ID="$LABEL_SHADERHASH">Шейдер Хэш</String>
 	<String ID="$SEARCH">Поиск</String>
 	<String ID="$LABEL_SEARCHBAR">Поиск материала</String>
-	<String ID="$LABEL_SELECTMATLIBRARY">Библеотека материалов</String>
+	<String ID="$LABEL_SELECTMATLIBRARY">Библиотека материалов</String>
 	<String ID="$TITLE_MATERIALBROWSER">Обозреватель материалов</String>
 
 	<!-- FrameResource Editor Form Strings-->
@@ -169,6 +184,45 @@
 	<String ID="$ADD_ITEM">Добавить объект</String>
 	<String ID="$ADD_DEFINITION">Добавить определение</String>
 
+	<!-- Actor FX -->
+	<String ID="$COPY">Копировать</String>
+	<String ID="$PASTE">Вставить</String>
+	<String ID="$EXPORT">Экспортировать</String>
+	<String ID="$IMPORT">Импортировать</String>
+	<String ID="$FXACTOR_EDITOR">Fx Actor Редактор</String>
+
+	<!-- Actor Anim Set -->
+	<String ID="$FXANIMSET_EDITOR">Fx Anim Set Редактор</String>
+
+	<!-- Cutscene Editor -->
+	<String ID="$CUTSCENE_EDITOR">Cutscene Редактор</String>
+	<String ID="$CUTSCENE_IMPORT_ENTITY">Импортировать Объект</String>
+	<String ID="$CUTSCENE_EXPORT_ENTITY">Экспортировать Объект</String>
+	<String ID="$CUTSCENE_DUPLICATE_ENTITY">Дублировать Объект</String>
+	<String ID="$CUTSCENE_DELETE_ENTITY">Удалить Объект</String>
+
+	<!-- Anim Editor -->
+	<String ID="$ADD_ATP">Добавить Сущетсво</String>
+	<String ID="$DELETE_ATP">Удалить Существо</String>
+	<String ID="$ATP_EDITOR_TITLE">Редактор ATP</String>
+
+	<!-- City Area -->
+	<String ID="$DELETE_AREA">Удалить область</String>
+	
+
+	<!-- City Shop -->
+	<String ID="$DUPLICATE_DATA">Удалить область</String>
+	<String ID="$DELETE_DATA">Удалить Данные</String>
+
+	<!-- Prefab -->
+	<String ID="$DELETE_PREFAB">Удалить Префаб</String>
+	<String ID="$IMPORT_PREFAB">Импортировать Префаб</String>
+	<String ID="$EXPORT_PREFAB">Экспортировать Префаб</String> 
+	<String ID="$PREFAB_EDITOR_TITLE">Редактор Prefab</String>  
+
+	<!-- Speech Editor -->
+	<String ID="$SPEECH_EDITOR_TITLE">Редактор Speech</String> 
+
 	<!-- EntityDataStorage Editor -->
 	<String ID="$EDS_EDITOR_TITLE">Редактор Entity Data Storage</String>
 	<String ID="$SAVE_TITLE">Сохранить файл</String>
@@ -192,8 +246,8 @@
 	<String ID="$WHEELS">Колеса</String>
 	<String ID="$HORN_SIREN">Гудок</String>
 	<String ID="$GLASS_BREAK">Стеклянные эффекты</String>
-	<String ID="$EXPLOSION">Explosion Effects</String>
-	<String ID="$FIRE">Эффекты взрыва</String>
+	<String ID="$EXPLOSION">Эффекты взрыва</String>
+	<String ID="$FIRE">Огонь</String>
 	<String ID="$RAIN_CONTACT">Эффекты дождя</String>
 	<String ID="$HEDGE_CONTACT">Эффекты столкновения живых???</String>
 	<String ID="$SKIDDING_SLIDING">Силовое скольжение/Занос</String>
@@ -256,6 +310,11 @@
 	<String ID="$ROTATION_X">Вращение X</String>
 	<String ID="$ROTATION_Y">Вращение Y</String>
 	<String ID="$ROTATION_Z">Вращение Z</String>
+	<String ID="$IMPORT_FRAME">Импортировать кадр</String>
+	<String ID="$IMPORT_BUNDLE">Импортировать модель</String>
+	<String ID="$TOP">Вид Вниз</String>
+	<String ID="$FRONT">Вид Вперед</String>
+	<String ID="$EDIT_LIGHTING">Изменить свет</String>
 
 	<!-- Property Descriptions Strings-->
 	<String ID="$XBIN_PROP_DESC_NAME_UNSTORED">Примечание: Это НЕ сохраняется в файле, а берется из значения «Хэш».</String>
@@ -269,5 +328,40 @@
 	<String ID="$EXCEPTION_LABEL">В вашем приложении произошло необработанное исключение. Если вы нажмёте «Продолжить» [ENTER], приложение проигнорирует эту ошибку и попытается продолжить работу. Если вы нажмёте «Выйти» [ESC], приложение немедленно закроется.</String>
 	<String ID="$EXCEPTION_CONTINUE">Продолжить</String>
 	<String ID="$EXCEPTION_QUIT">Выйти</String>
+	
+	<!-- Stream Mapa Form-->
+	<String ID="$STREAM_EDITOR_CREATE_LINE_GROUP">Добавить линию группы</String>
+	<String ID="$STREAM_EDITOR_CREATE_STREAM_GROUP">Добавить группу</String>
+	<String ID="$DELETE_LINE">Удалить линию в группе</String>
+	<String ID="$DUPLICATE_LINE">Дублировать линию</String>
+	<String ID="$MOVE_UP">Поднять</String>
+	<String ID="$MOVE_DOWN">Опустить</String>
+	<String ID="$ADD_LINE">Добавить линию</String>
+	<String ID="$STREAM_EDITOR_TITLE">Редактор Stream Mapa</String>
+	
+	
+	<!-- Material Editor -->
+	<String ID="$DEBUG_TOOLS">Инструменты</String>
+	<String ID="$DUMP_TEXTURE_NAMES">Дамп Название текстур</String> 
+	<String ID="$MERGE_MTL">Соединить материалы</String>
+	<String ID="$RELOAD_MATERIAL">Перезагрузить</String>
+
+	<!-- Tables Editor -->
+	<String ID="$DELETE_ROW">Удалить ряд</String>
+	
+	<!-- ShopMenu2 -->
+	<String ID="$SHOPMENU2_EDITOR_TITLE">Редактор ShopMenu2</String>
+	<String ID="$ADD_SHOPTYPE">Добавить Тип Магазина</String>
+	<String ID="$ADD_METAINFO">Добавить Мета Данные</String>
+	<String ID="$DUPLICATE_ITEM">Дублировать Объект</String>
+	<String ID="$DUPE_METAINFO">Дублировать Данные</String>
+	
+	<!-- SDS Content -->
+	<String ID="$SDSCONTENT_EDITOR_TITLE">Редактор SDS Content</String>
+	<String ID="$IMPORT_TXT">Импортировать Txt</String>
+	<String ID="$AUTO-ADD_FILES">Автоматически добавить файлы</String>
+	
+	
+	
 
 </Localisation>

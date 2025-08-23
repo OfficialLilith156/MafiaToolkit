@@ -22,397 +22,386 @@
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent() {
+        private void InitializeComponent()
+        {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MaterialEditor));
-            this.MaterialSearch = new System.Windows.Forms.TextBox();
-            this.MaterialGrid = new System.Windows.Forms.PropertyGrid();
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.Button_File = new System.Windows.Forms.ToolStripDropDownButton();
-            this.Button_Open = new System.Windows.Forms.ToolStripMenuItem();
-            this.Button_Reload = new System.Windows.Forms.ToolStripMenuItem();
-            this.Button_Save = new System.Windows.Forms.ToolStripMenuItem();
-            this.Button_Exit = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolButton = new System.Windows.Forms.ToolStripDropDownButton();
-            this.Button_AddMaterial = new System.Windows.Forms.ToolStripMenuItem();
-            this.Button_Delete = new System.Windows.Forms.ToolStripMenuItem();
-            this.Button_MergeMTL = new System.Windows.Forms.ToolStripMenuItem();
-            this.Button_ExportSelected = new System.Windows.Forms.ToolStripMenuItem();
-            this.Button_Debug = new System.Windows.Forms.ToolStripDropDownButton();
-            this.Button_DumpTextures = new System.Windows.Forms.ToolStripMenuItem();
-            this.GirdView_Materials = new System.Windows.Forms.DataGridView();
-            this.columnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.columnHash = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.MTLBrowser = new System.Windows.Forms.OpenFileDialog();
-            this.Panel_Main = new System.Windows.Forms.Panel();
-            this.Button_Search = new System.Windows.Forms.Button();
-            this.Label_SearchType = new System.Windows.Forms.Label();
-            this.ComboBox_SearchType = new System.Windows.Forms.ComboBox();
-            this.MergePanel = new System.Windows.Forms.Panel();
-            this.SelectAllNewButton = new System.Windows.Forms.Button();
-            this.SelectAllOverwriteButton = new System.Windows.Forms.Button();
-            this.NewMaterialLabel = new System.Windows.Forms.Label();
-            this.OverWriteLabel = new System.Windows.Forms.Label();
-            this.NewMatListBox = new System.Windows.Forms.CheckedListBox();
-            this.CancelButton = new System.Windows.Forms.Button();
-            this.MergeButton = new System.Windows.Forms.Button();
-            this.OverwriteListBox = new System.Windows.Forms.CheckedListBox();
-            this.MTLSaveDialog = new System.Windows.Forms.SaveFileDialog();
-            this.toolStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.GirdView_Materials)).BeginInit();
-            this.Panel_Main.SuspendLayout();
-            this.MergePanel.SuspendLayout();
-            this.SuspendLayout();
+            MaterialSearch = new System.Windows.Forms.TextBox();
+            MaterialGrid = new System.Windows.Forms.PropertyGrid();
+            toolStrip1 = new System.Windows.Forms.ToolStrip();
+            Button_File = new System.Windows.Forms.ToolStripDropDownButton();
+            Button_Open = new System.Windows.Forms.ToolStripMenuItem();
+            Button_Reload = new System.Windows.Forms.ToolStripMenuItem();
+            Button_Save = new System.Windows.Forms.ToolStripMenuItem();
+            Button_Exit = new System.Windows.Forms.ToolStripMenuItem();
+            toolButton = new System.Windows.Forms.ToolStripDropDownButton();
+            Button_AddMaterial = new System.Windows.Forms.ToolStripMenuItem();
+            Button_Delete = new System.Windows.Forms.ToolStripMenuItem();
+            Button_MergeMTL = new System.Windows.Forms.ToolStripMenuItem();
+            Button_ExportSelected = new System.Windows.Forms.ToolStripMenuItem();
+            Button_Debug = new System.Windows.Forms.ToolStripDropDownButton();
+            Button_DumpTextures = new System.Windows.Forms.ToolStripMenuItem();
+            GirdView_Materials = new System.Windows.Forms.DataGridView();
+            columnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            columnHash = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            MTLBrowser = new System.Windows.Forms.OpenFileDialog();
+            Panel_Main = new System.Windows.Forms.Panel();
+            Button_Search = new System.Windows.Forms.Button();
+            Label_SearchType = new System.Windows.Forms.Label();
+            ComboBox_SearchType = new System.Windows.Forms.ComboBox();
+            MergePanel = new System.Windows.Forms.Panel();
+            SelectAllNewButton = new System.Windows.Forms.Button();
+            SelectAllOverwriteButton = new System.Windows.Forms.Button();
+            NewMaterialLabel = new System.Windows.Forms.Label();
+            OverWriteLabel = new System.Windows.Forms.Label();
+            NewMatListBox = new System.Windows.Forms.CheckedListBox();
+            CancelButton = new System.Windows.Forms.Button();
+            MergeButton = new System.Windows.Forms.Button();
+            OverwriteListBox = new System.Windows.Forms.CheckedListBox();
+            MTLSaveDialog = new System.Windows.Forms.SaveFileDialog();
+            toolStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)GirdView_Materials).BeginInit();
+            Panel_Main.SuspendLayout();
+            MergePanel.SuspendLayout();
+            SuspendLayout();
             // 
             // MaterialSearch
             // 
-            this.MaterialSearch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.MaterialSearch.Location = new System.Drawing.Point(3, 28);
-            this.MaterialSearch.Name = "MaterialSearch";
-            this.MaterialSearch.Size = new System.Drawing.Size(209, 20);
-            this.MaterialSearch.TabIndex = 0;
-            this.MaterialSearch.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MaterialSearch_KeyDown);
+            MaterialSearch.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            MaterialSearch.Location = new System.Drawing.Point(4, 32);
+            MaterialSearch.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            MaterialSearch.Name = "MaterialSearch";
+            MaterialSearch.Size = new System.Drawing.Size(243, 23);
+            MaterialSearch.TabIndex = 0;
+            MaterialSearch.KeyDown += MaterialSearch_KeyDown;
             // 
             // MaterialGrid
             // 
-            this.MaterialGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.MaterialGrid.Location = new System.Drawing.Point(338, 3);
-            this.MaterialGrid.Name = "MaterialGrid";
-            this.MaterialGrid.PropertySort = System.Windows.Forms.PropertySort.Categorized;
-            this.MaterialGrid.Size = new System.Drawing.Size(447, 400);
-            this.MaterialGrid.TabIndex = 2;
-            this.MaterialGrid.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.MaterialGrid_OnPropertyValueChanged);
+            MaterialGrid.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            MaterialGrid.Location = new System.Drawing.Point(394, 3);
+            MaterialGrid.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            MaterialGrid.Name = "MaterialGrid";
+            MaterialGrid.PropertySort = System.Windows.Forms.PropertySort.Categorized;
+            MaterialGrid.Size = new System.Drawing.Size(522, 462);
+            MaterialGrid.TabIndex = 2;
+            MaterialGrid.PropertyValueChanged += MaterialGrid_OnPropertyValueChanged;
             // 
             // toolStrip1
             // 
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.Button_File,
-            this.toolButton,
-            this.Button_Debug});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(785, 25);
-            this.toolStrip1.TabIndex = 1;
-            this.toolStrip1.Text = "toolStrip1";
+            toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { Button_File, toolButton, Button_Debug });
+            toolStrip1.Location = new System.Drawing.Point(0, 0);
+            toolStrip1.Name = "toolStrip1";
+            toolStrip1.Size = new System.Drawing.Size(916, 25);
+            toolStrip1.TabIndex = 1;
+            toolStrip1.Text = "toolStrip1";
             // 
             // Button_File
             // 
-            this.Button_File.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.Button_File.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.Button_Open,
-            this.Button_Reload,
-            this.Button_Save,
-            this.Button_Exit});
-            this.Button_File.Image = ((System.Drawing.Image)(resources.GetObject("Button_File.Image")));
-            this.Button_File.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.Button_File.Name = "Button_File";
-            this.Button_File.Size = new System.Drawing.Size(38, 22);
-            this.Button_File.Text = "File";
+            Button_File.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            Button_File.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { Button_Open, Button_Reload, Button_Save, Button_Exit });
+            Button_File.Image = (System.Drawing.Image)resources.GetObject("Button_File.Image");
+            Button_File.ImageTransparentColor = System.Drawing.Color.Magenta;
+            Button_File.Name = "Button_File";
+            Button_File.Size = new System.Drawing.Size(38, 22);
+            Button_File.Text = "File";
             // 
             // Button_Open
             // 
-            this.Button_Open.Enabled = false;
-            this.Button_Open.Name = "Button_Open";
-            this.Button_Open.Size = new System.Drawing.Size(180, 22);
-            this.Button_Open.Text = "Open";
+            Button_Open.Enabled = false;
+            Button_Open.Name = "Button_Open";
+            Button_Open.Size = new System.Drawing.Size(183, 22);
+            Button_Open.Text = "Open";
             // 
             // Button_Reload
             // 
-            this.Button_Reload.Name = "Button_Reload";
-            this.Button_Reload.Size = new System.Drawing.Size(180, 22);
-            this.Button_Reload.Text = "Reload";
-            this.Button_Reload.Click += new System.EventHandler(this.Button_Reload_Click);
+            Button_Reload.Name = "Button_Reload";
+            Button_Reload.Size = new System.Drawing.Size(183, 22);
+            Button_Reload.Text = "$RELOAD_MATERIAL";
+            Button_Reload.Click += Button_Reload_Click;
             // 
             // Button_Save
             // 
-            this.Button_Save.Name = "Button_Save";
-            this.Button_Save.Size = new System.Drawing.Size(180, 22);
-            this.Button_Save.Text = "Save";
-            this.Button_Save.Click += new System.EventHandler(this.Button_Save_Click);
+            Button_Save.Name = "Button_Save";
+            Button_Save.Size = new System.Drawing.Size(183, 22);
+            Button_Save.Text = "Save";
+            Button_Save.Click += Button_Save_Click;
             // 
             // Button_Exit
             // 
-            this.Button_Exit.Name = "Button_Exit";
-            this.Button_Exit.Size = new System.Drawing.Size(180, 22);
-            this.Button_Exit.Text = "Exit";
-            this.Button_Exit.Click += new System.EventHandler(this.Button_Exit_Click);
+            Button_Exit.Name = "Button_Exit";
+            Button_Exit.Size = new System.Drawing.Size(183, 22);
+            Button_Exit.Text = "Exit";
+            Button_Exit.Click += Button_Exit_Click;
             // 
             // toolButton
             // 
-            this.toolButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.Button_AddMaterial,
-            this.Button_Delete,
-            this.Button_MergeMTL,
-            this.Button_ExportSelected});
-            this.toolButton.Image = ((System.Drawing.Image)(resources.GetObject("toolButton.Image")));
-            this.toolButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolButton.Name = "toolButton";
-            this.toolButton.Size = new System.Drawing.Size(47, 22);
-            this.toolButton.Text = "Tools";
+            toolButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            toolButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { Button_AddMaterial, Button_Delete, Button_MergeMTL, Button_ExportSelected });
+            toolButton.Image = (System.Drawing.Image)resources.GetObject("toolButton.Image");
+            toolButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            toolButton.Name = "toolButton";
+            toolButton.Size = new System.Drawing.Size(47, 22);
+            toolButton.Text = "Tools";
             // 
             // Button_AddMaterial
             // 
-            this.Button_AddMaterial.Name = "Button_AddMaterial";
-            this.Button_AddMaterial.Size = new System.Drawing.Size(180, 22);
-            this.Button_AddMaterial.Text = "Add Material";
-            this.Button_AddMaterial.Click += new System.EventHandler(this.Button_AddMaterial_Click);
+            Button_AddMaterial.Name = "Button_AddMaterial";
+            Button_AddMaterial.Size = new System.Drawing.Size(178, 22);
+            Button_AddMaterial.Text = "Add Material";
+            Button_AddMaterial.Click += Button_AddMaterial_Click;
             // 
             // Button_Delete
             // 
-            this.Button_Delete.Name = "Button_Delete";
-            this.Button_Delete.Size = new System.Drawing.Size(180, 22);
-            this.Button_Delete.Text = "$DELETE_SEL_MAT";
-            this.Button_Delete.Click += new System.EventHandler(this.Button_Delete_Click);
+            Button_Delete.Name = "Button_Delete";
+            Button_Delete.Size = new System.Drawing.Size(178, 22);
+            Button_Delete.Text = "$DELETE_SEL_MAT";
+            Button_Delete.Click += Button_Delete_Click;
             // 
             // Button_MergeMTL
             // 
-            this.Button_MergeMTL.Name = "Button_MergeMTL";
-            this.Button_MergeMTL.Size = new System.Drawing.Size(180, 22);
-            this.Button_MergeMTL.Text = "$MERGE_MTL";
-            this.Button_MergeMTL.Click += new System.EventHandler(this.Button_MergeMTL_Click);
+            Button_MergeMTL.Name = "Button_MergeMTL";
+            Button_MergeMTL.Size = new System.Drawing.Size(178, 22);
+            Button_MergeMTL.Text = "$MERGE_MTL";
+            Button_MergeMTL.Click += Button_MergeMTL_Click;
             // 
             // Button_ExportSelected
             // 
-            this.Button_ExportSelected.Name = "Button_ExportSelected";
-            this.Button_ExportSelected.Size = new System.Drawing.Size(180, 22);
-            this.Button_ExportSelected.Text = "$EXPORT_SELECTED";
-            this.Button_ExportSelected.Click += new System.EventHandler(this.Button_ExportedSelected_Click);
+            Button_ExportSelected.Name = "Button_ExportSelected";
+            Button_ExportSelected.Size = new System.Drawing.Size(178, 22);
+            Button_ExportSelected.Text = "$EXPORT_SELECTED";
+            Button_ExportSelected.Click += Button_ExportedSelected_Click;
             // 
             // Button_Debug
             // 
-            this.Button_Debug.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.Button_Debug.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.Button_DumpTextures});
-            this.Button_Debug.Image = ((System.Drawing.Image)(resources.GetObject("Button_Debug.Image")));
-            this.Button_Debug.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.Button_Debug.Name = "Button_Debug";
-            this.Button_Debug.Size = new System.Drawing.Size(85, 22);
-            this.Button_Debug.Text = "Debug Tools";
+            Button_Debug.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            Button_Debug.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { Button_DumpTextures });
+            Button_Debug.Image = (System.Drawing.Image)resources.GetObject("Button_Debug.Image");
+            Button_Debug.ImageTransparentColor = System.Drawing.Color.Magenta;
+            Button_Debug.Name = "Button_Debug";
+            Button_Debug.Size = new System.Drawing.Size(103, 22);
+            Button_Debug.Text = "$DEBUG_TOOLS";
             // 
             // Button_DumpTextures
             // 
-            this.Button_DumpTextures.Name = "Button_DumpTextures";
-            this.Button_DumpTextures.Size = new System.Drawing.Size(188, 22);
-            this.Button_DumpTextures.Text = "Dump Texture Names";
-            this.Button_DumpTextures.Click += new System.EventHandler(this.Button_DumpTextures_Click);
+            Button_DumpTextures.Name = "Button_DumpTextures";
+            Button_DumpTextures.Size = new System.Drawing.Size(210, 22);
+            Button_DumpTextures.Text = "$DUMP_TEXTURE_NAMES";
+            Button_DumpTextures.Click += Button_DumpTextures_Click;
             // 
             // GirdView_Materials
             // 
-            this.GirdView_Materials.AllowUserToAddRows = false;
-            this.GirdView_Materials.AllowUserToDeleteRows = false;
-            this.GirdView_Materials.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.GirdView_Materials.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.GirdView_Materials.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.GirdView_Materials.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.columnName,
-            this.columnHash});
-            this.GirdView_Materials.Location = new System.Drawing.Point(3, 54);
-            this.GirdView_Materials.Name = "GirdView_Materials";
-            this.GirdView_Materials.ReadOnly = true;
-            this.GirdView_Materials.Size = new System.Drawing.Size(329, 346);
-            this.GirdView_Materials.TabIndex = 3;
-            this.GirdView_Materials.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.OnMaterialSelected);
+            GirdView_Materials.AllowUserToAddRows = false;
+            GirdView_Materials.AllowUserToDeleteRows = false;
+            GirdView_Materials.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            GirdView_Materials.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            GirdView_Materials.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            GirdView_Materials.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { columnName, columnHash });
+            GirdView_Materials.Location = new System.Drawing.Point(4, 62);
+            GirdView_Materials.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            GirdView_Materials.Name = "GirdView_Materials";
+            GirdView_Materials.ReadOnly = true;
+            GirdView_Materials.Size = new System.Drawing.Size(384, 399);
+            GirdView_Materials.TabIndex = 3;
+            GirdView_Materials.RowEnter += OnMaterialSelected;
             // 
             // columnName
             // 
-            this.columnName.HeaderText = "Name";
-            this.columnName.Name = "columnName";
-            this.columnName.ReadOnly = true;
+            columnName.HeaderText = "Name";
+            columnName.Name = "columnName";
+            columnName.ReadOnly = true;
             // 
             // columnHash
             // 
-            this.columnHash.HeaderText = "Hash";
-            this.columnHash.Name = "columnHash";
-            this.columnHash.ReadOnly = true;
+            columnHash.HeaderText = "Hash";
+            columnHash.Name = "columnHash";
+            columnHash.ReadOnly = true;
             // 
             // MTLBrowser
             // 
-            this.MTLBrowser.Filter = "Material Library|*.mtl";
+            MTLBrowser.Filter = "Material Library|*.mtl";
             // 
             // Panel_Main
             // 
-            this.Panel_Main.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.Panel_Main.Controls.Add(this.Button_Search);
-            this.Panel_Main.Controls.Add(this.Label_SearchType);
-            this.Panel_Main.Controls.Add(this.ComboBox_SearchType);
-            this.Panel_Main.Controls.Add(this.GirdView_Materials);
-            this.Panel_Main.Controls.Add(this.MaterialSearch);
-            this.Panel_Main.Controls.Add(this.MaterialGrid);
-            this.Panel_Main.Location = new System.Drawing.Point(0, 28);
-            this.Panel_Main.Name = "Panel_Main";
-            this.Panel_Main.Size = new System.Drawing.Size(785, 403);
-            this.Panel_Main.TabIndex = 4;
+            Panel_Main.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            Panel_Main.Controls.Add(Button_Search);
+            Panel_Main.Controls.Add(Label_SearchType);
+            Panel_Main.Controls.Add(ComboBox_SearchType);
+            Panel_Main.Controls.Add(GirdView_Materials);
+            Panel_Main.Controls.Add(MaterialSearch);
+            Panel_Main.Controls.Add(MaterialGrid);
+            Panel_Main.Location = new System.Drawing.Point(0, 32);
+            Panel_Main.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Panel_Main.Name = "Panel_Main";
+            Panel_Main.Size = new System.Drawing.Size(916, 465);
+            Panel_Main.TabIndex = 4;
             // 
             // Button_Search
             // 
-            this.Button_Search.Location = new System.Drawing.Point(218, 25);
-            this.Button_Search.Name = "Button_Search";
-            this.Button_Search.Size = new System.Drawing.Size(114, 23);
-            this.Button_Search.TabIndex = 6;
-            this.Button_Search.Text = "$SEARCH";
-            this.Button_Search.UseVisualStyleBackColor = true;
-            this.Button_Search.Click += new System.EventHandler(this.Button_Search_Click);
+            Button_Search.Location = new System.Drawing.Point(254, 29);
+            Button_Search.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Button_Search.Name = "Button_Search";
+            Button_Search.Size = new System.Drawing.Size(133, 27);
+            Button_Search.TabIndex = 6;
+            Button_Search.Text = "$SEARCH";
+            Button_Search.UseVisualStyleBackColor = true;
+            Button_Search.Click += Button_Search_Click;
             // 
             // Label_SearchType
             // 
-            this.Label_SearchType.AutoSize = true;
-            this.Label_SearchType.Location = new System.Drawing.Point(8, 7);
-            this.Label_SearchType.Name = "Label_SearchType";
-            this.Label_SearchType.Size = new System.Drawing.Size(124, 13);
-            this.Label_SearchType.TabIndex = 5;
-            this.Label_SearchType.Text = "$LABEL_SEARCHTYPE";
+            Label_SearchType.AutoSize = true;
+            Label_SearchType.Location = new System.Drawing.Point(9, 8);
+            Label_SearchType.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            Label_SearchType.Name = "Label_SearchType";
+            Label_SearchType.Size = new System.Drawing.Size(121, 15);
+            Label_SearchType.TabIndex = 5;
+            Label_SearchType.Text = "$LABEL_SEARCHTYPE";
             // 
             // ComboBox_SearchType
             // 
-            this.ComboBox_SearchType.FormattingEnabled = true;
-            this.ComboBox_SearchType.Items.AddRange(new object[] {
-            "$LABEL_MATERIALNAME",
-            "$LABEL_TEXTURENAME",
-            "$LABEL_MATERIALHASH",
-            "$LABEL_SHADERID",
-            "$LABEL_SHADERHASH"});
-            this.ComboBox_SearchType.Location = new System.Drawing.Point(148, 3);
-            this.ComboBox_SearchType.Name = "ComboBox_SearchType";
-            this.ComboBox_SearchType.Size = new System.Drawing.Size(184, 21);
-            this.ComboBox_SearchType.TabIndex = 4;
-            this.ComboBox_SearchType.SelectedIndexChanged += new System.EventHandler(this.SearchType_OnIndexChanged);
+            ComboBox_SearchType.FormattingEnabled = true;
+            ComboBox_SearchType.Items.AddRange(new object[] { "$LABEL_MATERIALNAME", "$LABEL_TEXTURENAME", "$LABEL_MATERIALHASH", "$LABEL_SHADERID", "$LABEL_SHADERHASH" });
+            ComboBox_SearchType.Location = new System.Drawing.Point(173, 3);
+            ComboBox_SearchType.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            ComboBox_SearchType.Name = "ComboBox_SearchType";
+            ComboBox_SearchType.Size = new System.Drawing.Size(214, 23);
+            ComboBox_SearchType.TabIndex = 4;
+            ComboBox_SearchType.SelectedIndexChanged += SearchType_OnIndexChanged;
             // 
             // MergePanel
             // 
-            this.MergePanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.MergePanel.Controls.Add(this.SelectAllNewButton);
-            this.MergePanel.Controls.Add(this.SelectAllOverwriteButton);
-            this.MergePanel.Controls.Add(this.NewMaterialLabel);
-            this.MergePanel.Controls.Add(this.OverWriteLabel);
-            this.MergePanel.Controls.Add(this.NewMatListBox);
-            this.MergePanel.Controls.Add(this.CancelButton);
-            this.MergePanel.Controls.Add(this.MergeButton);
-            this.MergePanel.Controls.Add(this.OverwriteListBox);
-            this.MergePanel.Location = new System.Drawing.Point(0, 28);
-            this.MergePanel.Name = "MergePanel";
-            this.MergePanel.Padding = new System.Windows.Forms.Padding(5);
-            this.MergePanel.Size = new System.Drawing.Size(785, 403);
-            this.MergePanel.TabIndex = 4;
+            MergePanel.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            MergePanel.Controls.Add(SelectAllNewButton);
+            MergePanel.Controls.Add(SelectAllOverwriteButton);
+            MergePanel.Controls.Add(NewMaterialLabel);
+            MergePanel.Controls.Add(OverWriteLabel);
+            MergePanel.Controls.Add(NewMatListBox);
+            MergePanel.Controls.Add(CancelButton);
+            MergePanel.Controls.Add(MergeButton);
+            MergePanel.Controls.Add(OverwriteListBox);
+            MergePanel.Location = new System.Drawing.Point(0, 32);
+            MergePanel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            MergePanel.Name = "MergePanel";
+            MergePanel.Padding = new System.Windows.Forms.Padding(6);
+            MergePanel.Size = new System.Drawing.Size(916, 465);
+            MergePanel.TabIndex = 4;
             // 
             // SelectAllNewButton
             // 
-            this.SelectAllNewButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.SelectAllNewButton.Location = new System.Drawing.Point(424, 28);
-            this.SelectAllNewButton.Name = "SelectAllNewButton";
-            this.SelectAllNewButton.Size = new System.Drawing.Size(100, 23);
-            this.SelectAllNewButton.TabIndex = 8;
-            this.SelectAllNewButton.Text = "$SELECT_ALL";
-            this.SelectAllNewButton.UseVisualStyleBackColor = true;
-            this.SelectAllNewButton.Click += new System.EventHandler(this.SelectAllNewButton_Click);
+            SelectAllNewButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            SelectAllNewButton.Location = new System.Drawing.Point(495, 32);
+            SelectAllNewButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            SelectAllNewButton.Name = "SelectAllNewButton";
+            SelectAllNewButton.Size = new System.Drawing.Size(117, 27);
+            SelectAllNewButton.TabIndex = 8;
+            SelectAllNewButton.Text = "$SELECT_ALL";
+            SelectAllNewButton.UseVisualStyleBackColor = true;
+            SelectAllNewButton.Click += SelectAllNewButton_Click;
             // 
             // SelectAllOverwriteButton
             // 
-            this.SelectAllOverwriteButton.Location = new System.Drawing.Point(251, 28);
-            this.SelectAllOverwriteButton.Name = "SelectAllOverwriteButton";
-            this.SelectAllOverwriteButton.Size = new System.Drawing.Size(100, 23);
-            this.SelectAllOverwriteButton.TabIndex = 7;
-            this.SelectAllOverwriteButton.Text = "$SELECT_ALL";
-            this.SelectAllOverwriteButton.UseVisualStyleBackColor = true;
-            this.SelectAllOverwriteButton.Click += new System.EventHandler(this.SelectAllOverwriteButton_Click);
+            SelectAllOverwriteButton.Location = new System.Drawing.Point(293, 32);
+            SelectAllOverwriteButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            SelectAllOverwriteButton.Name = "SelectAllOverwriteButton";
+            SelectAllOverwriteButton.Size = new System.Drawing.Size(117, 27);
+            SelectAllOverwriteButton.TabIndex = 7;
+            SelectAllOverwriteButton.Text = "$SELECT_ALL";
+            SelectAllOverwriteButton.UseVisualStyleBackColor = true;
+            SelectAllOverwriteButton.Click += SelectAllOverwriteButton_Click;
             // 
             // NewMaterialLabel
             // 
-            this.NewMaterialLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.NewMaterialLabel.AutoSize = true;
-            this.NewMaterialLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.NewMaterialLabel.Location = new System.Drawing.Point(527, 5);
-            this.NewMaterialLabel.Name = "NewMaterialLabel";
-            this.NewMaterialLabel.Size = new System.Drawing.Size(96, 17);
-            this.NewMaterialLabel.TabIndex = 6;
-            this.NewMaterialLabel.Text = "New Materials";
+            NewMaterialLabel.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            NewMaterialLabel.AutoSize = true;
+            NewMaterialLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            NewMaterialLabel.Location = new System.Drawing.Point(615, 6);
+            NewMaterialLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            NewMaterialLabel.Name = "NewMaterialLabel";
+            NewMaterialLabel.Size = new System.Drawing.Size(96, 17);
+            NewMaterialLabel.TabIndex = 6;
+            NewMaterialLabel.Text = "New Materials";
             // 
             // OverWriteLabel
             // 
-            this.OverWriteLabel.AutoSize = true;
-            this.OverWriteLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.OverWriteLabel.Location = new System.Drawing.Point(8, 5);
-            this.OverWriteLabel.Name = "OverWriteLabel";
-            this.OverWriteLabel.Size = new System.Drawing.Size(134, 17);
-            this.OverWriteLabel.TabIndex = 5;
-            this.OverWriteLabel.Text = "Conflicting Materials";
+            OverWriteLabel.AutoSize = true;
+            OverWriteLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            OverWriteLabel.Location = new System.Drawing.Point(9, 6);
+            OverWriteLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            OverWriteLabel.Name = "OverWriteLabel";
+            OverWriteLabel.Size = new System.Drawing.Size(134, 17);
+            OverWriteLabel.TabIndex = 5;
+            OverWriteLabel.Text = "Conflicting Materials";
             // 
             // NewMatListBox
             // 
-            this.NewMatListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.NewMatListBox.FormattingEnabled = true;
-            this.NewMatListBox.Location = new System.Drawing.Point(530, 23);
-            this.NewMatListBox.Name = "NewMatListBox";
-            this.NewMatListBox.Size = new System.Drawing.Size(243, 364);
-            this.NewMatListBox.TabIndex = 4;
+            NewMatListBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            NewMatListBox.FormattingEnabled = true;
+            NewMatListBox.Location = new System.Drawing.Point(618, 27);
+            NewMatListBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            NewMatListBox.Name = "NewMatListBox";
+            NewMatListBox.Size = new System.Drawing.Size(283, 418);
+            NewMatListBox.TabIndex = 4;
             // 
             // CancelButton
             // 
-            this.CancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.CancelButton.Location = new System.Drawing.Point(251, 364);
-            this.CancelButton.Name = "CancelButton";
-            this.CancelButton.Size = new System.Drawing.Size(100, 23);
-            this.CancelButton.TabIndex = 3;
-            this.CancelButton.Text = "$CANCEL";
-            this.CancelButton.UseVisualStyleBackColor = true;
-            this.CancelButton.Click += new System.EventHandler(this.Button_Cancel_Click);
+            CancelButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            CancelButton.Location = new System.Drawing.Point(293, 420);
+            CancelButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            CancelButton.Name = "CancelButton";
+            CancelButton.Size = new System.Drawing.Size(117, 27);
+            CancelButton.TabIndex = 3;
+            CancelButton.Text = "$CANCEL";
+            CancelButton.UseVisualStyleBackColor = true;
+            CancelButton.Click += Button_Cancel_Click;
             // 
             // MergeButton
             // 
-            this.MergeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.MergeButton.Location = new System.Drawing.Point(424, 364);
-            this.MergeButton.Name = "MergeButton";
-            this.MergeButton.Size = new System.Drawing.Size(100, 23);
-            this.MergeButton.TabIndex = 2;
-            this.MergeButton.Text = "$MERGE";
-            this.MergeButton.UseVisualStyleBackColor = true;
-            this.MergeButton.Click += new System.EventHandler(this.Button_Merge_Click);
+            MergeButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            MergeButton.Location = new System.Drawing.Point(495, 420);
+            MergeButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            MergeButton.Name = "MergeButton";
+            MergeButton.Size = new System.Drawing.Size(117, 27);
+            MergeButton.TabIndex = 2;
+            MergeButton.Text = "$MERGE";
+            MergeButton.UseVisualStyleBackColor = true;
+            MergeButton.Click += Button_Merge_Click;
             // 
             // OverwriteListBox
             // 
-            this.OverwriteListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.OverwriteListBox.FormattingEnabled = true;
-            this.OverwriteListBox.Location = new System.Drawing.Point(8, 23);
-            this.OverwriteListBox.Name = "OverwriteListBox";
-            this.OverwriteListBox.Size = new System.Drawing.Size(237, 364);
-            this.OverwriteListBox.TabIndex = 0;
+            OverwriteListBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            OverwriteListBox.FormattingEnabled = true;
+            OverwriteListBox.Location = new System.Drawing.Point(9, 27);
+            OverwriteListBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            OverwriteListBox.Name = "OverwriteListBox";
+            OverwriteListBox.Size = new System.Drawing.Size(276, 418);
+            OverwriteListBox.TabIndex = 0;
             // 
             // MTLSaveDialog
             // 
-            this.MTLSaveDialog.Filter = "Material Library|*.mtl";
+            MTLSaveDialog.Filter = "Material Library|*.mtl";
             // 
             // MaterialEditor
             // 
-            this.KeyPreview = true;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(785, 431);
-            this.Controls.Add(this.toolStrip1);
-            this.Controls.Add(this.Panel_Main);
-            this.Controls.Add(this.MergePanel);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "MaterialEditor";
-            this.Text = "Material Library Editor";
-            this.toolStrip1.ResumeLayout(false);
-            this.toolStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.GirdView_Materials)).EndInit();
-            this.Panel_Main.ResumeLayout(false);
-            this.Panel_Main.PerformLayout();
-            this.MergePanel.ResumeLayout(false);
-            this.MergePanel.PerformLayout();
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MaterialEditor_Closing);
-            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MaterialEditor_OnKeyUp);
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(916, 497);
+            Controls.Add(toolStrip1);
+            Controls.Add(Panel_Main);
+            Controls.Add(MergePanel);
+            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
+            KeyPreview = true;
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Name = "MaterialEditor";
+            Text = "Material Library Editor";
+            FormClosing += MaterialEditor_Closing;
+            KeyUp += MaterialEditor_OnKeyUp;
+            toolStrip1.ResumeLayout(false);
+            toolStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)GirdView_Materials).EndInit();
+            Panel_Main.ResumeLayout(false);
+            Panel_Main.PerformLayout();
+            MergePanel.ResumeLayout(false);
+            MergePanel.PerformLayout();
+            ResumeLayout(false);
+            PerformLayout();
 
         }
 

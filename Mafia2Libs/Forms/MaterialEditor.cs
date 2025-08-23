@@ -52,8 +52,11 @@ namespace Mafia2Tool
             Button_ExportSelected.Text = Language.GetString("$EXPORT_MATS");
             Label_SearchType.Text = Language.GetString("$LABEL_SEARCHTYPE");
             Button_Search.Text = Language.GetString("$SEARCH");
+            Button_Debug.Text = Language.GetString("$DEBUG_TOOLS");
+            Button_DumpTextures.Text = Language.GetString("$DUMP_TEXTURE_NAMES");
+            Button_Reload.Text = Language.GetString("$RELOAD_MATERIAL");
 
-            for(int i = 0; i < ComboBox_SearchType.Items.Count; i++)
+            for (int i = 0; i < ComboBox_SearchType.Items.Count; i++)
             {
                 var text = (ComboBox_SearchType.Items[i] as string);
                 text = Language.GetString(text);

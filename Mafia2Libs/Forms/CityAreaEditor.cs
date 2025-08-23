@@ -31,8 +31,9 @@ namespace Mafia2Tool
             SaveButton.Text = Language.GetString("$SAVE");
             ReloadButton.Text = Language.GetString("$RELOAD");
             ExitButton.Text = Language.GetString("$EXIT");
-            toolButton.Text = Language.GetString("$TOOLS");
+            toolButton.Text = Language.GetString("$TOOLS"); 
             AddAreaButton.Text = Language.GetString("$ADD_AREA");
+            DeleteArea.Text = Language.GetString("$DELETE_AREA");
         }
 
         private void BuildData()

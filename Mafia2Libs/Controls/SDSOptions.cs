@@ -18,7 +18,10 @@ namespace Forms.OptionControls
         private void Localise()
         {
             M2Label.Text = Language.GetString("$SDS_COMPRESSION_RATIO");
+            groupSDS.Text = Language.GetString("$SDSOptions");
+            Checkbox_EnableLuaHelper.Text = Language.GetString("$LUA_DECOMPILE");
             AddTimeDateBackupsBox.Text = Language.GetString("$ADD_TIME_DATE_BACKUP");
+            CheckBox_UseOodle.Text = Language.GetString("$Use_Oodle");
             UnpackLUABox.Text = Language.GetString("$DECOMPILE_LUA_UNPACK");
             SDSToolFormat.Text = Language.GetString("$USE_SDS_TOOL_FORMAT");
             CookCollisionsBox.Text = Language.GetString("$COOK_COLLISIONS");
