@@ -111,8 +111,22 @@
 	<String ID="$Use_Oodle">Использовать Oodle</String>
 	<String ID="$SDS_TOOLTIP_USE_OODLE">Система сжатия Oodle для Mafia Definitive Editon</String>
 	
+	<!-- MODEL BUNDLE EXPORT + IMPPORT -->
+	<String ID="$VALIDATE">Подтвердить</String>
+	<String ID="$TAB_MODELS">Список моделей</String>
+	<String ID="$TAB_VALIDATION">Валидация</String>
+	<String ID="$TAB_IMPORT_LOG">Логи</String>
+	<String ID="$TITLE_EXPORT_MODEL_BUNDLE">Экспортер моделей</String>
+	<String ID="$TITLE_IMPORT_MODEL_BUNDLE">Импортер моделей</String>
+	<String ID="$STOP">Остановить</String>
+	<String ID="$TAB_MATERIALS">Список Материалов</String>
+	<String ID="$TAB_ANIMS">Список Анимаций</String>
+	<String ID="$SAVE_AN2">Сохранить анимацию</String>
+	<String ID="$LABEL_MT_CHOOSE_LIBRARY">Библеотека материалов</String>
+	<String ID="$LABEL_MT_CHOOSE_PRESET">Пресет</String>
 	
 	
+
 	<!-- Render Options -->
 	<String ID="$RENDER">Рендеринг</String>
 	<String ID="$RENDER_OPTIONS">Настройки рендера</String>

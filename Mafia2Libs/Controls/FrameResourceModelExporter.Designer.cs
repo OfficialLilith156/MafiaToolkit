@@ -106,8 +106,8 @@
             Button_Validate.Image = (System.Drawing.Image)resources.GetObject("Button_Validate.Image");
             Button_Validate.ImageTransparentColor = System.Drawing.Color.Magenta;
             Button_Validate.Name = "Button_Validate";
-            Button_Validate.Size = new System.Drawing.Size(68, 22);
-            Button_Validate.Text = "Validate";
+            Button_Validate.Size = new System.Drawing.Size(74, 22);
+            Button_Validate.Text = "$Validate";
             Button_Validate.Click += Button_Validate_Click;
             // 
             // Button_Continue
@@ -124,8 +124,8 @@
             Button_StopImport.Image = (System.Drawing.Image)resources.GetObject("Button_StopImport.Image");
             Button_StopImport.ImageTransparentColor = System.Drawing.Color.Magenta;
             Button_StopImport.Name = "Button_StopImport";
-            Button_StopImport.Size = new System.Drawing.Size(90, 22);
-            Button_StopImport.Text = "Stop Import";
+            Button_StopImport.Size = new System.Drawing.Size(98, 22);
+            Button_StopImport.Text = "$Stop_Import";
             Button_StopImport.Click += Button_StopImport_Click;
             // 
             // Label_DebugMessage
@@ -157,7 +157,7 @@
             TabPage_Validation.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
             TabPage_Validation.Size = new System.Drawing.Size(712, 113);
             TabPage_Validation.TabIndex = 0;
-            TabPage_Validation.Text = "Validation";
+            TabPage_Validation.Text = "$Validation";
             TabPage_Validation.UseVisualStyleBackColor = true;
             // 
             // ListBox_Validation
@@ -182,7 +182,7 @@
             TabPage_ConvertLogs.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
             TabPage_ConvertLogs.Size = new System.Drawing.Size(712, 113);
             TabPage_ConvertLogs.TabIndex = 1;
-            TabPage_ConvertLogs.Text = "Import Log";
+            TabPage_ConvertLogs.Text = "$ImportLog";
             TabPage_ConvertLogs.UseVisualStyleBackColor = true;
             // 
             // ListBox_ImportLog

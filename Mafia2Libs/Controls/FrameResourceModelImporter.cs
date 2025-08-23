@@ -99,6 +99,8 @@ namespace Forms.EditorControls
             Button_Continue.Text = Language.GetString("$CONTINUE");
             Button_StopImport.Text = Language.GetString("$STOP");
             TabPage_Model.Text = Language.GetString("$TAB_MODELS");
+            TabPage_Animations.Text = Language.GetString("$TAB_ANIMS");
+            Button_Anim_SaveAN2.Text = Language.GetString("$SAVE_AN2");
             TabPage_Material.Text = Language.GetString("$TAB_MATERIALS");
             TabPage_Validation.Text = Language.GetString("$TAB_VALIDATION");
             TabPage_ConvertLogs.Text = Language.GetString("$TAB_IMPORT_LOG");
