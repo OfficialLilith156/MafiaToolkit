@@ -40,6 +40,7 @@ namespace Mafia2Tool
             exitToolStripMenuItem.Text = Language.GetString("$EXIT");
             AddLineButton.Text = Language.GetString("$ADD_LINE");
             DeleteLineButton.Text = Language.GetString("$DELETE_LINE");
+            DuplicateLine.Text = Language.GetString("$DUPLICATE_LINE");
             MoveItemDownButton.Text = Language.GetString("$MOVE_DOWN");
             MoveItemUpButton.Text = Language.GetString("$MOVE_UP");
             Button_CreateLineGroup.Text = Language.GetString("$STREAM_EDITOR_CREATE_LINE_GROUP");

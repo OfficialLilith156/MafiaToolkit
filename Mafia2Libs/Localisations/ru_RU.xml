@@ -197,6 +197,9 @@
 	<String ID="$ACTOR_EDITOR_TITLE">Редактор Актора</String>
 	<String ID="$ADD_ITEM">Добавить объект</String>
 	<String ID="$ADD_DEFINITION">Добавить определение</String>
+	<String ID="$SELECT_TYPE_AND_NAME">Название объекта</String>
+	<String ID="$ACTOR_DEFINITION_NAME">Название опеределения</String>
+	<String ID="$ACTOR_TYPE">Актор тип</String>
 
 	<!-- Actor FX -->
 	<String ID="$COPY">Копировать</String>
@@ -233,6 +236,7 @@
 	<String ID="$IMPORT_PREFAB">Импортировать Префаб</String>
 	<String ID="$EXPORT_PREFAB">Экспортировать Префаб</String> 
 	<String ID="$PREFAB_EDITOR_TITLE">Редактор Prefab</String>  
+	
 
 	<!-- Speech Editor -->
 	<String ID="$SPEECH_EDITOR_TITLE">Редактор Speech</String> 
@@ -374,8 +378,13 @@
 	<String ID="$SDSCONTENT_EDITOR_TITLE">Редактор SDS Content</String>
 	<String ID="$IMPORT_TXT">Импортировать Txt</String>
 	<String ID="$AUTO-ADD_FILES">Автоматически добавить файлы</String>
-	
-	
+
+	<!-- TRANSLOCATOR EDITOR -->
+	<String ID="$ADD_GROUP">Добавить Группу</String>
+	<String ID="$ADD_OBJECT">Добавить Объект</String>
+	<String ID="$ADD_INSTANCE">Добавить экземпляр</String>
+	<String ID="$VIEW_NUM_INST">Просмотреть количество экземпляров</String>
+	<String ID="$TRANSLOKATOR_EDITOR">Редактор Translokator</String>
 	
 
 </Localisation>

@@ -109,6 +109,9 @@
 	<String ID="$BACKUP_SDS_LABEL">Create SDS Backups when unpacking.</String>
 	<String ID="$VERTEX_BUFFER_SIZE_LABEL">Vertex Buffer Limit</String>
 	<String ID="$INDEX_BUFFER_SIZE_LABEL">Index Buffer Limit</String>
+	<String ID="$Use_Oodle">Use Oodle</String>
+	<String ID="$LUA_DECOMPILE">Lua Decompile Assistant</String>
+	<String ID="$SDSOptions">SDS Options</String>
 
 	<!-- Map Editor -->
 	<String ID="$NO_COL_FILE_CREATE_NEW">No Collision file is present. Create new Collision File?</String>
@@ -129,6 +132,11 @@
 	<String ID="$RENDER_FOV">Field of View</String>
 	<String ID="$TEXTURE_DIRECTORY">Texture Directory</String>
 	<String ID="$SELECT_TEX_FOLDER">Select the folder which contains textures.</String>
+	<String ID="$USE_MIPS">Use MIPs</String>
+	<String ID="$VSync">VSync</String>
+	<String ID="$ENABLE_NAVIGATION">Navigation mode</String>
+	<String ID="$ENABLE_EXPERIMENTAL">Experimental mode</String>
+	
 
 	<!-- Collision Editor Form Strings-->
 	<String ID="$SAVE">Save</String>
@@ -184,6 +192,9 @@
 	<String ID="$ACTOR_EDITOR_TITLE">Actor Editor</String>
 	<String ID="$ADD_ITEM">Add Item</String>
 	<String ID="$ADD_DEFINITION">Add Definition</String>
+	<String ID="$SELECT_TYPE_AND_NAME">Entity Name</String>
+	<String ID="$ACTOR_DEFINITION_NAME">Definition Name</String>
+	<String ID="$ACTOR_TYPE">Actor Type</String>
 
 	<!-- EntityDataStorage Editor -->
 	<String ID="$EDS_EDITOR_TITLE">EntityDataStorage Editor</String>
@@ -285,6 +296,36 @@
 	<String ID="$SCALE_Y">Scale Y</String>
 	<String ID="$SCALE_Z">Scale Z</String>
 
+	<!-- Actor FX -->
+	<String ID="$EXPORT">Export</String>
+	<String ID="$IMPORT">Import</String>
+	<String ID="$FXACTOR_EDITOR">Fx Actor Editor</String>
+
+	<!-- Actor Anim Set -->
+	<String ID="$FXANIMSET_EDITOR">Fx Anim Set Editor</String>
+
+	<!-- Cutscene Editor -->
+	<String ID="$CUTSCENE_EDITOR">Cutscene Editor</String>
+	<String ID="$CUTSCENE_IMPORT_ENTITY">Import Entity</String>
+	<String ID="$CUTSCENE_EXPORT_ENTITY">Export Entity</String>
+	<String ID="$CUTSCENE_DUPLICATE_ENTITY">Duplicate Entity</String>
+	<String ID="$CUTSCENE_DELETE_ENTITY">Delete Entity</String>
+
+	<!-- MODEL BUNDLE EXPORT + IMPPORT -->
+	<String ID="$TITLE_EXPORT_MODEL_BUNDLE">Export models</String>
+	<String ID="$TAB_ANIMS">Animations</String>
+	<String ID="$SAVE_AN2">Save An2</String>
+
+
+	<!-- Prefab -->
+	<String ID="$DELETE_PREFAB">Delete Prefab</String>
+	<String ID="$IMPORT_PREFAB">Import Prefab</String>
+	<String ID="$EXPORT_PREFAB">Export Prefab</String>
+	<String ID="$PREFAB_EDITOR_TITLE">Prefab Editor</String>
+
+	<!-- Speech Editor -->
+	<String ID="$SPEECH_EDITOR_TITLE">Speech Editor</String>
+
 	<!-- StreamEditor strings-->
 	<String ID="$STREAM_EDITOR_TITLE">Stream Editor</String>
 	<String ID="$ADD_LINE">Add Line</String>
@@ -332,5 +373,35 @@
 	<String ID="$EXCEPTION_LABEL">Unhandled exception has occurred in your application. If you click continue [ENTER], the application will ignore this error and attempt to continue. If you click Quit [ESC], the application will close immediatly.</String>
 	<String ID="$EXCEPTION_CONTINUE">Continue</String>
 	<String ID="$EXCEPTION_QUIT">Quit</String>
+
+	<!-- Stream Mapa Form-->
+	<String ID="$STREAM_EDITOR_CREATE_LINE_GROUP">Create Line Group</String>
+	<String ID="$STREAM_EDITOR_CREATE_STREAM_GROUP">Create Stream Group</String>
+	<String ID="$DUPLICATE_LINE">Duplicate line</String>
+
+
+	<!-- Material Editor -->
+	<String ID="$DEBUG_TOOLS">Debug Tools</String>
+	<String ID="$DUMP_TEXTURE_NAMES">Dump Textures</String>
+	<String ID="$RELOAD_MATERIAL">Reload</String>
+
+	<!-- Tables Editor -->
+	<String ID="$DELETE_ROW">Delete row</String>
+
+	<!-- ShopMenu2 -->
+	<String ID="$SHOPMENU2_EDITOR_TITLE">ShopMenu2 Editor</String>
+	<String ID="$ADD_SHOPTYPE">Add Shop Type</String>
+	<String ID="$ADD_METAINFO">Add Meta Info</String>
+	<String ID="$DUPLICATE_ITEM">Duplicate Item</String>
+	<String ID="$DUPE_METAINFO">Duplicate Meta Info</String>
+
+	<!-- SDS Content -->
+	<String ID="$SDSCONTENT_EDITOR_TITLE">SDS Content Editor</String>
+	<String ID="$IMPORT_TXT">Import Txt</String>
+	<String ID="$AUTO-ADD_FILES">Automatic Add Files</String>
+	
+	<!-- TRANSLOCATOR EDITOR -->
+	<String ID="$ADD_GROUP">Add Group</String>
+
 
 </Localisation>

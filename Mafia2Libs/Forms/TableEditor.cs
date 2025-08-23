@@ -36,7 +36,7 @@ namespace Mafia2Tool
             ExitButton.Text = Language.GetString("$EXIT");
             ReloadButton.Text = Language.GetString("$RELOAD");
             AddRowButton.Text = Language.GetString("$TABLE_ADD_ROW");
-            AddRowButton.Text = Language.GetString("$DELETE_ROW");
+            DeleteRowButton.Text = Language.GetString("$DELETE_ROW");
         }
 
         public void Initialise()

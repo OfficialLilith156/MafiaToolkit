@@ -38,8 +38,11 @@ namespace Mafia2Tool
             Button_Save.Text = Language.GetString("$SAVE");
             Button_Reload.Text = Language.GetString("$RELOAD"); 
             Button_Exit.Text = Language.GetString("$EXIT");
+            Button_Tools.Text = Language.GetString("$TOOLS");
             Button_Import.Text = Language.GetString("$IMPORT_PREFAB");
             Button_Export.Text = Language.GetString("$EXPORT_PREFAB");
+            Context_ImportXML.Text = Language.GetString("$IMPORT_XML");
+            Context_ExportXML.Text = Language.GetString("$EXPORT_XML");
             Button_Delete.Text = Language.GetString("$DELETE_PREFAB");
             Context_Delete.Text = Language.GetString("$DELETE");
         }

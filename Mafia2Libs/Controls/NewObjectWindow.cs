@@ -21,6 +21,7 @@ namespace Mafia2Tool
             buttonCancel.Text = Language.GetString("$CANCEL");
             buttonContinue.Text = Language.GetString("$CONTINUE");
             Text = Language.GetString("$NEWOBJFORM_TITLE");
+            label.Text = Language.GetString("$SELECT_TYPE_AND_NAME");
         }
 
         public void LoadOption(Control desiredControl)

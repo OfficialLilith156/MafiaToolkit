@@ -1,6 +1,7 @@
 ﻿using ResourceTypes.Translokator;
 using System;
 using System.IO;
+using System.Security.Cryptography;
 using System.Windows.Forms;
 using Utils.Language;
 
@@ -26,11 +27,15 @@ namespace Mafia2Tool.Forms
 
         private void Localise()
         {
-            ExitButton.Text = Language.GetString("$EXIT");
+            ExitButton.Text = Language.GetString("$EXIT"); 
             fileToolButton.Text = Language.GetString("$FILE");
             SaveToolButton.Text = Language.GetString("$SAVE");
             ReloadButton.Text = Language.GetString("$RELOAD");
             AddInstance.Text = Language.GetString("$ADD_INSTANCE");
+            Button_ExportXml.Text = Language.GetString("$EXPORT_XML");
+            Button_ImportXml.Text = Language.GetString("$IMPORT_XML");
+            AddGroup.Text = Language.GetString("$ADD_GROUP");
+            ViewNumInstButton.Text = Language.GetString("$VIEW_NUM_INST");
             AddObject.Text = Language.GetString("$ADD_OBJECT");
             Delete.Text = Language.GetString("$DELETE");
             Text = Language.GetString("$TRANSLOKATOR_EDITOR");
