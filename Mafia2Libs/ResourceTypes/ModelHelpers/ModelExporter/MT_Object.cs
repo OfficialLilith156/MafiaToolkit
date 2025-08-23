@@ -266,7 +266,7 @@ namespace ResourceTypes.ModelHelpers.ModelExporter
                 {
                     // TODO: This is a very loose coupling, can we somehow improve this?
                     // Perhaps within the Extras of a node, we can identify that this is LOD0?
-                    if (ChildNode.Name.Contains("LOD_0"))
+                    if (ChildNode.Name.Contains("MODEL"))
                     {
                         if (DesiredType == MT_ObjectType.RiggedMesh)
                         {
@@ -308,7 +308,7 @@ namespace ResourceTypes.ModelHelpers.ModelExporter
                             }
                         }
                     }
-                    else if(ChildNode.Name.Contains("COLINSTANCE"))
+                    else if(ChildNode.Name.Contains("COL"))
                     {
                         if (DesiredType == MT_ObjectType.StaticCollision)
                         {
