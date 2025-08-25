@@ -306,7 +306,7 @@
             Button_MoveDown.Name = "Button_MoveDown";
             Button_MoveDown.ShortcutKeyDisplayString = "CTRL + PageDown";
             Button_MoveDown.Size = new System.Drawing.Size(260, 22);
-            Button_MoveDown.Text = "$MOVE_DOWN";
+            Button_MoveDown.Text = "$MOVE_DOWN"; 
             // 
             // CityShopEditor
             // 

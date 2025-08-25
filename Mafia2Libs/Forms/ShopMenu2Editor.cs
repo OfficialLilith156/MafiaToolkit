@@ -344,7 +344,7 @@ namespace Mafia2Tool
         }
 
         private void RunSearch(string query)
-        {
+        { 
             query = query.Trim().ToLower();
             if (string.IsNullOrWhiteSpace(query))
                 return;
