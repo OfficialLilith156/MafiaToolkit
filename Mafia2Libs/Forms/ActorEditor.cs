@@ -240,7 +240,7 @@ namespace Mafia2Tool
         private void AddItemButton_Click(object sender, System.EventArgs e)
         {
             NewObjectForm objectForm = new NewObjectForm(true);
-            objectForm.SetLabel("$SELECT_TYPE_AND_NAME");
+            objectForm.SetLabel("Entity Name");
             ActorItemAddOption optionControl = new ActorItemAddOption();
             objectForm.LoadOption(optionControl);
 
