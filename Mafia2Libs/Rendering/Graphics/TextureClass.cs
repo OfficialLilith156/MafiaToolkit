@@ -34,12 +34,39 @@ namespace Rendering.Graphics
                     return (File.Exists(mip) && bUseMIPs ? mip : path);
                 }
 
-                if (!string.IsNullOrEmpty(ToolkitSettings.TexturePath) || Directory.Exists(ToolkitSettings.TexturePath))
+                if (!string.IsNullOrEmpty(ToolkitSettings.TexturePath1) || Directory.Exists(ToolkitSettings.TexturePath1))
                 {
-                    path = Path.Combine(ToolkitSettings.TexturePath, fileName);
+                    path = Path.Combine(ToolkitSettings.TexturePath1, fileName);
                     if (File.Exists(path))
                     {
-                        string mip = Path.Combine(ToolkitSettings.TexturePath, "MIP_" + fileName);
+                        string mip = Path.Combine(ToolkitSettings.TexturePath1, "MIP_" + fileName);
+                        return (File.Exists(mip) && bUseMIPs ? mip : path);
+                    }
+                }
+                if (!string.IsNullOrEmpty(ToolkitSettings.TexturePath2) || Directory.Exists(ToolkitSettings.TexturePath2))
+                {
+                    path = Path.Combine(ToolkitSettings.TexturePath2, fileName);
+                    if (File.Exists(path))
+                    {
+                        string mip = Path.Combine(ToolkitSettings.TexturePath2, "MIP_" + fileName);
+                        return (File.Exists(mip) && bUseMIPs ? mip : path);
+                    }
+                }
+                if (!string.IsNullOrEmpty(ToolkitSettings.TexturePath3) || Directory.Exists(ToolkitSettings.TexturePath3))
+                {
+                    path = Path.Combine(ToolkitSettings.TexturePath3, fileName);
+                    if (File.Exists(path))
+                    {
+                        string mip = Path.Combine(ToolkitSettings.TexturePath3, "MIP_" + fileName);
+                        return (File.Exists(mip) && bUseMIPs ? mip : path);
+                    }
+                }
+                if (!string.IsNullOrEmpty(ToolkitSettings.TexturePath4) || Directory.Exists(ToolkitSettings.TexturePath4))
+                {
+                    path = Path.Combine(ToolkitSettings.TexturePath4, fileName);
+                    if (File.Exists(path))
+                    {
+                        string mip = Path.Combine(ToolkitSettings.TexturePath4, "MIP_" + fileName);
                         return (File.Exists(mip) && bUseMIPs ? mip : path);
                     }
                 }

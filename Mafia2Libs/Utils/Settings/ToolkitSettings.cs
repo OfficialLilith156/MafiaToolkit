@@ -24,7 +24,10 @@ namespace Utils.Settings
         public static float ScreenDepth;
         public static float ScreenNear;
         public static float CameraSpeed;
-        public static string TexturePath;
+        public static string TexturePath1;
+        public static string TexturePath2;
+        public static string TexturePath3;
+        public static string TexturePath4;
         public static bool Experimental;
         public static bool bNavigation;
         public static bool bTranslokatorTint;
@@ -68,7 +71,10 @@ namespace Utils.Settings
             ini = new IniFile();
             ElapsedTime = (int)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
 
-            TexturePath = ReadKey("TexturePath", "ModelViewer");
+            TexturePath1 = ReadKey("TexturePath1", "ModelViewer");
+            TexturePath2 = ReadKey("TexturePath2", "ModelViewer");
+            TexturePath3 = ReadKey("TexturePath3", "ModelViewer");
+            TexturePath4 = ReadKey("TexturePath4", "ModelViewer");
             CustomStateText = ReadKey("CustomStateText", "Discord", "Developing mods.");
             bool.TryParse(ReadKey("Enabled", "Discord", "True"), out DiscordEnabled);
             bool.TryParse(ReadKey("ElapsedTimeEnabled", "Discord", "True"), out DiscordElapsedTimeEnabled);

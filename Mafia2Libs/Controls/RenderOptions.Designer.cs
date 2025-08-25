@@ -29,6 +29,12 @@
         private void InitializeComponent()
         {
             RenderGroup = new System.Windows.Forms.GroupBox();
+            TexDirectoryBox2 = new System.Windows.Forms.TextBox();
+            BrowseButton4 = new System.Windows.Forms.Button();
+            TexDirectoryBox4 = new System.Windows.Forms.TextBox();
+            BrowseButton3 = new System.Windows.Forms.Button();
+            TexDirectoryBox3 = new System.Windows.Forms.TextBox();
+            BrowseButton2 = new System.Windows.Forms.Button();
             Checkbox_EnableNavigation = new System.Windows.Forms.CheckBox();
             Checkbox_EnableTranslokatorTint = new System.Windows.Forms.CheckBox();
             CheckBox_VSync = new System.Windows.Forms.CheckBox();
@@ -36,8 +42,8 @@
             RenderFieldOfView = new System.Windows.Forms.Label();
             UseMIPsBox = new System.Windows.Forms.CheckBox();
             ExperimentalBox = new System.Windows.Forms.CheckBox();
-            BrowseButton = new System.Windows.Forms.Button();
-            TexDirectoryBox = new System.Windows.Forms.TextBox();
+            TexDirectoryBox1 = new System.Windows.Forms.TextBox();
+            BrowseButton1 = new System.Windows.Forms.Button();
             TexLabel = new System.Windows.Forms.Label();
             CameraSpeedUpDown = new System.Windows.Forms.NumericUpDown();
             CameraSpeedLabel = new System.Windows.Forms.Label();
@@ -55,6 +61,12 @@
             // 
             // RenderGroup
             // 
+            RenderGroup.Controls.Add(TexDirectoryBox2);
+            RenderGroup.Controls.Add(BrowseButton4);
+            RenderGroup.Controls.Add(TexDirectoryBox4);
+            RenderGroup.Controls.Add(BrowseButton3);
+            RenderGroup.Controls.Add(TexDirectoryBox3);
+            RenderGroup.Controls.Add(BrowseButton2);
             RenderGroup.Controls.Add(Checkbox_EnableNavigation);
             RenderGroup.Controls.Add(Checkbox_EnableTranslokatorTint);
             RenderGroup.Controls.Add(CheckBox_VSync);
@@ -62,8 +74,8 @@
             RenderGroup.Controls.Add(RenderFieldOfView);
             RenderGroup.Controls.Add(UseMIPsBox);
             RenderGroup.Controls.Add(ExperimentalBox);
-            RenderGroup.Controls.Add(BrowseButton);
-            RenderGroup.Controls.Add(TexDirectoryBox);
+            RenderGroup.Controls.Add(TexDirectoryBox1);
+            RenderGroup.Controls.Add(BrowseButton1);
             RenderGroup.Controls.Add(TexLabel);
             RenderGroup.Controls.Add(CameraSpeedUpDown);
             RenderGroup.Controls.Add(CameraSpeedLabel);
@@ -71,15 +83,74 @@
             RenderGroup.Controls.Add(ScreenNearUpDown);
             RenderGroup.Controls.Add(ScreenFarLabel);
             RenderGroup.Controls.Add(ScreenNearLabel);
-            RenderGroup.Dock = System.Windows.Forms.DockStyle.Fill;
             RenderGroup.Location = new System.Drawing.Point(0, 0);
             RenderGroup.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             RenderGroup.Name = "RenderGroup";
             RenderGroup.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            RenderGroup.Size = new System.Drawing.Size(455, 223);
+            RenderGroup.Size = new System.Drawing.Size(455, 314);
             RenderGroup.TabIndex = 2;
             RenderGroup.TabStop = false;
             RenderGroup.Text = "$RENDER_OPTIONS";
+            // 
+            // TexDirectoryBox2
+            // 
+            TexDirectoryBox2.Location = new System.Drawing.Point(7, 222);
+            TexDirectoryBox2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            TexDirectoryBox2.Name = "TexDirectoryBox2";
+            TexDirectoryBox2.Size = new System.Drawing.Size(387, 23);
+            TexDirectoryBox2.TabIndex = 17;
+            TexDirectoryBox2.TextChanged += TexDirectoryBox2_TextChanged;
+            // 
+            // BrowseButton4
+            // 
+            BrowseButton4.Location = new System.Drawing.Point(402, 280);
+            BrowseButton4.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            BrowseButton4.Name = "BrowseButton4";
+            BrowseButton4.Size = new System.Drawing.Size(30, 23);
+            BrowseButton4.TabIndex = 22;
+            BrowseButton4.Text = "...";
+            BrowseButton4.UseVisualStyleBackColor = true;
+            BrowseButton4.Click += BrowseButton4_Click;
+            // 
+            // TexDirectoryBox4
+            // 
+            TexDirectoryBox4.Location = new System.Drawing.Point(7, 280);
+            TexDirectoryBox4.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            TexDirectoryBox4.Name = "TexDirectoryBox4";
+            TexDirectoryBox4.Size = new System.Drawing.Size(387, 23);
+            TexDirectoryBox4.TabIndex = 21;
+            TexDirectoryBox4.TextChanged += TexDirectoryBox4_TextChanged;
+            // 
+            // BrowseButton3
+            // 
+            BrowseButton3.Location = new System.Drawing.Point(402, 251);
+            BrowseButton3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            BrowseButton3.Name = "BrowseButton3";
+            BrowseButton3.Size = new System.Drawing.Size(30, 23);
+            BrowseButton3.TabIndex = 20;
+            BrowseButton3.Text = "...";
+            BrowseButton3.UseVisualStyleBackColor = true;
+            BrowseButton3.Click += BrowseButton3_Click;
+            // 
+            // TexDirectoryBox3
+            // 
+            TexDirectoryBox3.Location = new System.Drawing.Point(7, 251);
+            TexDirectoryBox3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            TexDirectoryBox3.Name = "TexDirectoryBox3";
+            TexDirectoryBox3.Size = new System.Drawing.Size(387, 23);
+            TexDirectoryBox3.TabIndex = 19;
+            TexDirectoryBox3.TextChanged += TexDirectoryBox3_TextChanged;
+            // 
+            // BrowseButton2
+            // 
+            BrowseButton2.Location = new System.Drawing.Point(402, 221);
+            BrowseButton2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            BrowseButton2.Name = "BrowseButton2";
+            BrowseButton2.Size = new System.Drawing.Size(30, 23);
+            BrowseButton2.TabIndex = 18;
+            BrowseButton2.Text = "...";
+            BrowseButton2.UseVisualStyleBackColor = true;
+            BrowseButton2.Click += BrowseButton2_Click;
             // 
             // Checkbox_EnableNavigation
             // 
@@ -165,25 +236,25 @@
             ExperimentalBox.UseVisualStyleBackColor = true;
             ExperimentalBox.CheckedChanged += ExperimentalBox_CheckedChanged;
             // 
-            // BrowseButton
+            // TexDirectoryBox1
             // 
-            BrowseButton.Location = new System.Drawing.Point(402, 193);
-            BrowseButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            BrowseButton.Name = "BrowseButton";
-            BrowseButton.Size = new System.Drawing.Size(30, 23);
-            BrowseButton.TabIndex = 9;
-            BrowseButton.Text = "...";
-            BrowseButton.UseVisualStyleBackColor = true;
-            BrowseButton.Click += BrowseButton_Click;
+            TexDirectoryBox1.Location = new System.Drawing.Point(7, 193);
+            TexDirectoryBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            TexDirectoryBox1.Name = "TexDirectoryBox1";
+            TexDirectoryBox1.Size = new System.Drawing.Size(387, 23);
+            TexDirectoryBox1.TabIndex = 8;
+            TexDirectoryBox1.TextChanged += TexDirectoryBox1_TextChanged;
             // 
-            // TexDirectoryBox
+            // BrowseButton1
             // 
-            TexDirectoryBox.Location = new System.Drawing.Point(8, 193);
-            TexDirectoryBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            TexDirectoryBox.Name = "TexDirectoryBox";
-            TexDirectoryBox.Size = new System.Drawing.Size(387, 23);
-            TexDirectoryBox.TabIndex = 8;
-            TexDirectoryBox.TextChanged += TexDirectoryBox_TextChanged;
+            BrowseButton1.Location = new System.Drawing.Point(402, 193);
+            BrowseButton1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            BrowseButton1.Name = "BrowseButton1";
+            BrowseButton1.Size = new System.Drawing.Size(30, 23);
+            BrowseButton1.TabIndex = 9;
+            BrowseButton1.Text = "...";
+            BrowseButton1.UseVisualStyleBackColor = true;
+            BrowseButton1.Click += BrowseButton1_Click;
             // 
             // TexLabel
             // 
@@ -273,7 +344,7 @@
             Controls.Add(RenderGroup);
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             Name = "RenderOptions";
-            Size = new System.Drawing.Size(455, 223);
+            Size = new System.Drawing.Size(455, 312);
             RenderGroup.ResumeLayout(false);
             RenderGroup.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)FieldOfViewNumDown).EndInit();
@@ -292,8 +363,8 @@
         private System.Windows.Forms.NumericUpDown ScreenNearUpDown;
         private System.Windows.Forms.NumericUpDown CameraSpeedUpDown;
         private System.Windows.Forms.Label CameraSpeedLabel;
-        private System.Windows.Forms.Button BrowseButton;
-        private System.Windows.Forms.TextBox TexDirectoryBox;
+        private System.Windows.Forms.Button BrowseButton1;
+        private System.Windows.Forms.TextBox TexDirectoryBox1;
         private System.Windows.Forms.Label TexLabel;
         private System.Windows.Forms.FolderBrowserDialog TexBrowser;
         private System.Windows.Forms.CheckBox ExperimentalBox;
@@ -303,5 +374,11 @@
         private System.Windows.Forms.CheckBox CheckBox_VSync;
         private System.Windows.Forms.CheckBox Checkbox_EnableNavigation;
         private System.Windows.Forms.CheckBox Checkbox_EnableTranslokatorTint;
+        private System.Windows.Forms.Button BrowseButton2;
+        private System.Windows.Forms.TextBox TexDirectoryBox2;
+        private System.Windows.Forms.Button BrowseButton3;
+        private System.Windows.Forms.TextBox TexDirectoryBox3;
+        private System.Windows.Forms.Button BrowseButton4;
+        private System.Windows.Forms.TextBox TexDirectoryBox4;
     }
 }

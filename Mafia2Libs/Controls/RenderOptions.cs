@@ -37,7 +37,10 @@ namespace Forms.OptionControls
             ScreenNearUpDown.Value = Math.Min((decimal)ToolkitSettings.ScreenNear, ScreenNearUpDown.Maximum);
             CameraSpeedUpDown.Value = Math.Min((decimal)ToolkitSettings.CameraSpeed, CameraSpeedUpDown.Maximum);
             FieldOfViewNumDown.Value = Math.Min(Math.Max(Convert.ToInt16(ToolkitSettings.FieldOfView), FieldOfViewNumDown.Minimum), FieldOfViewNumDown.Maximum);
-            TexDirectoryBox.Text = ToolkitSettings.TexturePath;
+            TexDirectoryBox1.Text = ToolkitSettings.TexturePath1;
+            TexDirectoryBox2.Text = ToolkitSettings.TexturePath2;
+            TexDirectoryBox3.Text = ToolkitSettings.TexturePath3;
+            TexDirectoryBox4.Text = ToolkitSettings.TexturePath4;
             ExperimentalBox.Checked = ToolkitSettings.Experimental;
             Checkbox_EnableNavigation.Checked = ToolkitSettings.bNavigation;
             Checkbox_EnableTranslokatorTint.Checked = ToolkitSettings.bTranslokatorTint;
@@ -63,19 +66,64 @@ namespace Forms.OptionControls
             ToolkitSettings.WriteKey("CameraSpeed", "ModelViewer", ToolkitSettings.CameraSpeed.ToString());
         }
 
-        private void TexDirectoryBox_TextChanged(object sender, EventArgs e)
+        private void TexDirectoryBox1_TextChanged(object sender, EventArgs e)
         {
-            ToolkitSettings.TexturePath = TexDirectoryBox.Text;
-            ToolkitSettings.WriteKey("TexturePath", "ModelViewer", ToolkitSettings.TexturePath);
+            ToolkitSettings.TexturePath1 = TexDirectoryBox1.Text;
+            ToolkitSettings.WriteKey("TexturePath1", "ModelViewer", ToolkitSettings.TexturePath1);
+        }
+        private void TexDirectoryBox2_TextChanged(object sender, EventArgs e)
+        {
+            ToolkitSettings.TexturePath2 = TexDirectoryBox2.Text;
+            ToolkitSettings.WriteKey("TexturePath2", "ModelViewer", ToolkitSettings.TexturePath2);
+        }
+        private void TexDirectoryBox3_TextChanged(object sender, EventArgs e)
+        {
+            ToolkitSettings.TexturePath3 = TexDirectoryBox3.Text;
+            ToolkitSettings.WriteKey("TexturePath3", "ModelViewer", ToolkitSettings.TexturePath3);
+        }
+        private void TexDirectoryBox4_TextChanged(object sender, EventArgs e)
+        {
+            ToolkitSettings.TexturePath4 = TexDirectoryBox4.Text;
+            ToolkitSettings.WriteKey("TexturePath4", "ModelViewer", ToolkitSettings.TexturePath4);
         }
 
-        private void BrowseButton_Click(object sender, EventArgs e)
+        private void BrowseButton1_Click(object sender, EventArgs e)
         {
             TexBrowser.SelectedPath = "";
             if (TexBrowser.ShowDialog() == DialogResult.OK)
             {
-                TexDirectoryBox.Text = TexBrowser.SelectedPath;
-                TexDirectoryBox_TextChanged(null, null);
+                TexDirectoryBox1.Text = TexBrowser.SelectedPath;
+                TexDirectoryBox1_TextChanged(null, null);
+            }
+            else return;
+        }
+        private void BrowseButton2_Click(object sender, EventArgs e)
+        {
+            TexBrowser.SelectedPath = "";
+            if (TexBrowser.ShowDialog() == DialogResult.OK)
+            {
+                TexDirectoryBox2.Text = TexBrowser.SelectedPath;
+                TexDirectoryBox2_TextChanged(null, null);
+            }
+            else return;
+        }
+        private void BrowseButton3_Click(object sender, EventArgs e)
+        {
+            TexBrowser.SelectedPath = "";
+            if (TexBrowser.ShowDialog() == DialogResult.OK)
+            {
+                TexDirectoryBox3.Text = TexBrowser.SelectedPath;
+                TexDirectoryBox3_TextChanged(null, null);
+            }
+            else return;
+        }
+        private void BrowseButton4_Click(object sender, EventArgs e)
+        {
+            TexBrowser.SelectedPath = "";
+            if (TexBrowser.ShowDialog() == DialogResult.OK)
+            {
+                TexDirectoryBox4.Text = TexBrowser.SelectedPath;
+                TexDirectoryBox4_TextChanged(null, null);
             }
             else return;
         }
@@ -109,11 +157,12 @@ namespace Forms.OptionControls
             ToolkitSettings.bNavigation = Checkbox_EnableNavigation.Checked;
             ToolkitSettings.WriteKey("EnableNavigation", "ModelViewer", ToolkitSettings.bNavigation.ToString());
         }
-        
+
         private void Button_EnableTranslokatorTint_CheckedChanged(object sender, EventArgs e)
         {
             ToolkitSettings.bTranslokatorTint = Checkbox_EnableTranslokatorTint.Checked;
             ToolkitSettings.WriteKey("EnableTranslokator", "ModelViewer", ToolkitSettings.bTranslokatorTint.ToString());
         }
+
     }
 }
