@@ -247,7 +247,7 @@ namespace Mafia2Tool
                 TreeView_ShopMenu2.SelectedNode.Text = e.ChangedItem.Value.ToString();
             }
 
-            MarkAsEdited();
+            MarkAsEdited(); 
         }
 
         private void ShopMenu2Editor_Closing(object sender, FormClosingEventArgs e)

@@ -242,7 +242,7 @@
 
         #endregion
 
-        private System.Windows.Forms.PropertyGrid PropertyGrid_ShopMenu2;
+        private System.Windows.Forms.PropertyGrid PropertyGrid_ShopMenu2; 
         private System.Windows.Forms.ToolStrip ToolStrip_Main;
         private System.Windows.Forms.ToolStripDropDownButton Button_File;
         private System.Windows.Forms.ToolStripMenuItem Button_Save;
