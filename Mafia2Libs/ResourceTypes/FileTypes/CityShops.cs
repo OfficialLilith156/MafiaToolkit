@@ -1,4 +1,4 @@
-﻿using ResourceTypes.Actors;
+﻿
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,7 +9,7 @@ namespace ResourceTypes.City
 {
     public class CityShops 
     {
-        List<ActorEntry> items;
+
         private int fileVersion; //vanilla = 8; JA = 9;
         public int numAreas;
         public int bufferSize;
