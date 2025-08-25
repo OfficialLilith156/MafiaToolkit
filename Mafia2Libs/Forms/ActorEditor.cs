@@ -19,7 +19,6 @@ namespace Mafia2Tool
         private TreeNode definitions;
         private TreeNode items;
 
-        private object clipboard;
         private static ActorExtraData globalClipboard;
 
         private bool bIsFileEdited = false;

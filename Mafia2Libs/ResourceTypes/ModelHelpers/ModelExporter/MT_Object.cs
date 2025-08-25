@@ -89,7 +89,7 @@ namespace ResourceTypes.ModelHelpers.ModelExporter
                 // It's simply too noisy to debug right now, we need 1 LOD working first.
                 for(int Index = 0; Index < 1; Index++)
                 {
-                    NodeBuilder LodNode = ThisNode.CreateNode(string.Format("LOD_{0}", Index));
+                    NodeBuilder LodNode = ThisNode.CreateNode(string.Format("MODEL", Index));
                     if (Skeleton != null)
                     {
                         var BuiltMesh = Lods[Index].BuildSkinnedGLTF();

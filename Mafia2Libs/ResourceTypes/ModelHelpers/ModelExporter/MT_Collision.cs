@@ -70,7 +70,7 @@ namespace ResourceTypes.ModelHelpers.ModelExporter
             foreach(MT_CollisionInstance Instance in Instances)
             {
                 NodeBuilder InstanceNode = new NodeBuilder().WithLocalTranslation(Instance.Position).WithLocalScale(Instance.Scale).WithLocalRotation(Instance.Rotation);
-                InstanceNode.Name = string.Format("COLINSTANCE_{0}", InstanceIdx);
+                InstanceNode.Name = string.Format("COL", InstanceIdx);
                 RootNode.AddNode(InstanceNode);
 
                 InScene.AddRigidMesh(LodMesh, InstanceNode);
