@@ -28,270 +28,312 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CityShopEditor));
-            this.CollisionContext = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.ContextDelete = new System.Windows.Forms.ToolStripMenuItem();
-            this.deletePlacementToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openM2T = new System.Windows.Forms.OpenFileDialog();
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.fileToolButton = new System.Windows.Forms.ToolStripDropDownButton();
-            this.Button_SaveNonDLC = new System.Windows.Forms.ToolStripMenuItem();
-            this.Button_SaveDLC = new System.Windows.Forms.ToolStripMenuItem();
-            this.ReloadButton = new System.Windows.Forms.ToolStripMenuItem();
-            this.ExitButton = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolButton = new System.Windows.Forms.ToolStripDropDownButton();
-            this.AddAreaButton = new System.Windows.Forms.ToolStripMenuItem();
-            this.AddDataButton = new System.Windows.Forms.ToolStripMenuItem();
-            this.DuplicateDataButton = new System.Windows.Forms.ToolStripMenuItem();
-            this.PopulateTranslokatorButton = new System.Windows.Forms.ToolStripMenuItem();
-            this.DeleteAreaButton = new System.Windows.Forms.ToolStripMenuItem();
-            this.DeleteDataButton = new System.Windows.Forms.ToolStripMenuItem();
-            this.TreeView_CityShop = new Mafia2Tool.Controls.MTreeView();
-            this.propertyGrid1 = new System.Windows.Forms.PropertyGrid();
-            this.TabControl = new System.Windows.Forms.TabControl();
-            this.PropertyGridTab = new System.Windows.Forms.TabPage();
-            this.DataGridTab = new System.Windows.Forms.TabPage();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.CollisionContext.SuspendLayout();
-            this.toolStrip1.SuspendLayout();
-            this.TabControl.SuspendLayout();
-            this.PropertyGridTab.SuspendLayout();
-            this.DataGridTab.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
-            this.SuspendLayout();
+            CollisionContext = new System.Windows.Forms.ContextMenuStrip(components);
+            ContextDelete = new System.Windows.Forms.ToolStripMenuItem();
+            deletePlacementToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            openM2T = new System.Windows.Forms.OpenFileDialog();
+            toolStrip1 = new System.Windows.Forms.ToolStrip();
+            fileToolButton = new System.Windows.Forms.ToolStripDropDownButton();
+            Button_SaveNonDLC = new System.Windows.Forms.ToolStripMenuItem();
+            Button_SaveDLC = new System.Windows.Forms.ToolStripMenuItem();
+            ReloadButton = new System.Windows.Forms.ToolStripMenuItem();
+            ExitButton = new System.Windows.Forms.ToolStripMenuItem();
+            toolButton = new System.Windows.Forms.ToolStripDropDownButton();
+            AddAreaButton = new System.Windows.Forms.ToolStripMenuItem();
+            AddDataButton = new System.Windows.Forms.ToolStripMenuItem();
+            DuplicateDataButton = new System.Windows.Forms.ToolStripMenuItem();
+            PopulateTranslokatorButton = new System.Windows.Forms.ToolStripMenuItem();
+            DeleteAreaButton = new System.Windows.Forms.ToolStripMenuItem();
+            DeleteDataButton = new System.Windows.Forms.ToolStripMenuItem();
+            TreeView_CityShop = new Mafia2Tool.Controls.MTreeView();
+            propertyGrid1 = new System.Windows.Forms.PropertyGrid();
+            TabControl = new System.Windows.Forms.TabControl();
+            PropertyGridTab = new System.Windows.Forms.TabPage();
+            DataGridTab = new System.Windows.Forms.TabPage();
+            dataGridView1 = new System.Windows.Forms.DataGridView();
+            CItyShopsContext = new System.Windows.Forms.ContextMenuStrip(components);
+            toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            ContextCopy = new System.Windows.Forms.ToolStripMenuItem();
+            ContextPaste = new System.Windows.Forms.ToolStripMenuItem();
+            Button_MoveUp = new System.Windows.Forms.ToolStripMenuItem();
+            Button_MoveDown = new System.Windows.Forms.ToolStripMenuItem();
+            CollisionContext.SuspendLayout();
+            toolStrip1.SuspendLayout();
+            TabControl.SuspendLayout();
+            PropertyGridTab.SuspendLayout();
+            DataGridTab.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            CItyShopsContext.SuspendLayout();
+            SuspendLayout();
             // 
             // CollisionContext
             // 
-            this.CollisionContext.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ContextDelete,
-            this.deletePlacementToolStripMenuItem});
-            this.CollisionContext.Name = "SDSContext";
-            this.CollisionContext.Size = new System.Drawing.Size(167, 48);
+            CollisionContext.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { ContextDelete, deletePlacementToolStripMenuItem });
+            CollisionContext.Name = "SDSContext";
+            CollisionContext.Size = new System.Drawing.Size(167, 48);
             // 
             // ContextDelete
             // 
-            this.ContextDelete.Name = "ContextDelete";
-            this.ContextDelete.Size = new System.Drawing.Size(166, 22);
-            this.ContextDelete.Text = "Delete Collision";
+            ContextDelete.Name = "ContextDelete";
+            ContextDelete.Size = new System.Drawing.Size(166, 22);
+            ContextDelete.Text = "Delete Collision";
             // 
             // deletePlacementToolStripMenuItem
             // 
-            this.deletePlacementToolStripMenuItem.Name = "deletePlacementToolStripMenuItem";
-            this.deletePlacementToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
-            this.deletePlacementToolStripMenuItem.Text = "Delete Placement";
+            deletePlacementToolStripMenuItem.Name = "deletePlacementToolStripMenuItem";
+            deletePlacementToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
+            deletePlacementToolStripMenuItem.Text = "Delete Placement";
             // 
             // openM2T
             // 
-            this.openM2T.FileName = "Select M2T file.";
-            this.openM2T.Filter = "Model File|*.m2t|All Files|*.*|FBX Model|*.fbx";
-            this.openM2T.Tag = "";
+            openM2T.FileName = "Select M2T file.";
+            openM2T.Filter = "Model File|*.m2t|All Files|*.*|FBX Model|*.fbx";
+            openM2T.Tag = "";
             // 
             // toolStrip1
             // 
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolButton,
-            this.toolButton});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(933, 25);
-            this.toolStrip1.TabIndex = 15;
-            this.toolStrip1.Text = "toolStrip1";
+            toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { fileToolButton, toolButton });
+            toolStrip1.Location = new System.Drawing.Point(0, 0);
+            toolStrip1.Name = "toolStrip1";
+            toolStrip1.Size = new System.Drawing.Size(933, 25);
+            toolStrip1.TabIndex = 15;
+            toolStrip1.Text = "toolStrip1";
             // 
             // fileToolButton
             // 
-            this.fileToolButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.fileToolButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.Button_SaveNonDLC,
-            this.Button_SaveDLC,
-            this.ReloadButton,
-            this.ExitButton});
-            this.fileToolButton.Image = ((System.Drawing.Image)(resources.GetObject("fileToolButton.Image")));
-            this.fileToolButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.fileToolButton.Name = "fileToolButton";
-            this.fileToolButton.Size = new System.Drawing.Size(47, 22);
-            this.fileToolButton.Text = "$FILE";
+            fileToolButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            fileToolButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { Button_SaveNonDLC, Button_SaveDLC, ReloadButton, ExitButton });
+            fileToolButton.Image = (System.Drawing.Image)resources.GetObject("fileToolButton.Image");
+            fileToolButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            fileToolButton.Name = "fileToolButton";
+            fileToolButton.Size = new System.Drawing.Size(47, 22);
+            fileToolButton.Text = "$FILE";
             // 
             // Button_SaveNonDLC
             // 
-            this.Button_SaveNonDLC.Name = "Button_SaveNonDLC";
-            this.Button_SaveNonDLC.Size = new System.Drawing.Size(133, 22);
-            this.Button_SaveNonDLC.Text = "$SAVE";
-            this.Button_SaveNonDLC.Click += new System.EventHandler(this.SaveButton_Click);
+            Button_SaveNonDLC.Name = "Button_SaveNonDLC";
+            Button_SaveNonDLC.ShortcutKeyDisplayString = "";
+            Button_SaveNonDLC.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S;
+            Button_SaveNonDLC.Size = new System.Drawing.Size(180, 22);
+            Button_SaveNonDLC.Text = "$SAVE";
+            Button_SaveNonDLC.Click += SaveButton_Click;
             // 
             // Button_SaveDLC
             // 
-            this.Button_SaveDLC.Name = "Button_SaveDLC";
-            this.Button_SaveDLC.Size = new System.Drawing.Size(133, 22);
-            this.Button_SaveDLC.Text = "$SAVE_DLC";
-            this.Button_SaveDLC.Click += new System.EventHandler(this.SaveButtonDLC_Click);
+            Button_SaveDLC.Name = "Button_SaveDLC";
+            Button_SaveDLC.Size = new System.Drawing.Size(180, 22);
+            Button_SaveDLC.Text = "$SAVE_DLC";
+            Button_SaveDLC.Click += SaveButtonDLC_Click;
             // 
             // ReloadButton
             // 
-            this.ReloadButton.Name = "ReloadButton";
-            this.ReloadButton.Size = new System.Drawing.Size(133, 22);
-            this.ReloadButton.Text = "$RELOAD";
-            this.ReloadButton.Click += new System.EventHandler(this.ReloadButton_Click);
+            ReloadButton.Name = "ReloadButton";
+            ReloadButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R;
+            ReloadButton.Size = new System.Drawing.Size(180, 22);
+            ReloadButton.Text = "$RELOAD";
+            ReloadButton.Click += ReloadButton_Click;
             // 
             // ExitButton
             // 
-            this.ExitButton.Name = "ExitButton";
-            this.ExitButton.Size = new System.Drawing.Size(133, 22);
-            this.ExitButton.Text = "$EXIT";
-            this.ExitButton.Click += new System.EventHandler(this.ExitButton_Click);
+            ExitButton.Name = "ExitButton";
+            ExitButton.Size = new System.Drawing.Size(180, 22);
+            ExitButton.Text = "$EXIT";
+            ExitButton.Click += ExitButton_Click;
             // 
             // toolButton
             // 
-            this.toolButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.AddAreaButton,
-            this.AddDataButton,
-            this.DuplicateDataButton,
-            this.PopulateTranslokatorButton,
-            this.DeleteAreaButton,
-            this.DeleteDataButton});
-            this.toolButton.Image = ((System.Drawing.Image)(resources.GetObject("toolButton.Image")));
-            this.toolButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolButton.Name = "toolButton";
-            this.toolButton.Size = new System.Drawing.Size(61, 22);
-            this.toolButton.Text = "$TOOLS";
+            toolButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            toolButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { AddAreaButton, AddDataButton, DuplicateDataButton, PopulateTranslokatorButton, DeleteAreaButton, DeleteDataButton });
+            toolButton.Image = (System.Drawing.Image)resources.GetObject("toolButton.Image");
+            toolButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            toolButton.Name = "toolButton";
+            toolButton.Size = new System.Drawing.Size(61, 22);
+            toolButton.Text = "$TOOLS";
             // 
             // AddAreaButton
             // 
-            this.AddAreaButton.Name = "AddAreaButton";
-            this.AddAreaButton.Size = new System.Drawing.Size(233, 22);
-            this.AddAreaButton.Text = "$ADD_AREA";
-            this.AddAreaButton.Click += new System.EventHandler(this.AddAreaButton_Click);
+            AddAreaButton.Name = "AddAreaButton";
+            AddAreaButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A;
+            AddAreaButton.Size = new System.Drawing.Size(233, 22);
+            AddAreaButton.Text = "$ADD_AREA";
+            AddAreaButton.Click += AddAreaButton_Click;
             // 
             // AddDataButton
             // 
-            this.AddDataButton.Name = "AddDataButton";
-            this.AddDataButton.Size = new System.Drawing.Size(233, 22);
-            this.AddDataButton.Text = "$ADD_DATA";
-            this.AddDataButton.Click += new System.EventHandler(this.AddDataButton_Click);
+            AddDataButton.Name = "AddDataButton";
+            AddDataButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D;
+            AddDataButton.Size = new System.Drawing.Size(233, 22);
+            AddDataButton.Text = "$ADD_DATA";
+            AddDataButton.Click += AddDataButton_Click;
             // 
             // DuplicateDataButton
             // 
-            this.DuplicateDataButton.Name = "DuplicateDataButton";
-            this.DuplicateDataButton.Size = new System.Drawing.Size(233, 22);
-            this.DuplicateDataButton.Text = "$DUPLICATE_DATA";
-            this.DuplicateDataButton.Click += new System.EventHandler(this.DuplicateData_OnClick);
+            DuplicateDataButton.Name = "DuplicateDataButton";
+            DuplicateDataButton.Size = new System.Drawing.Size(233, 22);
+            DuplicateDataButton.Text = "$DUPLICATE_DATA";
+            DuplicateDataButton.Click += DuplicateData_OnClick;
             // 
             // PopulateTranslokatorButton
             // 
-            this.PopulateTranslokatorButton.Name = "PopulateTranslokatorButton";
-            this.PopulateTranslokatorButton.Size = new System.Drawing.Size(233, 22);
-            this.PopulateTranslokatorButton.Text = "$POPULATE_TRANSLOKATORS";
-            this.PopulateTranslokatorButton.Click += new System.EventHandler(this.PopulateTranslokatorButton_Click);
+            PopulateTranslokatorButton.Name = "PopulateTranslokatorButton";
+            PopulateTranslokatorButton.Size = new System.Drawing.Size(233, 22);
+            PopulateTranslokatorButton.Text = "$POPULATE_TRANSLOKATORS";
+            PopulateTranslokatorButton.Click += PopulateTranslokatorButton_Click;
             // 
             // DeleteAreaButton
             // 
-            this.DeleteAreaButton.Name = "DeleteAreaButton";
-            this.DeleteAreaButton.Size = new System.Drawing.Size(233, 22);
-            this.DeleteAreaButton.Text = "$DELETE_AREA";
-            this.DeleteAreaButton.Click += new System.EventHandler(this.DeleteArea_Click);
+            DeleteAreaButton.Name = "DeleteAreaButton";
+            DeleteAreaButton.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.A;
+            DeleteAreaButton.Size = new System.Drawing.Size(233, 22);
+            DeleteAreaButton.Text = "$DELETE_AREA";
+            DeleteAreaButton.Click += DeleteArea_Click;
             // 
             // DeleteDataButton
             // 
-            this.DeleteDataButton.Name = "DeleteDataButton";
-            this.DeleteDataButton.Size = new System.Drawing.Size(233, 22);
-            this.DeleteDataButton.Text = "$DELETE_DATA";
-            this.DeleteDataButton.Click += new System.EventHandler(this.DeleteData_Click);
+            DeleteDataButton.Name = "DeleteDataButton";
+            DeleteDataButton.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.D;
+            DeleteDataButton.Size = new System.Drawing.Size(233, 22);
+            DeleteDataButton.Text = "$DELETE_DATA";
+            DeleteDataButton.Click += DeleteData_Click;
             // 
             // TreeView_CityShop
             // 
-            this.TreeView_CityShop.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.TreeView_CityShop.Location = new System.Drawing.Point(14, 32);
-            this.TreeView_CityShop.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.TreeView_CityShop.Name = "TreeView_CityShop";
-            this.TreeView_CityShop.Size = new System.Drawing.Size(360, 472);
-            this.TreeView_CityShop.TabIndex = 16;
-            this.TreeView_CityShop.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.OnAfterSelect);
+            TreeView_CityShop.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            TreeView_CityShop.Location = new System.Drawing.Point(14, 32);
+            TreeView_CityShop.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            TreeView_CityShop.Name = "TreeView_CityShop";
+            TreeView_CityShop.Size = new System.Drawing.Size(360, 472);
+            TreeView_CityShop.TabIndex = 16;
+            TreeView_CityShop.AfterSelect += OnAfterSelect;
             // 
             // propertyGrid1
             // 
-            this.propertyGrid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.propertyGrid1.Location = new System.Drawing.Point(4, 3);
-            this.propertyGrid1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.propertyGrid1.Name = "propertyGrid1";
-            this.propertyGrid1.Size = new System.Drawing.Size(522, 439);
-            this.propertyGrid1.TabIndex = 17;
-            this.propertyGrid1.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.OnPropertyChanged);
+            propertyGrid1.Dock = System.Windows.Forms.DockStyle.Fill;
+            propertyGrid1.Location = new System.Drawing.Point(4, 3);
+            propertyGrid1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            propertyGrid1.Name = "propertyGrid1";
+            propertyGrid1.Size = new System.Drawing.Size(522, 439);
+            propertyGrid1.TabIndex = 17;
+            propertyGrid1.PropertyValueChanged += OnPropertyChanged;
             // 
             // TabControl
             // 
-            this.TabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.TabControl.Controls.Add(this.PropertyGridTab);
-            this.TabControl.Controls.Add(this.DataGridTab);
-            this.TabControl.Location = new System.Drawing.Point(382, 32);
-            this.TabControl.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.TabControl.Name = "TabControl";
-            this.TabControl.SelectedIndex = 0;
-            this.TabControl.Size = new System.Drawing.Size(538, 473);
-            this.TabControl.TabIndex = 18;
-            this.TabControl.Selected += new System.Windows.Forms.TabControlEventHandler(this.OnTabSelected);
+            TabControl.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            TabControl.Controls.Add(PropertyGridTab);
+            TabControl.Controls.Add(DataGridTab);
+            TabControl.Location = new System.Drawing.Point(382, 32);
+            TabControl.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            TabControl.Name = "TabControl";
+            TabControl.SelectedIndex = 0;
+            TabControl.Size = new System.Drawing.Size(538, 473);
+            TabControl.TabIndex = 18;
+            TabControl.Selected += OnTabSelected;
             // 
             // PropertyGridTab
             // 
-            this.PropertyGridTab.Controls.Add(this.propertyGrid1);
-            this.PropertyGridTab.Location = new System.Drawing.Point(4, 24);
-            this.PropertyGridTab.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.PropertyGridTab.Name = "PropertyGridTab";
-            this.PropertyGridTab.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.PropertyGridTab.Size = new System.Drawing.Size(530, 445);
-            this.PropertyGridTab.TabIndex = 0;
-            this.PropertyGridTab.Text = "Properties";
-            this.PropertyGridTab.UseVisualStyleBackColor = true;
+            PropertyGridTab.Controls.Add(propertyGrid1);
+            PropertyGridTab.Location = new System.Drawing.Point(4, 24);
+            PropertyGridTab.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            PropertyGridTab.Name = "PropertyGridTab";
+            PropertyGridTab.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            PropertyGridTab.Size = new System.Drawing.Size(530, 445);
+            PropertyGridTab.TabIndex = 0;
+            PropertyGridTab.Text = "Properties";
+            PropertyGridTab.UseVisualStyleBackColor = true;
             // 
             // DataGridTab
             // 
-            this.DataGridTab.Controls.Add(this.dataGridView1);
-            this.DataGridTab.Location = new System.Drawing.Point(4, 24);
-            this.DataGridTab.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.DataGridTab.Name = "DataGridTab";
-            this.DataGridTab.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.DataGridTab.Size = new System.Drawing.Size(530, 445);
-            this.DataGridTab.TabIndex = 1;
-            this.DataGridTab.Text = "Entity Grid";
-            this.DataGridTab.UseVisualStyleBackColor = true;
+            DataGridTab.Controls.Add(dataGridView1);
+            DataGridTab.Location = new System.Drawing.Point(4, 24);
+            DataGridTab.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            DataGridTab.Name = "DataGridTab";
+            DataGridTab.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            DataGridTab.Size = new System.Drawing.Size(530, 445);
+            DataGridTab.TabIndex = 1;
+            DataGridTab.Text = "Entity Grid";
+            DataGridTab.UseVisualStyleBackColor = true;
             // 
             // dataGridView1
             // 
-            this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
-            this.dataGridView1.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridView1.Location = new System.Drawing.Point(4, 3);
-            this.dataGridView1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(522, 439);
-            this.dataGridView1.TabIndex = 0;
+            dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+            dataGridView1.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+            dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            dataGridView1.Location = new System.Drawing.Point(4, 3);
+            dataGridView1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            dataGridView1.Name = "dataGridView1";
+            dataGridView1.Size = new System.Drawing.Size(522, 439);
+            dataGridView1.TabIndex = 0;
+            // 
+            // CItyShopsContext
+            // 
+            CItyShopsContext.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripMenuItem1, ContextCopy, ContextPaste, Button_MoveUp, Button_MoveDown });
+            CItyShopsContext.Name = "SDSContext";
+            CItyShopsContext.Size = new System.Drawing.Size(261, 114);
+            CItyShopsContext.Opening += ContextMenu_OnOpening;
+            // 
+            // toolStripMenuItem1
+            // 
+            toolStripMenuItem1.Name = "toolStripMenuItem1";
+            toolStripMenuItem1.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Delete;
+            toolStripMenuItem1.Size = new System.Drawing.Size(260, 22);
+            toolStripMenuItem1.Text = "$DELETE";
+            // 
+            // ContextCopy
+            // 
+            ContextCopy.Name = "ContextCopy";
+            ContextCopy.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C;
+            ContextCopy.Size = new System.Drawing.Size(260, 22);
+            ContextCopy.Text = "$COPY";
+            // 
+            // ContextPaste
+            // 
+            ContextPaste.Name = "ContextPaste";
+            ContextPaste.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V;
+            ContextPaste.Size = new System.Drawing.Size(260, 22);
+            ContextPaste.Text = "$PASTE";
+            // 
+            // Button_MoveUp
+            // 
+            Button_MoveUp.Name = "Button_MoveUp";
+            Button_MoveUp.ShortcutKeyDisplayString = "CTRL + PageUp";
+            Button_MoveUp.Size = new System.Drawing.Size(260, 22);
+            Button_MoveUp.Text = "$MOVE_UP";
+            Button_MoveUp.Click += Button_MoveUp_Clicked;
+            // 
+            // Button_MoveDown
+            // 
+            Button_MoveDown.Name = "Button_MoveDown";
+            Button_MoveDown.ShortcutKeyDisplayString = "CTRL + PageDown";
+            Button_MoveDown.Size = new System.Drawing.Size(260, 22);
+            Button_MoveDown.Text = "$MOVE_DOWN";
+            Button_MoveDown.Click += Button_MoveDown_Clicked;
             // 
             // CityShopEditor
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(933, 519);
-            this.Controls.Add(this.TreeView_CityShop);
-            this.Controls.Add(this.toolStrip1);
-            this.Controls.Add(this.TabControl);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.Name = "CityShopEditor";
-            this.Text = "$ACTOR_EDITOR_TITLE";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.CityShopEditor_Closing);
-            this.CollisionContext.ResumeLayout(false);
-            this.toolStrip1.ResumeLayout(false);
-            this.toolStrip1.PerformLayout();
-            this.TabControl.ResumeLayout(false);
-            this.PropertyGridTab.ResumeLayout(false);
-            this.DataGridTab.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(933, 519);
+            Controls.Add(TreeView_CityShop);
+            Controls.Add(toolStrip1);
+            Controls.Add(TabControl);
+            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Name = "CityShopEditor";
+            Text = "$ACTOR_EDITOR_TITLE";
+            FormClosing += CityShopEditor_Closing;
+            CollisionContext.ResumeLayout(false);
+            toolStrip1.ResumeLayout(false);
+            toolStrip1.PerformLayout();
+            TabControl.ResumeLayout(false);
+            PropertyGridTab.ResumeLayout(false);
+            DataGridTab.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            CItyShopsContext.ResumeLayout(false);
+            ResumeLayout(false);
+            PerformLayout();
 
         }
 
@@ -319,5 +361,11 @@
         private System.Windows.Forms.ToolStripMenuItem DeleteDataButton;
         private System.Windows.Forms.ToolStripMenuItem Button_SaveDLC;
         private Controls.MTreeView TreeView_CityShop;
+        private System.Windows.Forms.ContextMenuStrip CItyShopsContext;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem ContextCopy;
+        private System.Windows.Forms.ToolStripMenuItem ContextPaste;
+        private System.Windows.Forms.ToolStripMenuItem Button_MoveUp;
+        private System.Windows.Forms.ToolStripMenuItem Button_MoveDown;
     }
 }

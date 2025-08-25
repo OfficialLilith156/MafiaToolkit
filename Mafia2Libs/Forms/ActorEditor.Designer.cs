@@ -132,7 +132,7 @@
             // 
             SaveButton.Name = "SaveButton";
             SaveButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S;
-            SaveButton.Size = new System.Drawing.Size(165, 22);
+            SaveButton.Size = new System.Drawing.Size(180, 22);
             SaveButton.Text = "$SAVE";
             SaveButton.Click += SaveButton_OnClick;
             // 
@@ -140,14 +140,14 @@
             // 
             ReloadButton.Name = "ReloadButton";
             ReloadButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R;
-            ReloadButton.Size = new System.Drawing.Size(165, 22);
+            ReloadButton.Size = new System.Drawing.Size(180, 22);
             ReloadButton.Text = "$RELOAD";
             ReloadButton.Click += ReloadButton_OnClick;
             // 
             // ExitButton
             // 
             ExitButton.Name = "ExitButton";
-            ExitButton.Size = new System.Drawing.Size(165, 22);
+            ExitButton.Size = new System.Drawing.Size(180, 22);
             ExitButton.Text = "$EXIT";
             ExitButton.Click += ExitButton_OnClick;
             // 
@@ -164,14 +164,16 @@
             // AddItemButton
             // 
             AddItemButton.Name = "AddItemButton";
-            AddItemButton.Size = new System.Drawing.Size(171, 22);
+            AddItemButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A;
+            AddItemButton.Size = new System.Drawing.Size(251, 22);
             AddItemButton.Text = "$ADD_ITEM";
             AddItemButton.Click += AddItemButton_Click;
             // 
             // AddDefinitionButton
             // 
             AddDefinitionButton.Name = "AddDefinitionButton";
-            AddDefinitionButton.Size = new System.Drawing.Size(171, 22);
+            AddDefinitionButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.A;
+            AddDefinitionButton.Size = new System.Drawing.Size(251, 22);
             AddDefinitionButton.Text = "$ADD_DEFINITION";
             AddDefinitionButton.Click += AddDefinitionButton_Click;
             // 

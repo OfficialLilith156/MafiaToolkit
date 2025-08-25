@@ -9,7 +9,7 @@ using Utils.VorticeUtils;
 namespace ResourceTypes.Actors
 {
     [TypeConverter(typeof(ExpandableObjectConverter))]
-    public class ActorEntry
+    public class ActorEntry 
     {
         int size; //item size in bytes;
         string actorTypeName; //actor type (string)

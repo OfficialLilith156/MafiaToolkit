@@ -1,8 +1,9 @@
-﻿using System;
+﻿using ResourceTypes.Actors;
+using ResourceTypes.City;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
-using ResourceTypes.City;
 using Utils.Helpers;
 using Utils.Language;
 using Utils.Settings;
@@ -44,6 +45,98 @@ namespace Mafia2Tool
             DuplicateDataButton.Text = Language.GetString("$DUPLICATE_DATA");
             DeleteDataButton.Text = Language.GetString("$DELETE_DATA");
             DeleteAreaButton.Text = Language.GetString("$DELETE_AREA");
+        }
+        private void MoveItemDown()
+        {
+            TreeNode SelectedNode = TreeView_CityShop.SelectedNode;
+            if (SelectedNode == null || SelectedNode.Tag == null)
+            {
+                return;
+            }
+
+            CityShops Item = (SelectedNode.Tag as CityShops);
+            if (Item == null)
+            {
+                // Only works for ActorEntry for now
+                return;
+            }
+
+
+
+            // Can move down, start by swapping entires
+
+
+            // Now move down in TreeView
+            TreeNode ParentNode = SelectedNode.Parent;
+            int NodeIndex = ParentNode.Nodes.IndexOf(SelectedNode);
+            ParentNode.Nodes.RemoveAt(NodeIndex);
+            ParentNode.Nodes.Insert(NodeIndex + 1, SelectedNode);
+            TreeView_CityShop.SelectedNode = SelectedNode;
+
+            // Update UI
+            Text = Language.GetString("$STREAM_EDITOR_TITLE") + "*";
+            bIsFileEdited = true;
+        }
+
+        private void MoveItemUp()
+        {
+            TreeNode SelectedNode = TreeView_CityShop.SelectedNode;
+            if (SelectedNode == null || SelectedNode.Tag == null)
+            {
+                return;
+            }
+
+            ActorEntry Item = (SelectedNode.Tag as ActorEntry);
+            if (Item == null)
+            {
+                // Only works for ActorEntry for now
+                return;
+            }
+
+
+
+
+
+            // Can move up, start by swapping entires
+
+
+            // Now move up in TreeView
+            TreeNode ParentNode = SelectedNode.Parent;
+            int NodeIndex = ParentNode.Nodes.IndexOf(SelectedNode);
+            ParentNode.Nodes.RemoveAt(NodeIndex);
+            ParentNode.Nodes.Insert(NodeIndex - 1, SelectedNode);
+            TreeView_CityShop.SelectedNode = SelectedNode;
+
+            // Update UI
+            Text = Language.GetString("$STREAM_EDITOR_TITLE") + "*";
+            bIsFileEdited = true;
+        }
+        private void Button_MoveUp_Clicked(object sender, EventArgs e) => MoveItemUp();
+        private void Button_MoveDown_Clicked(object sender, EventArgs e) => MoveItemDown();
+        private void ContextMenu_OnOpening(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            ContextCopy.Visible = false;
+            ContextPaste.Visible = false;
+            Button_MoveDown.Visible = false;
+            Button_MoveUp.Visible = false;
+
+            TreeNode SelectedNode = TreeView_CityShop.SelectedNode;
+            if (SelectedNode != null && SelectedNode.Tag != null)
+            {
+                if (SelectedNode.Text.Equals("Data") || SelectedNode.Tag is CityShops)
+                {
+                    ContextCopy.Visible = true;
+                    ContextPaste.Visible = true;
+                }
+
+                // For now, Move Up/Down only active for ActorEntry.
+                CityShops Item = (SelectedNode.Tag as CityShops);
+                if (Item != null)
+                {
+                    Button_MoveDown.Visible = true;
+                    Button_MoveUp.Visible = true;
+                }
+            }
         }
 
         private void BuildData()

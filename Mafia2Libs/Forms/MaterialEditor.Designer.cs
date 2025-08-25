@@ -108,27 +108,29 @@
             // 
             Button_Open.Enabled = false;
             Button_Open.Name = "Button_Open";
-            Button_Open.Size = new System.Drawing.Size(183, 22);
+            Button_Open.Size = new System.Drawing.Size(224, 22);
             Button_Open.Text = "Open";
             // 
             // Button_Reload
             // 
             Button_Reload.Name = "Button_Reload";
-            Button_Reload.Size = new System.Drawing.Size(183, 22);
+            Button_Reload.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R;
+            Button_Reload.Size = new System.Drawing.Size(224, 22);
             Button_Reload.Text = "$RELOAD_MATERIAL";
             Button_Reload.Click += Button_Reload_Click;
             // 
             // Button_Save
             // 
             Button_Save.Name = "Button_Save";
-            Button_Save.Size = new System.Drawing.Size(183, 22);
+            Button_Save.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S;
+            Button_Save.Size = new System.Drawing.Size(224, 22);
             Button_Save.Text = "Save";
             Button_Save.Click += Button_Save_Click;
             // 
             // Button_Exit
             // 
             Button_Exit.Name = "Button_Exit";
-            Button_Exit.Size = new System.Drawing.Size(183, 22);
+            Button_Exit.Size = new System.Drawing.Size(224, 22);
             Button_Exit.Text = "Exit";
             Button_Exit.Click += Button_Exit_Click;
             // 
@@ -145,28 +147,30 @@
             // Button_AddMaterial
             // 
             Button_AddMaterial.Name = "Button_AddMaterial";
-            Button_AddMaterial.Size = new System.Drawing.Size(178, 22);
+            Button_AddMaterial.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A;
+            Button_AddMaterial.Size = new System.Drawing.Size(212, 22);
             Button_AddMaterial.Text = "Add Material";
             Button_AddMaterial.Click += Button_AddMaterial_Click;
             // 
             // Button_Delete
             // 
             Button_Delete.Name = "Button_Delete";
-            Button_Delete.Size = new System.Drawing.Size(178, 22);
+            Button_Delete.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D;
+            Button_Delete.Size = new System.Drawing.Size(212, 22);
             Button_Delete.Text = "$DELETE_SEL_MAT";
             Button_Delete.Click += Button_Delete_Click;
             // 
             // Button_MergeMTL
             // 
             Button_MergeMTL.Name = "Button_MergeMTL";
-            Button_MergeMTL.Size = new System.Drawing.Size(178, 22);
+            Button_MergeMTL.Size = new System.Drawing.Size(212, 22);
             Button_MergeMTL.Text = "$MERGE_MTL";
             Button_MergeMTL.Click += Button_MergeMTL_Click;
             // 
             // Button_ExportSelected
             // 
             Button_ExportSelected.Name = "Button_ExportSelected";
-            Button_ExportSelected.Size = new System.Drawing.Size(178, 22);
+            Button_ExportSelected.Size = new System.Drawing.Size(212, 22);
             Button_ExportSelected.Text = "$EXPORT_SELECTED";
             Button_ExportSelected.Click += Button_ExportedSelected_Click;
             // 

@@ -115,7 +115,7 @@ namespace Mafia2Tool
             PositionXTool.Overflow = System.Windows.Forms.ToolStripItemOverflow.Always;
             PositionXTool.Padding = new System.Windows.Forms.Padding(2, 0, 2, 0);
             PositionXTool.Size = new System.Drawing.Size(84, 28);
-            PositionXTool.Text = "0.00000";
+            PositionXTool.Text = "0,00000";
             PositionXTool.Value = new decimal(new int[] { 0, 0, 0, 0 });
             PositionXTool.ValueChanged += CameraToolsOnValueChanged;
             // 
@@ -132,7 +132,7 @@ namespace Mafia2Tool
             PositionYTool.Overflow = System.Windows.Forms.ToolStripItemOverflow.Always;
             PositionYTool.Padding = new System.Windows.Forms.Padding(2, 0, 2, 0);
             PositionYTool.Size = new System.Drawing.Size(84, 28);
-            PositionYTool.Text = "0.00000";
+            PositionYTool.Text = "0,00000";
             PositionYTool.Value = new decimal(new int[] { 0, 0, 0, 0 });
             PositionYTool.ValueChanged += CameraToolsOnValueChanged;
             // 
@@ -149,7 +149,7 @@ namespace Mafia2Tool
             PositionZTool.Overflow = System.Windows.Forms.ToolStripItemOverflow.Always;
             PositionZTool.Padding = new System.Windows.Forms.Padding(2, 0, 2, 0);
             PositionZTool.Size = new System.Drawing.Size(84, 28);
-            PositionZTool.Text = "0.00000";
+            PositionZTool.Text = "0,00000";
             PositionZTool.Value = new decimal(new int[] { 0, 0, 0, 0 });
             PositionZTool.ValueChanged += CameraToolsOnValueChanged;
             // 
@@ -166,7 +166,7 @@ namespace Mafia2Tool
             CameraSpeedTool.Overflow = System.Windows.Forms.ToolStripItemOverflow.Always;
             CameraSpeedTool.Padding = new System.Windows.Forms.Padding(2, 0, 2, 0);
             CameraSpeedTool.Size = new System.Drawing.Size(84, 28);
-            CameraSpeedTool.Text = "0.00000";
+            CameraSpeedTool.Text = "0,00000";
             CameraSpeedTool.Value = new decimal(new int[] { 0, 0, 0, 0 });
             CameraSpeedTool.ValueChanged += CameraSpeedUpdate;
             // 
@@ -188,7 +188,7 @@ namespace Mafia2Tool
             // 
             Label_StatusBar.Name = "Label_StatusBar";
             Label_StatusBar.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            Label_StatusBar.Size = new System.Drawing.Size(677, 23);
+            Label_StatusBar.Size = new System.Drawing.Size(708, 23);
             Label_StatusBar.Spring = true;
             Label_StatusBar.Text = "Label_StatusBar";
             Label_StatusBar.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -215,14 +215,15 @@ namespace Mafia2Tool
             // SaveButton
             // 
             SaveButton.Name = "SaveButton";
-            SaveButton.Size = new System.Drawing.Size(106, 22);
+            SaveButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S;
+            SaveButton.Size = new System.Drawing.Size(180, 22);
             SaveButton.Text = "$SAVE";
             SaveButton.Click += SaveButton_Click;
             // 
             // ExitButton
             // 
             ExitButton.Name = "ExitButton";
-            ExitButton.Size = new System.Drawing.Size(106, 22);
+            ExitButton.Size = new System.Drawing.Size(180, 22);
             ExitButton.Text = "$EXIT";
             ExitButton.Click += ExitButton_Click;
             // 
@@ -239,28 +240,31 @@ namespace Mafia2Tool
             // AddButton
             // 
             AddButton.Name = "AddButton";
-            AddButton.Size = new System.Drawing.Size(191, 22);
+            AddButton.Size = new System.Drawing.Size(227, 22);
             AddButton.Text = "$ADD";
             AddButton.Click += AddButtonOnClick;
             // 
             // Button_ImportFrame
             // 
             Button_ImportFrame.Name = "Button_ImportFrame";
-            Button_ImportFrame.Size = new System.Drawing.Size(191, 22);
+            Button_ImportFrame.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F;
+            Button_ImportFrame.Size = new System.Drawing.Size(227, 22);
             Button_ImportFrame.Text = "$IMPORT_FRAME";
             Button_ImportFrame.Click += Button_ImportFrame_OnClicked;
             // 
             // Button_ImportBundle
             // 
             Button_ImportBundle.Name = "Button_ImportBundle";
-            Button_ImportBundle.Size = new System.Drawing.Size(191, 22);
+            Button_ImportBundle.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A;
+            Button_ImportBundle.Size = new System.Drawing.Size(227, 22);
             Button_ImportBundle.Text = "$IMPORT_BUNDLE";
             Button_ImportBundle.Click += Button_ImportBundle_OnClick;
             // 
             // AddSceneFolderButton
             // 
             AddSceneFolderButton.Name = "AddSceneFolderButton";
-            AddSceneFolderButton.Size = new System.Drawing.Size(191, 22);
+            AddSceneFolderButton.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.S;
+            AddSceneFolderButton.Size = new System.Drawing.Size(227, 22);
             AddSceneFolderButton.Text = "$ADD_SCENE_FOLDER";
             AddSceneFolderButton.Click += AddSceneFolderButton_Click;
             // 

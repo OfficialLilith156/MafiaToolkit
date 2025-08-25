@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ResourceTypes.Actors;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -6,8 +7,9 @@ using Utils.StringHelpers;
 
 namespace ResourceTypes.City
 {
-    public class CityShops
+    public class CityShops 
     {
+        List<ActorEntry> items;
         private int fileVersion; //vanilla = 8; JA = 9;
         public int numAreas;
         public int bufferSize;

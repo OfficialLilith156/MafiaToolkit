@@ -30,290 +30,278 @@ namespace Mafia2Tool
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(StreamEditor));
-            this.linesTree = new System.Windows.Forms.TreeView();
-            this.LineContextStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.AddLineButton = new System.Windows.Forms.ToolStripMenuItem();
-            this.DeleteLineButton = new System.Windows.Forms.ToolStripMenuItem();
-            this.DuplicateLine = new System.Windows.Forms.ToolStripMenuItem();
-            this.MoveItemUpButton = new System.Windows.Forms.ToolStripMenuItem();
-            this.MoveItemDownButton = new System.Windows.Forms.ToolStripMenuItem();
-            this.ToolStrip = new System.Windows.Forms.ToolStrip();
-            this.fileToolButton = new System.Windows.Forms.ToolStripDropDownButton();
-            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.reloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.Button_Tools = new System.Windows.Forms.ToolStripDropDownButton();
-            this.Button_CreateLineGroup = new System.Windows.Forms.ToolStripMenuItem();
-            this.Button_CreateStreamGroup = new System.Windows.Forms.ToolStripMenuItem();
-            this.PropertyGrid_Stream = new System.Windows.Forms.PropertyGrid();
-            this.tabControl = new System.Windows.Forms.TabControl();
-            this.StreamLinesPage = new System.Windows.Forms.TabPage();
-            this.StreamGroupPage = new System.Windows.Forms.TabPage();
-            this.groupTree = new Mafia2Tool.Controls.MTreeView();
-            this.StreamBlocksPage = new System.Windows.Forms.TabPage();
-            this.blockView = new Mafia2Tool.Controls.MTreeView();
-            this.SearchBox = new System.Windows.Forms.TextBox();
-            this.LineContextStrip.SuspendLayout();
-            this.ToolStrip.SuspendLayout();
-            this.tabControl.SuspendLayout();
-            this.StreamLinesPage.SuspendLayout();
-            this.StreamGroupPage.SuspendLayout();
-            this.StreamBlocksPage.SuspendLayout();
-            this.SuspendLayout();
+            linesTree = new TreeView();
+            LineContextStrip = new ContextMenuStrip(components);
+            AddLineButton = new ToolStripMenuItem();
+            DeleteLineButton = new ToolStripMenuItem();
+            DuplicateLine = new ToolStripMenuItem();
+            MoveItemUpButton = new ToolStripMenuItem();
+            MoveItemDownButton = new ToolStripMenuItem();
+            ToolStrip = new ToolStrip();
+            fileToolButton = new ToolStripDropDownButton();
+            saveToolStripMenuItem = new ToolStripMenuItem();
+            reloadToolStripMenuItem = new ToolStripMenuItem();
+            exitToolStripMenuItem = new ToolStripMenuItem();
+            Button_Tools = new ToolStripDropDownButton();
+            Button_CreateLineGroup = new ToolStripMenuItem();
+            Button_CreateStreamGroup = new ToolStripMenuItem();
+            PropertyGrid_Stream = new PropertyGrid();
+            tabControl = new TabControl();
+            StreamLinesPage = new TabPage();
+            StreamGroupPage = new TabPage();
+            groupTree = new Mafia2Tool.Controls.MTreeView();
+            StreamBlocksPage = new TabPage();
+            blockView = new Mafia2Tool.Controls.MTreeView();
+            SearchBox = new TextBox();
+            LineContextStrip.SuspendLayout();
+            ToolStrip.SuspendLayout();
+            tabControl.SuspendLayout();
+            StreamLinesPage.SuspendLayout();
+            StreamGroupPage.SuspendLayout();
+            StreamBlocksPage.SuspendLayout();
+            SuspendLayout();
             // 
             // linesTree
             // 
-            this.linesTree.ContextMenuStrip = this.LineContextStrip;
-            this.linesTree.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.linesTree.FullRowSelect = true;
-            this.linesTree.HideSelection = false;
-            this.linesTree.Location = new System.Drawing.Point(0, 0);
-            this.linesTree.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.linesTree.Name = "linesTree";
-            this.linesTree.Size = new System.Drawing.Size(279, 412);
-            this.linesTree.TabIndex = 11;
-            this.linesTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.OnNodeSelectSelect);
-            this.linesTree.KeyUp += new System.Windows.Forms.KeyEventHandler(this.OnKeyUp);
+            linesTree.ContextMenuStrip = LineContextStrip;
+            linesTree.Dock = DockStyle.Fill;
+            linesTree.FullRowSelect = true;
+            linesTree.HideSelection = false;
+            linesTree.Location = new System.Drawing.Point(0, 0);
+            linesTree.Margin = new Padding(4, 3, 4, 3);
+            linesTree.Name = "linesTree";
+            linesTree.Size = new System.Drawing.Size(279, 412);
+            linesTree.TabIndex = 11;
+            linesTree.AfterSelect += OnNodeSelectSelect;
+            linesTree.KeyUp += OnKeyUp;
             // 
             // LineContextStrip
             // 
-            this.LineContextStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.AddLineButton,
-            this.DeleteLineButton,
-            this.DuplicateLine,
-            this.MoveItemUpButton,
-            this.MoveItemDownButton});
-            this.LineContextStrip.Name = "AddLineButton";
-            this.LineContextStrip.Size = new System.Drawing.Size(221, 114);
-            this.LineContextStrip.Text = "Context Strip";
-            this.LineContextStrip.Opening += new System.ComponentModel.CancelEventHandler(this.OnContextMenuOpening);
+            LineContextStrip.Items.AddRange(new ToolStripItem[] { AddLineButton, DeleteLineButton, DuplicateLine, MoveItemUpButton, MoveItemDownButton });
+            LineContextStrip.Name = "AddLineButton";
+            LineContextStrip.Size = new System.Drawing.Size(221, 114);
+            LineContextStrip.Text = "Context Strip";
+            LineContextStrip.Opening += OnContextMenuOpening;
             // 
             // AddLineButton
             // 
-            this.AddLineButton.Name = "AddLineButton";
-            this.AddLineButton.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.AddLineButton.Size = new System.Drawing.Size(220, 22);
-            this.AddLineButton.Text = "$ADD_LINE";
-            this.AddLineButton.Click += new System.EventHandler(this.AddLineButtonPressed);
+            AddLineButton.Name = "AddLineButton";
+            AddLineButton.ShortcutKeys = Keys.Control | Keys.N;
+            AddLineButton.Size = new System.Drawing.Size(220, 22);
+            AddLineButton.Text = "$ADD_LINE";
+            AddLineButton.Click += AddLineButtonPressed;
             // 
             // DeleteLineButton
             // 
-            this.DeleteLineButton.Name = "DeleteLineButton";
-            this.DeleteLineButton.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Delete)));
-            this.DeleteLineButton.Size = new System.Drawing.Size(220, 22);
-            this.DeleteLineButton.Text = "$DELETE_LINE";
-            this.DeleteLineButton.Click += new System.EventHandler(this.DeleteLineButtonPressed);
+            DeleteLineButton.Name = "DeleteLineButton";
+            DeleteLineButton.ShortcutKeys = Keys.Control | Keys.Delete;
+            DeleteLineButton.Size = new System.Drawing.Size(220, 22);
+            DeleteLineButton.Text = "$DELETE_LINE";
+            DeleteLineButton.Click += DeleteLineButtonPressed;
             // 
             // DuplicateLine
             // 
-            this.DuplicateLine.Name = "DuplicateLine";
-            this.DuplicateLine.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D)));
-            this.DuplicateLine.Size = new System.Drawing.Size(220, 22);
-            this.DuplicateLine.Text = "$DUPLICATE_LINE";
-            this.DuplicateLine.Click += new System.EventHandler(this.CopyLoadListAbove_Click);
+            DuplicateLine.Name = "DuplicateLine";
+            DuplicateLine.ShortcutKeys = Keys.Control | Keys.D;
+            DuplicateLine.Size = new System.Drawing.Size(220, 22);
+            DuplicateLine.Text = "$DUPLICATE_LINE";
+            DuplicateLine.Click += CopyLoadListAbove_Click;
             // 
             // MoveItemUpButton
             // 
-            this.MoveItemUpButton.Name = "MoveItemUpButton";
-            this.MoveItemUpButton.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Up)));
-            this.MoveItemUpButton.Size = new System.Drawing.Size(220, 22);
-            this.MoveItemUpButton.Text = "$MOVE_UP";
-            this.MoveItemUpButton.Click += new System.EventHandler(this.MoveItemUp_Click);
+            MoveItemUpButton.Name = "MoveItemUpButton";
+            MoveItemUpButton.ShortcutKeys = Keys.Control | Keys.Up;
+            MoveItemUpButton.Size = new System.Drawing.Size(220, 22);
+            MoveItemUpButton.Text = "$MOVE_UP";
+            MoveItemUpButton.Click += MoveItemUp_Click;
             // 
             // MoveItemDownButton
             // 
-            this.MoveItemDownButton.Name = "MoveItemDownButton";
-            this.MoveItemDownButton.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Down)));
-            this.MoveItemDownButton.Size = new System.Drawing.Size(220, 22);
-            this.MoveItemDownButton.Text = "$MOVE_DOWN";
-            this.MoveItemDownButton.Click += new System.EventHandler(this.MoveItemDown_Click);
+            MoveItemDownButton.Name = "MoveItemDownButton";
+            MoveItemDownButton.ShortcutKeys = Keys.Control | Keys.Down;
+            MoveItemDownButton.Size = new System.Drawing.Size(220, 22);
+            MoveItemDownButton.Text = "$MOVE_DOWN";
+            MoveItemDownButton.Click += MoveItemDown_Click;
             // 
             // ToolStrip
             // 
-            this.ToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolButton,
-            this.Button_Tools});
-            this.ToolStrip.Location = new System.Drawing.Point(0, 0);
-            this.ToolStrip.Name = "ToolStrip";
-            this.ToolStrip.Size = new System.Drawing.Size(1090, 25);
-            this.ToolStrip.TabIndex = 15;
-            this.ToolStrip.Text = "toolStrip1";
+            ToolStrip.Items.AddRange(new ToolStripItem[] { fileToolButton, Button_Tools });
+            ToolStrip.Location = new System.Drawing.Point(0, 0);
+            ToolStrip.Name = "ToolStrip";
+            ToolStrip.Size = new System.Drawing.Size(1090, 25);
+            ToolStrip.TabIndex = 15;
+            ToolStrip.Text = "toolStrip1";
             // 
             // fileToolButton
             // 
-            this.fileToolButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.fileToolButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.saveToolStripMenuItem,
-            this.reloadToolStripMenuItem,
-            this.exitToolStripMenuItem});
-            this.fileToolButton.Image = ((System.Drawing.Image)(resources.GetObject("fileToolButton.Image")));
-            this.fileToolButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.fileToolButton.Name = "fileToolButton";
-            this.fileToolButton.Size = new System.Drawing.Size(47, 22);
-            this.fileToolButton.Text = "$FILE";
+            fileToolButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            fileToolButton.DropDownItems.AddRange(new ToolStripItem[] { saveToolStripMenuItem, reloadToolStripMenuItem, exitToolStripMenuItem });
+            fileToolButton.Image = (System.Drawing.Image)resources.GetObject("fileToolButton.Image");
+            fileToolButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            fileToolButton.Name = "fileToolButton";
+            fileToolButton.Size = new System.Drawing.Size(47, 22);
+            fileToolButton.Text = "$FILE";
             // 
             // saveToolStripMenuItem
             // 
-            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
-            this.saveToolStripMenuItem.Text = "$SAVE";
-            this.saveToolStripMenuItem.Click += new System.EventHandler(this.SaveButtonPressed);
+            saveToolStripMenuItem.Name = "saveToolStripMenuItem";
+            saveToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.S;
+            saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            saveToolStripMenuItem.Text = "$SAVE";
+            saveToolStripMenuItem.Click += SaveButtonPressed;
             // 
             // reloadToolStripMenuItem
             // 
-            this.reloadToolStripMenuItem.Name = "reloadToolStripMenuItem";
-            this.reloadToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
-            this.reloadToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
-            this.reloadToolStripMenuItem.Text = "$RELOAD";
-            this.reloadToolStripMenuItem.Click += new System.EventHandler(this.ReloadButtonPressed);
+            reloadToolStripMenuItem.Name = "reloadToolStripMenuItem";
+            reloadToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.R;
+            reloadToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            reloadToolStripMenuItem.Text = "$RELOAD";
+            reloadToolStripMenuItem.Click += ReloadButtonPressed;
             // 
             // exitToolStripMenuItem
             // 
-            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
-            this.exitToolStripMenuItem.Text = "$EXIT";
-            this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitButtonPressed);
+            exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+            exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            exitToolStripMenuItem.Text = "$EXIT";
+            exitToolStripMenuItem.Click += ExitButtonPressed;
             // 
             // Button_Tools
             // 
-            this.Button_Tools.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.Button_Tools.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.Button_CreateLineGroup, this.Button_CreateStreamGroup});
-            this.Button_Tools.Image = ((System.Drawing.Image)(resources.GetObject("Button_Tools.Image")));
-            this.Button_Tools.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.Button_Tools.Name = "Button_Tools";
-            this.Button_Tools.Size = new System.Drawing.Size(61, 22);
-            this.Button_Tools.Text = "$TOOLS";
+            Button_Tools.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            Button_Tools.DropDownItems.AddRange(new ToolStripItem[] { Button_CreateLineGroup, Button_CreateStreamGroup });
+            Button_Tools.Image = (System.Drawing.Image)resources.GetObject("Button_Tools.Image");
+            Button_Tools.ImageTransparentColor = System.Drawing.Color.Magenta;
+            Button_Tools.Name = "Button_Tools";
+            Button_Tools.Size = new System.Drawing.Size(61, 22);
+            Button_Tools.Text = "$TOOLS";
             // 
             // Button_CreateLineGroup
             // 
-            this.Button_CreateLineGroup.Name = "Button_CreateLineGroup";
-            this.Button_CreateLineGroup.Size = new System.Drawing.Size(193, 22);
-            this.Button_CreateLineGroup.Text = "$CREATE_LINE_GROUP";
-            this.Button_CreateLineGroup.Click += new System.EventHandler(this.Button_CreateLineGroup_Click);
+            Button_CreateLineGroup.Name = "Button_CreateLineGroup";
+            Button_CreateLineGroup.ShortcutKeys = Keys.Control | Keys.A;
+            Button_CreateLineGroup.Size = new System.Drawing.Size(293, 22);
+            Button_CreateLineGroup.Text = "$CREATE_LINE_GROUP";
+            Button_CreateLineGroup.Click += Button_CreateLineGroup_Click;
             // 
-            // Button_CreateLineGroup
+            // Button_CreateStreamGroup
             // 
-            this.Button_CreateStreamGroup.Name = "Button_CreateStreamGroup";
-            this.Button_CreateStreamGroup.Size = new System.Drawing.Size(193, 22);
-            this.Button_CreateStreamGroup.Text = "$CREATE_STREAM_GROUP";
-            this.Button_CreateStreamGroup.Click += new System.EventHandler(this.Button_CreateStreamGroup_Click);
+            Button_CreateStreamGroup.Name = "Button_CreateStreamGroup";
+            Button_CreateStreamGroup.ShortcutKeys = Keys.Control | Keys.Shift | Keys.A;
+            Button_CreateStreamGroup.Size = new System.Drawing.Size(293, 22);
+            Button_CreateStreamGroup.Text = "$CREATE_STREAM_GROUP";
+            Button_CreateStreamGroup.Click += Button_CreateStreamGroup_Click;
             // 
             // PropertyGrid_Stream
             // 
-            this.PropertyGrid_Stream.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.PropertyGrid_Stream.Location = new System.Drawing.Point(303, 32);
-            this.PropertyGrid_Stream.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.PropertyGrid_Stream.Name = "PropertyGrid_Stream";
-            this.PropertyGrid_Stream.PropertySort = System.Windows.Forms.PropertySort.Categorized;
-            this.PropertyGrid_Stream.Size = new System.Drawing.Size(772, 473);
-            this.PropertyGrid_Stream.TabIndex = 10;
-            this.PropertyGrid_Stream.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.PropertyGrid_PropertyValueChanged);
+            PropertyGrid_Stream.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            PropertyGrid_Stream.Location = new System.Drawing.Point(303, 32);
+            PropertyGrid_Stream.Margin = new Padding(4, 3, 4, 3);
+            PropertyGrid_Stream.Name = "PropertyGrid_Stream";
+            PropertyGrid_Stream.PropertySort = PropertySort.Categorized;
+            PropertyGrid_Stream.Size = new System.Drawing.Size(772, 473);
+            PropertyGrid_Stream.TabIndex = 10;
+            PropertyGrid_Stream.PropertyValueChanged += PropertyGrid_PropertyValueChanged;
             // 
             // tabControl
             // 
-            this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.tabControl.Controls.Add(this.StreamLinesPage);
-            this.tabControl.Controls.Add(this.StreamGroupPage);
-            this.tabControl.Controls.Add(this.StreamBlocksPage);
-            this.tabControl.Location = new System.Drawing.Point(14, 66);
-            this.tabControl.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tabControl.Name = "tabControl";
-            this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(287, 440);
-            this.tabControl.TabIndex = 16;
+            tabControl.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            tabControl.Controls.Add(StreamLinesPage);
+            tabControl.Controls.Add(StreamGroupPage);
+            tabControl.Controls.Add(StreamBlocksPage);
+            tabControl.Location = new System.Drawing.Point(14, 66);
+            tabControl.Margin = new Padding(4, 3, 4, 3);
+            tabControl.Name = "tabControl";
+            tabControl.SelectedIndex = 0;
+            tabControl.Size = new System.Drawing.Size(287, 440);
+            tabControl.TabIndex = 16;
             // 
             // StreamLinesPage
             // 
-            this.StreamLinesPage.Controls.Add(this.linesTree);
-            this.StreamLinesPage.Location = new System.Drawing.Point(4, 24);
-            this.StreamLinesPage.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.StreamLinesPage.Name = "StreamLinesPage";
-            this.StreamLinesPage.Size = new System.Drawing.Size(279, 412);
-            this.StreamLinesPage.TabIndex = 0;
-            this.StreamLinesPage.Text = "Stream Lines";
-            this.StreamLinesPage.UseVisualStyleBackColor = true;
+            StreamLinesPage.Controls.Add(linesTree);
+            StreamLinesPage.Location = new System.Drawing.Point(4, 24);
+            StreamLinesPage.Margin = new Padding(4, 3, 4, 3);
+            StreamLinesPage.Name = "StreamLinesPage";
+            StreamLinesPage.Size = new System.Drawing.Size(279, 412);
+            StreamLinesPage.TabIndex = 0;
+            StreamLinesPage.Text = "Stream Lines";
+            StreamLinesPage.UseVisualStyleBackColor = true;
             // 
             // StreamGroupPage
             // 
-            this.StreamGroupPage.Controls.Add(this.groupTree);
-            this.StreamGroupPage.Location = new System.Drawing.Point(4, 24);
-            this.StreamGroupPage.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.StreamGroupPage.Name = "StreamGroupPage";
-            this.StreamGroupPage.Size = new System.Drawing.Size(279, 412);
-            this.StreamGroupPage.TabIndex = 1;
-            this.StreamGroupPage.Text = "Stream Groups";
-            this.StreamGroupPage.UseVisualStyleBackColor = true;
+            StreamGroupPage.Controls.Add(groupTree);
+            StreamGroupPage.Location = new System.Drawing.Point(4, 24);
+            StreamGroupPage.Margin = new Padding(4, 3, 4, 3);
+            StreamGroupPage.Name = "StreamGroupPage";
+            StreamGroupPage.Size = new System.Drawing.Size(279, 412);
+            StreamGroupPage.TabIndex = 1;
+            StreamGroupPage.Text = "Stream Groups";
+            StreamGroupPage.UseVisualStyleBackColor = true;
             // 
             // groupTree
             // 
-            this.groupTree.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupTree.Location = new System.Drawing.Point(0, 0);
-            this.groupTree.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.groupTree.Name = "groupTree";
-            this.groupTree.Size = new System.Drawing.Size(279, 412);
-            this.groupTree.TabIndex = 13;
-            this.groupTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.OnNodeSelectSelect);
+            groupTree.Dock = DockStyle.Fill;
+            groupTree.Location = new System.Drawing.Point(0, 0);
+            groupTree.Margin = new Padding(4, 3, 4, 3);
+            groupTree.Name = "groupTree";
+            groupTree.Size = new System.Drawing.Size(279, 412);
+            groupTree.TabIndex = 13;
+            groupTree.AfterSelect += OnNodeSelectSelect;
             // 
             // StreamBlocksPage
             // 
-            this.StreamBlocksPage.Controls.Add(this.blockView);
-            this.StreamBlocksPage.Location = new System.Drawing.Point(4, 24);
-            this.StreamBlocksPage.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.StreamBlocksPage.Name = "StreamBlocksPage";
-            this.StreamBlocksPage.Size = new System.Drawing.Size(279, 412);
-            this.StreamBlocksPage.TabIndex = 2;
-            this.StreamBlocksPage.Text = "Stream Blocks";
-            this.StreamBlocksPage.UseVisualStyleBackColor = true;
+            StreamBlocksPage.Controls.Add(blockView);
+            StreamBlocksPage.Location = new System.Drawing.Point(4, 24);
+            StreamBlocksPage.Margin = new Padding(4, 3, 4, 3);
+            StreamBlocksPage.Name = "StreamBlocksPage";
+            StreamBlocksPage.Size = new System.Drawing.Size(279, 412);
+            StreamBlocksPage.TabIndex = 2;
+            StreamBlocksPage.Text = "Stream Blocks";
+            StreamBlocksPage.UseVisualStyleBackColor = true;
             // 
             // blockView
             // 
-            this.blockView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.blockView.Location = new System.Drawing.Point(0, 0);
-            this.blockView.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.blockView.Name = "blockView";
-            this.blockView.Size = new System.Drawing.Size(279, 412);
-            this.blockView.TabIndex = 14;
-            this.blockView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.OnNodeSelectSelect);
+            blockView.Dock = DockStyle.Fill;
+            blockView.Location = new System.Drawing.Point(0, 0);
+            blockView.Margin = new Padding(4, 3, 4, 3);
+            blockView.Name = "blockView";
+            blockView.Size = new System.Drawing.Size(279, 412);
+            blockView.TabIndex = 14;
+            blockView.AfterSelect += OnNodeSelectSelect;
             // 
             // SearchBox
             // 
-            this.SearchBox.Location = new System.Drawing.Point(14, 36);
-            this.SearchBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.SearchBox.Name = "SearchBox";
-            this.SearchBox.Size = new System.Drawing.Size(282, 23);
-            this.SearchBox.TabIndex = 28;
-            this.SearchBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OnKeyPressed);
+            SearchBox.Location = new System.Drawing.Point(14, 36);
+            SearchBox.Margin = new Padding(4, 3, 4, 3);
+            SearchBox.Name = "SearchBox";
+            SearchBox.Size = new System.Drawing.Size(282, 23);
+            SearchBox.TabIndex = 28;
+            SearchBox.KeyPress += OnKeyPressed;
             // 
             // StreamEditor
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1090, 519);
-            this.Controls.Add(this.SearchBox);
-            this.Controls.Add(this.ToolStrip);
-            this.Controls.Add(this.PropertyGrid_Stream);
-            this.Controls.Add(this.tabControl);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.Name = "StreamEditor";
-            this.Text = "$STREAM_MAP_EDITOR_TITLE";
-            this.LineContextStrip.ResumeLayout(false);
-            this.ToolStrip.ResumeLayout(false);
-            this.ToolStrip.PerformLayout();
-            this.tabControl.ResumeLayout(false);
-            this.StreamLinesPage.ResumeLayout(false);
-            this.StreamGroupPage.ResumeLayout(false);
-            this.StreamBlocksPage.ResumeLayout(false);
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.StreamEditor_Closing);
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(1090, 519);
+            Controls.Add(SearchBox);
+            Controls.Add(ToolStrip);
+            Controls.Add(PropertyGrid_Stream);
+            Controls.Add(tabControl);
+            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
+            Margin = new Padding(4, 3, 4, 3);
+            Name = "StreamEditor";
+            Text = "$STREAM_MAP_EDITOR_TITLE";
+            FormClosing += StreamEditor_Closing;
+            LineContextStrip.ResumeLayout(false);
+            ToolStrip.ResumeLayout(false);
+            ToolStrip.PerformLayout();
+            tabControl.ResumeLayout(false);
+            StreamLinesPage.ResumeLayout(false);
+            StreamGroupPage.ResumeLayout(false);
+            StreamBlocksPage.ResumeLayout(false);
+            ResumeLayout(false);
+            PerformLayout();
 
         }
 

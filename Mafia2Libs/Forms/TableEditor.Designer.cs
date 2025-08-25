@@ -74,7 +74,7 @@
             SaveButton.Name = "SaveButton";
             SaveButton.ShortcutKeyDisplayString = "";
             SaveButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S;
-            SaveButton.Size = new System.Drawing.Size(165, 22);
+            SaveButton.Size = new System.Drawing.Size(180, 22);
             SaveButton.Text = "$SAVE";
             SaveButton.Click += SaveOnClick;
             // 
@@ -82,14 +82,14 @@
             // 
             ReloadButton.Name = "ReloadButton";
             ReloadButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R;
-            ReloadButton.Size = new System.Drawing.Size(165, 22);
+            ReloadButton.Size = new System.Drawing.Size(180, 22);
             ReloadButton.Text = "$RELOAD";
             ReloadButton.Click += ReloadOnClick;
             // 
             // ExitButton
             // 
             ExitButton.Name = "ExitButton";
-            ExitButton.Size = new System.Drawing.Size(165, 22);
+            ExitButton.Size = new System.Drawing.Size(180, 22);
             ExitButton.Text = "$EXIT";
             ExitButton.Click += ExitButtonOnClick;
             // 
@@ -106,7 +106,8 @@
             // AddRowButton
             // 
             AddRowButton.Name = "AddRowButton";
-            AddRowButton.Size = new System.Drawing.Size(201, 22);
+            AddRowButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A;
+            AddRowButton.Size = new System.Drawing.Size(222, 22);
             AddRowButton.Text = "$ADD_ROW";
             AddRowButton.Click += AddRowOnClick;
             // 
@@ -114,7 +115,7 @@
             // 
             DeleteRowButton.Name = "DeleteRowButton";
             DeleteRowButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Delete;
-            DeleteRowButton.Size = new System.Drawing.Size(201, 22);
+            DeleteRowButton.Size = new System.Drawing.Size(222, 22);
             DeleteRowButton.Text = "$DELETE_ROW";
             DeleteRowButton.Click += DeleteRowOnClick;
             // 

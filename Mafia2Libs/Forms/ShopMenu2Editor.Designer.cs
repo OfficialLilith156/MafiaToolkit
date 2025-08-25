@@ -142,7 +142,7 @@
             // 
             Button_Save.Name = "Button_Save";
             Button_Save.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S;
-            Button_Save.Size = new System.Drawing.Size(165, 22);
+            Button_Save.Size = new System.Drawing.Size(180, 22);
             Button_Save.Text = "$SAVE";
             Button_Save.Click += Button_Save_OnClick;
             // 
@@ -150,14 +150,14 @@
             // 
             Button_Reload.Name = "Button_Reload";
             Button_Reload.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R;
-            Button_Reload.Size = new System.Drawing.Size(165, 22);
+            Button_Reload.Size = new System.Drawing.Size(180, 22);
             Button_Reload.Text = "$RELOAD";
             Button_Reload.Click += Button_Reload_OnClick;
             // 
             // Button_Exit
             // 
             Button_Exit.Name = "Button_Exit";
-            Button_Exit.Size = new System.Drawing.Size(165, 22);
+            Button_Exit.Size = new System.Drawing.Size(180, 22);
             Button_Exit.Text = "$EXIT";
             Button_Exit.Click += Button_Exit_OnClick;
             // 
@@ -175,14 +175,16 @@
             // Button_AddType
             // 
             Button_AddType.Name = "Button_AddType";
-            Button_AddType.Size = new System.Drawing.Size(190, 22);
+            Button_AddType.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.A;
+            Button_AddType.Size = new System.Drawing.Size(246, 22);
             Button_AddType.Text = "$ADD_SHOPTYPE";
             Button_AddType.Click += Button_AddType_OnClick;
             // 
             // Button_AddMetaInfo
             // 
             Button_AddMetaInfo.Name = "Button_AddMetaInfo";
-            Button_AddMetaInfo.Size = new System.Drawing.Size(190, 22);
+            Button_AddMetaInfo.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.D;
+            Button_AddMetaInfo.Size = new System.Drawing.Size(246, 22);
             Button_AddMetaInfo.Text = "$ADD_METAINFO";
             Button_AddMetaInfo.Click += Button_AddMetaInfo_OnClick;
             // 
@@ -190,21 +192,23 @@
             // 
             Button_Delete.Name = "Button_Delete";
             Button_Delete.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Delete;
-            Button_Delete.Size = new System.Drawing.Size(190, 22);
+            Button_Delete.Size = new System.Drawing.Size(246, 22);
             Button_Delete.Text = "$DELETE";
             Button_Delete.Click += Button_Delete_OnClick;
             // 
             // Button_ExportXml
             // 
             Button_ExportXml.Name = "Button_ExportXml";
-            Button_ExportXml.Size = new System.Drawing.Size(190, 22);
+            Button_ExportXml.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.A;
+            Button_ExportXml.Size = new System.Drawing.Size(246, 22);
             Button_ExportXml.Text = "$EXPORT_XML";
             Button_ExportXml.Click += Button_ExportXml_OnClick;
             // 
             // Button_ImportXml
             // 
             Button_ImportXml.Name = "Button_ImportXml";
-            Button_ImportXml.Size = new System.Drawing.Size(190, 22);
+            Button_ImportXml.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.A;
+            Button_ImportXml.Size = new System.Drawing.Size(246, 22);
             Button_ImportXml.Text = "$IMPORT_XML";
             Button_ImportXml.Click += Button_ImportXml_OnClick;
             // 
