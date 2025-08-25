@@ -272,7 +272,6 @@
             CItyShopsContext.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripMenuItem1, ContextCopy, ContextPaste, Button_MoveUp, Button_MoveDown });
             CItyShopsContext.Name = "SDSContext";
             CItyShopsContext.Size = new System.Drawing.Size(261, 114);
-            CItyShopsContext.Opening += ContextMenu_OnOpening;
             // 
             // toolStripMenuItem1
             // 
@@ -301,7 +300,6 @@
             Button_MoveUp.ShortcutKeyDisplayString = "CTRL + PageUp";
             Button_MoveUp.Size = new System.Drawing.Size(260, 22);
             Button_MoveUp.Text = "$MOVE_UP";
-            Button_MoveUp.Click += Button_MoveUp_Clicked;
             // 
             // Button_MoveDown
             // 
@@ -309,7 +307,6 @@
             Button_MoveDown.ShortcutKeyDisplayString = "CTRL + PageDown";
             Button_MoveDown.Size = new System.Drawing.Size(260, 22);
             Button_MoveDown.Text = "$MOVE_DOWN";
-            Button_MoveDown.Click += Button_MoveDown_Clicked;
             // 
             // CityShopEditor
             // 

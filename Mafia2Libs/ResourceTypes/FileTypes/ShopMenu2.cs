@@ -35,7 +35,7 @@ namespace ResourceTypes.City
 
                 if (!string.IsNullOrEmpty(stringValue))
                 {
-                    float[] values = ConverterUtils.ConvertStringToFloats(stringValue, 3);
+                    float[] values = ConverterUtils.ConvertStringToFloats(stringValue, 4);
                     result = new SHPMQuaternion(values);
                 }
 
