@@ -258,7 +258,7 @@ namespace Mafia2Tool
 
                 if (SaveChanges == System.Windows.MessageBoxResult.Yes)
                 {
-                    Save();
+                    Save(); 
                 }
                 else if (SaveChanges == System.Windows.MessageBoxResult.Cancel)
                 {

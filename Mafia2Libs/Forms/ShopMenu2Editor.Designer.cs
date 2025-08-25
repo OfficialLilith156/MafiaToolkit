@@ -237,7 +237,7 @@
             ToolStrip_Main.ResumeLayout(false);
             ToolStrip_Main.PerformLayout();
             ResumeLayout(false);
-            PerformLayout();
+            PerformLayout(); 
         }
 
         #endregion
