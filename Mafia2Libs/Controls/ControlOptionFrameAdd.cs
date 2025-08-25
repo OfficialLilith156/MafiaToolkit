@@ -30,7 +30,7 @@ namespace Forms.EditorControls
             switch (SelectedIndex)
             {
                 case 0:
-                    SelectedType = FrameResourceObjectType.SingleMesh;
+                    //SelectedType = FrameResourceObjectType.SingleMesh;
                     break;
                 case 1:
                     SelectedType = FrameResourceObjectType.Frame;
