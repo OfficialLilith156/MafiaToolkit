@@ -1093,8 +1093,6 @@ namespace ResourceTypes.Actors
             frameLinks = new HashName[0];
             sceneLinks = new HashName[0];
             frameIdxLinks = new int[0];
-           
-
             names = new HashName[4];
             for (int i = 0; i < 4; i++)
             {
@@ -1187,6 +1185,8 @@ namespace ResourceTypes.Actors
 
                 nameLight = new HashName(stream, isBigEndian);
 
+                unk_int2 = stream.ReadInt32(isBigEndian);
+
 
                 //-------------------------------
                 //NEW SYSTEM DATA
@@ -1199,7 +1199,7 @@ namespace ResourceTypes.Actors
                 //-------------------------------
 
 
-                unk_int2 = stream.ReadInt32(isBigEndian);
+                
 
 
                 for (int i = 0; i < 4; i++)
