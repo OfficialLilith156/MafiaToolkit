@@ -995,13 +995,14 @@ namespace ResourceTypes.Actors
             public float UNK17 { get; set; }
             public float UNK18 { get; set; }
             public float UNK19 { get; set; }
+            public float UNK20 { get; set; }
 
 
 
 
             public float[] ToArray()
             {
-                return new float[] { UNK01, UNK02, UNK03, UNK04, UNK05, UNK06, UNK07, UNK08, UNK09, UNK10, UNK11, UNK12, UNK13, UNK14, UNK15, UNK16, UNK17, UNK18, UNK19 };
+                return new float[] { UNK01, UNK02, UNK03, UNK04, UNK05, UNK06, UNK07, UNK08, UNK09, UNK10, UNK11, UNK12, UNK13, UNK14, UNK15, UNK16, UNK17, UNK18, UNK19, UNK20 };
             }
 
             public void FromArray(float[] arr5)
@@ -1012,22 +1013,22 @@ namespace ResourceTypes.Actors
                 UNK02 = arr5[1];
                 UNK03 = arr5[2];
                 UNK04 = arr5[3];
-                UNK04 = arr5[4];
-                UNK05 = arr5[5];
-                UNK06 = arr5[6];
-                UNK07 = arr5[7];
-                UNK08 = arr5[8];
-                UNK09 = arr5[9];
-                UNK10 = arr5[10];
-                UNK11 = arr5[11];
-                UNK12 = arr5[12];
-                UNK13 = arr5[13];
-                UNK14 = arr5[14];
-                UNK15 = arr5[15];
-                UNK16 = arr5[16];
-                UNK17 = arr5[17];
-                UNK18 = arr5[18];
-                UNK19 = arr5[19];
+                UNK05 = arr5[4];
+                UNK06 = arr5[5];
+                UNK07 = arr5[6];
+                UNK08 = arr5[7];
+                UNK09 = arr5[8];
+                UNK10 = arr5[9];
+                UNK11 = arr5[10];
+                UNK12 = arr5[11];
+                UNK13 = arr5[12];
+                UNK14 = arr5[13];
+                UNK15 = arr5[14];
+                UNK16 = arr5[15];
+                UNK17 = arr5[16];
+                UNK18 = arr5[17];
+                UNK19 = arr5[18];
+                UNK20 = arr5[19];
             }
         }
 
