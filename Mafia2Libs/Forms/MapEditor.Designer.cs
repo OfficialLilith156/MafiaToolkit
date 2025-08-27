@@ -255,7 +255,7 @@ namespace Mafia2Tool
             // Button_ImportBundle
             // 
             Button_ImportBundle.Name = "Button_ImportBundle";
-            Button_ImportBundle.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A;
+            Button_ImportBundle.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.B;
             Button_ImportBundle.Size = new System.Drawing.Size(227, 22);
             Button_ImportBundle.Text = "$IMPORT_BUNDLE";
             Button_ImportBundle.Click += Button_ImportBundle_OnClick;
@@ -281,14 +281,14 @@ namespace Mafia2Tool
             // ViewTopButton
             // 
             ViewTopButton.Name = "ViewTopButton";
-            ViewTopButton.Size = new System.Drawing.Size(126, 22);
+            ViewTopButton.Size = new System.Drawing.Size(180, 22);
             ViewTopButton.Text = "$TOP";
             ViewTopButton.Click += OnViewTopButtonClicked;
             // 
             // ViewFrontButton
             // 
             ViewFrontButton.Name = "ViewFrontButton";
-            ViewFrontButton.Size = new System.Drawing.Size(126, 22);
+            ViewFrontButton.Size = new System.Drawing.Size(180, 22);
             ViewFrontButton.Text = "$FRONT";
             ViewFrontButton.Click += OnViewFrontButtonClicked;
             // 
@@ -296,7 +296,7 @@ namespace Mafia2Tool
             // 
             ViewSideButton.Enabled = false;
             ViewSideButton.Name = "ViewSideButton";
-            ViewSideButton.Size = new System.Drawing.Size(126, 22);
+            ViewSideButton.Size = new System.Drawing.Size(180, 22);
             ViewSideButton.Text = "$SIDE";
             ViewSideButton.Visible = false;
             ViewSideButton.Click += OnViewSideButtonClicked;
@@ -305,7 +305,7 @@ namespace Mafia2Tool
             // 
             ViewBottomButton.Enabled = false;
             ViewBottomButton.Name = "ViewBottomButton";
-            ViewBottomButton.Size = new System.Drawing.Size(126, 22);
+            ViewBottomButton.Size = new System.Drawing.Size(180, 22);
             ViewBottomButton.Text = "$BOTTOM";
             ViewBottomButton.Visible = false;
             ViewBottomButton.Click += OnViewBottomButtonClicked;
@@ -314,7 +314,7 @@ namespace Mafia2Tool
             // 
             ViewSide2Button.Enabled = false;
             ViewSide2Button.Name = "ViewSide2Button";
-            ViewSide2Button.Size = new System.Drawing.Size(126, 22);
+            ViewSide2Button.Size = new System.Drawing.Size(180, 22);
             ViewSide2Button.Text = "$SIDE 2";
             ViewSide2Button.Visible = false;
             ViewSide2Button.Click += OnViewSide2ButtonClicked;

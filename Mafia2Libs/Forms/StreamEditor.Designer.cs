@@ -148,7 +148,7 @@ namespace Mafia2Tool
             // 
             saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             saveToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.S;
-            saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            saveToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             saveToolStripMenuItem.Text = "$SAVE";
             saveToolStripMenuItem.Click += SaveButtonPressed;
             // 
@@ -156,14 +156,14 @@ namespace Mafia2Tool
             // 
             reloadToolStripMenuItem.Name = "reloadToolStripMenuItem";
             reloadToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.R;
-            reloadToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            reloadToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             reloadToolStripMenuItem.Text = "$RELOAD";
             reloadToolStripMenuItem.Click += ReloadButtonPressed;
             // 
             // exitToolStripMenuItem
             // 
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            exitToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             exitToolStripMenuItem.Text = "$EXIT";
             exitToolStripMenuItem.Click += ExitButtonPressed;
             // 
@@ -180,7 +180,7 @@ namespace Mafia2Tool
             // Button_CreateLineGroup
             // 
             Button_CreateLineGroup.Name = "Button_CreateLineGroup";
-            Button_CreateLineGroup.ShortcutKeys = Keys.Control | Keys.A;
+            Button_CreateLineGroup.ShortcutKeys = Keys.Alt | Keys.A;
             Button_CreateLineGroup.Size = new System.Drawing.Size(293, 22);
             Button_CreateLineGroup.Text = "$CREATE_LINE_GROUP";
             Button_CreateLineGroup.Click += Button_CreateLineGroup_Click;
@@ -188,8 +188,8 @@ namespace Mafia2Tool
             // Button_CreateStreamGroup
             // 
             Button_CreateStreamGroup.Name = "Button_CreateStreamGroup";
-            Button_CreateStreamGroup.ShortcutKeys = Keys.Control | Keys.Shift | Keys.A;
-            Button_CreateStreamGroup.Size = new System.Drawing.Size(293, 22);
+            Button_CreateStreamGroup.ShortcutKeys = Keys.Alt | Keys.Shift | Keys.A;
+            Button_CreateStreamGroup.Size = new System.Drawing.Size(289, 22);
             Button_CreateStreamGroup.Text = "$CREATE_STREAM_GROUP";
             Button_CreateStreamGroup.Click += Button_CreateStreamGroup_Click;
             // 

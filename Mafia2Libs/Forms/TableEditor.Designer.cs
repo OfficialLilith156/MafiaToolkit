@@ -106,7 +106,7 @@
             // AddRowButton
             // 
             AddRowButton.Name = "AddRowButton";
-            AddRowButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A;
+            AddRowButton.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.A;
             AddRowButton.Size = new System.Drawing.Size(222, 22);
             AddRowButton.Text = "$ADD_ROW";
             AddRowButton.Click += AddRowOnClick;

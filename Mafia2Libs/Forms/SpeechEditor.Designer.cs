@@ -126,16 +126,16 @@
             // Button_SaveToXML
             // 
             Button_SaveToXML.Name = "Button_SaveToXML";
-            Button_SaveToXML.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.A;
-            Button_SaveToXML.Size = new System.Drawing.Size(230, 22);
+            Button_SaveToXML.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.A;
+            Button_SaveToXML.Size = new System.Drawing.Size(226, 22);
             Button_SaveToXML.Text = "$EXPORT_XML";
             Button_SaveToXML.Click += OnSaveToXMLClicked;
             // 
             // Button_LoadFromXML
             // 
             Button_LoadFromXML.Name = "Button_LoadFromXML";
-            Button_LoadFromXML.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A;
-            Button_LoadFromXML.Size = new System.Drawing.Size(230, 22);
+            Button_LoadFromXML.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.A;
+            Button_LoadFromXML.Size = new System.Drawing.Size(226, 22);
             Button_LoadFromXML.Text = "$IMPORT_XML";
             Button_LoadFromXML.Click += OnLoadFromXMLClicked;
             // 

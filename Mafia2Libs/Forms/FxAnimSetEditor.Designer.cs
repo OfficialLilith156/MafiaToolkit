@@ -87,7 +87,7 @@
             // 
             Button_Save.Name = "Button_Save";
             Button_Save.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S;
-            Button_Save.Size = new System.Drawing.Size(180, 22);
+            Button_Save.Size = new System.Drawing.Size(165, 22);
             Button_Save.Text = "$SAVE";
             Button_Save.Click += Button_Save_Click;
             // 
@@ -95,14 +95,14 @@
             // 
             Button_Reload.Name = "Button_Reload";
             Button_Reload.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R;
-            Button_Reload.Size = new System.Drawing.Size(180, 22);
+            Button_Reload.Size = new System.Drawing.Size(165, 22);
             Button_Reload.Text = "$RELOAD";
             Button_Reload.Click += Button_Reload_Click;
             // 
             // Button_Exit
             // 
             Button_Exit.Name = "Button_Exit";
-            Button_Exit.Size = new System.Drawing.Size(180, 22);
+            Button_Exit.Size = new System.Drawing.Size(165, 22);
             Button_Exit.Text = "$EXIT";
             Button_Exit.Click += Button_Exit_Click;
             // 
@@ -119,16 +119,16 @@
             // Button_Import
             // 
             Button_Import.Name = "Button_Import";
-            Button_Import.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A;
-            Button_Import.Size = new System.Drawing.Size(201, 22);
+            Button_Import.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.A;
+            Button_Import.Size = new System.Drawing.Size(197, 22);
             Button_Import.Text = "$IMPORT";
             Button_Import.Click += Button_Import_Click;
             // 
             // Button_Export
             // 
             Button_Export.Name = "Button_Export";
-            Button_Export.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.A;
-            Button_Export.Size = new System.Drawing.Size(201, 22);
+            Button_Export.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.A;
+            Button_Export.Size = new System.Drawing.Size(197, 22);
             Button_Export.Text = "$EXPORT";
             Button_Export.Click += Button_Export_Click;
             // 
@@ -136,7 +136,7 @@
             // 
             Button_Copy.Name = "Button_Copy";
             Button_Copy.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C;
-            Button_Copy.Size = new System.Drawing.Size(201, 22);
+            Button_Copy.Size = new System.Drawing.Size(197, 22);
             Button_Copy.Text = "$COPY";
             Button_Copy.Click += Button_Copy_Click;
             // 
@@ -144,7 +144,7 @@
             // 
             Button_Paste.Name = "Button_Paste";
             Button_Paste.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V;
-            Button_Paste.Size = new System.Drawing.Size(201, 22);
+            Button_Paste.Size = new System.Drawing.Size(197, 22);
             Button_Paste.Text = "$PASTE";
             Button_Paste.Click += Button_Paste_Click;
             // 
@@ -152,7 +152,7 @@
             // 
             Button_Delete.Name = "Button_Delete";
             Button_Delete.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Delete;
-            Button_Delete.Size = new System.Drawing.Size(201, 22);
+            Button_Delete.Size = new System.Drawing.Size(197, 22);
             Button_Delete.Text = "$DELETE";
             Button_Delete.Click += Button_Delete_Click;
             // 

@@ -164,16 +164,16 @@
             // AddItemButton
             // 
             AddItemButton.Name = "AddItemButton";
-            AddItemButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A;
-            AddItemButton.Size = new System.Drawing.Size(251, 22);
+            AddItemButton.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.A;
+            AddItemButton.Size = new System.Drawing.Size(247, 22);
             AddItemButton.Text = "$ADD_ITEM";
             AddItemButton.Click += AddItemButton_Click;
             // 
             // AddDefinitionButton
             // 
             AddDefinitionButton.Name = "AddDefinitionButton";
-            AddDefinitionButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.A;
-            AddDefinitionButton.Size = new System.Drawing.Size(251, 22);
+            AddDefinitionButton.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.A;
+            AddDefinitionButton.Size = new System.Drawing.Size(247, 22);
             AddDefinitionButton.Text = "$ADD_DEFINITION";
             AddDefinitionButton.Click += AddDefinitionButton_Click;
             // 

@@ -116,14 +116,14 @@
             Button_SaveNonDLC.Name = "Button_SaveNonDLC";
             Button_SaveNonDLC.ShortcutKeyDisplayString = "";
             Button_SaveNonDLC.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S;
-            Button_SaveNonDLC.Size = new System.Drawing.Size(180, 22);
+            Button_SaveNonDLC.Size = new System.Drawing.Size(165, 22);
             Button_SaveNonDLC.Text = "$SAVE";
             Button_SaveNonDLC.Click += SaveButton_Click;
             // 
             // Button_SaveDLC
             // 
             Button_SaveDLC.Name = "Button_SaveDLC";
-            Button_SaveDLC.Size = new System.Drawing.Size(180, 22);
+            Button_SaveDLC.Size = new System.Drawing.Size(165, 22);
             Button_SaveDLC.Text = "$SAVE_DLC";
             Button_SaveDLC.Click += SaveButtonDLC_Click;
             // 
@@ -131,14 +131,14 @@
             // 
             ReloadButton.Name = "ReloadButton";
             ReloadButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R;
-            ReloadButton.Size = new System.Drawing.Size(180, 22);
+            ReloadButton.Size = new System.Drawing.Size(165, 22);
             ReloadButton.Text = "$RELOAD";
             ReloadButton.Click += ReloadButton_Click;
             // 
             // ExitButton
             // 
             ExitButton.Name = "ExitButton";
-            ExitButton.Size = new System.Drawing.Size(180, 22);
+            ExitButton.Size = new System.Drawing.Size(165, 22);
             ExitButton.Text = "$EXIT";
             ExitButton.Click += ExitButton_Click;
             // 
@@ -155,7 +155,7 @@
             // AddAreaButton
             // 
             AddAreaButton.Name = "AddAreaButton";
-            AddAreaButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A;
+            AddAreaButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.A;
             AddAreaButton.Size = new System.Drawing.Size(233, 22);
             AddAreaButton.Text = "$ADD_AREA";
             AddAreaButton.Click += AddAreaButton_Click;
@@ -163,7 +163,7 @@
             // AddDataButton
             // 
             AddDataButton.Name = "AddDataButton";
-            AddDataButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D;
+            AddDataButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.D;
             AddDataButton.Size = new System.Drawing.Size(233, 22);
             AddDataButton.Text = "$ADD_DATA";
             AddDataButton.Click += AddDataButton_Click;
@@ -306,7 +306,7 @@
             Button_MoveDown.Name = "Button_MoveDown";
             Button_MoveDown.ShortcutKeyDisplayString = "CTRL + PageDown";
             Button_MoveDown.Size = new System.Drawing.Size(260, 22);
-            Button_MoveDown.Text = "$MOVE_DOWN"; 
+            Button_MoveDown.Text = "$MOVE_DOWN";
             // 
             // CityShopEditor
             // 

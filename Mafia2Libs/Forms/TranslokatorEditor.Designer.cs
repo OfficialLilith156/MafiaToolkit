@@ -189,23 +189,23 @@
             // ViewNumInstButton
             // 
             ViewNumInstButton.Name = "ViewNumInstButton";
-            ViewNumInstButton.Size = new System.Drawing.Size(230, 22);
+            ViewNumInstButton.Size = new System.Drawing.Size(226, 22);
             ViewNumInstButton.Text = "$VIEW_NUM_INST";
             ViewNumInstButton.Click += ViewNumInstButton_Click;
             // 
             // Button_ExportXml
             // 
             Button_ExportXml.Name = "Button_ExportXml";
-            Button_ExportXml.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.A;
-            Button_ExportXml.Size = new System.Drawing.Size(230, 22);
+            Button_ExportXml.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.A;
+            Button_ExportXml.Size = new System.Drawing.Size(226, 22);
             Button_ExportXml.Text = "$EXPORT_XML";
             Button_ExportXml.Click += Button_ExportXml_OnClick;
             // 
             // Button_ImportXml
             // 
             Button_ImportXml.Name = "Button_ImportXml";
-            Button_ImportXml.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A;
-            Button_ImportXml.Size = new System.Drawing.Size(230, 22);
+            Button_ImportXml.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.A;
+            Button_ImportXml.Size = new System.Drawing.Size(226, 22);
             Button_ImportXml.Text = "$IMPORT_XML";
             Button_ImportXml.Click += Button_ImportXml_OnClick;
             // 

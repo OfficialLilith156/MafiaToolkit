@@ -132,7 +132,7 @@
             // 
             Button_Save.Name = "Button_Save";
             Button_Save.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S;
-            Button_Save.Size = new System.Drawing.Size(180, 22);
+            Button_Save.Size = new System.Drawing.Size(165, 22);
             Button_Save.Text = "$SAVE";
             Button_Save.Click += Button_Save_Click;
             // 
@@ -140,14 +140,14 @@
             // 
             Button_Reload.Name = "Button_Reload";
             Button_Reload.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R;
-            Button_Reload.Size = new System.Drawing.Size(180, 22);
+            Button_Reload.Size = new System.Drawing.Size(165, 22);
             Button_Reload.Text = "$RELOAD";
             Button_Reload.Click += Button_Reload_Click;
             // 
             // Button_Exit
             // 
             Button_Exit.Name = "Button_Exit";
-            Button_Exit.Size = new System.Drawing.Size(180, 22);
+            Button_Exit.Size = new System.Drawing.Size(165, 22);
             Button_Exit.Text = "$EXIT";
             // 
             // Button_Tools
@@ -163,16 +163,16 @@
             // Button_Import
             // 
             Button_Import.Name = "Button_Import";
-            Button_Import.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A;
-            Button_Import.Size = new System.Drawing.Size(246, 22);
+            Button_Import.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.A;
+            Button_Import.Size = new System.Drawing.Size(242, 22);
             Button_Import.Text = "$IMPORT_PREFAB";
             Button_Import.Click += Button_Import_Click;
             // 
             // Button_Export
             // 
             Button_Export.Name = "Button_Export";
-            Button_Export.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.A;
-            Button_Export.Size = new System.Drawing.Size(246, 22);
+            Button_Export.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.A;
+            Button_Export.Size = new System.Drawing.Size(242, 22);
             Button_Export.Text = "$EXPORT_PREFAB";
             Button_Export.Click += Button_Export_Click;
             // 
@@ -180,7 +180,7 @@
             // 
             Button_Delete.Name = "Button_Delete";
             Button_Delete.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Delete;
-            Button_Delete.Size = new System.Drawing.Size(246, 22);
+            Button_Delete.Size = new System.Drawing.Size(242, 22);
             Button_Delete.Text = "$DELETE_PREFAB";
             Button_Delete.Click += Button_Delete_Click;
             // 

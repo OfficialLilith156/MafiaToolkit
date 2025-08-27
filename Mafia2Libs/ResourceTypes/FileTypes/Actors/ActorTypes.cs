@@ -2085,7 +2085,7 @@ namespace ResourceTypes.Actors
                     break;
                 default:
                     throw new Exception();
-                    break;
+                   break;
             }
 
             testPrimitive = reader.ReadInt32(isBigEndian);

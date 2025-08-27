@@ -85,7 +85,7 @@
             // 
             Button_Save.Name = "Button_Save";
             Button_Save.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S;
-            Button_Save.Size = new System.Drawing.Size(180, 22);
+            Button_Save.Size = new System.Drawing.Size(165, 22);
             Button_Save.Text = "$SAVE";
             Button_Save.Click += Button_Save_OnClick;
             // 
@@ -93,14 +93,14 @@
             // 
             Button_Reload.Name = "Button_Reload";
             Button_Reload.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R;
-            Button_Reload.Size = new System.Drawing.Size(180, 22);
+            Button_Reload.Size = new System.Drawing.Size(165, 22);
             Button_Reload.Text = "$RELOAD";
             Button_Reload.Click += Button_Reload_OnClick;
             // 
             // Button_Exit
             // 
             Button_Exit.Name = "Button_Exit";
-            Button_Exit.Size = new System.Drawing.Size(180, 22);
+            Button_Exit.Size = new System.Drawing.Size(165, 22);
             Button_Exit.Text = "$EXIT";
             Button_Exit.Click += Button_Exit_OnClick;
             // 
@@ -118,7 +118,7 @@
             // 
             Button_CopyData.Name = "Button_CopyData";
             Button_CopyData.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C;
-            Button_CopyData.Size = new System.Drawing.Size(230, 22);
+            Button_CopyData.Size = new System.Drawing.Size(226, 22);
             Button_CopyData.Text = "$COPY";
             Button_CopyData.Click += Button_CopyData_Click;
             // 
@@ -126,23 +126,23 @@
             // 
             Button_PasteData.Name = "Button_PasteData";
             Button_PasteData.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V;
-            Button_PasteData.Size = new System.Drawing.Size(230, 22);
+            Button_PasteData.Size = new System.Drawing.Size(226, 22);
             Button_PasteData.Text = "$PASTE";
             Button_PasteData.Click += Button_Paste_Click;
             // 
             // Button_ExportXML
             // 
             Button_ExportXML.Name = "Button_ExportXML";
-            Button_ExportXML.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.A;
-            Button_ExportXML.Size = new System.Drawing.Size(230, 22);
+            Button_ExportXML.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.A;
+            Button_ExportXML.Size = new System.Drawing.Size(226, 22);
             Button_ExportXML.Text = "$EXPORT_XML";
             Button_ExportXML.Click += Button_ExportXML_Click;
             // 
             // Button_ImportXML
             // 
             Button_ImportXML.Name = "Button_ImportXML";
-            Button_ImportXML.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A;
-            Button_ImportXML.Size = new System.Drawing.Size(230, 22);
+            Button_ImportXML.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.A;
+            Button_ImportXML.Size = new System.Drawing.Size(226, 22);
             Button_ImportXML.Text = "$IMPORT_XML";
             Button_ImportXML.Click += Button_ImportXML_Click;
             // 
