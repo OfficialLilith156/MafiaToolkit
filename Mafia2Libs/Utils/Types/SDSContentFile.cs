@@ -42,6 +42,7 @@ namespace Utils.Types
             typeList.Add("Texture", new TextureResource(2, "Texture"));
             typeList.Add("FrameResource", new BaseResource(28, "FrameResource"));
             typeList.Add("Effects", new BaseResource(2, "Effects"));
+            typeList.Add("Speech", new BaseResource(2, "Speech"));
             typeList.Add("FrameNameTable", new BaseResource(3, "FrameNameTable"));
             typeList.Add("Actors", new BaseResource(4, "Actors"));
             typeList.Add("EntityDataStorage", new BaseResource(2, "EntityDataStorage"));
@@ -69,6 +70,7 @@ namespace Utils.Types
 
             typeExtension = new Dictionary<string, string>();
             typeExtension.Add("ibp", "IndexBufferPool");
+            typeExtension.Add("spe", "Speech");
             typeExtension.Add("vbp", "VertexBufferPool");
             typeExtension.Add("fr", "FrameResource");
             typeExtension.Add("eff", "Effects");

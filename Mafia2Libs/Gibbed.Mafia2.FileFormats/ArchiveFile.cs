@@ -624,6 +624,9 @@ namespace Gibbed.Mafia2.FileFormats
                         ReadAudioSectorEntry(entry, resourceXML, name, finalPath);
                         saveName = name;
                         break;
+                    case "Speech":
+                        saveName = ReadBasicEntry(resourceXML, name);
+                        break;
                     default:
                         saveName = name;
                         Console.WriteLine("Unhandled Resource Type {0}", type);
