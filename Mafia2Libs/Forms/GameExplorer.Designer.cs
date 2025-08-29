@@ -62,6 +62,7 @@ namespace Mafia2Tool
             ContextViewTile = new ToolStripMenuItem();
             ContextForceBigEndian = new ToolStripMenuItem();
             ContextSeperator = new ToolStripSeparator();
+            ContextRemoveToCartFiles = new ToolStripMenuItem();
             ContextDeleteSelectedFiles = new ToolStripMenuItem();
             ContextUnpackSelectedSDS = new ToolStripMenuItem();
             ContextPackSelectedSDS = new ToolStripMenuItem();
@@ -231,7 +232,7 @@ namespace Mafia2Tool
             fileListView.Location = new System.Drawing.Point(4, 35);
             fileListView.Margin = new Padding(4, 3, 4, 3);
             fileListView.Name = "fileListView";
-            fileListView.Size = new System.Drawing.Size(608, 391);
+            fileListView.Size = new System.Drawing.Size(605, 391);
             fileListView.SmallImageList = imageBank;
             fileListView.TabIndex = 0;
             fileListView.UseCompatibleStateImageBehavior = false;
@@ -264,9 +265,9 @@ namespace Mafia2Tool
             // 
             // GEContext
             // 
-            GEContext.Items.AddRange(new ToolStripItem[] { ContextSDSUnpack, ContextSDSPack, ContextFileExport, ContextFileImport, ContextOpenFolder, ContextSDSUnpackAll, ContextView, ContextForceBigEndian, ContextSeperator, ContextDeleteSelectedFiles, ContextUnpackSelectedSDS, ContextPackSelectedSDS });
+            GEContext.Items.AddRange(new ToolStripItem[] { ContextSDSUnpack, ContextSDSPack, ContextFileExport, ContextFileImport, ContextOpenFolder, ContextSDSUnpackAll, ContextView, ContextForceBigEndian, ContextSeperator, ContextRemoveToCartFiles, ContextDeleteSelectedFiles, ContextUnpackSelectedSDS, ContextPackSelectedSDS });
             GEContext.Name = "SDSContext";
-            GEContext.Size = new System.Drawing.Size(294, 252);
+            GEContext.Size = new System.Drawing.Size(294, 274);
             GEContext.Text = "$VIEW";
             GEContext.Opening += OnOpening;
             // 
@@ -375,13 +376,21 @@ namespace Mafia2Tool
             ContextSeperator.Name = "ContextSeperator";
             ContextSeperator.Size = new System.Drawing.Size(290, 6);
             // 
+            // ContextRemoveToCartFiles
+            // 
+            ContextRemoveToCartFiles.Name = "ContextRemoveToCartFiles";
+            ContextRemoveToCartFiles.ShortcutKeyDisplayString = "ALT + DELETE";
+            ContextRemoveToCartFiles.ShortcutKeys = Keys.Alt | Keys.Delete;
+            ContextRemoveToCartFiles.Size = new System.Drawing.Size(293, 22);
+            ContextRemoveToCartFiles.Text = "$DELETE_FILES_TO_TRASH";
+            ContextRemoveToCartFiles.Click += ContextRemoveToCartFiles_OnClick;
+            // 
             // ContextDeleteSelectedFiles
             // 
             ContextDeleteSelectedFiles.Name = "ContextDeleteSelectedFiles";
             ContextDeleteSelectedFiles.ShortcutKeyDisplayString = "CTRL + DELETE";
             ContextDeleteSelectedFiles.Size = new System.Drawing.Size(293, 22);
             ContextDeleteSelectedFiles.Text = "$DELETE_SELECTED_FILES";
-            ContextDeleteSelectedFiles.Click += ContextDeleteSelectedFiles_OnClick;
             // 
             // ContextUnpackSelectedSDS
             // 
@@ -553,7 +562,7 @@ namespace Mafia2Tool
             ViewStripMenuIcon.CheckOnClick = true;
             ViewStripMenuIcon.Image = (System.Drawing.Image)resources.GetObject("ViewStripMenuIcon.Image");
             ViewStripMenuIcon.Name = "ViewStripMenuIcon";
-            ViewStripMenuIcon.Size = new System.Drawing.Size(180, 22);
+            ViewStripMenuIcon.Size = new System.Drawing.Size(151, 22);
             ViewStripMenuIcon.Text = "$ICON";
             ViewStripMenuIcon.Click += OnViewIconClicked;
             // 
@@ -561,7 +570,7 @@ namespace Mafia2Tool
             // 
             ViewStripMenuDetails.CheckOnClick = true;
             ViewStripMenuDetails.Name = "ViewStripMenuDetails";
-            ViewStripMenuDetails.Size = new System.Drawing.Size(180, 22);
+            ViewStripMenuDetails.Size = new System.Drawing.Size(151, 22);
             ViewStripMenuDetails.Text = "$DETAILS";
             ViewStripMenuDetails.Click += OnViewDetailsClicked;
             // 
@@ -570,7 +579,7 @@ namespace Mafia2Tool
             ViewStripMenuSmallIcon.CheckOnClick = true;
             ViewStripMenuSmallIcon.Image = (System.Drawing.Image)resources.GetObject("ViewStripMenuSmallIcon.Image");
             ViewStripMenuSmallIcon.Name = "ViewStripMenuSmallIcon";
-            ViewStripMenuSmallIcon.Size = new System.Drawing.Size(180, 22);
+            ViewStripMenuSmallIcon.Size = new System.Drawing.Size(151, 22);
             ViewStripMenuSmallIcon.Text = "$SMALL_ICON";
             ViewStripMenuSmallIcon.Click += OnViewSmallIconClicked;
             // 
@@ -579,7 +588,7 @@ namespace Mafia2Tool
             ViewStripMenuList.CheckOnClick = true;
             ViewStripMenuList.Image = (System.Drawing.Image)resources.GetObject("ViewStripMenuList.Image");
             ViewStripMenuList.Name = "ViewStripMenuList";
-            ViewStripMenuList.Size = new System.Drawing.Size(180, 22);
+            ViewStripMenuList.Size = new System.Drawing.Size(151, 22);
             ViewStripMenuList.Text = "$LIST";
             ViewStripMenuList.Click += OnViewListClicked;
             // 
@@ -587,7 +596,7 @@ namespace Mafia2Tool
             // 
             ViewStripMenuTile.CheckOnClick = true;
             ViewStripMenuTile.Name = "ViewStripMenuTile";
-            ViewStripMenuTile.Size = new System.Drawing.Size(180, 22);
+            ViewStripMenuTile.Size = new System.Drawing.Size(151, 22);
             ViewStripMenuTile.Text = "$TILE";
             ViewStripMenuTile.Click += OnViewTileClicked;
             // 
@@ -605,20 +614,20 @@ namespace Mafia2Tool
             // 
             OptionsItem.Image = (System.Drawing.Image)resources.GetObject("OptionsItem.Image");
             OptionsItem.Name = "OptionsItem";
-            OptionsItem.Size = new System.Drawing.Size(180, 22);
+            OptionsItem.Size = new System.Drawing.Size(179, 22);
             OptionsItem.Text = "$OPTIONS";
             OptionsItem.Click += OnOptionsItem_Clicked;
             // 
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            toolStripSeparator1.Size = new System.Drawing.Size(176, 6);
             // 
             // PackCurrentSDSButton
             // 
             PackCurrentSDSButton.Image = (System.Drawing.Image)resources.GetObject("PackCurrentSDSButton.Image");
             PackCurrentSDSButton.Name = "PackCurrentSDSButton";
-            PackCurrentSDSButton.Size = new System.Drawing.Size(180, 22);
+            PackCurrentSDSButton.Size = new System.Drawing.Size(179, 22);
             PackCurrentSDSButton.Text = "$PACK_CUR_SDS";
             PackCurrentSDSButton.Click += ContextPackSelectedSDS_OnClick;
             // 
@@ -626,14 +635,14 @@ namespace Mafia2Tool
             // 
             UnpackCurrentSDSButton.Image = (System.Drawing.Image)resources.GetObject("UnpackCurrentSDSButton.Image");
             UnpackCurrentSDSButton.Name = "UnpackCurrentSDSButton";
-            UnpackCurrentSDSButton.Size = new System.Drawing.Size(180, 22);
+            UnpackCurrentSDSButton.Size = new System.Drawing.Size(179, 22);
             UnpackCurrentSDSButton.Text = "$UNPACK_CUR_SDS";
             UnpackCurrentSDSButton.Click += ContextUnpackSelectedSDS_OnClick;
             // 
             // UnpackAllSDSButton
             // 
             UnpackAllSDSButton.Name = "UnpackAllSDSButton";
-            UnpackAllSDSButton.Size = new System.Drawing.Size(180, 22);
+            UnpackAllSDSButton.Size = new System.Drawing.Size(179, 22);
             UnpackAllSDSButton.Text = "$UNPACK_ALL_SDS";
             UnpackAllSDSButton.Click += UnpackAllSDSButton_Click;
             // 
@@ -797,5 +806,6 @@ namespace Mafia2Tool
         private ToolStripButton Button_OpenMapEditor;
         private ToolStripMenuItem ContextFileExport;
         private ToolStripMenuItem ContextFileImport;
+        private ToolStripMenuItem ContextRemoveToCartFiles;
     }
 }

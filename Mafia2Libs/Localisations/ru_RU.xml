@@ -7,6 +7,7 @@
 	<String ID="$ENTRY_NAME">Наименование записи</String>
 
 	<!-- Game Explorer Strings -->
+	<String ID="$DELETE_FILES_TO_TRASH">Удалить в корзину</String>
 	<String ID="$ABOUT">О нас</String>
 	<String ID="$THANKS">Особая благодарность</String>
 	<String ID="$VIEW">Вид</String>

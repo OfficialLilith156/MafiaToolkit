@@ -12,6 +12,7 @@ using Utils.Extensions;
 using Utils.Language;
 using Utils.Settings;
 using Vortice.Mathematics;
+using Microsoft.VisualBasic.FileIO;
 
 namespace Mafia2Tool
 {
@@ -78,8 +79,9 @@ namespace Mafia2Tool
             ContextSDSUnpack.Text = Language.GetString("$UNPACK");
             ContextSDSPack.Text = Language.GetString("$PACK");
             ContextOpenFolder.Text = Language.GetString("$OPEN_FOLDER_EXPLORER");
-            ContextSDSUnpackAll.Text = Language.GetString("$UNPACK_ALL_SDS");
+            ContextSDSUnpackAll.Text = Language.GetString("$UNPACK_ALL_SDS"); 
             ContextDeleteSelectedFiles.Text = Language.GetString("$DELETE_SELECTED_OBJECTS");
+            ContextRemoveToCartFiles.Text = Language.GetString("$DELETE_FILES_TO_TRASH");
             ContextUnpackSelectedSDS.Text = Language.GetString("$UNPACK_SELECTED_SDS");
             ContextPackSelectedSDS.Text = Language.GetString("$PACK_SELECTED_SDS");
             ContextView.Text = Language.GetString("$VIEW");
@@ -546,6 +548,7 @@ namespace Mafia2Tool
             ContextFileImport.Visible = false;
             ContextForceBigEndian.Visible = false;
             ContextDeleteSelectedFiles.Visible = false;
+            ContextRemoveToCartFiles.Visible = false;
             ContextUnpackSelectedSDS.Visible = false;
             ContextPackSelectedSDS.Visible = false;
 
@@ -594,6 +597,7 @@ namespace Mafia2Tool
             }
 
             ContextDeleteSelectedFiles.Visible = true;
+            ContextRemoveToCartFiles.Visible = true;
         }
         private void OnOptionsItem_Clicked(object sender, EventArgs e)
         {
@@ -742,6 +746,11 @@ namespace Mafia2Tool
                 // TODO: Make this not use the function which is wired up to a delegate
                 ContextDeleteSelectedFiles_OnClick(sender, null);
             }
+            else if (e.KeyCode == Keys.Back)
+            {
+                // TODO: Make this not use the function which is wired up to a delegate
+                ContextRemoveToCartFiles_OnClick(sender, null);
+            }
         }
 
         private void FolderViewAfterExpand(object sender, TreeViewEventArgs e)
@@ -859,6 +868,46 @@ namespace Mafia2Tool
                 else if(ActualObject is DirectoryBase)
                 {
                     (ActualObject as DirectoryBase).Delete();
+                }
+            }
+
+            OpenDirectory(currentDirectory);
+        }
+
+        private void ContextRemoveToCartFiles_OnClick(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show(
+                "Are you sure? This will move all selected files and folders to the Recycle Bin.",
+                "Toolkit",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question
+            );
+
+            if (result != DialogResult.Yes)
+                return;
+
+            foreach (ListViewItem selectedItem in fileListView.SelectedItems)
+            {
+                object actualObject = selectedItem.Tag;
+
+                try
+                {
+                    if (actualObject is FileBase file)
+                    {
+                        FileInfo fileInfo = file.GetUnderlyingFileInfo();
+                        if (fileInfo.Exists)
+                            FileSystem.DeleteFile(fileInfo.FullName, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+                    }
+                    else if (actualObject is DirectoryBase dir)
+                    {
+                        DirectoryInfo dirInfo = dir.GetDirectoryInfo();
+                        if (dirInfo.Exists)
+                            FileSystem.DeleteDirectory(dirInfo.FullName, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Failed to delete {actualObject}: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
 

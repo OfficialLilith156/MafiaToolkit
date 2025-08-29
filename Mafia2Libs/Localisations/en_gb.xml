@@ -14,6 +14,7 @@
 	<String ID="$FAILED_UPDATE_CHECK">Failed to checking for updates!</String>
 
 	<!-- Game Explorer Strings -->
+	<String ID="$DELETE_FILES_TO_TRASH">Delete to bin</String>
 	<String ID="$ABOUT">About</String>
 	<String ID="$THANKS">Special Thanks</String>
 	<String ID="$VIEW">View</String>
