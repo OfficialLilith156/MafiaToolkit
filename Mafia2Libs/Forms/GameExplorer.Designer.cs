@@ -232,7 +232,7 @@ namespace Mafia2Tool
             fileListView.Location = new System.Drawing.Point(4, 35);
             fileListView.Margin = new Padding(4, 3, 4, 3);
             fileListView.Name = "fileListView";
-            fileListView.Size = new System.Drawing.Size(605, 391);
+            fileListView.Size = new System.Drawing.Size(604, 391);
             fileListView.SmallImageList = imageBank;
             fileListView.TabIndex = 0;
             fileListView.UseCompatibleStateImageBehavior = false;
@@ -391,6 +391,7 @@ namespace Mafia2Tool
             ContextDeleteSelectedFiles.ShortcutKeyDisplayString = "CTRL + DELETE";
             ContextDeleteSelectedFiles.Size = new System.Drawing.Size(293, 22);
             ContextDeleteSelectedFiles.Text = "$DELETE_SELECTED_FILES";
+            ContextDeleteSelectedFiles.Click += ContextDeleteSelectedFiles_OnClick;
             // 
             // ContextUnpackSelectedSDS
             // 
