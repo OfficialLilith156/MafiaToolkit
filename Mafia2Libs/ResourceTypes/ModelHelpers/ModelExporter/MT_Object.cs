@@ -484,16 +484,16 @@ namespace ResourceTypes.ModelHelpers.ModelExporter
                     //if(string.IsNullOrEmpty(FaceGroups[v].MaterialName))
                     //{
                     var Material = MaterialsManager.LookupMaterialByHash(FaceGroups[v].MaterialHash);
-                    FaceGroups[v].MaterialName = Material.GetMaterialName();
-                    FaceGroups[v].MaterialHash = Material.GetMaterialHash();
+                    //FaceGroups[v].MaterialName = Material.GetMaterialName();
+                    //FaceGroups[v].MaterialHash = Material.GetMaterialHash();
 
                     // Add texture (if applicable)
-                    HashName DiffuseHashName = Material.GetTextureByID("S000");
-                    if (DiffuseHashName != null)
-                    {
-                        MaterialInstanceObject.DiffuseTexture = DiffuseHashName.String;
-                        MaterialInstanceObject.MaterialFlags |= MT_MaterialInstanceFlags.HasDiffuse;
-                    }
+                    //HashName DiffuseHashName = Material.GetTextureByID("S000");
+                    //if (DiffuseHashName != null)
+                    //{
+                    //    MaterialInstanceObject.DiffuseTexture = DiffuseHashName.String;
+                    //    MaterialInstanceObject.MaterialFlags |= MT_MaterialInstanceFlags.HasDiffuse;
+                    //}
                     //}
 
                     MaterialInstanceObject.Name = FaceGroups[v].MaterialName;
