@@ -22,7 +22,7 @@ namespace Utils.Types
         static Dictionary<string, string> typeExtension = new Dictionary<string, string>();
         static readonly List<string> sortList = new List<string>() {"IndexBufferPool", "VertexBufferPool", "Texture", "FrameResource", "Effects", "FrameNameTable",
                "Actors", "EntityDataStorage", "Table", "NAV_OBJ_DATA", "NAV_AIWORLD_DATA", "PREFAB", "AnimalTrafficPaths", "Animation2","NAV_HPD_DATA",
-                "AudioSectors", "MemFile", "Collisions", "ItemDesc", "FxActor", "FxAnimSet", "Script", "Sound", "Speech", "Cutscene", "SoundTable", "XML", "Translokator", "Mipmap", "Animated Texture" };
+                "AudioSectors", "MemFile", "Collisions", "ItemDesc", "FxActor", "FxAnimSet", "Script", "Sound", "Speech", "Cutscene", "SoundTable", "XML", "Translokator", "Mipmap", "Animated Texture", "RoadMap" };
         
         public Dictionary<string, List<TreeNode>> Resources {
             get { return resources; }
@@ -49,6 +49,7 @@ namespace Utils.Types
             typeList.Add("PREFAB", new BaseResource(0, "PREFAB"));
             typeList.Add("Animation2", new BaseResource(1, "Animation2"));
             typeList.Add("Animated Texture", new BaseResource(1, "Animated Texture"));
+            typeList.Add("RoadMap", new BaseResource(2, "MemFile"));
             typeList.Add("Tables", new TableResource(1, "Tables"));
             typeList.Add("NAV_OBJ_DATA", new BaseResource(0, "NAV_OBJ_DATA"));
             typeList.Add("NAV_AIWORLD_DATA", new BaseResource(0, "NAV_AIWORLD_DATA"));
@@ -78,6 +79,7 @@ namespace Utils.Types
             typeExtension.Add("act", "Actors");
             typeExtension.Add("prf", "PREFAB");
             typeExtension.Add("an2", "Animation2");
+            typeExtension.Add("gsd", "MemFile");
             typeExtension.Add("ifl", "Animated Texture");
             typeExtension.Add("nov", "NAV_OBJ_DATA");
             typeExtension.Add("nav", "NAV_AIWORLD_DATA");
@@ -162,6 +164,7 @@ namespace Utils.Types
                     case "FxActor":
                     case "FxAnimSet":
                     case "Translokator":
+                    case "RoadMap":
                     case "Speech":
                     case "SoundTable":
                     case "AnimalTrafficPaths":

@@ -116,6 +116,9 @@ namespace Gibbed.Mafia2.FileFormats
                     case "Animation2":
                         saveName = ReadBasicEntry(resourceXML, itemNames[i] + ".an2");
                         break;
+                    case "RoadMap":
+                        saveName = ReadBasicEntry(resourceXML, itemNames[i] + ".gsd");
+                        break;
                     case "NAV_AIWORLD_DATA":
                         saveName = ReadBasicEntry(resourceXML, ToolkitSettings.UseSDSToolFormat == false ? "NAV_AIWORLD_DATA_" + i + ".nav" : sdsToolName);
                         break;
@@ -209,6 +212,7 @@ namespace Gibbed.Mafia2.FileFormats
                     case "NAV_HPD_DATA":
                     case "Cutscene":
                     case "FxActor":
+                    case "RoadMap":
                     case "FxAnimSet":
                     case "Translokator":
                     case "Speech":

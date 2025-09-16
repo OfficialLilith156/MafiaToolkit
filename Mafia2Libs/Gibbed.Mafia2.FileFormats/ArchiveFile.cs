@@ -627,6 +627,9 @@ namespace Gibbed.Mafia2.FileFormats
                     case "Speech":
                         saveName = ReadBasicEntry(resourceXML, name);
                         break;
+                    case "RoadMap":
+                        saveName = ReadBasicEntry(resourceXML, name);
+                        break;
                     default:
                         saveName = name;
                         Console.WriteLine("Unhandled Resource Type {0}", type);

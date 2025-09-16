@@ -46,6 +46,7 @@ namespace Gibbed.Mafia2.FileFormats
             { "MemFile", ".txt" },
             { "XML", ".xml" },
             { "Animated Texture", ".ifl" },
+            { "RoadMap", ".gsd" },
         };
 
         private Dictionary<string, string> FileExtensionLookupFusion = new Dictionary<string, string>

@@ -171,24 +171,24 @@ namespace Mafia2Tool
 #endif // DEBUG
 
             //RoadMap
-#if DEBUG
-            //if (!isBigEndian)
-            //{
-            //    paths = sdsContent.GetResourceFiles("MemFile", true);
-            //    foreach (var item in paths)
-            //    {
-            //        if (item.Contains("RoadMap") || item.Contains("roadmap"))
-            //        {
-            //            using (FileStream RoadmapStream = File.Open(item, FileMode.Open))
-            //            {
-            //                roadMap = new RoadmapCe();
-            //                roadMap.Read(RoadmapStream);
-            //            }
-            //        }
-            //    }
-            //}
-#endif // DEBUG
-            
+
+            if (!isBigEndian)
+            {
+                paths = sdsContent.GetResourceFiles("MemFile", true);
+                foreach (var item in paths)
+                {
+                    if (item.Contains("RoadMap") || item.Contains("roadmap"))
+                    {
+                        using (FileStream RoadmapStream = File.Open(item, FileMode.Open))
+                        {
+                            roadMap = new RoadmapCe();
+                            roadMap.Read(RoadmapStream);
+                        }
+                    }
+                }
+            }
+ // DEBUG
+
             //Translokator
             if (!isBigEndian && sdsContent.HasResource("Translokator"))
             {
