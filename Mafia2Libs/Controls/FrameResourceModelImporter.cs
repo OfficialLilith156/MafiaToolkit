@@ -587,7 +587,8 @@ namespace Forms.EditorControls
 
             SaveFileDialog AnimSaveDialog = new SaveFileDialog();
             AnimSaveDialog.Title = "$SAVE_ANIMATION";
-            AnimSaveDialog.Filter = "Animation2 File (*.an2)|*.an2*";
+            AnimSaveDialog.Filter = "Animation2 File (*.an2)|*.an2";
+            AnimSaveDialog.AddExtension = true;
 
             if (AnimSaveDialog.ShowDialog() == DialogResult.OK)
             {
