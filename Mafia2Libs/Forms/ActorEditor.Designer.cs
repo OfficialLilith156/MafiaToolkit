@@ -37,6 +37,7 @@
             ContextPaste = new System.Windows.Forms.ToolStripMenuItem();
             Button_MoveUp = new System.Windows.Forms.ToolStripMenuItem();
             Button_MoveDown = new System.Windows.Forms.ToolStripMenuItem();
+            dUPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStrip1 = new System.Windows.Forms.ToolStrip();
             FileButton = new System.Windows.Forms.ToolStripDropDownButton();
             SaveButton = new System.Windows.Forms.ToolStripMenuItem();
@@ -64,9 +65,9 @@
             // 
             // ActorContext
             // 
-            ActorContext.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { ContextDelete, ContextCopy, ContextPaste, Button_MoveUp, Button_MoveDown });
+            ActorContext.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { ContextDelete, ContextCopy, ContextPaste, Button_MoveUp, Button_MoveDown, dUPToolStripMenuItem });
             ActorContext.Name = "SDSContext";
-            ActorContext.Size = new System.Drawing.Size(261, 114);
+            ActorContext.Size = new System.Drawing.Size(261, 158);
             ActorContext.Opening += ContextMenu_OnOpening;
             // 
             // ContextDelete
@@ -109,6 +110,13 @@
             Button_MoveDown.Text = "$MOVE_DOWN";
             Button_MoveDown.Click += Button_MoveDown_Clicked;
             // 
+            // dUPToolStripMenuItem
+            // 
+            dUPToolStripMenuItem.Name = "dUPToolStripMenuItem";
+            dUPToolStripMenuItem.Size = new System.Drawing.Size(260, 22);
+            dUPToolStripMenuItem.Text = "Duplicate Item";
+            dUPToolStripMenuItem.Click += dUPToolStripMenuItem_Click;
+            // 
             // toolStrip1
             // 
             toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { FileButton, EditButton });
@@ -132,7 +140,7 @@
             // 
             SaveButton.Name = "SaveButton";
             SaveButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S;
-            SaveButton.Size = new System.Drawing.Size(180, 22);
+            SaveButton.Size = new System.Drawing.Size(165, 22);
             SaveButton.Text = "$SAVE";
             SaveButton.Click += SaveButton_OnClick;
             // 
@@ -140,14 +148,14 @@
             // 
             ReloadButton.Name = "ReloadButton";
             ReloadButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R;
-            ReloadButton.Size = new System.Drawing.Size(180, 22);
+            ReloadButton.Size = new System.Drawing.Size(165, 22);
             ReloadButton.Text = "$RELOAD";
             ReloadButton.Click += ReloadButton_OnClick;
             // 
             // ExitButton
             // 
             ExitButton.Name = "ExitButton";
-            ExitButton.Size = new System.Drawing.Size(180, 22);
+            ExitButton.Size = new System.Drawing.Size(165, 22);
             ExitButton.Text = "$EXIT";
             ExitButton.Click += ExitButton_OnClick;
             // 
@@ -236,5 +244,6 @@
         private System.Windows.Forms.ToolStripMenuItem Button_MoveUp;
         private System.Windows.Forms.ToolStripMenuItem Button_MoveDown;
         private System.Windows.Forms.TextBox SearchBox;
+        private System.Windows.Forms.ToolStripMenuItem dUPToolStripMenuItem;
     }
 }

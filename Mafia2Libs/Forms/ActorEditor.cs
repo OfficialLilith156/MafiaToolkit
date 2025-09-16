@@ -295,11 +295,11 @@ namespace Mafia2Tool
                 ActorGrid.SelectedObject = null;
                 ActorTreeView.SelectedNode = null;
             }
-            else if(e.Control && e.KeyCode == Keys.PageUp)
+            else if (e.Control && e.KeyCode == Keys.PageUp)
             {
                 MoveItemUp();
             }
-            else if(e.Control && e.KeyCode == Keys.PageDown)
+            else if (e.Control && e.KeyCode == Keys.PageDown)
             {
                 MoveItemDown();
             }
@@ -359,7 +359,7 @@ namespace Mafia2Tool
 
                 // For now, Move Up/Down only active for ActorEntry.
                 ActorEntry Item = (SelectedNode.Tag as ActorEntry);
-                if(Item != null)
+                if (Item != null)
                 {
                     Button_MoveDown.Visible = true;
                     Button_MoveUp.Visible = true;
@@ -444,16 +444,16 @@ namespace Mafia2Tool
             Text = Language.GetString("$STREAM_EDITOR_TITLE") + "*";
             bIsFileEdited = true;
         }
-        
+
         private void SearchBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
-                e.SuppressKeyPress = true; 
+                e.SuppressKeyPress = true;
                 RunSearch(SearchBox.Text);
             }
         }
-        
+
         private void RunSearch(string query)
         {
             query = query.Trim().ToLower();
@@ -486,6 +486,51 @@ namespace Mafia2Tool
                     return child;
             }
             return null;
+        }
+
+        private void dUPToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TreeNode selectedNode = ActorTreeView.SelectedNode;
+            if (selectedNode == null || !(selectedNode.Tag is ActorEntry originalEntry))
+            {
+                //MessageBox.Show("Select an Actor to duplicate.");
+                return;
+            }
+
+            ActorEntry clonedEntry = actors.CreateActorEntry(
+                (ActorTypes)originalEntry.ActorTypeID,
+                originalEntry.EntityName + ""
+            );
+            clonedEntry.DefinitionName = originalEntry.DefinitionName;
+
+            if (originalEntry.DataID != -1)
+            {
+                ActorExtraData emptyExtraData = new ActorExtraData()
+                {
+                    BufferType = actors.ExtraData[originalEntry.DataID].BufferType,
+                    Data = null
+                };
+
+                clonedEntry.DataID = (short)actors.ExtraData.Count;
+                actors.ExtraData.Add(emptyExtraData);
+            }
+
+            TreeNode node = new TreeNode(clonedEntry.EntityName);
+            node.Tag = clonedEntry;
+
+            if (clonedEntry.DataID != -1)
+            {
+                TreeNode child = new TreeNode("Extra Data");
+                child.Tag = actors.ExtraData[clonedEntry.DataID];
+                node.Nodes.Add(child);
+            }
+
+            items.Nodes.Add(node);
+            ActorTreeView.SelectedNode = node;
+            ActorTreeView.Focus();
+
+            Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
+            bIsFileEdited = true;
         }
     }
 }
