@@ -39,6 +39,7 @@ namespace Mafia2Tool
             PositionYTool = new NumericUpDownToolStrip();
             PositionZTool = new NumericUpDownToolStrip();
             CameraSpeedTool = new NumericUpDownToolStrip();
+            CopyXYZ = new System.Windows.Forms.ToolStripSplitButton();
             Label_FPS = new System.Windows.Forms.ToolStripStatusLabel();
             Label_MemoryUsage = new System.Windows.Forms.ToolStripStatusLabel();
             Label_StatusBar = new System.Windows.Forms.ToolStripStatusLabel();
@@ -84,7 +85,7 @@ namespace Mafia2Tool
             // StatusStrip
             // 
             StatusStrip.AutoSize = false;
-            StatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { CurrentModeButton, PositionXTool, PositionYTool, PositionZTool, CameraSpeedTool, Label_FPS, Label_MemoryUsage, Label_StatusBar });
+            StatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { CurrentModeButton, PositionXTool, PositionYTool, PositionZTool, CameraSpeedTool, CopyXYZ, Label_FPS, Label_MemoryUsage, Label_StatusBar });
             StatusStrip.Location = new System.Drawing.Point(0, 692);
             StatusStrip.Name = "StatusStrip";
             StatusStrip.Padding = new System.Windows.Forms.Padding(1, 0, 16, 0);
@@ -170,8 +171,22 @@ namespace Mafia2Tool
             CameraSpeedTool.Value = new decimal(new int[] { 0, 0, 0, 0 });
             CameraSpeedTool.ValueChanged += CameraSpeedUpdate;
             // 
+            // CopyXYZ
+            // 
+            CopyXYZ.AutoToolTip = false;
+            CopyXYZ.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            CopyXYZ.Image = (System.Drawing.Image)resources.GetObject("CopyXYZ.Image");
+            CopyXYZ.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            CopyXYZ.ImageTransparentColor = System.Drawing.Color.Magenta;
+            CopyXYZ.Name = "CopyXYZ";
+            CopyXYZ.Size = new System.Drawing.Size(75, 26);
+            CopyXYZ.Text = "Copy XYZ";
+            CopyXYZ.ButtonClick += CopyXYZ_ButtonClick;
+            // 
             // Label_FPS
             // 
+            Label_FPS.BorderStyle = System.Windows.Forms.Border3DStyle.RaisedOuter;
+            Label_FPS.Margin = new System.Windows.Forms.Padding(0, 3, 4, 2);
             Label_FPS.Name = "Label_FPS";
             Label_FPS.Overflow = System.Windows.Forms.ToolStripItemOverflow.Always;
             Label_FPS.Padding = new System.Windows.Forms.Padding(41, 0, 0, 0);
@@ -188,7 +203,7 @@ namespace Mafia2Tool
             // 
             Label_StatusBar.Name = "Label_StatusBar";
             Label_StatusBar.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            Label_StatusBar.Size = new System.Drawing.Size(708, 23);
+            Label_StatusBar.Size = new System.Drawing.Size(598, 23);
             Label_StatusBar.Spring = true;
             Label_StatusBar.Text = "Label_StatusBar";
             Label_StatusBar.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -216,14 +231,14 @@ namespace Mafia2Tool
             // 
             SaveButton.Name = "SaveButton";
             SaveButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S;
-            SaveButton.Size = new System.Drawing.Size(180, 22);
+            SaveButton.Size = new System.Drawing.Size(146, 22);
             SaveButton.Text = "$SAVE";
             SaveButton.Click += SaveButton_Click;
             // 
             // ExitButton
             // 
             ExitButton.Name = "ExitButton";
-            ExitButton.Size = new System.Drawing.Size(180, 22);
+            ExitButton.Size = new System.Drawing.Size(146, 22);
             ExitButton.Text = "$EXIT";
             ExitButton.Click += ExitButton_Click;
             // 
@@ -281,14 +296,14 @@ namespace Mafia2Tool
             // ViewTopButton
             // 
             ViewTopButton.Name = "ViewTopButton";
-            ViewTopButton.Size = new System.Drawing.Size(180, 22);
+            ViewTopButton.Size = new System.Drawing.Size(126, 22);
             ViewTopButton.Text = "$TOP";
             ViewTopButton.Click += OnViewTopButtonClicked;
             // 
             // ViewFrontButton
             // 
             ViewFrontButton.Name = "ViewFrontButton";
-            ViewFrontButton.Size = new System.Drawing.Size(180, 22);
+            ViewFrontButton.Size = new System.Drawing.Size(126, 22);
             ViewFrontButton.Text = "$FRONT";
             ViewFrontButton.Click += OnViewFrontButtonClicked;
             // 
@@ -296,7 +311,7 @@ namespace Mafia2Tool
             // 
             ViewSideButton.Enabled = false;
             ViewSideButton.Name = "ViewSideButton";
-            ViewSideButton.Size = new System.Drawing.Size(180, 22);
+            ViewSideButton.Size = new System.Drawing.Size(126, 22);
             ViewSideButton.Text = "$SIDE";
             ViewSideButton.Visible = false;
             ViewSideButton.Click += OnViewSideButtonClicked;
@@ -305,7 +320,7 @@ namespace Mafia2Tool
             // 
             ViewBottomButton.Enabled = false;
             ViewBottomButton.Name = "ViewBottomButton";
-            ViewBottomButton.Size = new System.Drawing.Size(180, 22);
+            ViewBottomButton.Size = new System.Drawing.Size(126, 22);
             ViewBottomButton.Text = "$BOTTOM";
             ViewBottomButton.Visible = false;
             ViewBottomButton.Click += OnViewBottomButtonClicked;
@@ -314,7 +329,7 @@ namespace Mafia2Tool
             // 
             ViewSide2Button.Enabled = false;
             ViewSide2Button.Name = "ViewSide2Button";
-            ViewSide2Button.Size = new System.Drawing.Size(180, 22);
+            ViewSide2Button.Size = new System.Drawing.Size(126, 22);
             ViewSide2Button.Text = "$SIDE 2";
             ViewSide2Button.Visible = false;
             ViewSide2Button.Click += OnViewSide2ButtonClicked;
@@ -514,5 +529,6 @@ namespace Mafia2Tool
         private System.Windows.Forms.SaveFileDialog SaveFileDialog;
         private System.Windows.Forms.OpenFileDialog AnimFileDialog;
         private System.Windows.Forms.ToolStripStatusLabel Label_StatusBar;
+        private System.Windows.Forms.ToolStripSplitButton CopyXYZ;
     }
 }

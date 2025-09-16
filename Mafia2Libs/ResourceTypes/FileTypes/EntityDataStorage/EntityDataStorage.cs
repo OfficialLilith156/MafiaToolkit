@@ -14,9 +14,9 @@ namespace ResourceTypes.EntityDataStorage
     {
         private static Dictionary<ulong, string> Hashes = new Dictionary<ulong, string>()
         {
-            { 15612227391441882417, "plr" },
-            { 10074354998178438286, "trfc" },
-            { 17374058875421798942, "hunt" },
+            { 15612227391441882417, "player" },
+            { 10074354998178438286, "traffic" },
+            { 17374058875421798942, "hunter" },
             { 12442775612479247440, "pt01" },
             { 12442775612479247443, "pt02" },
             { 12442775612479247442, "pt03" },
