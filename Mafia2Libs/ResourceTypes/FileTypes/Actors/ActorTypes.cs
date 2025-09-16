@@ -731,14 +731,14 @@ namespace ResourceTypes.Actors
             public float Green { get; set; }  
             public float Blue { get; set; }   
             public float Unk4 { get; set; }   
-            public float Unk5 { get; set; }   
+            public float Shadow { get; set; }   
         }
 
         public class UnkFloats3
         {
             public float Unk1 { get; set; }      
             public float Influence { get; set; } 
-            public float Unk3 { get; set; }     
+            public float Shadow { get; set; }     
             public float Normal_Map { get; set; }
             public float Unk5 { get; set; }   
             public float Unk6 { get; set; }   
@@ -1035,7 +1035,7 @@ namespace ResourceTypes.Actors
                     Green = stream.ReadSingle(isBigEndian),
                     Blue = stream.ReadSingle(isBigEndian),
                     Unk4 = stream.ReadSingle(isBigEndian),
-                    Unk5 = stream.ReadSingle(isBigEndian)
+                    Shadow = stream.ReadSingle(isBigEndian)
                 };
 
                 unk_byte1 = stream.ReadByte8();
@@ -1045,7 +1045,7 @@ namespace ResourceTypes.Actors
 
                     Unk1 = stream.ReadSingle(isBigEndian),
                     Influence = stream.ReadSingle(isBigEndian),
-                    Unk3 = stream.ReadSingle(isBigEndian),
+                    Shadow = stream.ReadSingle(isBigEndian),
                     Normal_Map = stream.ReadSingle(isBigEndian),
                     Unk5 = stream.ReadSingle(isBigEndian),
                     Unk6 = stream.ReadSingle(isBigEndian),
@@ -1166,13 +1166,13 @@ namespace ResourceTypes.Actors
             writer.Write(unkfloats2.Green, isBigEndian);
             writer.Write(unkfloats2.Blue, isBigEndian);
             writer.Write(unkfloats2.Unk4, isBigEndian);
-            writer.Write(unkfloats2.Unk5, isBigEndian);
+            writer.Write(unkfloats2.Shadow, isBigEndian);
 
             writer.WriteByte(unk_byte1);
 
             writer.Write(unkfloats3.Unk1, isBigEndian);
             writer.Write(unkfloats3.Influence, isBigEndian);
-            writer.Write(unkfloats3.Unk3, isBigEndian);
+            writer.Write(unkfloats3.Shadow, isBigEndian);
             writer.Write(unkfloats3.Normal_Map, isBigEndian);
             writer.Write(unkfloats3.Unk5, isBigEndian);
             writer.Write(unkfloats3.Unk6, isBigEndian);
