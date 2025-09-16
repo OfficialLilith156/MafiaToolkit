@@ -11,9 +11,11 @@ using Utils.Logging;
 using Utils.Types;
 using Utils.VorticeUtils;
 using Vortice.Mathematics;
+using static ResourceTypes.Actors.ActorLight;
 
 namespace ResourceTypes.Actors
 {
+    
     public interface IActorExtraDataInterface
     {
         void ReadFromFile(MemoryStream stream, bool isBigEndian);
@@ -690,16 +692,16 @@ namespace ResourceTypes.Actors
         HashName[] frameLinks;
         int[] frameIdxLinks;
         int flags;
-        float[] unkFloat1 = new float[7];
+        private UnkFloats1 unkfloats1 = new UnkFloats1();
         int unk_int;
-        float[] unkFloat2 = new float[5];
+        private UnkFloats2 unkfloats2 = new UnkFloats2();
         byte unk_byte1;
-        float[] unkFloat3 = new float[17];
+        private UnkFloats3 unkfloats3 = new UnkFloats3();
         byte unk_byte2;
-        float[] unkFloat4 = new float[5];
+        private UnkFloats4 unkfloats4 = new UnkFloats4();
         HashName nameLight;
         int unk_int2;
-        float[] unkFloat5 = new float[20];
+        private UnkFloats5 unkfloats5 = new UnkFloats5();
         HashName[] names = new HashName[4];
         BoundingBox boundingBox;
         byte unk_byte3;
@@ -707,9 +709,84 @@ namespace ResourceTypes.Actors
         int instanced;
         int type;
 
+
         //DO NOT STORE IN ACTOR!
         private Quaternion uMatrix0Quat;
         private Quaternion uMatrix1Quat;
+
+        public class UnkFloats1
+        {
+            public float Cone { get; set; }        
+            public float Light_on_player { get; set; }  
+            public float Intensity { get; set; }    
+            public float Narrowing { get; set; }    
+            public float Unk4 { get; set; }  
+            public float Brightness { get; set; }   
+            public float Blur { get; set; }        
+        }
+
+        public class UnkFloats2
+        {
+            public float Red { get; set; }    
+            public float Green { get; set; }  
+            public float Blue { get; set; }   
+            public float Unk4 { get; set; }   
+            public float Unk5 { get; set; }   
+        }
+
+        public class UnkFloats3
+        {
+            public float Unk1 { get; set; }      
+            public float Influence { get; set; } 
+            public float Unk3 { get; set; }     
+            public float Normal_Map { get; set; }
+            public float Unk5 { get; set; }   
+            public float Unk6 { get; set; }   
+            public float Unk7 { get; set; }   
+            public float Unk8 { get; set; }   
+            public float Unk9 { get; set; }   
+            public float Unk10 { get; set; }   
+            public float Unk11 { get; set; }   
+            public float Unk12 { get; set; }   
+            public float Unk13 { get; set; }   
+            public float Unk14 { get; set; }   
+            public float Unk15 { get; set; }   
+            public float Unk16 { get; set; }   
+            public float Unk17 { get; set; }   
+        }
+
+        public class UnkFloats4
+        {
+            public float Unk1 { get; set; } 
+            public float Unk2 { get; set; } 
+            public float Unk3 { get; set; } 
+            public float Unk4 { get; set; } 
+            public float Unk5 { get; set; } 
+        }
+
+        public class UnkFloats5
+        {
+            public float Unk1 { get; set; }  
+            public float Unk2 { get; set; }  
+            public float Unk3 { get; set; }  
+            public float Unk4 { get; set; }  
+            public float Unk5 { get; set; }  
+            public float Unk6 { get; set; }  
+            public float Unk7 { get; set; }  
+            public float Unk8 { get; set; }  
+            public float Unk9 { get; set; }  
+            public float Unk10 { get; set; } 
+            public float Unk11 { get; set; } 
+            public float Unk12 { get; set; } 
+            public float Unk13 { get; set; } 
+            public float Unk14 { get; set; } 
+            public float Unk15 { get; set; } 
+            public float Unk16 { get; set; } 
+            public float Unk17 { get; set; } 
+            public float Unk18 { get; set; } 
+            public float Unk19 { get; set; } 
+            public float Unk20 { get; set; } 
+        }
 
         public int Unk01
         {
@@ -777,41 +854,52 @@ namespace ResourceTypes.Actors
             get { return frameIdxLinks; }
             set { frameIdxLinks = value; }
         }
-        public float[] UnkFloats1
+
+        [TypeConverter(typeof(ExpandableObjectConverter))]
+        public UnkFloats1 Settings
         {
-            get { return unkFloat1; }
-            set { unkFloat1 = value; }
+            get { return unkfloats1; }
+            set { unkfloats1 = value; }
         }
+
         public int UnkInt1
         {
             get { return unk_int; }
             set { unk_int = value; }
         }
-        public float[] UnkFloats2
+
+        [TypeConverter(typeof(ExpandableObjectConverter))]
+        public UnkFloats2 RGB
         {
-            get { return unkFloat2; }
-            set { unkFloat2 = value; }
+            get { return unkfloats2; }
+            set { unkfloats2 = value; }
         }
+
         public byte UnkByte1
         {
             get { return unk_byte1; }
             set { unk_byte1 = value; }
         }
-        public float[] UnkFloats3
+
+        [TypeConverter(typeof(ExpandableObjectConverter))]
+        public UnkFloats3 Texture
         {
-            get { return unkFloat3; }
-            set { unkFloat3 = value; }
+            get { return unkfloats3; }
+            set { unkfloats3 = value; }
         }
         public byte UnkByte2
         {
             get { return unk_byte2; }
             set { unk_byte2 = value; }
         }
-        public float[] UnkFloats4
+
+        [TypeConverter(typeof(ExpandableObjectConverter))]
+        public UnkFloats4 UnkFloats_4
         {
-            get { return unkFloat4; }
-            set { unkFloat4 = value; }
+            get { return unkfloats4; }
+            set { unkfloats4 = value; }
         }
+
         public HashName NameLight
         {
             get { return nameLight; }
@@ -822,11 +910,14 @@ namespace ResourceTypes.Actors
             get { return unk_int2; }
             set { unk_int2 = value; }
         }
-        public float[] UnkFloats5
+
+        [TypeConverter(typeof(ExpandableObjectConverter))]
+        public UnkFloats5 UnkFloats_5
         {
-            get { return unkFloat5; }
-            set { unkFloat5 = value; }
+            get { return unkfloats5; }
+            set { unkfloats5 = value; }
         }
+
         public HashName[] UnkHashes
         {
             get { return names; }
@@ -889,11 +980,6 @@ namespace ResourceTypes.Actors
             frameLinks = new HashName[0];
             sceneLinks = new HashName[0];
             frameIdxLinks = new int[0];
-            unkFloat1 = new float[7];
-            unkFloat2 = new float[5];
-            unkFloat3 = new float[17];
-            unkFloat4 = new float[5];
-            unkFloat5 = new float[20];
             names = new HashName[4];
             for (int i = 0; i < 4; i++)
             {
@@ -930,40 +1016,91 @@ namespace ResourceTypes.Actors
                     frameIdxLinks[i] = stream.ReadInt32(isBigEndian);
                 }
 
-                for (int i = 0; i < 7; i++)
+                unkfloats1 = new UnkFloats1
                 {
-                    unkFloat1[i] = stream.ReadSingle(isBigEndian);
-                }
+                    Cone = stream.ReadSingle(isBigEndian),
+                    Light_on_player = stream.ReadSingle(isBigEndian),
+                    Intensity = stream.ReadSingle(isBigEndian),
+                    Narrowing = stream.ReadSingle(isBigEndian),
+                    Unk4 = stream.ReadSingle(isBigEndian),
+                    Brightness = stream.ReadSingle(isBigEndian),
+                    Blur = stream.ReadSingle(isBigEndian)
+                };
 
                 unk_int = stream.ReadInt32(isBigEndian);
 
-                for (int i = 0; i < 5; i++)
+                unkfloats2 = new UnkFloats2
                 {
-                    unkFloat2[i] = stream.ReadSingle(isBigEndian);
-                }
+                    Red = stream.ReadSingle(isBigEndian),
+                    Green = stream.ReadSingle(isBigEndian),
+                    Blue = stream.ReadSingle(isBigEndian),
+                    Unk4 = stream.ReadSingle(isBigEndian),
+                    Unk5 = stream.ReadSingle(isBigEndian)
+                };
 
                 unk_byte1 = stream.ReadByte8();
 
-                for (int i = 0; i < 17; i++)
+                unkfloats3 = new UnkFloats3
                 {
-                    unkFloat3[i] = stream.ReadSingle(isBigEndian);
-                }
+
+                    Unk1 = stream.ReadSingle(isBigEndian),
+                    Influence = stream.ReadSingle(isBigEndian),
+                    Unk3 = stream.ReadSingle(isBigEndian),
+                    Normal_Map = stream.ReadSingle(isBigEndian),
+                    Unk5 = stream.ReadSingle(isBigEndian),
+                    Unk6 = stream.ReadSingle(isBigEndian),
+                    Unk7 = stream.ReadSingle(isBigEndian),
+                    Unk8 = stream.ReadSingle(isBigEndian),
+                    Unk9 = stream.ReadSingle(isBigEndian),
+                    Unk10 = stream.ReadSingle(isBigEndian),
+                    Unk11 = stream.ReadSingle(isBigEndian),
+                    Unk12 = stream.ReadSingle(isBigEndian),
+                    Unk13 = stream.ReadSingle(isBigEndian),
+                    Unk14 = stream.ReadSingle(isBigEndian),
+                    Unk15 = stream.ReadSingle(isBigEndian),
+                    Unk16 = stream.ReadSingle(isBigEndian),
+                    Unk17 = stream.ReadSingle(isBigEndian)
+                };
 
                 unk_byte2 = stream.ReadByte8();
 
-                for (int i = 0; i < 5; i++)
+                unkfloats4 = new UnkFloats4
                 {
-                    unkFloat4[i] = stream.ReadSingle(isBigEndian);
-                }
+                    Unk1 = stream.ReadSingle(isBigEndian),
+                    Unk2 = stream.ReadSingle(isBigEndian),
+                    Unk3 = stream.ReadSingle(isBigEndian),
+                    Unk4 = stream.ReadSingle(isBigEndian),
+                    Unk5 = stream.ReadSingle(isBigEndian)
+                };
 
                 nameLight = new HashName(stream, isBigEndian);
 
                 unk_int2 = stream.ReadInt32(isBigEndian);
 
-                for (int i = 0; i < 20; i++)
+                unkfloats5 = new UnkFloats5
                 {
-                    unkFloat5[i] = stream.ReadSingle(isBigEndian);
-                }
+
+                    Unk1 = stream.ReadSingle(isBigEndian),
+                    Unk2 = stream.ReadSingle(isBigEndian),
+                    Unk3 = stream.ReadSingle(isBigEndian),
+                    Unk4 = stream.ReadSingle(isBigEndian),
+                    Unk5 = stream.ReadSingle(isBigEndian),
+                    Unk6 = stream.ReadSingle(isBigEndian),
+                    Unk7 = stream.ReadSingle(isBigEndian),
+                    Unk8 = stream.ReadSingle(isBigEndian),
+                    Unk9 = stream.ReadSingle(isBigEndian),
+                    Unk10 = stream.ReadSingle(isBigEndian),
+                    Unk11 = stream.ReadSingle(isBigEndian),
+                    Unk12 = stream.ReadSingle(isBigEndian),
+                    Unk13 = stream.ReadSingle(isBigEndian),
+                    Unk14 = stream.ReadSingle(isBigEndian),
+                    Unk15 = stream.ReadSingle(isBigEndian),
+                    Unk16 = stream.ReadSingle(isBigEndian),
+                    Unk17 = stream.ReadSingle(isBigEndian),
+                    Unk18 = stream.ReadSingle(isBigEndian),
+                    Unk19 = stream.ReadSingle(isBigEndian),
+                    Unk20 = stream.ReadSingle(isBigEndian)
+                };
 
                 for (int i = 0; i < 4; i++)
                 {
@@ -1015,40 +1152,74 @@ namespace ResourceTypes.Actors
                 writer.Write(frameIdxLinks[i], isBigEndian);
             }
 
-            for (int i = 0; i < 7; i++)
-            {
-                writer.Write(unkFloat1[i], isBigEndian);
-            }
+            writer.Write(unkfloats1.Cone, isBigEndian);
+            writer.Write(unkfloats1.Light_on_player, isBigEndian);
+            writer.Write(unkfloats1.Intensity, isBigEndian);
+            writer.Write(unkfloats1.Narrowing, isBigEndian);
+            writer.Write(unkfloats1.Unk4, isBigEndian);
+            writer.Write(unkfloats1.Brightness, isBigEndian);
+            writer.Write(unkfloats1.Blur, isBigEndian);
 
             writer.Write(unk_int, isBigEndian);
 
-            for (int i = 0; i < 5; i++)
-            {
-                writer.Write(unkFloat2[i], isBigEndian);
-            }
+            writer.Write(unkfloats2.Red, isBigEndian);
+            writer.Write(unkfloats2.Green, isBigEndian);
+            writer.Write(unkfloats2.Blue, isBigEndian);
+            writer.Write(unkfloats2.Unk4, isBigEndian);
+            writer.Write(unkfloats2.Unk5, isBigEndian);
 
             writer.WriteByte(unk_byte1);
 
-            for (int i = 0; i < 17; i++)
-            {
-                writer.Write(unkFloat3[i], isBigEndian);
-            }
+            writer.Write(unkfloats3.Unk1, isBigEndian);
+            writer.Write(unkfloats3.Influence, isBigEndian);
+            writer.Write(unkfloats3.Unk3, isBigEndian);
+            writer.Write(unkfloats3.Normal_Map, isBigEndian);
+            writer.Write(unkfloats3.Unk5, isBigEndian);
+            writer.Write(unkfloats3.Unk6, isBigEndian);
+            writer.Write(unkfloats3.Unk7, isBigEndian);
+            writer.Write(unkfloats3.Unk8, isBigEndian);
+            writer.Write(unkfloats3.Unk9, isBigEndian);
+            writer.Write(unkfloats3.Unk10, isBigEndian);
+            writer.Write(unkfloats3.Unk11, isBigEndian);
+            writer.Write(unkfloats3.Unk12, isBigEndian);
+            writer.Write(unkfloats3.Unk13, isBigEndian);
+            writer.Write(unkfloats3.Unk14, isBigEndian);
+            writer.Write(unkfloats3.Unk15, isBigEndian);
+            writer.Write(unkfloats3.Unk16, isBigEndian);
+            writer.Write(unkfloats3.Unk17, isBigEndian);
 
             writer.WriteByte(unk_byte2);
 
-            for (int i = 0; i < 5; i++)
-            {
-                writer.Write(unkFloat4[i], isBigEndian);
-            }
+            writer.Write(unkfloats4.Unk1, isBigEndian);
+            writer.Write(unkfloats4.Unk2, isBigEndian);
+            writer.Write(unkfloats4.Unk3, isBigEndian);
+            writer.Write(unkfloats4.Unk4, isBigEndian);
+            writer.Write(unkfloats4.Unk5, isBigEndian);
 
             nameLight.WriteToFile(writer, isBigEndian);
 
             writer.Write(unk_int2, isBigEndian);
 
-            for (int i = 0; i != 20; i++)
-            {
-                writer.Write(unkFloat5[i], isBigEndian);
-            }
+            writer.Write(unkfloats5.Unk1, isBigEndian);
+            writer.Write(unkfloats5.Unk2, isBigEndian);
+            writer.Write(unkfloats5.Unk3, isBigEndian);
+            writer.Write(unkfloats5.Unk4, isBigEndian);
+            writer.Write(unkfloats5.Unk5, isBigEndian);
+            writer.Write(unkfloats5.Unk6, isBigEndian);
+            writer.Write(unkfloats5.Unk7, isBigEndian);
+            writer.Write(unkfloats5.Unk8, isBigEndian);
+            writer.Write(unkfloats5.Unk9, isBigEndian);
+            writer.Write(unkfloats5.Unk10, isBigEndian);
+            writer.Write(unkfloats5.Unk11, isBigEndian);
+            writer.Write(unkfloats5.Unk12, isBigEndian);
+            writer.Write(unkfloats5.Unk13, isBigEndian);
+            writer.Write(unkfloats5.Unk14, isBigEndian);
+            writer.Write(unkfloats5.Unk15, isBigEndian);
+            writer.Write(unkfloats5.Unk16, isBigEndian);
+            writer.Write(unkfloats5.Unk17, isBigEndian);
+            writer.Write(unkfloats5.Unk18, isBigEndian);
+            writer.Write(unkfloats5.Unk19, isBigEndian);
+            writer.Write(unkfloats5.Unk20, isBigEndian);
 
             for (int i = 0; i != 4; i++)
             {
