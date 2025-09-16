@@ -2895,18 +2895,14 @@ namespace Mafia2Tool
 
         private void CopyXYZ_ButtonClick(object sender, EventArgs e)
         {
-            // Получаем значения с трёх NumericUpDownToolStrip
             decimal value1 = PositionXTool.Value;
             decimal value2 = PositionYTool.Value;
             decimal value3 = PositionZTool.Value;
 
-            // Формируем строку
             string result = $"{value1} {value2} {value3}";
 
-            // Копируем в буфер обмена
             Clipboard.SetText(result);
 
-            MessageBox.Show("Значения скопированы: " + result, "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
     }
 }
