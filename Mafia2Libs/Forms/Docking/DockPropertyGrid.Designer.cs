@@ -28,459 +28,422 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.QuickEditTab = new System.Windows.Forms.TabPage();
-            this.ScaleZNumeric = new System.Windows.Forms.NumericUpDown();
-            this.ScaleYNumeric = new System.Windows.Forms.NumericUpDown();
-            this.ScaleXNumeric = new System.Windows.Forms.NumericUpDown();
-            this.ScaleZLabel = new System.Windows.Forms.Label();
-            this.ScaleYLabel = new System.Windows.Forms.Label();
-            this.ScaleXLabel = new System.Windows.Forms.Label();
-            this.RotationZNumeric = new System.Windows.Forms.NumericUpDown();
-            this.RotationYNumeric = new System.Windows.Forms.NumericUpDown();
-            this.RotationXNumeric = new System.Windows.Forms.NumericUpDown();
-            this.PositionZNumeric = new System.Windows.Forms.NumericUpDown();
-            this.PositionYNumeric = new System.Windows.Forms.NumericUpDown();
-            this.PositionXNumeric = new System.Windows.Forms.NumericUpDown();
-            this.CurrentEntry = new System.Windows.Forms.Label();
-            this.RotationZLabel = new System.Windows.Forms.Label();
-            this.RotationYLabel = new System.Windows.Forms.Label();
-            this.RotationXLabel = new System.Windows.Forms.Label();
-            this.PositionZLabel = new System.Windows.Forms.Label();
-            this.PositionYLabel = new System.Windows.Forms.Label();
-            this.PositionXLabel = new System.Windows.Forms.Label();
-            this.PropertyTab = new System.Windows.Forms.TabPage();
-            this.PropertyGrid = new System.Windows.Forms.PropertyGrid();
-            this.MainTabControl = new System.Windows.Forms.TabControl();
-            this.MaterialPage = new System.Windows.Forms.TabPage();
-            this.MatViewPanel = new System.Windows.Forms.FlowLayoutPanel();
-            this.label1 = new System.Windows.Forms.Label();
-            this.LODComboBox = new System.Windows.Forms.ComboBox();
-            this.QuickEditTab.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.ScaleZNumeric)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ScaleYNumeric)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ScaleXNumeric)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.RotationZNumeric)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.RotationYNumeric)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.RotationXNumeric)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PositionZNumeric)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PositionYNumeric)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PositionXNumeric)).BeginInit();
-            this.PropertyTab.SuspendLayout();
-            this.MainTabControl.SuspendLayout();
-            this.MaterialPage.SuspendLayout();
-            this.SuspendLayout();
+            QuickEditTab = new System.Windows.Forms.TabPage();
+            button2 = new System.Windows.Forms.Button();
+            button1 = new System.Windows.Forms.Button();
+            ScaleZNumeric = new System.Windows.Forms.NumericUpDown();
+            ScaleYNumeric = new System.Windows.Forms.NumericUpDown();
+            ScaleXNumeric = new System.Windows.Forms.NumericUpDown();
+            ScaleZLabel = new System.Windows.Forms.Label();
+            ScaleYLabel = new System.Windows.Forms.Label();
+            ScaleXLabel = new System.Windows.Forms.Label();
+            RotationZNumeric = new System.Windows.Forms.NumericUpDown();
+            RotationYNumeric = new System.Windows.Forms.NumericUpDown();
+            RotationXNumeric = new System.Windows.Forms.NumericUpDown();
+            PositionZNumeric = new System.Windows.Forms.NumericUpDown();
+            PositionYNumeric = new System.Windows.Forms.NumericUpDown();
+            PositionXNumeric = new System.Windows.Forms.NumericUpDown();
+            CurrentEntry = new System.Windows.Forms.Label();
+            RotationZLabel = new System.Windows.Forms.Label();
+            RotationYLabel = new System.Windows.Forms.Label();
+            RotationXLabel = new System.Windows.Forms.Label();
+            PositionZLabel = new System.Windows.Forms.Label();
+            PositionYLabel = new System.Windows.Forms.Label();
+            PositionXLabel = new System.Windows.Forms.Label();
+            PropertyTab = new System.Windows.Forms.TabPage();
+            PropertyGrid = new System.Windows.Forms.PropertyGrid();
+            MainTabControl = new System.Windows.Forms.TabControl();
+            MaterialPage = new System.Windows.Forms.TabPage();
+            MatViewPanel = new System.Windows.Forms.FlowLayoutPanel();
+            label1 = new System.Windows.Forms.Label();
+            LODComboBox = new System.Windows.Forms.ComboBox();
+            QuickEditTab.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)ScaleZNumeric).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)ScaleYNumeric).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)ScaleXNumeric).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)RotationZNumeric).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)RotationYNumeric).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)RotationXNumeric).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)PositionZNumeric).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)PositionYNumeric).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)PositionXNumeric).BeginInit();
+            PropertyTab.SuspendLayout();
+            MainTabControl.SuspendLayout();
+            MaterialPage.SuspendLayout();
+            SuspendLayout();
             // 
             // QuickEditTab
             // 
-            this.QuickEditTab.Controls.Add(this.ScaleZNumeric);
-            this.QuickEditTab.Controls.Add(this.ScaleYNumeric);
-            this.QuickEditTab.Controls.Add(this.ScaleXNumeric);
-            this.QuickEditTab.Controls.Add(this.ScaleZLabel);
-            this.QuickEditTab.Controls.Add(this.ScaleYLabel);
-            this.QuickEditTab.Controls.Add(this.ScaleXLabel);
-            this.QuickEditTab.Controls.Add(this.RotationZNumeric);
-            this.QuickEditTab.Controls.Add(this.RotationYNumeric);
-            this.QuickEditTab.Controls.Add(this.RotationXNumeric);
-            this.QuickEditTab.Controls.Add(this.PositionZNumeric);
-            this.QuickEditTab.Controls.Add(this.PositionYNumeric);
-            this.QuickEditTab.Controls.Add(this.PositionXNumeric);
-            this.QuickEditTab.Controls.Add(this.CurrentEntry);
-            this.QuickEditTab.Controls.Add(this.RotationZLabel);
-            this.QuickEditTab.Controls.Add(this.RotationYLabel);
-            this.QuickEditTab.Controls.Add(this.RotationXLabel);
-            this.QuickEditTab.Controls.Add(this.PositionZLabel);
-            this.QuickEditTab.Controls.Add(this.PositionYLabel);
-            this.QuickEditTab.Controls.Add(this.PositionXLabel);
-            this.QuickEditTab.Location = new System.Drawing.Point(4, 22);
-            this.QuickEditTab.Name = "QuickEditTab";
-            this.QuickEditTab.Padding = new System.Windows.Forms.Padding(3);
-            this.QuickEditTab.Size = new System.Drawing.Size(261, 435);
-            this.QuickEditTab.TabIndex = 1;
-            this.QuickEditTab.Text = "Edit Transform";
-            this.QuickEditTab.UseVisualStyleBackColor = true;
+            QuickEditTab.Controls.Add(button2);
+            QuickEditTab.Controls.Add(button1);
+            QuickEditTab.Controls.Add(ScaleZNumeric);
+            QuickEditTab.Controls.Add(ScaleYNumeric);
+            QuickEditTab.Controls.Add(ScaleXNumeric);
+            QuickEditTab.Controls.Add(ScaleZLabel);
+            QuickEditTab.Controls.Add(ScaleYLabel);
+            QuickEditTab.Controls.Add(ScaleXLabel);
+            QuickEditTab.Controls.Add(RotationZNumeric);
+            QuickEditTab.Controls.Add(RotationYNumeric);
+            QuickEditTab.Controls.Add(RotationXNumeric);
+            QuickEditTab.Controls.Add(PositionZNumeric);
+            QuickEditTab.Controls.Add(PositionYNumeric);
+            QuickEditTab.Controls.Add(PositionXNumeric);
+            QuickEditTab.Controls.Add(CurrentEntry);
+            QuickEditTab.Controls.Add(RotationZLabel);
+            QuickEditTab.Controls.Add(RotationYLabel);
+            QuickEditTab.Controls.Add(RotationXLabel);
+            QuickEditTab.Controls.Add(PositionZLabel);
+            QuickEditTab.Controls.Add(PositionYLabel);
+            QuickEditTab.Controls.Add(PositionXLabel);
+            QuickEditTab.Location = new System.Drawing.Point(4, 24);
+            QuickEditTab.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            QuickEditTab.Name = "QuickEditTab";
+            QuickEditTab.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            QuickEditTab.Size = new System.Drawing.Size(306, 504);
+            QuickEditTab.TabIndex = 1;
+            QuickEditTab.Text = "Edit Transform";
+            QuickEditTab.UseVisualStyleBackColor = true;
+            // 
+            // button2
+            // 
+            button2.Location = new System.Drawing.Point(158, 319);
+            button2.Name = "button2";
+            button2.Size = new System.Drawing.Size(140, 23);
+            button2.TabIndex = 31;
+            button2.Text = "Paste Position";
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += buttonPaste_Click;
+            // 
+            // button1
+            // 
+            button1.Location = new System.Drawing.Point(12, 319);
+            button1.Name = "button1";
+            button1.Size = new System.Drawing.Size(140, 23);
+            button1.TabIndex = 30;
+            button1.Text = "Copy Position";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += buttonCopy_Click;
             // 
             // ScaleZNumeric
             // 
-            this.ScaleZNumeric.DecimalPlaces = 5;
-            this.ScaleZNumeric.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.ScaleZNumeric.Location = new System.Drawing.Point(67, 240);
-            this.ScaleZNumeric.Maximum = new decimal(new int[] {
-            1000,
-            0,
-            0,
-            0});
-            this.ScaleZNumeric.Minimum = new decimal(new int[] {
-            1000,
-            0,
-            0,
-            -2147483648});
-            this.ScaleZNumeric.Name = "ScaleZNumeric";
-            this.ScaleZNumeric.Size = new System.Drawing.Size(185, 20);
-            this.ScaleZNumeric.TabIndex = 29;
-            this.ScaleZNumeric.ValueChanged += new System.EventHandler(this.ObjectHasUpdated);
+            ScaleZNumeric.DecimalPlaces = 5;
+            ScaleZNumeric.Increment = new decimal(new int[] { 1, 0, 0, 65536 });
+            ScaleZNumeric.Location = new System.Drawing.Point(78, 277);
+            ScaleZNumeric.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            ScaleZNumeric.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
+            ScaleZNumeric.Minimum = new decimal(new int[] { 1000, 0, 0, int.MinValue });
+            ScaleZNumeric.Name = "ScaleZNumeric";
+            ScaleZNumeric.Size = new System.Drawing.Size(216, 23);
+            ScaleZNumeric.TabIndex = 29;
+            ScaleZNumeric.ValueChanged += ObjectHasUpdated;
             // 
             // ScaleYNumeric
             // 
-            this.ScaleYNumeric.DecimalPlaces = 5;
-            this.ScaleYNumeric.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.ScaleYNumeric.Location = new System.Drawing.Point(67, 214);
-            this.ScaleYNumeric.Maximum = new decimal(new int[] {
-            1000,
-            0,
-            0,
-            0});
-            this.ScaleYNumeric.Minimum = new decimal(new int[] {
-            1000,
-            0,
-            0,
-            -2147483648});
-            this.ScaleYNumeric.Name = "ScaleYNumeric";
-            this.ScaleYNumeric.Size = new System.Drawing.Size(185, 20);
-            this.ScaleYNumeric.TabIndex = 28;
-            this.ScaleYNumeric.ValueChanged += new System.EventHandler(this.ObjectHasUpdated);
+            ScaleYNumeric.DecimalPlaces = 5;
+            ScaleYNumeric.Increment = new decimal(new int[] { 1, 0, 0, 65536 });
+            ScaleYNumeric.Location = new System.Drawing.Point(78, 247);
+            ScaleYNumeric.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            ScaleYNumeric.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
+            ScaleYNumeric.Minimum = new decimal(new int[] { 1000, 0, 0, int.MinValue });
+            ScaleYNumeric.Name = "ScaleYNumeric";
+            ScaleYNumeric.Size = new System.Drawing.Size(216, 23);
+            ScaleYNumeric.TabIndex = 28;
+            ScaleYNumeric.ValueChanged += ObjectHasUpdated;
             // 
             // ScaleXNumeric
             // 
-            this.ScaleXNumeric.DecimalPlaces = 5;
-            this.ScaleXNumeric.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.ScaleXNumeric.Location = new System.Drawing.Point(67, 188);
-            this.ScaleXNumeric.Maximum = new decimal(new int[] {
-            1000,
-            0,
-            0,
-            0});
-            this.ScaleXNumeric.Minimum = new decimal(new int[] {
-            1000,
-            0,
-            0,
-            -2147483648});
-            this.ScaleXNumeric.Name = "ScaleXNumeric";
-            this.ScaleXNumeric.Size = new System.Drawing.Size(185, 20);
-            this.ScaleXNumeric.TabIndex = 27;
-            this.ScaleXNumeric.ValueChanged += new System.EventHandler(this.ObjectHasUpdated);
+            ScaleXNumeric.DecimalPlaces = 5;
+            ScaleXNumeric.Increment = new decimal(new int[] { 1, 0, 0, 65536 });
+            ScaleXNumeric.Location = new System.Drawing.Point(78, 217);
+            ScaleXNumeric.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            ScaleXNumeric.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
+            ScaleXNumeric.Minimum = new decimal(new int[] { 1000, 0, 0, int.MinValue });
+            ScaleXNumeric.Name = "ScaleXNumeric";
+            ScaleXNumeric.Size = new System.Drawing.Size(216, 23);
+            ScaleXNumeric.TabIndex = 27;
+            ScaleXNumeric.ValueChanged += ObjectHasUpdated;
             // 
             // ScaleZLabel
             // 
-            this.ScaleZLabel.AutoSize = true;
-            this.ScaleZLabel.Location = new System.Drawing.Point(10, 242);
-            this.ScaleZLabel.Name = "ScaleZLabel";
-            this.ScaleZLabel.Size = new System.Drawing.Size(44, 13);
-            this.ScaleZLabel.TabIndex = 26;
-            this.ScaleZLabel.Text = "Scale Z";
+            ScaleZLabel.AutoSize = true;
+            ScaleZLabel.Location = new System.Drawing.Point(12, 279);
+            ScaleZLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            ScaleZLabel.Name = "ScaleZLabel";
+            ScaleZLabel.Size = new System.Drawing.Size(44, 15);
+            ScaleZLabel.TabIndex = 26;
+            ScaleZLabel.Text = "Scale Z";
             // 
             // ScaleYLabel
             // 
-            this.ScaleYLabel.AutoSize = true;
-            this.ScaleYLabel.Location = new System.Drawing.Point(10, 216);
-            this.ScaleYLabel.Name = "ScaleYLabel";
-            this.ScaleYLabel.Size = new System.Drawing.Size(44, 13);
-            this.ScaleYLabel.TabIndex = 25;
-            this.ScaleYLabel.Text = "Scale Y";
+            ScaleYLabel.AutoSize = true;
+            ScaleYLabel.Location = new System.Drawing.Point(12, 249);
+            ScaleYLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            ScaleYLabel.Name = "ScaleYLabel";
+            ScaleYLabel.Size = new System.Drawing.Size(44, 15);
+            ScaleYLabel.TabIndex = 25;
+            ScaleYLabel.Text = "Scale Y";
             // 
             // ScaleXLabel
             // 
-            this.ScaleXLabel.AutoSize = true;
-            this.ScaleXLabel.Location = new System.Drawing.Point(10, 190);
-            this.ScaleXLabel.Name = "ScaleXLabel";
-            this.ScaleXLabel.Size = new System.Drawing.Size(44, 13);
-            this.ScaleXLabel.TabIndex = 24;
-            this.ScaleXLabel.Text = "Scale X";
+            ScaleXLabel.AutoSize = true;
+            ScaleXLabel.Location = new System.Drawing.Point(12, 219);
+            ScaleXLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            ScaleXLabel.Name = "ScaleXLabel";
+            ScaleXLabel.Size = new System.Drawing.Size(44, 15);
+            ScaleXLabel.TabIndex = 24;
+            ScaleXLabel.Text = "Scale X";
             // 
             // RotationZNumeric
             // 
-            this.RotationZNumeric.DecimalPlaces = 5;
-            this.RotationZNumeric.Location = new System.Drawing.Point(67, 162);
-            this.RotationZNumeric.Maximum = new decimal(new int[] {
-            360,
-            0,
-            0,
-            0});
-            this.RotationZNumeric.Minimum = new decimal(new int[] {
-            360,
-            0,
-            0,
-            -2147483648});
-            this.RotationZNumeric.Name = "RotationZNumeric";
-            this.RotationZNumeric.Size = new System.Drawing.Size(185, 20);
-            this.RotationZNumeric.TabIndex = 23;
-            this.RotationZNumeric.ValueChanged += new System.EventHandler(this.ObjectHasUpdated);
+            RotationZNumeric.DecimalPlaces = 5;
+            RotationZNumeric.Location = new System.Drawing.Point(78, 187);
+            RotationZNumeric.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            RotationZNumeric.Maximum = new decimal(new int[] { 360, 0, 0, 0 });
+            RotationZNumeric.Minimum = new decimal(new int[] { 360, 0, 0, int.MinValue });
+            RotationZNumeric.Name = "RotationZNumeric";
+            RotationZNumeric.Size = new System.Drawing.Size(216, 23);
+            RotationZNumeric.TabIndex = 23;
+            RotationZNumeric.ValueChanged += ObjectHasUpdated;
             // 
             // RotationYNumeric
             // 
-            this.RotationYNumeric.DecimalPlaces = 5;
-            this.RotationYNumeric.Location = new System.Drawing.Point(67, 136);
-            this.RotationYNumeric.Maximum = new decimal(new int[] {
-            360,
-            0,
-            0,
-            0});
-            this.RotationYNumeric.Minimum = new decimal(new int[] {
-            360,
-            0,
-            0,
-            -2147483648});
-            this.RotationYNumeric.Name = "RotationYNumeric";
-            this.RotationYNumeric.Size = new System.Drawing.Size(185, 20);
-            this.RotationYNumeric.TabIndex = 22;
-            this.RotationYNumeric.ValueChanged += new System.EventHandler(this.ObjectHasUpdated);
+            RotationYNumeric.DecimalPlaces = 5;
+            RotationYNumeric.Location = new System.Drawing.Point(78, 157);
+            RotationYNumeric.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            RotationYNumeric.Maximum = new decimal(new int[] { 360, 0, 0, 0 });
+            RotationYNumeric.Minimum = new decimal(new int[] { 360, 0, 0, int.MinValue });
+            RotationYNumeric.Name = "RotationYNumeric";
+            RotationYNumeric.Size = new System.Drawing.Size(216, 23);
+            RotationYNumeric.TabIndex = 22;
+            RotationYNumeric.ValueChanged += ObjectHasUpdated;
             // 
             // RotationXNumeric
             // 
-            this.RotationXNumeric.DecimalPlaces = 5;
-            this.RotationXNumeric.Location = new System.Drawing.Point(67, 110);
-            this.RotationXNumeric.Maximum = new decimal(new int[] {
-            360,
-            0,
-            0,
-            0});
-            this.RotationXNumeric.Minimum = new decimal(new int[] {
-            360,
-            0,
-            0,
-            -2147483648});
-            this.RotationXNumeric.Name = "RotationXNumeric";
-            this.RotationXNumeric.Size = new System.Drawing.Size(185, 20);
-            this.RotationXNumeric.TabIndex = 21;
-            this.RotationXNumeric.ValueChanged += new System.EventHandler(this.ObjectHasUpdated);
+            RotationXNumeric.DecimalPlaces = 5;
+            RotationXNumeric.Location = new System.Drawing.Point(78, 127);
+            RotationXNumeric.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            RotationXNumeric.Maximum = new decimal(new int[] { 360, 0, 0, 0 });
+            RotationXNumeric.Minimum = new decimal(new int[] { 360, 0, 0, int.MinValue });
+            RotationXNumeric.Name = "RotationXNumeric";
+            RotationXNumeric.Size = new System.Drawing.Size(216, 23);
+            RotationXNumeric.TabIndex = 21;
+            RotationXNumeric.ValueChanged += ObjectHasUpdated;
             // 
             // PositionZNumeric
             // 
-            this.PositionZNumeric.DecimalPlaces = 5;
-            this.PositionZNumeric.Location = new System.Drawing.Point(67, 84);
-            this.PositionZNumeric.Maximum = new decimal(new int[] {
-            999999999,
-            0,
-            0,
-            0});
-            this.PositionZNumeric.Minimum = new decimal(new int[] {
-            999999999,
-            0,
-            0,
-            -2147483648});
-            this.PositionZNumeric.Name = "PositionZNumeric";
-            this.PositionZNumeric.Size = new System.Drawing.Size(185, 20);
-            this.PositionZNumeric.TabIndex = 20;
-            this.PositionZNumeric.ValueChanged += new System.EventHandler(this.ObjectHasUpdated);
+            PositionZNumeric.DecimalPlaces = 5;
+            PositionZNumeric.Location = new System.Drawing.Point(78, 97);
+            PositionZNumeric.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            PositionZNumeric.Maximum = new decimal(new int[] { 999999999, 0, 0, 0 });
+            PositionZNumeric.Minimum = new decimal(new int[] { 999999999, 0, 0, int.MinValue });
+            PositionZNumeric.Name = "PositionZNumeric";
+            PositionZNumeric.Size = new System.Drawing.Size(216, 23);
+            PositionZNumeric.TabIndex = 20;
+            PositionZNumeric.ValueChanged += ObjectHasUpdated;
             // 
             // PositionYNumeric
             // 
-            this.PositionYNumeric.DecimalPlaces = 5;
-            this.PositionYNumeric.Location = new System.Drawing.Point(67, 58);
-            this.PositionYNumeric.Maximum = new decimal(new int[] {
-            999999999,
-            0,
-            0,
-            0});
-            this.PositionYNumeric.Minimum = new decimal(new int[] {
-            999999999,
-            0,
-            0,
-            -2147483648});
-            this.PositionYNumeric.Name = "PositionYNumeric";
-            this.PositionYNumeric.Size = new System.Drawing.Size(185, 20);
-            this.PositionYNumeric.TabIndex = 19;
-            this.PositionYNumeric.ValueChanged += new System.EventHandler(this.ObjectHasUpdated);
+            PositionYNumeric.DecimalPlaces = 5;
+            PositionYNumeric.Location = new System.Drawing.Point(78, 67);
+            PositionYNumeric.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            PositionYNumeric.Maximum = new decimal(new int[] { 999999999, 0, 0, 0 });
+            PositionYNumeric.Minimum = new decimal(new int[] { 999999999, 0, 0, int.MinValue });
+            PositionYNumeric.Name = "PositionYNumeric";
+            PositionYNumeric.Size = new System.Drawing.Size(216, 23);
+            PositionYNumeric.TabIndex = 19;
+            PositionYNumeric.ValueChanged += ObjectHasUpdated;
             // 
             // PositionXNumeric
             // 
-            this.PositionXNumeric.DecimalPlaces = 5;
-            this.PositionXNumeric.Location = new System.Drawing.Point(67, 32);
-            this.PositionXNumeric.Maximum = new decimal(new int[] {
-            999999999,
-            0,
-            0,
-            0});
-            this.PositionXNumeric.Minimum = new decimal(new int[] {
-            999999999,
-            0,
-            0,
-            -2147483648});
-            this.PositionXNumeric.Name = "PositionXNumeric";
-            this.PositionXNumeric.Size = new System.Drawing.Size(185, 20);
-            this.PositionXNumeric.TabIndex = 18;
-            this.PositionXNumeric.ValueChanged += new System.EventHandler(this.ObjectHasUpdated);
+            PositionXNumeric.DecimalPlaces = 5;
+            PositionXNumeric.Location = new System.Drawing.Point(78, 37);
+            PositionXNumeric.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            PositionXNumeric.Maximum = new decimal(new int[] { 999999999, 0, 0, 0 });
+            PositionXNumeric.Minimum = new decimal(new int[] { 999999999, 0, 0, int.MinValue });
+            PositionXNumeric.Name = "PositionXNumeric";
+            PositionXNumeric.Size = new System.Drawing.Size(216, 23);
+            PositionXNumeric.TabIndex = 18;
+            PositionXNumeric.ValueChanged += ObjectHasUpdated;
             // 
             // CurrentEntry
             // 
-            this.CurrentEntry.AutoSize = true;
-            this.CurrentEntry.Location = new System.Drawing.Point(10, 7);
-            this.CurrentEntry.Name = "CurrentEntry";
-            this.CurrentEntry.Size = new System.Drawing.Size(0, 13);
-            this.CurrentEntry.TabIndex = 12;
+            CurrentEntry.AutoSize = true;
+            CurrentEntry.Location = new System.Drawing.Point(12, 8);
+            CurrentEntry.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            CurrentEntry.Name = "CurrentEntry";
+            CurrentEntry.Size = new System.Drawing.Size(0, 15);
+            CurrentEntry.TabIndex = 12;
             // 
             // RotationZLabel
             // 
-            this.RotationZLabel.AutoSize = true;
-            this.RotationZLabel.Location = new System.Drawing.Point(7, 164);
-            this.RotationZLabel.Name = "RotationZLabel";
-            this.RotationZLabel.Size = new System.Drawing.Size(57, 13);
-            this.RotationZLabel.TabIndex = 10;
-            this.RotationZLabel.Text = "Rotation Z";
+            RotationZLabel.AutoSize = true;
+            RotationZLabel.Location = new System.Drawing.Point(8, 189);
+            RotationZLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            RotationZLabel.Name = "RotationZLabel";
+            RotationZLabel.Size = new System.Drawing.Size(62, 15);
+            RotationZLabel.TabIndex = 10;
+            RotationZLabel.Text = "Rotation Z";
             // 
             // RotationYLabel
             // 
-            this.RotationYLabel.AutoSize = true;
-            this.RotationYLabel.Location = new System.Drawing.Point(7, 138);
-            this.RotationYLabel.Name = "RotationYLabel";
-            this.RotationYLabel.Size = new System.Drawing.Size(57, 13);
-            this.RotationYLabel.TabIndex = 8;
-            this.RotationYLabel.Text = "Rotation Y";
+            RotationYLabel.AutoSize = true;
+            RotationYLabel.Location = new System.Drawing.Point(8, 159);
+            RotationYLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            RotationYLabel.Name = "RotationYLabel";
+            RotationYLabel.Size = new System.Drawing.Size(62, 15);
+            RotationYLabel.TabIndex = 8;
+            RotationYLabel.Text = "Rotation Y";
             // 
             // RotationXLabel
             // 
-            this.RotationXLabel.AutoSize = true;
-            this.RotationXLabel.Location = new System.Drawing.Point(7, 112);
-            this.RotationXLabel.Name = "RotationXLabel";
-            this.RotationXLabel.Size = new System.Drawing.Size(57, 13);
-            this.RotationXLabel.TabIndex = 6;
-            this.RotationXLabel.Text = "Rotation X";
+            RotationXLabel.AutoSize = true;
+            RotationXLabel.Location = new System.Drawing.Point(8, 129);
+            RotationXLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            RotationXLabel.Name = "RotationXLabel";
+            RotationXLabel.Size = new System.Drawing.Size(62, 15);
+            RotationXLabel.TabIndex = 6;
+            RotationXLabel.Text = "Rotation X";
             // 
             // PositionZLabel
             // 
-            this.PositionZLabel.AutoSize = true;
-            this.PositionZLabel.Location = new System.Drawing.Point(7, 86);
-            this.PositionZLabel.Name = "PositionZLabel";
-            this.PositionZLabel.Size = new System.Drawing.Size(54, 13);
-            this.PositionZLabel.TabIndex = 4;
-            this.PositionZLabel.Text = "Position Z";
+            PositionZLabel.AutoSize = true;
+            PositionZLabel.Location = new System.Drawing.Point(8, 99);
+            PositionZLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            PositionZLabel.Name = "PositionZLabel";
+            PositionZLabel.Size = new System.Drawing.Size(60, 15);
+            PositionZLabel.TabIndex = 4;
+            PositionZLabel.Text = "Position Z";
             // 
             // PositionYLabel
             // 
-            this.PositionYLabel.AutoSize = true;
-            this.PositionYLabel.Location = new System.Drawing.Point(7, 60);
-            this.PositionYLabel.Name = "PositionYLabel";
-            this.PositionYLabel.Size = new System.Drawing.Size(54, 13);
-            this.PositionYLabel.TabIndex = 2;
-            this.PositionYLabel.Text = "Position Y";
+            PositionYLabel.AutoSize = true;
+            PositionYLabel.Location = new System.Drawing.Point(8, 69);
+            PositionYLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            PositionYLabel.Name = "PositionYLabel";
+            PositionYLabel.Size = new System.Drawing.Size(60, 15);
+            PositionYLabel.TabIndex = 2;
+            PositionYLabel.Text = "Position Y";
             // 
             // PositionXLabel
             // 
-            this.PositionXLabel.AutoSize = true;
-            this.PositionXLabel.Location = new System.Drawing.Point(6, 34);
-            this.PositionXLabel.Name = "PositionXLabel";
-            this.PositionXLabel.Size = new System.Drawing.Size(54, 13);
-            this.PositionXLabel.TabIndex = 0;
-            this.PositionXLabel.Text = "Position X";
+            PositionXLabel.AutoSize = true;
+            PositionXLabel.Location = new System.Drawing.Point(7, 39);
+            PositionXLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            PositionXLabel.Name = "PositionXLabel";
+            PositionXLabel.Size = new System.Drawing.Size(60, 15);
+            PositionXLabel.TabIndex = 0;
+            PositionXLabel.Text = "Position X";
             // 
             // PropertyTab
             // 
-            this.PropertyTab.Controls.Add(this.PropertyGrid);
-            this.PropertyTab.Location = new System.Drawing.Point(4, 22);
-            this.PropertyTab.Name = "PropertyTab";
-            this.PropertyTab.Padding = new System.Windows.Forms.Padding(3);
-            this.PropertyTab.Size = new System.Drawing.Size(261, 435);
-            this.PropertyTab.TabIndex = 0;
-            this.PropertyTab.Text = "Property Grid";
-            this.PropertyTab.UseVisualStyleBackColor = true;
+            PropertyTab.Controls.Add(PropertyGrid);
+            PropertyTab.Location = new System.Drawing.Point(4, 24);
+            PropertyTab.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            PropertyTab.Name = "PropertyTab";
+            PropertyTab.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            PropertyTab.Size = new System.Drawing.Size(306, 504);
+            PropertyTab.TabIndex = 0;
+            PropertyTab.Text = "Property Grid";
+            PropertyTab.UseVisualStyleBackColor = true;
             // 
             // PropertyGrid
             // 
-            this.PropertyGrid.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.PropertyGrid.LineColor = System.Drawing.SystemColors.ScrollBar;
-            this.PropertyGrid.Location = new System.Drawing.Point(3, 3);
-            this.PropertyGrid.Name = "PropertyGrid";
-            this.PropertyGrid.Size = new System.Drawing.Size(255, 429);
-            this.PropertyGrid.TabIndex = 2;
+            PropertyGrid.Dock = System.Windows.Forms.DockStyle.Fill;
+            PropertyGrid.LineColor = System.Drawing.SystemColors.ScrollBar;
+            PropertyGrid.Location = new System.Drawing.Point(4, 3);
+            PropertyGrid.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            PropertyGrid.Name = "PropertyGrid";
+            PropertyGrid.Size = new System.Drawing.Size(298, 498);
+            PropertyGrid.TabIndex = 2;
             // 
             // MainTabControl
             // 
-            this.MainTabControl.Controls.Add(this.PropertyTab);
-            this.MainTabControl.Controls.Add(this.QuickEditTab);
-            this.MainTabControl.Controls.Add(this.MaterialPage);
-            this.MainTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.MainTabControl.Location = new System.Drawing.Point(0, 0);
-            this.MainTabControl.Name = "MainTabControl";
-            this.MainTabControl.SelectedIndex = 0;
-            this.MainTabControl.Size = new System.Drawing.Size(269, 461);
-            this.MainTabControl.TabIndex = 7;
-            this.MainTabControl.SelectedIndexChanged += new System.EventHandler(this.MainTabControl_OnTabIndexChanged);
+            MainTabControl.Controls.Add(PropertyTab);
+            MainTabControl.Controls.Add(QuickEditTab);
+            MainTabControl.Controls.Add(MaterialPage);
+            MainTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            MainTabControl.Location = new System.Drawing.Point(0, 0);
+            MainTabControl.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            MainTabControl.Name = "MainTabControl";
+            MainTabControl.SelectedIndex = 0;
+            MainTabControl.Size = new System.Drawing.Size(314, 532);
+            MainTabControl.TabIndex = 7;
+            MainTabControl.SelectedIndexChanged += MainTabControl_OnTabIndexChanged;
             // 
             // MaterialPage
             // 
-            this.MaterialPage.Controls.Add(this.MatViewPanel);
-            this.MaterialPage.Controls.Add(this.label1);
-            this.MaterialPage.Controls.Add(this.LODComboBox);
-            this.MaterialPage.Location = new System.Drawing.Point(4, 22);
-            this.MaterialPage.Name = "MaterialPage";
-            this.MaterialPage.Padding = new System.Windows.Forms.Padding(3);
-            this.MaterialPage.Size = new System.Drawing.Size(261, 435);
-            this.MaterialPage.TabIndex = 2;
-            this.MaterialPage.Text = "Model Materials";
-            this.MaterialPage.UseVisualStyleBackColor = true;
+            MaterialPage.Controls.Add(MatViewPanel);
+            MaterialPage.Controls.Add(label1);
+            MaterialPage.Controls.Add(LODComboBox);
+            MaterialPage.Location = new System.Drawing.Point(4, 24);
+            MaterialPage.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            MaterialPage.Name = "MaterialPage";
+            MaterialPage.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            MaterialPage.Size = new System.Drawing.Size(306, 504);
+            MaterialPage.TabIndex = 2;
+            MaterialPage.Text = "Model Materials";
+            MaterialPage.UseVisualStyleBackColor = true;
             // 
             // MatViewPanel
             // 
-            this.MatViewPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.MatViewPanel.AutoScroll = true;
-            this.MatViewPanel.Location = new System.Drawing.Point(12, 51);
-            this.MatViewPanel.Name = "MatViewPanel";
-            this.MatViewPanel.Size = new System.Drawing.Size(239, 376);
-            this.MatViewPanel.TabIndex = 2;
+            MatViewPanel.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            MatViewPanel.AutoScroll = true;
+            MatViewPanel.Location = new System.Drawing.Point(14, 59);
+            MatViewPanel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            MatViewPanel.Name = "MatViewPanel";
+            MatViewPanel.Size = new System.Drawing.Size(279, 434);
+            MatViewPanel.TabIndex = 2;
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(9, 7);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(62, 13);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Select LOD";
+            label1.AutoSize = true;
+            label1.Location = new System.Drawing.Point(10, 8);
+            label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(64, 15);
+            label1.TabIndex = 1;
+            label1.Text = "Select LOD";
             // 
             // LODComboBox
             // 
-            this.LODComboBox.FormattingEnabled = true;
-            this.LODComboBox.Location = new System.Drawing.Point(8, 24);
-            this.LODComboBox.Name = "LODComboBox";
-            this.LODComboBox.Size = new System.Drawing.Size(243, 21);
-            this.LODComboBox.TabIndex = 0;
-            this.LODComboBox.SelectedIndexChanged += new System.EventHandler(this.SelectedIndexChanged);
+            LODComboBox.FormattingEnabled = true;
+            LODComboBox.Location = new System.Drawing.Point(9, 28);
+            LODComboBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            LODComboBox.Name = "LODComboBox";
+            LODComboBox.Size = new System.Drawing.Size(283, 23);
+            LODComboBox.TabIndex = 0;
+            LODComboBox.SelectedIndexChanged += SelectedIndexChanged;
             // 
             // DockPropertyGrid
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ClientSize = new System.Drawing.Size(269, 461);
-            this.Controls.Add(this.MainTabControl);
-            this.DockAreas = ((WeifenLuo.WinFormsUI.Docking.DockAreas)(((((WeifenLuo.WinFormsUI.Docking.DockAreas.Float | WeifenLuo.WinFormsUI.Docking.DockAreas.DockLeft) 
-            | WeifenLuo.WinFormsUI.Docking.DockAreas.DockRight) 
-            | WeifenLuo.WinFormsUI.Docking.DockAreas.DockTop) 
-            | WeifenLuo.WinFormsUI.Docking.DockAreas.DockBottom)));
-            this.HideOnClose = true;
-            this.Name = "DockPropertyGrid";
-            this.ShowHint = WeifenLuo.WinFormsUI.Docking.DockState.DockRight;
-            this.TabText = "Frame Properties";
-            this.Text = "PropertyGrid";
-            this.QuickEditTab.ResumeLayout(false);
-            this.QuickEditTab.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.ScaleZNumeric)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ScaleYNumeric)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ScaleXNumeric)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.RotationZNumeric)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.RotationYNumeric)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.RotationXNumeric)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PositionZNumeric)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PositionYNumeric)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PositionXNumeric)).EndInit();
-            this.PropertyTab.ResumeLayout(false);
-            this.MainTabControl.ResumeLayout(false);
-            this.MaterialPage.ResumeLayout(false);
-            this.MaterialPage.PerformLayout();
-            this.ResumeLayout(false);
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            ClientSize = new System.Drawing.Size(314, 532);
+            Controls.Add(MainTabControl);
+            DockAreas = WeifenLuo.WinFormsUI.Docking.DockAreas.Float | WeifenLuo.WinFormsUI.Docking.DockAreas.DockLeft | WeifenLuo.WinFormsUI.Docking.DockAreas.DockRight | WeifenLuo.WinFormsUI.Docking.DockAreas.DockTop | WeifenLuo.WinFormsUI.Docking.DockAreas.DockBottom;
+            HideOnClose = true;
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Name = "DockPropertyGrid";
+            ShowHint = WeifenLuo.WinFormsUI.Docking.DockState.DockRight;
+            TabText = "Frame Properties";
+            Text = "PropertyGrid";
+            QuickEditTab.ResumeLayout(false);
+            QuickEditTab.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)ScaleZNumeric).EndInit();
+            ((System.ComponentModel.ISupportInitialize)ScaleYNumeric).EndInit();
+            ((System.ComponentModel.ISupportInitialize)ScaleXNumeric).EndInit();
+            ((System.ComponentModel.ISupportInitialize)RotationZNumeric).EndInit();
+            ((System.ComponentModel.ISupportInitialize)RotationYNumeric).EndInit();
+            ((System.ComponentModel.ISupportInitialize)RotationXNumeric).EndInit();
+            ((System.ComponentModel.ISupportInitialize)PositionZNumeric).EndInit();
+            ((System.ComponentModel.ISupportInitialize)PositionYNumeric).EndInit();
+            ((System.ComponentModel.ISupportInitialize)PositionXNumeric).EndInit();
+            PropertyTab.ResumeLayout(false);
+            MainTabControl.ResumeLayout(false);
+            MaterialPage.ResumeLayout(false);
+            MaterialPage.PerformLayout();
+            ResumeLayout(false);
 
         }
 
@@ -512,5 +475,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ComboBox LODComboBox;
         private System.Windows.Forms.FlowLayoutPanel MatViewPanel;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button1;
     }
 }

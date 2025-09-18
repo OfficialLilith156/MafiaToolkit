@@ -19,6 +19,9 @@ namespace Forms.Docking
         private object currentObject;
         private TextureEntry currentEntry;
         private Dictionary<TextureEntry, MaterialStruct> currentMaterials;
+        private decimal savedValueX;
+        private decimal savedValueY;
+        private decimal savedValueZ;
 
         public bool IsEntryReady;
 
@@ -264,6 +267,20 @@ namespace Forms.Docking
         private void ObjectHasUpdated(object sender, EventArgs e)
         {
             OnObjectUpdated(this, EventArgs.Empty);
+        }
+
+        private void buttonCopy_Click(object sender, EventArgs e)
+        {
+            savedValueX = PositionXNumeric.Value;
+            savedValueY = PositionYNumeric.Value;
+            savedValueZ = PositionZNumeric.Value;
+        }
+
+        private void buttonPaste_Click(object sender, EventArgs e)
+        {
+            PositionXNumeric.Value = savedValueX;
+            PositionYNumeric.Value = savedValueY;
+            PositionZNumeric.Value = savedValueZ;
         }
     }
 }
