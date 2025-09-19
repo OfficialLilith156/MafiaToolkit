@@ -67,14 +67,14 @@
             // 
             ActorContext.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { ContextDelete, ContextCopy, ContextPaste, Button_MoveUp, Button_MoveDown, dUPToolStripMenuItem });
             ActorContext.Name = "SDSContext";
-            ActorContext.Size = new System.Drawing.Size(261, 158);
+            ActorContext.Size = new System.Drawing.Size(221, 136);
             ActorContext.Opening += ContextMenu_OnOpening;
             // 
             // ContextDelete
             // 
             ContextDelete.Name = "ContextDelete";
             ContextDelete.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Delete;
-            ContextDelete.Size = new System.Drawing.Size(260, 22);
+            ContextDelete.Size = new System.Drawing.Size(220, 22);
             ContextDelete.Text = "$DELETE";
             ContextDelete.Click += ContextDelete_Click;
             // 
@@ -82,7 +82,7 @@
             // 
             ContextCopy.Name = "ContextCopy";
             ContextCopy.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C;
-            ContextCopy.Size = new System.Drawing.Size(260, 22);
+            ContextCopy.Size = new System.Drawing.Size(220, 22);
             ContextCopy.Text = "$COPY";
             ContextCopy.Click += ContextCopy_Click;
             // 
@@ -90,30 +90,32 @@
             // 
             ContextPaste.Name = "ContextPaste";
             ContextPaste.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V;
-            ContextPaste.Size = new System.Drawing.Size(260, 22);
+            ContextPaste.Size = new System.Drawing.Size(220, 22);
             ContextPaste.Text = "$PASTE";
             ContextPaste.Click += ContextPaste_Click;
             // 
             // Button_MoveUp
             // 
             Button_MoveUp.Name = "Button_MoveUp";
-            Button_MoveUp.ShortcutKeyDisplayString = "CTRL + PageUp";
-            Button_MoveUp.Size = new System.Drawing.Size(260, 22);
+            Button_MoveUp.ShortcutKeyDisplayString = "";
+            Button_MoveUp.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Up;
+            Button_MoveUp.Size = new System.Drawing.Size(220, 22);
             Button_MoveUp.Text = "$MOVE_UP";
             Button_MoveUp.Click += Button_MoveUp_Clicked;
             // 
             // Button_MoveDown
             // 
             Button_MoveDown.Name = "Button_MoveDown";
-            Button_MoveDown.ShortcutKeyDisplayString = "CTRL + PageDown";
-            Button_MoveDown.Size = new System.Drawing.Size(260, 22);
+            Button_MoveDown.ShortcutKeyDisplayString = "";
+            Button_MoveDown.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Down;
+            Button_MoveDown.Size = new System.Drawing.Size(220, 22);
             Button_MoveDown.Text = "$MOVE_DOWN";
             Button_MoveDown.Click += Button_MoveDown_Clicked;
             // 
             // dUPToolStripMenuItem
             // 
             dUPToolStripMenuItem.Name = "dUPToolStripMenuItem";
-            dUPToolStripMenuItem.Size = new System.Drawing.Size(260, 22);
+            dUPToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             dUPToolStripMenuItem.Text = "Duplicate Item";
             dUPToolStripMenuItem.Click += dUPToolStripMenuItem_Click;
             // 
