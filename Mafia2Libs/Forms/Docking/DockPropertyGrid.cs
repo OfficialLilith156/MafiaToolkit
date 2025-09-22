@@ -42,6 +42,9 @@ namespace Forms.Docking
             RotationXNumeric.ValueChanged += Rotation_ValueChanged;
             RotationYNumeric.ValueChanged += Rotation_ValueChanged;
             RotationZNumeric.ValueChanged += Rotation_ValueChanged;
+            RotationXNumeric.ValueChanged += InvertZRotation_ValueChanged;
+            RotationYNumeric.ValueChanged += InvertZRotation_ValueChanged;
+            RotationZNumeric.ValueChanged += InvertZRotation_ValueChanged;
         }
 
         private void Localise()
@@ -276,20 +279,74 @@ namespace Forms.Docking
 
         private void buttonCopy_Click(object sender, EventArgs e)
         {
-            savedValueX = PositionXNumeric.Value;
-            savedValueY = PositionYNumeric.Value;
-            savedValueZ = PositionZNumeric.Value;
+            string copiedText = string.Format(
+                "X:{0:0.00000} Y:{1:0.00000} Z:{2:0.00000}",
+            PositionXNumeric.Value,
+            PositionYNumeric.Value,
+            PositionZNumeric.Value
+            );
+
+            Clipboard.SetText(copiedText);
         }
 
         private void buttonPaste_Click(object sender, EventArgs e)
         {
-            PositionXNumeric.Value = savedValueX;
-            PositionYNumeric.Value = savedValueY;
-            PositionZNumeric.Value = savedValueZ;
+            try
+            {
+                string clipboardText = Clipboard.GetText().Trim();
+
+                decimal x, y, z;
+
+                if (clipboardText.Contains("X:") && clipboardText.Contains("Y:") && clipboardText.Contains("Z:"))
+                {
+                    var regex = new System.Text.RegularExpressions.Regex(
+                        @"X:(?<x>[-+]?[0-9]*\.?[0-9]+)\s+Y:(?<y>[-+]?[0-9]*\.?[0-9]+)\s+Z:(?<z>[-+]?[0-9]*\.?[0-9]+)"
+                    );
+
+                    var match = regex.Match(clipboardText);
+
+                    if (!match.Success)
+                    {
+                        //MessageBox.Show("Error");
+                        return;
+                    }
+
+                    x = decimal.Parse(match.Groups["x"].Value, System.Globalization.CultureInfo.InvariantCulture);
+                    y = decimal.Parse(match.Groups["y"].Value, System.Globalization.CultureInfo.InvariantCulture);
+                    z = decimal.Parse(match.Groups["z"].Value, System.Globalization.CultureInfo.InvariantCulture);
+                }
+                else
+                {
+                    string[] parts = clipboardText.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+                    if (parts.Length != 3)
+                    {
+                        //MessageBox.Show("Error");
+                        return;
+                    }
+
+                    x = decimal.Parse(parts[0], System.Globalization.CultureInfo.InvariantCulture);
+                    y = decimal.Parse(parts[1], System.Globalization.CultureInfo.InvariantCulture);
+                    z = decimal.Parse(parts[2], System.Globalization.CultureInfo.InvariantCulture);
+                }
+
+                PositionXNumeric.Value = x;
+                PositionYNumeric.Value = y;
+                PositionZNumeric.Value = z;
+
+                savedValueX = x;
+                savedValueY = y;
+                savedValueZ = z;
+            }
+            catch { }
         }
         private void Rotation_ValueChanged(object sender, EventArgs e)
         {
             UpdateQuaternion();
+        }
+        private void InvertZRotation_ValueChanged(object sender, EventArgs e)
+        {
+            InvertZUpdateQuaternion();
         }
 
         private void UpdateQuaternion()
@@ -323,9 +380,47 @@ namespace Forms.Docking
 
             textQuaternion.Text = $"X:{q.X:F6} Y:{q.Y:F6} Z:{q.Z:F6} W:{q.W:F6}";
         }
-        private void ButtonCopy_Click(object sender, EventArgs e)
+
+        private void InvertZUpdateQuaternion()
+        {
+            double x = (double)RotationXNumeric.Value;
+            double y = (double)RotationYNumeric.Value;
+            double z = (double)RotationZNumeric.Value;
+
+            double angle = Math.Sqrt(x * x + y * y + z * z);
+            if (angle == 0)
+            {
+                textInvertZQuaternion.Text = "X:0 Y:0 Z:0 W:1";
+                return;
+            }
+
+            double axisX = x / angle;
+            double axisY = y / angle;
+            double axisZ = z / angle;
+
+            double angleRad = angle * Math.PI / 180.0;
+
+            double half = angleRad / 2.0;
+            double sinHalf = Math.Sin(half);
+
+            Quaternion q = new Quaternion(
+                (float)(axisX * sinHalf),
+                (float)(axisY * sinHalf),
+                (float)(axisZ * sinHalf),
+                (float)Math.Cos(half)
+            );
+
+            q.Z = -q.Z;
+
+            textInvertZQuaternion.Text = $"X:{q.X:F6} Y:{q.Y:F6} Z:{q.Z:F6} W:{q.W:F6}";
+        }
+        private void ButtonQuatCopy_Click(object sender, EventArgs e)
         {
             Clipboard.SetText(textQuaternion.Text);
+        }
+        private void ButtonQuatInvertZCopy_Click(object sender, EventArgs e)
+        {
+            Clipboard.SetText(textInvertZQuaternion.Text);
         }
     }
 }

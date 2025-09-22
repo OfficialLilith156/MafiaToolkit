@@ -29,6 +29,10 @@
         private void InitializeComponent()
         {
             QuickEditTab = new System.Windows.Forms.TabPage();
+            button4 = new System.Windows.Forms.Button();
+            label4 = new System.Windows.Forms.Label();
+            label3 = new System.Windows.Forms.Label();
+            textInvertZQuaternion = new System.Windows.Forms.Label();
             button3 = new System.Windows.Forms.Button();
             textQuaternion = new System.Windows.Forms.Label();
             button2 = new System.Windows.Forms.Button();
@@ -76,6 +80,10 @@
             // 
             // QuickEditTab
             // 
+            QuickEditTab.Controls.Add(button4);
+            QuickEditTab.Controls.Add(label4);
+            QuickEditTab.Controls.Add(label3);
+            QuickEditTab.Controls.Add(textInvertZQuaternion);
             QuickEditTab.Controls.Add(button3);
             QuickEditTab.Controls.Add(textQuaternion);
             QuickEditTab.Controls.Add(button2);
@@ -108,20 +116,57 @@
             QuickEditTab.Text = "Edit Transform";
             QuickEditTab.UseVisualStyleBackColor = true;
             // 
+            // button4
+            // 
+            button4.Location = new System.Drawing.Point(12, 436);
+            button4.Name = "button4";
+            button4.Size = new System.Drawing.Size(44, 23);
+            button4.TabIndex = 37;
+            button4.Text = "Copy";
+            button4.UseVisualStyleBackColor = true;
+            button4.Click += ButtonQuatInvertZCopy_Click;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new System.Drawing.Point(12, 403);
+            label4.Name = "label4";
+            label4.Size = new System.Drawing.Size(124, 15);
+            label4.TabIndex = 36;
+            label4.Text = "Quaternion + Invert Z:";
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new System.Drawing.Point(12, 345);
+            label3.Name = "label3";
+            label3.Size = new System.Drawing.Size(70, 15);
+            label3.TabIndex = 35;
+            label3.Text = "Quaternion:";
+            // 
+            // textInvertZQuaternion
+            // 
+            textInvertZQuaternion.AutoSize = true;
+            textInvertZQuaternion.Location = new System.Drawing.Point(12, 418);
+            textInvertZQuaternion.Name = "textInvertZQuaternion";
+            textInvertZQuaternion.Size = new System.Drawing.Size(38, 15);
+            textInvertZQuaternion.TabIndex = 34;
+            textInvertZQuaternion.Text = "label2";
+            // 
             // button3
             // 
-            button3.Location = new System.Drawing.Point(12, 388);
+            button3.Location = new System.Drawing.Point(12, 378);
             button3.Name = "button3";
-            button3.Size = new System.Drawing.Size(108, 23);
+            button3.Size = new System.Drawing.Size(44, 23);
             button3.TabIndex = 33;
-            button3.Text = "Copy Quaternion";
+            button3.Text = "Copy";
             button3.UseVisualStyleBackColor = true;
-            button3.Click += ButtonCopy_Click;
+            button3.Click += ButtonQuatCopy_Click;
             // 
             // textQuaternion
             // 
             textQuaternion.AutoSize = true;
-            textQuaternion.Location = new System.Drawing.Point(12, 359);
+            textQuaternion.Location = new System.Drawing.Point(12, 360);
             textQuaternion.Name = "textQuaternion";
             textQuaternion.Size = new System.Drawing.Size(38, 15);
             textQuaternion.TabIndex = 32;
@@ -502,5 +547,9 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Label textQuaternion;
+        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label textInvertZQuaternion;
     }
 }
