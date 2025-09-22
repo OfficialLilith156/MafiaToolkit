@@ -2,6 +2,7 @@
 using Mafia2Tool.Forms;
 using ResourceTypes.FrameResource;
 using ResourceTypes.Materials;
+using System.Windows.Forms;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -37,6 +38,10 @@ namespace Forms.Docking
             isMaterialTabFocused = false;
             hasLoadedMaterials = false;
             currentMaterials = new Dictionary<TextureEntry, MaterialStruct>();
+
+            RotationXNumeric.ValueChanged += Rotation_ValueChanged;
+            RotationYNumeric.ValueChanged += Rotation_ValueChanged;
+            RotationZNumeric.ValueChanged += Rotation_ValueChanged;
         }
 
         private void Localise()
@@ -281,6 +286,46 @@ namespace Forms.Docking
             PositionXNumeric.Value = savedValueX;
             PositionYNumeric.Value = savedValueY;
             PositionZNumeric.Value = savedValueZ;
+        }
+        private void Rotation_ValueChanged(object sender, EventArgs e)
+        {
+            UpdateQuaternion();
+        }
+
+        private void UpdateQuaternion()
+        {
+            double x = (double)RotationXNumeric.Value;
+            double y = (double)RotationYNumeric.Value;
+            double z = (double)RotationZNumeric.Value;
+
+            double angle = Math.Sqrt(x * x + y * y + z * z);
+            if (angle == 0)
+            {
+                textQuaternion.Text = "X:0 Y:0 Z:0 W:1";
+                return;
+            }
+
+            double axisX = x / angle;
+            double axisY = y / angle;
+            double axisZ = z / angle;
+
+            double angleRad = angle * Math.PI / 180.0;
+
+            double half = angleRad / 2.0;
+            double sinHalf = Math.Sin(half);
+
+            Quaternion q = new Quaternion(
+                (float)(axisX * sinHalf),
+                (float)(axisY * sinHalf),
+                (float)(axisZ * sinHalf),
+                (float)Math.Cos(half)
+            );
+
+            textQuaternion.Text = $"X:{q.X:F6} Y:{q.Y:F6} Z:{q.Z:F6} W:{q.W:F6}";
+        }
+        private void ButtonCopy_Click(object sender, EventArgs e)
+        {
+            Clipboard.SetText(textQuaternion.Text);
         }
     }
 }

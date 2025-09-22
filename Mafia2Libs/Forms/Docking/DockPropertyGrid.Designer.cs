@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             QuickEditTab = new System.Windows.Forms.TabPage();
+            button3 = new System.Windows.Forms.Button();
+            textQuaternion = new System.Windows.Forms.Label();
             button2 = new System.Windows.Forms.Button();
             button1 = new System.Windows.Forms.Button();
             ScaleZNumeric = new System.Windows.Forms.NumericUpDown();
@@ -74,6 +76,8 @@
             // 
             // QuickEditTab
             // 
+            QuickEditTab.Controls.Add(button3);
+            QuickEditTab.Controls.Add(textQuaternion);
             QuickEditTab.Controls.Add(button2);
             QuickEditTab.Controls.Add(button1);
             QuickEditTab.Controls.Add(ScaleZNumeric);
@@ -103,6 +107,25 @@
             QuickEditTab.TabIndex = 1;
             QuickEditTab.Text = "Edit Transform";
             QuickEditTab.UseVisualStyleBackColor = true;
+            // 
+            // button3
+            // 
+            button3.Location = new System.Drawing.Point(12, 388);
+            button3.Name = "button3";
+            button3.Size = new System.Drawing.Size(108, 23);
+            button3.TabIndex = 33;
+            button3.Text = "Copy Quaternion";
+            button3.UseVisualStyleBackColor = true;
+            button3.Click += ButtonCopy_Click;
+            // 
+            // textQuaternion
+            // 
+            textQuaternion.AutoSize = true;
+            textQuaternion.Location = new System.Drawing.Point(12, 359);
+            textQuaternion.Name = "textQuaternion";
+            textQuaternion.Size = new System.Drawing.Size(38, 15);
+            textQuaternion.TabIndex = 32;
+            textQuaternion.Text = "label2";
             // 
             // button2
             // 
@@ -477,5 +500,7 @@
         private System.Windows.Forms.FlowLayoutPanel MatViewPanel;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Label textQuaternion;
     }
 }
