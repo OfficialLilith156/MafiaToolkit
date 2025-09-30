@@ -272,16 +272,22 @@ namespace Mafia2Tool
 
         private void AddDefinitionButton_Click(object sender, System.EventArgs e)
         {
-            ListWindow window = new ListWindow();
+            ListWindowActor window = new ListWindowActor();
             window.PopulateForm(actors.Items);
 
-            if (window.ShowDialog() == DialogResult.OK)
+            if (window.ShowDialog() == DialogResult.OK && window.chosenObjects.Count > 0)
             {
-                ActorDefinition definition = actors.CreateActorDefinition((window.chosenObject as ActorEntry));
-                TreeNode node = new TreeNode(definition.Name);
-                node.Name = definition.FrameNameHash.ToString();
-                node.Tag = definition;
-                definitions.Nodes.Add(node);
+                foreach (var obj in window.chosenObjects)
+                {
+                    if (obj is ActorEntry selectedActor)
+                    {
+                        ActorDefinition definition = actors.CreateActorDefinition(selectedActor);
+                        TreeNode node = new TreeNode(definition.Name);
+                        node.Name = definition.FrameNameHash.ToString();
+                        node.Tag = definition;
+                        definitions.Nodes.Add(node);
+                    }
+                }
 
                 Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
                 bIsFileEdited = true;
