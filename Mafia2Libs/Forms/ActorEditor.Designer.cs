@@ -115,6 +115,7 @@
             // dUPToolStripMenuItem
             // 
             dUPToolStripMenuItem.Name = "dUPToolStripMenuItem";
+            dUPToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X;
             dUPToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             dUPToolStripMenuItem.Text = "Duplicate Item";
             dUPToolStripMenuItem.Click += dUPToolStripMenuItem_Click;

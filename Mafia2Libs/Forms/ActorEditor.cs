@@ -247,8 +247,10 @@ namespace Mafia2Tool
             {
                 ActorTypes type = optionControl.GetSelectedType();
                 string def = optionControl.GetDefinitionName();
+                string framedef = optionControl.GetFrameName();
                 ActorEntry entry = actors.CreateActorEntry(type, objectForm.GetInputText());
                 entry.DefinitionName = def;
+                entry.FrameName = framedef;
 
                 TreeNode node = new TreeNode(entry.EntityName);
                 node.Text = entry.EntityName;
@@ -508,6 +510,7 @@ namespace Mafia2Tool
                 originalEntry.EntityName + ""
             );
             clonedEntry.DefinitionName = originalEntry.DefinitionName;
+            clonedEntry.FrameName = originalEntry.FrameName;
 
             if (originalEntry.DataID != -1)
             {

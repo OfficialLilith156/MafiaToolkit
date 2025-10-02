@@ -28,78 +28,84 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.buttonContinue = new System.Windows.Forms.Button();
-            this.buttonCancel = new System.Windows.Forms.Button();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.SuspendLayout();
+            label = new System.Windows.Forms.Label();
+            textBox1 = new System.Windows.Forms.TextBox();
+            buttonContinue = new System.Windows.Forms.Button();
+            buttonCancel = new System.Windows.Forms.Button();
+            panel1 = new System.Windows.Forms.Panel();
+            SuspendLayout();
             // 
             // label
             // 
-            this.label.AutoSize = true;
-            this.label.Location = new System.Drawing.Point(13, 13);
-            this.label.Name = "label";
-            this.label.Size = new System.Drawing.Size(46, 13);
-            this.label.TabIndex = 0;
-            this.label.Text = "$LABEL";
+            label.AutoSize = true;
+            label.Location = new System.Drawing.Point(15, 15);
+            label.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label.Name = "label";
+            label.Size = new System.Drawing.Size(46, 15);
+            label.TabIndex = 0;
+            label.Text = "$LABEL";
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(16, 30);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(340, 20);
-            this.textBox1.TabIndex = 1;
+            textBox1.Location = new System.Drawing.Point(19, 35);
+            textBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            textBox1.Name = "textBox1";
+            textBox1.Size = new System.Drawing.Size(396, 23);
+            textBox1.TabIndex = 1;
             // 
             // buttonContinue
             // 
-            this.buttonContinue.Location = new System.Drawing.Point(259, 163);
-            this.buttonContinue.Name = "buttonContinue";
-            this.buttonContinue.Size = new System.Drawing.Size(93, 23);
-            this.buttonContinue.TabIndex = 2;
-            this.buttonContinue.Text = "$CONTINUE";
-            this.buttonContinue.UseVisualStyleBackColor = true;
-            this.buttonContinue.Click += new System.EventHandler(this.OnButtonClickContinue);
+            buttonContinue.Location = new System.Drawing.Point(304, 216);
+            buttonContinue.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            buttonContinue.Name = "buttonContinue";
+            buttonContinue.Size = new System.Drawing.Size(108, 27);
+            buttonContinue.TabIndex = 2;
+            buttonContinue.Text = "$CONTINUE";
+            buttonContinue.UseVisualStyleBackColor = true;
+            buttonContinue.Click += OnButtonClickContinue;
             // 
             // buttonCancel
             // 
-            this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(16, 163);
-            this.buttonCancel.Name = "buttonCancel";
-            this.buttonCancel.Size = new System.Drawing.Size(93, 23);
-            this.buttonCancel.TabIndex = 3;
-            this.buttonCancel.Text = "$CANCEL";
-            this.buttonCancel.UseVisualStyleBackColor = true;
-            this.buttonCancel.Click += new System.EventHandler(this.OnButtonClickCancel);
+            buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            buttonCancel.Location = new System.Drawing.Point(21, 216);
+            buttonCancel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            buttonCancel.Name = "buttonCancel";
+            buttonCancel.Size = new System.Drawing.Size(108, 27);
+            buttonCancel.TabIndex = 3;
+            buttonCancel.Text = "$CANCEL";
+            buttonCancel.UseVisualStyleBackColor = true;
+            buttonCancel.Click += OnButtonClickCancel;
             // 
             // panel1
             // 
-            this.panel1.AutoSize = true;
-            this.panel1.Location = new System.Drawing.Point(16, 57);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(340, 100);
-            this.panel1.TabIndex = 4;
+            panel1.AutoSize = true;
+            panel1.Location = new System.Drawing.Point(19, 66);
+            panel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            panel1.Name = "panel1";
+            panel1.Size = new System.Drawing.Size(397, 144);
+            panel1.TabIndex = 4;
             // 
             // NewObjectForm
             // 
-            this.AcceptButton = this.buttonContinue;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.AutoSize = true;
-            this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(364, 193);
-            this.ControlBox = false;
-            this.Controls.Add(this.panel1);
-            this.Controls.Add(this.buttonCancel);
-            this.Controls.Add(this.buttonContinue);
-            this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.label);
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.Name = "NewObjectForm";
-            this.Text = "NewObjectEntry";
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            AcceptButton = buttonContinue;
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            AutoSize = true;
+            CancelButton = buttonCancel;
+            ClientSize = new System.Drawing.Size(425, 249);
+            ControlBox = false;
+            Controls.Add(panel1);
+            Controls.Add(buttonCancel);
+            Controls.Add(buttonContinue);
+            Controls.Add(textBox1);
+            Controls.Add(label);
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "NewObjectForm";
+            Text = "NewObjectEntry";
+            ResumeLayout(false);
+            PerformLayout();
 
         }
 

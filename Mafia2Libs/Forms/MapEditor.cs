@@ -260,8 +260,10 @@ namespace Mafia2Tool
                     //create the new entry
                     ActorTypes type = optionControl.GetSelectedType();
                     string def = optionControl.GetDefinitionName();
+                    string framedef = optionControl.GetFrameName();
                     ActorEntry entry = SceneData.Actors[0].CreateActorEntry(type, objectForm.GetInputText());
                     entry.DefinitionName = def;
+                    entry.FrameName = framedef;
                     entry.FrameName = frame.Name.String;
                     entry.FrameNameHash = frame.Name.Hash;
                     frame.Item = entry;

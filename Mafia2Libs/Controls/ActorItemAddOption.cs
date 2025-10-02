@@ -11,6 +11,8 @@ namespace Forms.EditorControls
             InitializeComponent();
             Localise();
 
+
+
             TypeCombo.Items.Add(ActorTypes.Human);
             TypeCombo.Items.Add(ActorTypes.C_CrashObject);
             TypeCombo.Items.Add(ActorTypes.C_TrafficCar);
@@ -61,6 +63,11 @@ namespace Forms.EditorControls
         public string GetDefinitionName()
         {
             return DefinitionBox.Text;
+        }
+
+        public string GetFrameName()
+        {
+            return framename.Text;
         }
 
         public ActorTypes GetSelectedType()
