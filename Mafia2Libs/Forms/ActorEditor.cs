@@ -501,10 +501,7 @@ namespace Mafia2Tool
         {
             TreeNode selectedNode = ActorTreeView.SelectedNode;
             if (selectedNode == null || !(selectedNode.Tag is ActorEntry originalEntry))
-            {
-                //MessageBox.Show("Select an Actor to duplicate.");
                 return;
-            }
 
             ActorEntry clonedEntry = actors.CreateActorEntry(
                 (ActorTypes)originalEntry.ActorTypeID,
@@ -525,6 +522,7 @@ namespace Mafia2Tool
                 actors.ExtraData.Add(emptyExtraData);
             }
 
+
             TreeNode node = new TreeNode(clonedEntry.EntityName);
             node.Tag = clonedEntry;
 
@@ -541,6 +539,56 @@ namespace Mafia2Tool
 
             Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
             bIsFileEdited = true;
+
+            CopyExtraData(originalEntry, clonedEntry);
+        }
+
+        private void CopyExtraData(ActorEntry source, ActorEntry target)
+        {
+            if (source.DataID == -1 || target.DataID == -1)
+                return;
+
+            ActorExtraData sourceData = actors.ExtraData[source.DataID];
+            ActorExtraData targetData = actors.ExtraData[target.DataID];
+
+            if (sourceData?.Data == null)
+                return;
+
+            try
+            {
+                Type dataType = sourceData.Data.GetType();
+                object clonedData = null;
+
+                var copyConstructor = dataType.GetConstructor(new Type[] { dataType });
+                if (copyConstructor != null)
+                {
+                    clonedData = copyConstructor.Invoke(new object[] { sourceData.Data });
+                }
+                else
+                {
+                    clonedData = Activator.CreateInstance(dataType);
+                    ReflectionHelpers.Copy(sourceData.Data, ref clonedData);
+                }
+
+                targetData.Data = clonedData as IActorExtraDataInterface;
+
+                ActorTreeView.SelectedNode = FindNodeByActorEntry(target);
+                ActorGrid.SelectedObject = targetData;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при копировании ExtraData: {ex.Message}");
+            }
+        }
+
+        private TreeNode FindNodeByActorEntry(ActorEntry entry)
+        {
+            foreach (TreeNode node in items.Nodes)
+            {
+                if (node.Tag == entry)
+                    return node;
+            }
+            return null;
         }
 
         private void RenumberButton_Click(object sender, EventArgs e)
@@ -552,7 +600,7 @@ namespace Mafia2Tool
         {
             if (actors == null || items == null || items.Nodes.Count == 0)
             {
-                MessageBox.Show("Нет элементов для перенумерации.");
+                //MessageBox.Show("Нет элементов для перенумерации.");
                 return;
             }
 
@@ -574,7 +622,7 @@ namespace Mafia2Tool
             Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
             bIsFileEdited = true;
 
-            MessageBox.Show($"DataID перенумерованы в порядке дерева: 0 .. {newId - 1}.", "Готово");
+            //MessageBox.Show($"DataID перенумерованы в порядке дерева: 0 .. {newId - 1}.", "Готово");
         }
         
     }
