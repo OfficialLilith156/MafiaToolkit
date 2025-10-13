@@ -510,18 +510,22 @@ namespace Mafia2Tool
             clonedEntry.DefinitionName = originalEntry.DefinitionName;
             clonedEntry.FrameName = originalEntry.FrameName;
 
-            if (originalEntry.DataID != -1)
+            if (originalEntry.DataID != -1 && originalEntry.Data != null)
             {
-                ActorExtraData emptyExtraData = new ActorExtraData()
+                clonedEntry.Data = new ActorExtraData()
                 {
-                    BufferType = actors.ExtraData[originalEntry.DataID].BufferType,
+                    BufferType = originalEntry.Data.BufferType,
                     Data = null
                 };
 
-                clonedEntry.DataID = (short)actors.ExtraData.Count;
-                actors.ExtraData.Add(emptyExtraData);
-            }
+                Type dataType = originalEntry.Data.Data.GetType();
+                object clonedInternalData = Activator.CreateInstance(dataType);
+                ReflectionHelpers.Copy(originalEntry.Data.Data, ref clonedInternalData);
+                clonedEntry.Data.Data = clonedInternalData as IActorExtraDataInterface;
 
+                clonedEntry.DataID = (short)actors.ExtraData.Count;
+                actors.ExtraData.Add(clonedEntry.Data);
+            }
 
             TreeNode node = new TreeNode(clonedEntry.EntityName);
             node.Tag = clonedEntry;
@@ -529,7 +533,7 @@ namespace Mafia2Tool
             if (clonedEntry.DataID != -1)
             {
                 TreeNode child = new TreeNode("Extra Data");
-                child.Tag = actors.ExtraData[clonedEntry.DataID];
+                child.Tag = clonedEntry.Data;
                 node.Nodes.Add(child);
             }
 
@@ -539,56 +543,6 @@ namespace Mafia2Tool
 
             Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
             bIsFileEdited = true;
-
-            CopyExtraData(originalEntry, clonedEntry);
-        }
-
-        private void CopyExtraData(ActorEntry source, ActorEntry target)
-        {
-            if (source.DataID == -1 || target.DataID == -1)
-                return;
-
-            ActorExtraData sourceData = actors.ExtraData[source.DataID];
-            ActorExtraData targetData = actors.ExtraData[target.DataID];
-
-            if (sourceData?.Data == null)
-                return;
-
-            try
-            {
-                Type dataType = sourceData.Data.GetType();
-                object clonedData = null;
-
-                var copyConstructor = dataType.GetConstructor(new Type[] { dataType });
-                if (copyConstructor != null)
-                {
-                    clonedData = copyConstructor.Invoke(new object[] { sourceData.Data });
-                }
-                else
-                {
-                    clonedData = Activator.CreateInstance(dataType);
-                    ReflectionHelpers.Copy(sourceData.Data, ref clonedData);
-                }
-
-                targetData.Data = clonedData as IActorExtraDataInterface;
-
-                ActorTreeView.SelectedNode = FindNodeByActorEntry(target);
-                ActorGrid.SelectedObject = targetData;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка при копировании ExtraData: {ex.Message}");
-            }
-        }
-
-        private TreeNode FindNodeByActorEntry(ActorEntry entry)
-        {
-            foreach (TreeNode node in items.Nodes)
-            {
-                if (node.Tag == entry)
-                    return node;
-            }
-            return null;
         }
 
         private void RenumberButton_Click(object sender, EventArgs e)
