@@ -1,12 +1,13 @@
-﻿using System;
+﻿using Forms.EditorControls;
+using ResourceTypes.Actors;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
-using ResourceTypes.Actors;
+using Utils.Helpers.Reflection;
 using Utils.Language;
 using Utils.Settings;
-using Utils.Helpers.Reflection;
-using Forms.EditorControls;
 using static System.ComponentModel.Design.ObjectSelectorEditor;
 
 namespace Mafia2Tool
@@ -541,5 +542,40 @@ namespace Mafia2Tool
             Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
             bIsFileEdited = true;
         }
+
+        private void RenumberButton_Click(object sender, EventArgs e)
+        {
+            RenumberDataIDsByTreeOrder();
+        }
+
+        private void RenumberDataIDsByTreeOrder()
+        {
+            if (actors == null || items == null || items.Nodes.Count == 0)
+            {
+                MessageBox.Show("Нет элементов для перенумерации.");
+                return;
+            }
+
+            short newId = 0;
+
+            foreach (TreeNode node in items.Nodes)
+            {
+                if (node?.Tag is ActorEntry entry)
+                {
+                    if (entry.DataID != -1 && entry.DataID < actors.ExtraData.Count)
+                    {
+                        entry.DataID = newId;
+                        newId++;
+                    }
+                }
+            }
+
+            ActorGrid.Refresh();
+            Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
+            bIsFileEdited = true;
+
+            MessageBox.Show($"DataID перенумерованы в порядке дерева: 0 .. {newId - 1}.", "Готово");
+        }
+        
     }
 }
