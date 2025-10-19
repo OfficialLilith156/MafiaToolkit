@@ -88,6 +88,12 @@
     <None Update="Resources\Translokator.m2t">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Squish\squish_64.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Squish\squish_32.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\Translokator_Texture.dds">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -351,6 +357,14 @@
   <ItemGroup>
     <Page Remove="Rendering\Graphics\RenderTypes\Instances\**" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Squish\squish_32.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Squish\squish_64.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>call "$(TargetDir)build.cmd"
 cd $(TargetDir)
@@ -365,4 +379,7 @@ del *.cmd</PostBuildEvent>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/Greavesy1899/MafiaToolkit.git</RepositoryUrl>
   </PropertyGroup>
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="xcopy /Y /R &quot;$(ProjectDir)Squish\squish_32.dll&quot; &quot;$(TargetDir)&quot;&#xD;&#xA;xcopy /Y /R &quot;$(ProjectDir)Squish\squish_64.dll&quot; &quot;$(TargetDir)&quot;" />
+  </Target>
 </Project>
