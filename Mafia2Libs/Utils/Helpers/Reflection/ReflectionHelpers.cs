@@ -10,7 +10,7 @@ using static System.Resources.ResXFileRef;
 namespace Utils.Helpers.Reflection
 {
     public class ReflectionHelpers
-    {
+    { 
         public static void Copy<T>(T FromObject, ref T ToObject)
         {
             Type ObjectType = FromObject.GetType();
@@ -24,30 +24,33 @@ namespace Utils.Helpers.Reflection
                 // ensure that the contents of all properties are copied
                 foreach (PropertyInfo Info in ObjectType.GetProperties())
                 {
-                    if (Info.PropertyType.IsGenericType)
-                    {
-                        // need support
-                        continue;
-                    }
-
                     if (Info.PropertyType.IsArray)
                     {
-                        // Create an Array using the element type of the array, with the number of elements to set the length.
                         Array FromObjectArray = (Array)Info.GetValue(FromObject);
+                        if (FromObjectArray == null)
+                        {
+                            Info.SetValue(ToObject, null);
+                            continue;
+                        }
+
                         Array ArrayObject = Array.CreateInstance(Info.PropertyType.GetElementType(), FromObjectArray.Length);
 
-                        // Iterate through the elements, construct the object using our reflection system and push them into the array.
                         for (int i = 0; i < ArrayObject.Length; i++)
                         {
                             object FromItem = FromObjectArray.GetValue(i);
+
+                            if (FromItem == null)
+                            {
+                                ArrayObject.SetValue(null, i);
+                                continue;
+                            }
+
                             object ToItem = Activator.CreateInstance(FromItem.GetType());
                             Copy(FromItem, ref ToItem);
 
-                            // Set element in the array
                             ArrayObject.SetValue(ToItem, i);
                         }
 
-                        // Set new array
                         Info.SetValue(ToObject, ArrayObject);
                     }
                     else if (Info.PropertyType.IsClass)
