@@ -547,106 +547,105 @@ namespace ResourceTypes.Misc
             int loaderIDX = 0;
             foreach (var group in groups)
             {
-                int idx = -1;
-                if (!pool.TryGetValue(group.Name, out idx))
+                int idx;
+                string groupKey = group.Name.Trim();
+                if (!pool.TryGetValue(groupKey, out idx))
                 {
                     idx = size;
-                    pool.Add(group.Name, size);
-                    size += group.Name.Length + 2;
-                    rawPool += (group.Name + '\0' + '\0');
+                    pool[groupKey] = size;
+                    size += groupKey.Length + 2;
+                    rawPool += groupKey + '\0' + '\0';
                 }
-
                 group.nameIDX = idx;
+
                 for (int x = group.startOffset; x < group.startOffset + group.endOffset; x++)
                 {
                     loaderIDX++;
                     var loader = loaders[x];
-                    if (loader.LoaderSubID == 1)
-                    {
-                        loader.LoaderID = x != 0 ? loaders[x - 1].LoaderID : 1;
-                    }
-                    else
-                    {
-                        loader.LoaderID = loaderIDX;
-                    }
 
-                    idx = -1;
-                    if (!pool.TryGetValue(loader.Path, out idx))
+                    loader.LoaderID = loader.LoaderSubID == 1 ? (x != 0 ? loaders[x - 1].LoaderID : 1) : loaderIDX;
+
+                    string pathKey = loader.Path.Trim();
+                    if (!pool.TryGetValue(pathKey, out idx))
                     {
                         idx = size;
-                        pool.Add(loader.Path, size);
-                        size += loader.Path.Length + 2;
-                        rawPool += (loader.Path + '\0' + '\0');
+                        pool[pathKey] = size;
+                        size += pathKey.Length + 2;
+                        rawPool += pathKey + '\0' + '\0';
                     }
                     loader.pathIDX = idx;
-                    if (!pool.TryGetValue(loader.Entity, out idx))
+
+                    string entityKey = loader.Entity.Replace('|', '\0').Trim();
+                    if (!pool.TryGetValue(entityKey, out idx))
                     {
                         idx = size;
-                        pool.Add(loader.Entity, size);
-                        string[] splits = loader.Entity.Split('|');
-                        string entity = loader.Entity.Replace('|', '\0');
+                        pool[entityKey] = size;
 
-                        rawPool += (entity + '\0' + '\0');
+                        string[] splits = loader.Entity.Split('|');
+                        rawPool += entityKey + '\0' + '\0';
                         size += loader.Entity.Length + 2;
+
                         if (splits.Length > 5)
                         {
-                            rawPool += ('\0');
+                            rawPool += '\0';
                             size++;
                         }
                     }
                     loader.entityIDX = idx;
-
                 }
             }
 
             List<string> newGH = new List<string>();
             List<ulong> hashGH = new List<ulong>();
-            string groupName = "";
+            string prevGroupName = "";
+
             foreach (var line in lines)
             {
-                int idx = -1;
+                int idx;
 
-                if (groupName != line.Group)
+                string groupKey = line.Group.Trim();
+                if (prevGroupName != groupKey)
                 {
-                    groupName = line.Group;
-                    if (!pool.TryGetValue(line.Group, out idx))
+                    prevGroupName = groupKey;
+
+                    if (!pool.TryGetValue(groupKey, out idx))
                     {
-                        pool.Add(line.Group, size);
-                        line.groupID = newGH.Count;
-                        newGH.Add(line.Group);
-                        hashGH.Add((ulong)size);
-                        size += line.Group.Length + 2;
-                        rawPool += (line.Group + '\0' + '\0');
+                        idx = size;
+                        pool[groupKey] = size;
+                        size += groupKey.Length + 2;
+                        rawPool += groupKey + '\0' + '\0';
                     }
-                    else
-                    {
-                        line.groupID = newGH.Count;
-                        newGH.Add(line.Group);
-                        hashGH.Add((ulong)idx);
-                    }
+
+                    line.groupID = newGH.Count;
+                    newGH.Add(line.Group);
+                    hashGH.Add((ulong)idx);
                 }
                 else
                 {
                     line.groupID = newGH.Count - 1;
                 }
-                if (!pool.TryGetValue(line.Name, out idx))
+
+                string nameKey = line.Name.Trim();
+                if (!pool.TryGetValue(nameKey, out idx))
                 {
                     idx = size;
-                    pool.Add(line.Name, size);
-                    size += line.Name.Length + 2;
-                    rawPool += (line.Name + '\0' + '\0');
+                    pool[nameKey] = size;
+                    size += nameKey.Length + 2;
+                    rawPool += nameKey + '\0' + '\0';
                 }
                 line.nameIDX = idx;
-                if (!pool.TryGetValue(line.Flags, out idx))
+
+                string flagsKey = line.Flags.Replace('|', '\0').Trim();
+                if (!pool.TryGetValue(flagsKey, out idx))
                 {
                     idx = size;
-                    pool.Add(line.Flags, size);
+                    pool[flagsKey] = size;
                     size += line.Flags.Length + 3;
-                    string flags = line.Flags.Replace('|', '\0');
-                    rawPool += (flags + '\0' + '\0' + '\0');
+                    rawPool += flagsKey + '\0' + '\0' + '\0';
                 }
                 line.flagIDX = idx;
             }
+
             groupHeaders = newGH.ToArray();
             upGroupHeaders = hashGH.ToArray();
         }
