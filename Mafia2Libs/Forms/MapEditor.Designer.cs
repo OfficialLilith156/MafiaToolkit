@@ -73,7 +73,7 @@ namespace Mafia2Tool
             toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
             addType4ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             addGroupType1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+            addType7ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             imageList1 = new System.Windows.Forms.ImageList(components);
             RenderPanel = new System.Windows.Forms.Panel();
             MeshBrowser = new System.Windows.Forms.OpenFileDialog();
@@ -81,7 +81,7 @@ namespace Mafia2Tool
             dockPanel1 = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             FrameBrowser = new System.Windows.Forms.OpenFileDialog();
             SaveFileDialog = new System.Windows.Forms.SaveFileDialog();
-            addType7ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            deleteAINavigationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             StatusStrip = new System.Windows.Forms.StatusStrip();
             StatusStrip.SuspendLayout();
             ToolbarStrip.SuspendLayout();
@@ -215,7 +215,7 @@ namespace Mafia2Tool
             // 
             // ToolbarStrip
             // 
-            ToolbarStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { FileButton, EditButton, ViewButton, OptionsButton, WindowButton, toolStripDropDownButton1, toolStripButton1 });
+            ToolbarStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { FileButton, EditButton, ViewButton, OptionsButton, WindowButton, toolStripDropDownButton1 });
             ToolbarStrip.Location = new System.Drawing.Point(0, 0);
             ToolbarStrip.Name = "ToolbarStrip";
             ToolbarStrip.Size = new System.Drawing.Size(1420, 25);
@@ -236,14 +236,14 @@ namespace Mafia2Tool
             // 
             SaveButton.Name = "SaveButton";
             SaveButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S;
-            SaveButton.Size = new System.Drawing.Size(146, 22);
+            SaveButton.Size = new System.Drawing.Size(180, 22);
             SaveButton.Text = "$SAVE";
             SaveButton.Click += SaveButton_Click;
             // 
             // ExitButton
             // 
             ExitButton.Name = "ExitButton";
-            ExitButton.Size = new System.Drawing.Size(146, 22);
+            ExitButton.Size = new System.Drawing.Size(180, 22);
             ExitButton.Text = "$EXIT";
             ExitButton.Click += ExitButton_Click;
             // 
@@ -433,36 +433,34 @@ namespace Mafia2Tool
             // toolStripDropDownButton1
             // 
             toolStripDropDownButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { addType4ToolStripMenuItem, addGroupType1ToolStripMenuItem, addType7ToolStripMenuItem });
+            toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { addType4ToolStripMenuItem, addGroupType1ToolStripMenuItem, addType7ToolStripMenuItem, deleteAINavigationToolStripMenuItem });
             toolStripDropDownButton1.Image = (System.Drawing.Image)resources.GetObject("toolStripDropDownButton1.Image");
             toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             toolStripDropDownButton1.Name = "toolStripDropDownButton1";
-            toolStripDropDownButton1.Size = new System.Drawing.Size(43, 22);
-            toolStripDropDownButton1.Text = "NAV";
+            toolStripDropDownButton1.Size = new System.Drawing.Size(78, 22);
+            toolStripDropDownButton1.Text = "Navigation";
+            toolStripDropDownButton1.ToolTipText = "Navigation";
             // 
             // addType4ToolStripMenuItem
             // 
             addType4ToolStripMenuItem.Name = "addType4ToolStripMenuItem";
-            addType4ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            addType4ToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
             addType4ToolStripMenuItem.Text = "Add Type 4";
             addType4ToolStripMenuItem.Click += btnAddType4_Click;
             // 
             // addGroupType1ToolStripMenuItem
             // 
             addGroupType1ToolStripMenuItem.Name = "addGroupType1ToolStripMenuItem";
-            addGroupType1ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            addGroupType1ToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
             addGroupType1ToolStripMenuItem.Text = "Add Group Type1";
             addGroupType1ToolStripMenuItem.Click += Button_AddType1Group_Click;
             // 
-            // toolStripButton1
+            // addType7ToolStripMenuItem
             // 
-            toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            toolStripButton1.Image = (System.Drawing.Image)resources.GetObject("toolStripButton1.Image");
-            toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            toolStripButton1.Name = "toolStripButton1";
-            toolStripButton1.Size = new System.Drawing.Size(23, 22);
-            toolStripButton1.Text = "toolStripButton1";
-            toolStripButton1.Click += btnDelete_Click;
+            addType7ToolStripMenuItem.Name = "addType7ToolStripMenuItem";
+            addType7ToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            addType7ToolStripMenuItem.Text = "Add Type 7";
+            addType7ToolStripMenuItem.Click += btnAddType7_Click;
             // 
             // imageList1
             // 
@@ -502,12 +500,12 @@ namespace Mafia2Tool
             // 
             FrameBrowser.Filter = "FrameResource|*.fr|Toolkit Frame Data|*.framedata";
             // 
-            // addType7ToolStripMenuItem
+            // deleteAINavigationToolStripMenuItem
             // 
-            addType7ToolStripMenuItem.Name = "addType7ToolStripMenuItem";
-            addType7ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            addType7ToolStripMenuItem.Text = "Add Type 7";
-            addType7ToolStripMenuItem.Click += btnAddType7_Click;
+            deleteAINavigationToolStripMenuItem.Name = "deleteAINavigationToolStripMenuItem";
+            deleteAINavigationToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            deleteAINavigationToolStripMenuItem.Text = "Delete AI Navigation";
+            deleteAINavigationToolStripMenuItem.Click += btnDelete_Click;
             // 
             // MapEditor
             // 
@@ -578,8 +576,8 @@ namespace Mafia2Tool
         private System.Windows.Forms.ToolStripSplitButton CopyXYZ;
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
         private System.Windows.Forms.ToolStripMenuItem addType4ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripButton toolStripButton1;
         private System.Windows.Forms.ToolStripMenuItem addGroupType1ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addType7ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem deleteAINavigationToolStripMenuItem;
     }
 }

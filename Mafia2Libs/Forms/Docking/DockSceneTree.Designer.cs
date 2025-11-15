@@ -56,7 +56,6 @@ namespace Forms.Docking
             TextBox_Search = new System.Windows.Forms.TextBox();
             Button_Search = new System.Windows.Forms.Button();
             TreeView_Searcher = new Mafia2Tool.Controls.MTreeView();
-            button1 = new System.Windows.Forms.Button();
             EntryMenuStrip.SuspendLayout();
             Tab_Explorer.SuspendLayout();
             TabPage_Explorer.SuspendLayout();
@@ -222,7 +221,6 @@ namespace Forms.Docking
             // 
             tooltipPanel.BackColor = System.Drawing.Color.Silver;
             tooltipPanel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            tooltipPanel.Controls.Add(button1);
             tooltipPanel.Controls.Add(tooltipText);
             tooltipPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
             tooltipPanel.Location = new System.Drawing.Point(3, 438);
@@ -331,10 +329,6 @@ namespace Forms.Docking
             TreeView_Searcher.DoubleClick += TreeView_Searcher_OnDoubleClick;
             TreeView_Searcher.KeyUp += TreeView_Searcher_OnKeyUp;
             // 
-            // button1
-            // 
-
-            // 
             // DockSceneTree
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -391,6 +385,5 @@ namespace Forms.Docking
         public System.Windows.Forms.ToolStripMenuItem TranslokatorNewInstanceButton;
         public System.Windows.Forms.ToolStripMenuItem ActorEntryNewTRObjectButton;
         public System.Windows.Forms.ToolStripMenuItem TRRebuildObjectButton;
-        private System.Windows.Forms.Button button1;
     }
 }
