@@ -39,7 +39,6 @@ namespace ResourceTypes.Navigation
             set
             {
                 _minimum = value;
-                UpdateUnk2FromBBox();
                 NotifyUpdate();
             }
         }
@@ -51,7 +50,6 @@ namespace ResourceTypes.Navigation
             set
             {
                 _maximum = value;
-                UpdateUnk2FromBBox();
                 NotifyUpdate();
             }
         }
@@ -72,28 +70,33 @@ namespace ResourceTypes.Navigation
         }
         private void UpdateUnk2FromBBox()
         {
-           
-            Vector3 halfSize = (Maximum - Minimum) / 2.0f;
+            Vector3 halfSize = (Maximum - Minimum) * 0.5f;
 
-         
             const float MIN_HALF = 0.01f;
             if (MathF.Abs(halfSize.X) < MIN_HALF) halfSize.X = MIN_HALF;
             if (MathF.Abs(halfSize.Y) < MIN_HALF) halfSize.Y = MIN_HALF;
             if (MathF.Abs(halfSize.Z) < MIN_HALF) halfSize.Z = MIN_HALF;
 
-            Unk2 = new Vector3(halfSize.X, halfSize.Z, halfSize.Y);
+            Unk2 = new Vector3(
+                halfSize.X,   // X → X
+                halfSize.Z,   // Z → Y
+                halfSize.Y    // Y → Z
+            );
         }
+
         private void UpdateBBoxFromUnk2()
         {
-            _minimum = new Vector3(-Unk2.X, -Unk2.Z, -Unk2.Y);
-            _maximum = new Vector3(Unk2.X, Unk2.Z, Unk2.Y);
+            _minimum = new Vector3(
+                -Unk2.X,
+                -Unk2.Z,
+                -Unk2.Y
+            );
 
-        
-            const float MIN_HALF = 0.01f;
-            if ((_maximum - _minimum).Length() < MIN_HALF)
-            {
-                _maximum += new Vector3(MIN_HALF);
-            }
+            _maximum = new Vector3(
+                 Unk2.X,
+                 Unk2.Z,
+                 Unk2.Y
+            );
         }
 
         public override void Read(BinaryReader Reader)
