@@ -1,9 +1,11 @@
 ﻿using Rendering.Core;
 using Rendering.Graphics;
+using System;
 using System.ComponentModel;
 using System.IO;
 using System.Numerics;
 using System.Windows.Forms;
+using System.Windows.Media.Imaging;
 using Utils.VorticeUtils;
 using Vortice.Mathematics;
 
@@ -13,20 +15,85 @@ namespace ResourceTypes.Navigation
     {
         public ushort Unk0 { get; set; }
         public Vector3 Position { get; set; }
-        public Vector3 Direction { get; set; }
+
+        private Vector3 _direction;
+        public Vector3 Direction
+        {
+            get => _direction;
+            set
+            {
+                _direction = value;
+              
+            }
+        }
         public Vector3 Unk2 { get; set; }
         public uint Unk3 { get; set; }
 
+        private Vector3 _minimum;
+        private Vector3 _maximum;
+
         [Category("BBox Test")]
-        public Vector3 Minimum { get; set; }
+        public Vector3 Minimum
+        {
+            get => _minimum;
+            set
+            {
+                _minimum = value;
+                UpdateUnk2FromBBox();
+                NotifyUpdate();
+            }
+        }
+
         [Category("BBox Test")]
-        public Vector3 Maximum { get; set; }
+        public Vector3 Maximum
+        {
+            get => _maximum;
+            set
+            {
+                _maximum = value;
+                UpdateUnk2FromBBox();
+                NotifyUpdate();
+            }
+        }
 
         public AIWorld_Type7(AIWorld InWorld) : base(InWorld)
         {
             Position = Vector3.Zero;
-            Direction = Vector3.Zero;
-            Unk2 = Vector3.Zero;
+            Direction = new Vector3(0, 0, 1);
+            bIsVisible = true;
+
+         
+            
+            Unk2 = new Vector3(0.5f, 0.5f, 0.5f);
+
+      
+            _minimum = new Vector3(-Unk2.X, -Unk2.Z, -Unk2.Y);
+            _maximum = new Vector3(Unk2.X, Unk2.Z, Unk2.Y);
+        }
+        private void UpdateUnk2FromBBox()
+        {
+           
+            Vector3 halfSize = (Maximum - Minimum) / 2.0f;
+
+         
+            const float MIN_HALF = 0.01f;
+            if (MathF.Abs(halfSize.X) < MIN_HALF) halfSize.X = MIN_HALF;
+            if (MathF.Abs(halfSize.Y) < MIN_HALF) halfSize.Y = MIN_HALF;
+            if (MathF.Abs(halfSize.Z) < MIN_HALF) halfSize.Z = MIN_HALF;
+
+            Unk2 = new Vector3(halfSize.X, halfSize.Z, halfSize.Y);
+        }
+        private void UpdateBBoxFromUnk2()
+        {
+            _minimum = new Vector3(-Unk2.X, -Unk2.Z, -Unk2.Y);
+            _maximum = new Vector3(Unk2.X, Unk2.Z, Unk2.Y);
+
+        
+            const float MIN_HALF = 0.01f;
+            if ((_maximum - _minimum).Length() < MIN_HALF)
+            {
+                _maximum += new Vector3(MIN_HALF);
+            }
         }
 
         public override void Read(BinaryReader Reader)
@@ -39,9 +106,7 @@ namespace ResourceTypes.Navigation
             Unk2 = Vector3Utils.ReadFromFile(Reader);
             Unk3 = Reader.ReadUInt32();
 
-            // TODO: Need to convert this back to Unk2.
-            Minimum = new Vector3(-Unk2.X, -Unk2.Z, -Unk2.Y);
-            Maximum = new Vector3(Unk2.X, Unk2.Z, Unk2.Y);
+            UpdateBBoxFromUnk2();
         }
 
         public override void Write(BinaryWriter Writer)
@@ -51,6 +116,10 @@ namespace ResourceTypes.Navigation
             Writer.Write(Unk0);
             Position.WriteToFile(Writer);
             Direction.WriteToFile(Writer);
+
+         
+            UpdateUnk2FromBBox();
+
             Unk2.WriteToFile(Writer);
             Writer.Write(Unk3);
         }
@@ -60,21 +129,33 @@ namespace ResourceTypes.Navigation
             base.DebugWrite(Writer);
 
             Writer.WriteLine("Type 7:");
-            Writer.WriteLine("Unk0: {0}", Unk0);
-            Writer.WriteLine("Position: {0}", Position.ToString());
-            Writer.WriteLine("Direction: {0}", Direction.ToString());
-            Writer.WriteLine("Unk2: {0}", Unk2.ToString());
-            Writer.WriteLine("Unke3: {0}", Unk3);
+            Writer.WriteLine($"Unk0: {Unk0}");
+            Writer.WriteLine($"Position: {Position}");
+            Writer.WriteLine($"Direction: {Direction}");
+            Writer.WriteLine($"Unk2: {Unk2}");
+            Writer.WriteLine($"Unk3: {Unk3}");
+            Writer.WriteLine($"BBox Min: {Minimum}");
+            Writer.WriteLine($"BBox Max: {Maximum}");
         }
 
         public override void ConstructRenderable(PrimitiveBatch BBoxBatcher)
         {
             base.ConstructRenderable(BBoxBatcher);
 
+            if (!bIsVisible)
+                return;
+
+    
+            Vector3 min = Minimum;
+            Vector3 max = Maximum;
+            if (MathF.Abs(max.X - min.X) < 0.0001f) max.X = min.X + 0.01f;
+            if (MathF.Abs(max.Y - min.Y) < 0.0001f) max.Y = min.Y + 0.01f;
+            if (MathF.Abs(max.Z - min.Z) < 0.0001f) max.Z = min.Z + 0.01f;
+
             RenderBoundingBox navigationBox = new RenderBoundingBox();
             navigationBox.SetColour(System.Drawing.Color.Yellow);
 
-            BoundingBox BBox = new BoundingBox(Minimum, Maximum);
+            BoundingBox BBox = new BoundingBox(min, max);
 
             Matrix4x4 RotationMatrix = MatrixUtils.CreateFromDirection(Direction);
             RotationMatrix.Translation = Position;
@@ -87,15 +168,15 @@ namespace ResourceTypes.Navigation
 
         public override TreeNode PopulateTreeNode()
         {
-            base.PopulateTreeNode();
+            TreeNode node = new TreeNode();
+            node.Text = $"Type7 ({Unk0})";
+            node.Name = RefID.ToString();
+            node.Tag = this;
 
-            TreeNode ThisNode = new TreeNode();
-            ThisNode.Text = "Type7";
-            ThisNode.Name = RefID.ToString();
-            ThisNode.Tag = this;
-
-            return ThisNode;
+            return node;
         }
+
+
 
         public override Vector3 GetPosition()
         {

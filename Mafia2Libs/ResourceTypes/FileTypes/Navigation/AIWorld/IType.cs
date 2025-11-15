@@ -1,4 +1,5 @@
 ﻿using Rendering.Core;
+using System;
 using System.IO;
 using System.Numerics;
 using System.Windows.Forms;
@@ -10,7 +11,9 @@ namespace ResourceTypes.Navigation
     {
         protected int RefID;
         protected AIWorld OwnWorld;
-        
+        public AIWorld World => OwnWorld;
+        public int ID => RefID;
+
         public bool bIsVisible { get; protected set; }
 
         public IType(AIWorld InWorld) 
@@ -18,6 +21,23 @@ namespace ResourceTypes.Navigation
             RefID = RefManager.GetNewRefID(); 
             OwnWorld = InWorld;
             bIsVisible = true;
+        }
+
+        
+
+ 
+        private TreeNode FindTreeNodeByRefID(TreeNodeCollection nodes, int refID)
+        {
+            foreach (TreeNode node in nodes)
+            {
+                if (node.Tag is IType t && t.RefID == refID)
+                    return node;
+
+                TreeNode child = FindTreeNodeByRefID(node.Nodes, refID);
+                if (child != null)
+                    return child;
+            }
+            return null;
         }
 
         //~ Interface

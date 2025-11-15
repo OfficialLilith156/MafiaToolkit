@@ -1,11 +1,12 @@
-﻿using ResourceTypes.FrameResource;
+﻿using ResourceTypes.Actors;
+using ResourceTypes.FrameResource;
+using ResourceTypes.Navigation;
+using ResourceTypes.Translokator;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
 using System.Windows.Forms;
-using ResourceTypes.Actors;
-using ResourceTypes.Translokator;
 using Utils.Language;
 using Utils.VorticeUtils;
 using WeifenLuo.WinFormsUI.Docking;
@@ -22,6 +23,7 @@ namespace Forms.Docking
 
         public TreeNode DraggedNode;
         public TreeNode targetNode;
+        public TreeView TreeView => TreeView_Explorer;
 
         // Cache the last searched string so we can check if it has changed before we search again.
         private string LastSearchedString = String.Empty;
@@ -96,7 +98,46 @@ namespace Forms.Docking
                 throw new NotImplementedException();
             }
         }
-        
+
+        public void AddType4ToSelectedGroup()
+        {
+            if (SelectedNode?.Tag is AIWorld_Type1 selectedGroup)
+            {
+                IType newPoint = AIWorld_Factory.ConstructByTypeID(selectedGroup.World, 4);
+                selectedGroup.AddPoint(newPoint);
+
+                TreeNode newNode = newPoint.PopulateTreeNode();
+                SelectedNode.Nodes.Add(newNode);
+                SelectedNode.Expand();
+                SelectedNode = newNode;
+            }
+            else
+            {
+                MessageBox.Show("Select the Type1 group to add an element.");
+            }
+        }
+
+
+        public void DeleteSelectedNode()
+        {
+            if (TreeView_Explorer.SelectedNode == null) return;
+
+         
+            if (TreeView_Explorer.SelectedNode.Tag is IType selectedPoint)
+            {
+              
+                var parentWorld = selectedPoint.World; 
+                parentWorld.DeletePoint(selectedPoint);
+
+
+                TreeView_Explorer.Nodes.Remove(TreeView_Explorer.SelectedNode);
+            }
+            else if (TreeView_Explorer.SelectedNode.Tag is AIWorld world)
+            {
+                
+            }
+        }
+
         private void TreeView_Explorer_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left || e.Button == MouseButtons.Right || e.Button == MouseButtons.Middle)
@@ -124,7 +165,57 @@ namespace Forms.Docking
                 e.Effect = DragDropEffects.Move;
             }
         }
+
+        public void AddType7ToSelectedGroupOrWorld()
+        {
+            if (SelectedNode == null)
+            {
+                MessageBox.Show("Select AIWorld or the Type1 group in the tree.");
+                return;
+            }
+
+            AIWorld world = null;
+            AIWorld_Type1 group = null;
+
+     
+            if (SelectedNode.Tag is AIWorld_Type1 selectedGroup)
+            {
+                group = selectedGroup;
+                world = selectedGroup.World;
+            }
+          
+            else if (SelectedNode.Tag is AIWorld selectedWorld)
+            {
+                world = selectedWorld;
+            }
+            else
+            {
+                MessageBox.Show("Select AIWorld or Type1 group to add an item.");
+                return;
+            }
+
+            TreeNode newNode;
+
+            if (group != null)
+            {
+              
+                AIWorld_Type7 type7 = new AIWorld_Type7(world);
+                group.AddPoint(type7);                
+                type7.SetVisiblity(true);             
+                newNode = type7.PopulateTreeNode();   
+            }
+            else
+            {
+              
+                newNode = world.AddType<AIWorld_Type7>();
+            }
+
         
+            SelectedNode.Nodes.Add(newNode);
+            SelectedNode.Expand();
+            SelectedNode = newNode;
+        }
+
         private void TreeView_Explorer_DragDrop(object sender, DragEventArgs e)
         {
             Point pt = TreeView_Explorer.PointToClient(new Point(e.X, e.Y));
@@ -473,7 +564,21 @@ namespace Forms.Docking
 
             return CurrentNodeMatches;
         }
-
+        public void AddType1GroupToAIWorld()
+        {
+            if (SelectedNode?.Tag is AIWorld world)
+            {
+                TreeNode newGroupNode = world.AddType1Group();
+                SelectedNode.Nodes.Add(newGroupNode);
+                SelectedNode.Expand();
+                SelectedNode = newGroupNode;
+            }
+            else
+            {
+                MessageBox.Show("Select AIWorld to add Type1 group.");
+            }
+        }
+        
         private void InternalGotoExplorerNode()
         {
             if(TreeView_Searcher.SelectedNode == null)

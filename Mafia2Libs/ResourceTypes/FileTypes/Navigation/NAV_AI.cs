@@ -59,9 +59,23 @@ namespace ResourceTypes.Navigation
             // empty, for reflection system
         }
 
-        public void WriteToFile(bool bIsTest = true)
+        public void WriteToFile(bool bIsTest = false)
         {
-            string OutputName = file.FullName;
+            string OutputName;
+
+            if (file != null)
+            {
+                OutputName = file.FullName;
+            }
+            else if (!string.IsNullOrEmpty(Filename))
+            {
+                OutputName = Filename;
+            }
+            else
+            {
+                throw new Exception("Cannot write NAVData: no file or filename specified.");
+            }
+
             if (bIsTest)
             {
                 OutputName = OutputName.Insert(OutputName.Length - 4, "_test");

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Runtime.Serialization;
 using System.Windows.Forms;
 using Utils.StringHelpers;
 
@@ -14,11 +15,16 @@ namespace ResourceTypes.Navigation
     {
         public int Unk03 { get; set; }
         public int Unk05 { get; set; } // same as Unk3
-
+        public List<AIWorld_Type1> Types1 { get; set; }
         public string PartName { get; set; }
         public string KynogonString { get; set; }
         public List<IType> AIPoints { get; private set; }
         public string OriginStream { get; set; }
+
+        public class NavigationData
+        {
+            public List<AIWorld> Worlds { get; set; }
+        }
 
         [Browsable(false)]
         public RenderableAdapter RenderObject { get; private set; }
@@ -37,9 +43,11 @@ namespace ResourceTypes.Navigation
         public AIWorld(BinaryReader reader)
         {
             AIPoints = new List<IType>();
+ 
 
             ReadFromFile(reader);
         }
+        
 
         public void ReadFromFile(BinaryReader reader)
         {
@@ -166,8 +174,17 @@ namespace ResourceTypes.Navigation
 
         public void RequestPrimitiveBatchUpdate()
         {
-            RenderObject.GetRenderItem<RenderAIWorld>().RequestUpdate();
+            if (RenderObject == null)
+                return;
+
+            var item = RenderObject.GetRenderItem<RenderAIWorld>();
+            if (item == null)
+                return; 
+
+            item.RequestUpdate();
         }
+
+        
 
         public TreeNode PopulateTreeNode()
         {
@@ -175,6 +192,8 @@ namespace ResourceTypes.Navigation
             Parent.Text = PartName;
             Parent.Name = PartName;
             Parent.Tag = this;
+
+            
 
             foreach (IType AIPoint in AIPoints)
             {
@@ -184,12 +203,48 @@ namespace ResourceTypes.Navigation
             return Parent;
         }
 
+        public TreeNode AddType1Group()
+        {
+            AIWorld_Type1 Group = new AIWorld_Type1(this);
+            AIPoints.Add(Group);
+
+            TreeNode Node = Group.PopulateTreeNode();
+            RequestPrimitiveBatchUpdate();
+
+            return Node;
+        }
+
+        public TreeNode AddType7ToGroup(AIWorld_Type1 group = null)
+        {
+           
+            AIWorld_Type7 type7 = new AIWorld_Type7(this);
+
+           
+            AIPoints.Add(type7);
+
+            
+            if (group != null)
+            {
+                group.AIPoints.Add(type7); 
+            }
+
+           
+            TreeNode node = type7.PopulateTreeNode();
+
+         
+            RequestPrimitiveBatchUpdate();
+
+            return node;
+        }
+
         public TreeNode AddType<T>() where T : IType
         {
             T NewObject = (T)Activator.CreateInstance(typeof(T), this);
+
             AIPoints.Add(NewObject);
 
             TreeNode NewNode = NewObject.PopulateTreeNode();
+
 
             RequestPrimitiveBatchUpdate();
 

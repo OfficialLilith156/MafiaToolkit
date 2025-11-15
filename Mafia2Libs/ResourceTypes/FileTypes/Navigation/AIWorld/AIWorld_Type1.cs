@@ -1,4 +1,6 @@
 ﻿using Rendering.Core;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 
@@ -7,12 +9,19 @@ namespace ResourceTypes.Navigation
     public class AIWorld_Type1 : IType
     {
         public byte Unk01 { get; set; }
-        public IType[] AIPoints { get; set; }
+        public List<IType> AIPoints { get; set; }
 
         public AIWorld_Type1(AIWorld InWorld) : base(InWorld)
         {
-            AIPoints = new IType[0];
+            AIPoints = new List<IType>();
         }
+        public void AddPoint(IType point)
+        {
+            AIPoints.Add(point);
+            World.RequestPrimitiveBatchUpdate();
+        }
+
+        
 
         public override void Read(BinaryReader Reader)
         {
@@ -21,12 +30,13 @@ namespace ResourceTypes.Navigation
             Unk01 = Reader.ReadByte();
 
             uint NumPoints = Reader.ReadUInt32();
-            AIPoints = new IType[NumPoints];
-            for(uint i = 0; i < NumPoints; i++)
+            AIPoints.Clear();
+            for (uint i = 0; i < NumPoints; i++)
             {
                 ushort TypeID = Reader.ReadUInt16();
-                AIPoints[i] = AIWorld_Factory.ConstructByTypeID(OwnWorld, TypeID);
-                AIPoints[i].Read(Reader);
+                IType point = AIWorld_Factory.ConstructByTypeID(OwnWorld, TypeID);
+                point.Read(Reader);
+                AIPoints.Add(point);
             }
         }
 
@@ -35,9 +45,9 @@ namespace ResourceTypes.Navigation
             base.Write(Writer);
 
             Writer.Write(Unk01);
-            Writer.Write(AIPoints.Length);
+            Writer.Write(AIPoints.Count);
 
-            foreach(IType AIPoint in AIPoints)
+            foreach (IType AIPoint in AIPoints)
             {
                 ushort TypeID = AIWorld_Factory.GetIDByType(AIPoint);
                 Writer.Write(TypeID);
@@ -50,8 +60,8 @@ namespace ResourceTypes.Navigation
             base.DebugWrite(Writer);
 
             Writer.WriteLine("Unk0: {0}", Unk01);
-            Writer.WriteLine("NumPoints: {0}", AIPoints.Length);
-            foreach(IType AIPoint in AIPoints)
+            Writer.WriteLine("NumPoints: {0}", AIPoints.Count);
+            foreach (IType AIPoint in AIPoints)
             {
                 AIPoint.DebugWrite(Writer);
                 Writer.WriteLine("");
@@ -86,6 +96,16 @@ namespace ResourceTypes.Navigation
             }
 
             return ThisNode;
+        }
+        public TreeNode AddTypeToGroup<T>() where T : IType
+        {
+            T NewPoint = (T)Activator.CreateInstance(typeof(T), OwnWorld);
+            AIPoints.Add(NewPoint);
+
+            TreeNode Node = NewPoint.PopulateTreeNode();
+            NotifyUpdate();
+
+            return Node;
         }
     }
 }

@@ -13,8 +13,8 @@ using ResourceTypes.Materials;
 using ResourceTypes.ModelHelpers.ModelExporter;
 using ResourceTypes.Navigation;
 using ResourceTypes.Navigation.Traffic;
-using SharpGLTF.Schema2;
 using ResourceTypes.Translokator;
+using SharpGLTF.Schema2;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -33,6 +33,7 @@ using Utils.VorticeUtils;
 using Vortice.Mathematics;
 using WeifenLuo.WinFormsUI.Docking;
 using static ResourceTypes.Collisions.Collision;
+using static ResourceTypes.Navigation.AIWorld;
 using static UnluacNET.TableLiteral;
 using Collision = ResourceTypes.Collisions.Collision;
 using Object = ResourceTypes.Translokator.Object;
@@ -45,17 +46,15 @@ namespace Mafia2Tool
         private SceneData ImportedScene;
         private InputClass Input { get; set; }
         private GraphicsClass Graphics { get; set; }
-
+        private AIWorld.NavigationData navData;
         private Point mousePos;
         private Point lastMousePos;
         private FileInfo fileLocation;
-
         //docking panels
         private DockPropertyGrid dPropertyGrid;
         private DockSceneTree dSceneTree;
         private DockImportSceneTree dImportSceneTree;
         private DockViewProperties dViewProperties;
-
         //parent nodes for data
         private TreeNode frameResourceRoot;
         private TreeNode importFRRoot;
@@ -82,7 +81,10 @@ namespace Mafia2Tool
             TextureLoader.ScenePath = SceneData.ScenePath;
             InitializeComponent();
             Localise();
-
+            navData = new AIWorld.NavigationData
+            {
+                Worlds = new List<AIWorld>()
+            };
             sceneData.FrameResource.OnFrameRemoved += OnFrameRemoved;
 
             if (MaterialsManager.MaterialLibraries.Count == 0)
@@ -676,6 +678,7 @@ namespace Mafia2Tool
             Label_StatusBar.Text = Graphics.GetStatusBarText();
             return true;
         }
+        
 
         private void SanitizeBuffers()
         {
@@ -742,6 +745,10 @@ namespace Mafia2Tool
 
             #endregion index sanitize;
         }
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            dSceneTree.DeleteSelectedNode();
+        }
 
         private void Save()
         {
@@ -775,9 +782,42 @@ namespace Mafia2Tool
                     }
                 }
 
-                if (SceneData.roadMap != null && ToolkitSettings.Experimental)
+                if (SceneData.AIWorlds != null && ToolkitSettings.Experimental)
                 {
-                    // save code 
+                    foreach (NAVData navData in SceneData.AIWorlds)
+                    {
+                        if (navData.Data is AIWorld aiWorld)
+                        {
+                            foreach (TreeNode rootNode in dSceneTree.TreeView.Nodes)
+                            {
+                                if (rootNode.Tag == aiWorld)
+                                {
+                       
+                                    aiWorld.Types1.Clear();
+
+                                    foreach (TreeNode groupNode in rootNode.Nodes)
+                                    {
+                                        if (groupNode.Tag is AIWorld_Type1 group)
+                                        {
+                                            group.AIPoints.Clear();
+
+                                            foreach (TreeNode pointNode in groupNode.Nodes)
+                                            {
+                                                if (pointNode.Tag is IType point)
+                                                {
+                                                    group.AIPoints.Add(point);
+                                                }
+                                            }
+
+                                            aiWorld.Types1.Add(group);
+                                        }
+                                    }
+                                }
+                            }
+
+                            navData.WriteToFile(); 
+                        }
+                    }
                 }
 
                 if (SceneData.Collisions != null)
@@ -1346,6 +1386,62 @@ namespace Mafia2Tool
 
             dPropertyGrid.SetObject(node.Tag);
         }
+
+        private void btnAddType4_Click(object sender, EventArgs e)
+        {
+            if (dSceneTree == null)
+                return;
+
+            TreeNode selectedNode = dSceneTree.SelectedNode;
+            if (selectedNode?.Tag is AIWorld_Type1 selectedGroup)
+            {
+                IType newPoint = AIWorld_Factory.ConstructByTypeID(selectedGroup.World, 4);
+                selectedGroup.AddPoint(newPoint);
+
+                TreeNode newNode = newPoint.PopulateTreeNode();
+                selectedNode.Nodes.Add(newNode);
+                selectedNode.Expand();
+                dSceneTree.SelectedNode = newNode;
+            }
+            else
+            {
+                MessageBox.Show("Select the Type1 group in the tree.");
+            }
+        }
+
+        private void btnAddType7_Click(object sender, EventArgs e)
+        {
+            if (dSceneTree == null)
+                return;
+
+            TreeNode selectedNode = dSceneTree.SelectedNode;
+
+            if (selectedNode?.Tag is AIWorld_Type1 selectedGroup)
+            {
+                IType newPoint = AIWorld_Factory.ConstructByTypeID(selectedGroup.World, 7);
+                selectedGroup.AddPoint(newPoint);
+
+                TreeNode newNode = newPoint.PopulateTreeNode();
+                selectedNode.Nodes.Add(newNode);
+                selectedNode.Expand();
+                dSceneTree.SelectedNode = newNode;
+            }
+            else
+            {
+                MessageBox.Show("Select the Type1 group in the tree.");
+            }
+        }
+
+        private void Button_AddType1Group_Click(object sender, EventArgs e)
+        {
+            if (dSceneTree != null)
+            {
+                dSceneTree.AddType1GroupToAIWorld();
+            }
+        }
+        
+
+        
 
         private void FixActorDefintions(Actor actor)
         {
