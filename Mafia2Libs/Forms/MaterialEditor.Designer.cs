@@ -38,6 +38,7 @@
             Button_Delete = new System.Windows.Forms.ToolStripMenuItem();
             Button_MergeMTL = new System.Windows.Forms.ToolStripMenuItem();
             Button_ExportSelected = new System.Windows.Forms.ToolStripMenuItem();
+            dUPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             Button_Debug = new System.Windows.Forms.ToolStripDropDownButton();
             Button_DumpTextures = new System.Windows.Forms.ToolStripMenuItem();
             GirdView_Materials = new System.Windows.Forms.DataGridView();
@@ -137,7 +138,7 @@
             // toolButton
             // 
             toolButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            toolButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { Button_AddMaterial, Button_Delete, Button_MergeMTL, Button_ExportSelected });
+            toolButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { Button_AddMaterial, Button_Delete, dUPToolStripMenuItem, Button_MergeMTL, Button_ExportSelected });
             toolButton.Image = (System.Drawing.Image)resources.GetObject("toolButton.Image");
             toolButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             toolButton.Name = "toolButton";
@@ -173,6 +174,13 @@
             Button_ExportSelected.Size = new System.Drawing.Size(208, 22);
             Button_ExportSelected.Text = "$EXPORT_SELECTED";
             Button_ExportSelected.Click += Button_ExportedSelected_Click;
+            // 
+            // dUPToolStripMenuItem
+            // 
+            dUPToolStripMenuItem.Name = "dUPToolStripMenuItem";
+            dUPToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            dUPToolStripMenuItem.Text = "Duplicate Material";
+            dUPToolStripMenuItem.Click += DuplicateMaterial;
             // 
             // Button_Debug
             // 
@@ -444,5 +452,6 @@
         private System.Windows.Forms.Button Button_Search;
         private System.Windows.Forms.ToolStripDropDownButton Button_Debug;
         private System.Windows.Forms.ToolStripMenuItem Button_DumpTextures;
+        private System.Windows.Forms.ToolStripMenuItem dUPToolStripMenuItem;
     }
 }

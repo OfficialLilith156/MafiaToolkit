@@ -401,7 +401,59 @@ namespace Mafia2Tool
                 }
             }
         }
+        private void DuplicateMaterial(object sender, EventArgs e)
+        {
+            if (GirdView_Materials.SelectedCells.Count == 0 || !Panel_Main.Visible)
+                return;
 
+            HashSet<int> processedRows = new HashSet<int>();
+
+            foreach (DataGridViewCell cell in GirdView_Materials.SelectedCells)
+            {
+                int rowIndex = cell.RowIndex;
+
+                if (processedRows.Contains(rowIndex))
+                    continue;
+
+                processedRows.Add(rowIndex);
+
+                IMaterial originalMat = GirdView_Materials.Rows[rowIndex].Tag as IMaterial;
+                if (originalMat == null)
+                    continue;
+
+                IMaterial duplicatedMat;
+                switch (originalMat.GetMTLVersion())
+                {
+                    case VersionsEnumerator.V_57:
+                        duplicatedMat = new Material_v57(originalMat);
+                        break;
+                    case VersionsEnumerator.V_58:
+                        duplicatedMat = new Material_v58(originalMat);
+                        break;
+                    case VersionsEnumerator.V_63:
+                        duplicatedMat = new Material_v63(originalMat);
+                        break;
+                    default:
+                        MessageBox.Show("Unsupported material version for duplication!");
+                        continue;
+                }
+
+                string baseName = originalMat.GetMaterialName();
+                string newName = baseName + "_Copy";
+                int counter = 1;
+                while (mtl.Materials.ContainsKey(FNV64.Hash(newName)))
+                {
+                    newName = baseName + "_Copy" + counter;
+                    counter++;
+                }
+                duplicatedMat.SetName(newName);
+
+                mtl.Materials.Add(duplicatedMat.GetMaterialHash(), duplicatedMat);
+                GirdView_Materials.Rows.Add(BuildRowData(duplicatedMat));
+            }
+
+            FileIsEdited();
+        }
         private void MaterialSearch_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
