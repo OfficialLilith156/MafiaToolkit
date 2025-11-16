@@ -14,7 +14,17 @@ namespace ResourceTypes.Navigation
     public class AIWorld_Type7 : IType
     {
         public ushort Unk0 { get; set; }
-        public Vector3 Position { get; set; }
+
+        private Vector3 _position;
+        public Vector3 Position
+        {
+            get => _position;
+            set
+            {
+                _position = value;
+                NotifyUpdate();
+            }
+        }
 
         private Vector3 _direction;
         public Vector3 Direction
@@ -23,7 +33,8 @@ namespace ResourceTypes.Navigation
             set
             {
                 _direction = value;
-              
+                NotifyUpdate();
+
             }
         }
         public Vector3 Unk2 { get; set; }
