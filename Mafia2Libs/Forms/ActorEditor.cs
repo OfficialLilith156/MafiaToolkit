@@ -16,7 +16,7 @@ namespace Mafia2Tool
     {
         private FileInfo actorFile;
         private Actor actors;
-
+        private static ActorEntry branchClipboard;
         private TreeNode definitions;
         private TreeNode items;
 
@@ -271,6 +271,83 @@ namespace Mafia2Tool
             bIsFileEdited = true;
 
             objectForm.Dispose();
+        }
+
+
+        private void CopyEntityBranch(object sender, System.EventArgs e)
+        {
+            TreeNode selectedNode = ActorTreeView.SelectedNode;
+            if (selectedNode == null || !(selectedNode.Tag is ActorEntry original))
+                return;
+
+            ActorEntry cloned = actors.CreateActorEntry(
+                (ActorTypes)original.ActorTypeID,
+                original.EntityName + ""
+            );
+            cloned.DefinitionName = original.DefinitionName;
+            cloned.FrameName = original.FrameName;
+
+            if (original.DataID != -1 && original.Data != null)
+            {
+                cloned.Data = new ActorExtraData()
+                {
+                    BufferType = original.Data.BufferType
+                };
+
+                Type dataType = original.Data.Data.GetType();
+                object clonedInternal = Activator.CreateInstance(dataType);
+                ReflectionHelpers.Copy(original.Data.Data, ref clonedInternal);
+                cloned.Data.Data = clonedInternal as IActorExtraDataInterface;
+
+                branchClipboard = cloned;
+            }
+            else
+            {
+                branchClipboard = cloned;
+            }
+        }
+
+        private void PasteEntityBranch(object sender, System.EventArgs e)
+        {
+            if (branchClipboard == null)
+                return;
+
+            ActorEntry newEntry = actors.CreateActorEntry(
+                (ActorTypes)branchClipboard.ActorTypeID,
+                branchClipboard.EntityName
+            );
+            newEntry.DefinitionName = branchClipboard.DefinitionName;
+            newEntry.FrameName = branchClipboard.FrameName;
+
+            if (branchClipboard.Data != null)
+            {
+                ActorExtraData newData = new ActorExtraData()
+                {
+                    BufferType = branchClipboard.Data.BufferType
+                };
+
+                object clonedInternal = Activator.CreateInstance(branchClipboard.Data.Data.GetType());
+                ReflectionHelpers.Copy(branchClipboard.Data.Data, ref clonedInternal);
+
+                newData.Data = clonedInternal as IActorExtraDataInterface;
+                newEntry.Data = newData;
+                newEntry.DataID = (short)actors.ExtraData.Count;
+                actors.ExtraData.Add(newData);
+            }
+
+            TreeNode node = new TreeNode(newEntry.EntityName) { Tag = newEntry };
+
+            if (newEntry.Data != null)
+            {
+                TreeNode child = new TreeNode("Extra Data") { Tag = newEntry.Data };
+                node.Nodes.Add(child);
+            }
+
+            items.Nodes.Add(node);
+            ActorTreeView.SelectedNode = node;
+
+            Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
+            bIsFileEdited = true;
         }
 
         private void AddDefinitionButton_Click(object sender, System.EventArgs e)
