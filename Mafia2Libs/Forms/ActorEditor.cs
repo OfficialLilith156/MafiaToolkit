@@ -3,6 +3,7 @@ using ResourceTypes.Actors;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.Serialization;
 using System.IO;
 using System.Windows.Forms;
 using Utils.Helpers.Reflection;
@@ -573,44 +574,168 @@ namespace Mafia2Tool
             }
             return null;
         }
+        private object CloneObjectSafely(object src)
+        {
+            if (src == null) return null;
+
+            Type t = src.GetType();
+
+            if (t.IsPrimitive || t == typeof(string) || t.IsEnum
+                || t == typeof(decimal) || t == typeof(DateTime) || t == typeof(Guid))
+            {
+                return src;
+            }
+
+            if (src is ICloneable clonable)
+            {
+                try
+                {
+                    return clonable.Clone();
+                }
+                catch
+                {
+                }
+            }
+
+            if (t.IsArray)
+            {
+                Array arr = (Array)src;
+                Type elemType = t.GetElementType();
+                Array cloneArr = Array.CreateInstance(elemType, arr.Length);
+                for (int i = 0; i < arr.Length; i++)
+                {
+                    cloneArr.SetValue(CloneObjectSafely(arr.GetValue(i)), i);
+                }
+                return cloneArr;
+            }
+
+            if (t.IsValueType)
+            {
+                try
+                {
+                    object valCopy = Activator.CreateInstance(t);
+                    ReflectionHelpers.Copy(src, ref valCopy);
+                    return valCopy;
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"CloneObjectSafely: cannot Activator.CreateInstance value type {t.FullName}: {ex.Message}");
+                    return src;
+                }
+            }
+            object instance = null;
+            try
+            {
+                if (t != typeof(string))
+                {
+                    var ctor = t.GetConstructor(Type.EmptyTypes);
+                    if (ctor != null)
+                    {
+                        instance = Activator.CreateInstance(t);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"CloneObjectSafely: Activator.CreateInstance failed for {t.FullName}: {ex.Message}");
+                instance = null;
+            }
+
+            if (instance == null)
+            {
+                try
+                {
+                    if (t != typeof(string))
+                    {
+                        instance = FormatterServices.GetUninitializedObject(t);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"CloneObjectSafely: FormatterServices.GetUninitializedObject failed for {t.FullName}: {ex.Message}");
+                    instance = null;
+                }
+            }
+
+            if (instance != null)
+            {
+                try
+                {
+                    ReflectionHelpers.Copy(src, ref instance);
+                    return instance;
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"CloneObjectSafely: ReflectionHelpers.Copy failed for {t.FullName}: {ex.Message}");
+                    return src;
+                }
+            }
+
+            Debug.WriteLine($"CloneObjectSafely: Unable to create clone for type {t.FullName}. Returning original reference as fallback.");
+            return src;
+        }
 
         private void dUPToolStripMenuItem_Click(object sender, EventArgs e)
         {
             TreeNode selectedNode = ActorTreeView.SelectedNode;
-            if (selectedNode == null || !(selectedNode.Tag is ActorEntry originalEntry))
+            if (selectedNode == null || !(selectedNode.Tag is ActorEntry original))
                 return;
 
-            ActorEntry clonedEntry = actors.CreateActorEntry(
-                (ActorTypes)originalEntry.ActorTypeID,
-                originalEntry.EntityName + ""
+            ActorEntry clone = actors.CreateActorEntry(
+                (ActorTypes)original.ActorTypeID,
+                original.EntityName + ""
             );
-            clonedEntry.DefinitionName = originalEntry.DefinitionName;
-            clonedEntry.FrameName = originalEntry.FrameName;
 
-            if (originalEntry.DataID != -1 && originalEntry.Data != null)
+            clone.DefinitionName = original.DefinitionName;
+            clone.FrameName = original.FrameName;
+
+            if (original.Data != null && original.DataID != -1)
             {
-                clonedEntry.Data = new ActorExtraData()
+                ActorExtraData newData = new ActorExtraData
                 {
-                    BufferType = originalEntry.Data.BufferType,
-                    Data = null
+                    BufferType = original.Data.BufferType
                 };
 
-                Type dataType = originalEntry.Data.Data.GetType();
-                object clonedInternalData = Activator.CreateInstance(dataType);
-                ReflectionHelpers.Copy(originalEntry.Data.Data, ref clonedInternalData);
-                clonedEntry.Data.Data = clonedInternalData as IActorExtraDataInterface;
+                try
+                {
+                    object internalCopy = CloneObjectSafely(original.Data.Data);
+                    if (internalCopy is IActorExtraDataInterface asInterface)
+                    {
+                        newData.Data = asInterface;
+                    }
+                    else
+                    {
+                        if (original.Data.Data != null)
+                        {
+                            Type dataType = original.Data.Data.GetType();
+                            if (typeof(IActorExtraDataInterface).IsAssignableFrom(dataType))
+                            {
+                                newData.Data = internalCopy as IActorExtraDataInterface;
+                            }
+                            else
+                            {
+                                Debug.WriteLine("DUP: unexpected Data.Data type: " + dataType.FullName);
+                            }
+                        }
+                    }
 
-                clonedEntry.DataID = (short)actors.ExtraData.Count;
-                actors.ExtraData.Add(clonedEntry.Data);
+                    clone.Data = newData;
+                    clone.DataID = (short)actors.ExtraData.Count;
+                    actors.ExtraData.Add(newData);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error ExtraData: {ex.Message}\nType: {original.Data.Data?.GetType().FullName}");
+                    Debug.WriteLine($"DUP clone error: {ex}");
+                    return;
+                }
             }
 
-            TreeNode node = new TreeNode(clonedEntry.EntityName);
-            node.Tag = clonedEntry;
+            TreeNode node = new TreeNode(clone.EntityName) { Tag = clone };
 
-            if (clonedEntry.DataID != -1)
+            if (clone.Data != null)
             {
-                TreeNode child = new TreeNode("Extra Data");
-                child.Tag = clonedEntry.Data;
+                TreeNode child = new TreeNode("Extra Data") { Tag = clone.Data };
                 node.Nodes.Add(child);
             }
 
