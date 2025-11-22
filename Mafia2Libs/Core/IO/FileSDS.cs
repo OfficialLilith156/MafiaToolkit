@@ -49,9 +49,10 @@ namespace Core.IO
             Log.WriteLine("Successfully unwrapped compressed data");
             archiveFile.SaveResources(file);
 
-            if (File.Exists(file.FullName + ".patch") && GameStorage.Instance.GetSelectedGame().GameType == GamesEnumerator.MafiaII_DE)
+            if (File.Exists(file.FullName + ".patch") && (GameStorage.Instance.GetSelectedGame().GameType == GamesEnumerator.MafiaII_DE || GameStorage.Instance.GetSelectedGame().GameType == GamesEnumerator.MafiaII))
             {
                 DialogResult result = MessageBox.Show("Detected Patch file. Would you like to unpack?", "Toolkit", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
                 if (result == DialogResult.Yes)
                 {
                     archiveFile.ExtractPatch(new FileInfo(file.FullName + ".patch"));
