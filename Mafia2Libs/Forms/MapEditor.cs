@@ -238,12 +238,10 @@ namespace Mafia2Tool
                 return;
             }
 
-            if (SceneData.Actors != null)
+            if (SceneData.Actors == null || SceneData.Actors.Length == 0)
             {
-                // Actors array is invalid
                 SceneData.Actors = new Actor[0];
                 SceneData.CreateNewActor();
-
                 LoadActorFiles();
             }
 

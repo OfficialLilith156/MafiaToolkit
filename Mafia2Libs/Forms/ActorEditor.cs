@@ -54,9 +54,59 @@ namespace Mafia2Tool
             ContextDelete.Text = Language.GetString("$DELETE");
         }
 
+        private static readonly Dictionary<ActorTypes, int> TypePriority = new Dictionary<ActorTypes, int>()
+        {
+            { ActorTypes.C_CrashObject, 0 },
+            { ActorTypes.C_Car, 10 },
+            { ActorTypes.C_TranslocatedCar, 11 },
+            { ActorTypes.C_TrafficCar, 12 },
+            { ActorTypes.Human, 20 },
+            { ActorTypes.C_TrafficHuman, 21 },
+            { ActorTypes.C_Train, 30 },
+            { ActorTypes.C_TrafficTrain, 31 },
+            { ActorTypes.C_Door, 40 },
+            { ActorTypes.C_DummyDoor, 41 },
+            { ActorTypes.Tree, 50 },
+            { ActorTypes.StaticEntity, 51 },
+            { ActorTypes.C_StaticWeapon, 52 },
+            { ActorTypes.C_StaticParticle, 53 },
+            { ActorTypes.Blocker, 54 },
+            { ActorTypes.ActionPoint, 60 },
+            { ActorTypes.ActionPointScript, 61 },
+            { ActorTypes.ActionPointSearch, 62 },
+            { ActorTypes.C_Sound, 70 },
+            { ActorTypes.SoundMixer, 71 },
+            { ActorTypes.Boat, 80 },
+            { ActorTypes.Airplane, 81 },
+            { ActorTypes.Radio, 90 },
+            { ActorTypes.JukeBox, 91 },
+            { ActorTypes.Garage, 100 },
+            { ActorTypes.Wardrobe, 101 },
+            { ActorTypes.FramesController, 110 },
+            { ActorTypes.FrameWrapper, 111 },
+            { ActorTypes.Telephone, 120 },
+            { ActorTypes.C_Item, 130 },
+            { ActorTypes.FireTarget, 131 },
+            { ActorTypes.DangerZone, 132 },
+            { ActorTypes.C_ActorDetector, 133 },
+            { ActorTypes.SpikeStrip, 134 },
+            { ActorTypes.PhysicsScene, 140 },
+            { ActorTypes.CleanEntity, 141 },
+            { ActorTypes.None, 999 },
+        };
         private void BuildData()
         {
             actors = new Actor(actorFile);
+
+            actors.Items.Sort((a, b) =>
+            {
+                int pa = TypePriority.ContainsKey((ActorTypes)a.ActorTypeID) ? TypePriority[(ActorTypes)a.ActorTypeID] : 999;
+                int pb = TypePriority.ContainsKey((ActorTypes)b.ActorTypeID) ? TypePriority[(ActorTypes)b.ActorTypeID] : 999;
+                int typeCompare = pa.CompareTo(pb);
+                if (typeCompare != 0) return typeCompare;
+                return string.Compare(a.EntityName, b.EntityName, StringComparison.InvariantCultureIgnoreCase);
+            });
+
             definitions = new TreeNode("Definitions");
             items = new TreeNode("Entities");
 
@@ -68,33 +118,33 @@ namespace Mafia2Tool
                 definitions.Nodes.Add(node);
             }
 
-            for (int i = 0; i != actors.Items.Count; i++)
+            Dictionary<ActorTypes, TreeNode> groups = new Dictionary<ActorTypes, TreeNode>();
+
+            for (int i = 0; i < actors.Items.Count; i++)
             {
-                TreeNode node = new TreeNode(actors.Items[i].EntityName);
-                node.Tag = actors.Items[i];
+                ActorEntry entry = actors.Items[i];
+                ActorTypes type = (ActorTypes)entry.ActorTypeID;
 
-                if (actors.Items[i].DataID != -1)
+                if (!groups.ContainsKey(type))
                 {
-                    TreeNode child = new TreeNode("Extra Data");
-                    child.Tag = actors.ExtraData[actors.Items[i].DataID];
-                    node.Nodes.Add(child);
-
-                    if (Debugger.IsAttached)
-                    {
-                        string folder = "actors_unks/" + (ActorTypes)actors.Items[i].ActorTypeID + "/";
-                        string filename = actors.Items[i].EntityName + ".dat";
-
-                        if (!Directory.Exists(folder))
-                        {
-                            Directory.CreateDirectory(folder);
-                        }
-
-                        File.WriteAllBytes(Path.Combine(folder, filename), actors.Items[i].Data.GetDataInBytes());
-                    }
+                    TreeNode groupNode = new TreeNode(type.ToString()); 
+                    groups[type] = groupNode;
+                    items.Nodes.Add(groupNode);
                 }
 
-                items.Nodes.Add(node);
+                TreeNode node = new TreeNode(entry.EntityName);
+                node.Tag = entry;
+
+                if (entry.DataID != -1)
+                {
+                    TreeNode child = new TreeNode("Extra Data");
+                    child.Tag = actors.ExtraData[entry.DataID];
+                    node.Nodes.Add(child);
+                }
+
+                groups[type].Nodes.Add(node);
             }
+
             ActorTreeView.Nodes.Add(definitions);
             ActorTreeView.Nodes.Add(items);
         }
