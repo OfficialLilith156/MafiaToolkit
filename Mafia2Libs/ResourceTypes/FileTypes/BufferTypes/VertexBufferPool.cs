@@ -104,27 +104,38 @@ namespace ResourceTypes.BufferPools
             }
         }
 
+        //public bool TryAddBuffer(VertexBuffer buffer)
+        //{
+        //    bool bHasVertexBuffer = HasBuffer(buffer);
+
+        //    if(bHasVertexBuffer)
+        //    {
+        //        var result = MessageBox.Show("Found existing Vertex Buffer!\nPressing 'OK' will replace, pressing 'Cancel' will stop the importing process.", "Toolkit", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+        //        bHasVertexBuffer = (result == DialogResult.OK ? true : false);
+        //    }
+
+        //    if (bHasVertexBuffer)
+        //    {
+        //        RemoveBuffer(buffer);
+        //        AddBuffer(buffer);
+        //        return true;
+        //    }
+        //    else
+        //    {
+        //        AddBuffer(buffer);
+        //        return true;
+        //    }
+        //}
+
         public bool TryAddBuffer(VertexBuffer buffer)
         {
-            bool bHasVertexBuffer = HasBuffer(buffer);
-
-            if(bHasVertexBuffer)
-            {
-                var result = MessageBox.Show("Found existing Vertex Buffer!\nPressing 'OK' will replace, pressing 'Cancel' will stop the importing process.", "Toolkit", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
-                bHasVertexBuffer = (result == DialogResult.OK ? true : false);
-            }
-
-            if (bHasVertexBuffer)
+            if (HasBuffer(buffer))
             {
                 RemoveBuffer(buffer);
-                AddBuffer(buffer);
-                return true;
             }
-            else
-            {
-                AddBuffer(buffer);
-                return true;
-            }
+
+            AddBuffer(buffer);
+            return true;
         }
 
         public VertexBuffer GetBuffer(ulong vertexRef)

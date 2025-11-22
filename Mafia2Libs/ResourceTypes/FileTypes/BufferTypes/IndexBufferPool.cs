@@ -104,27 +104,39 @@ namespace ResourceTypes.BufferPools
             }
         }
 
+        //public bool TryAddBuffer(IndexBuffer buffer)
+        //{
+        //    bool bIndexBuffer = HasBuffer(buffer);
+
+        //    if (bIndexBuffer)
+        //    {
+        //        var result = MessageBox.Show("Found existing Index Buffer!\nPressing 'OK' will replace, pressing 'Cancel' will stop the importing process.", "Toolkit", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+        //        bIndexBuffer = (result == DialogResult.OK ? true : false);
+        //    }
+
+        //    if (bIndexBuffer)
+        //    {
+        //        RemoveBuffer(buffer);
+        //        AddBuffer(buffer);
+        //        return true;
+        //    }
+        //    else
+        //    {
+        //        AddBuffer(buffer);
+        //        return true;
+        //    }
+        //}
         public bool TryAddBuffer(IndexBuffer buffer)
         {
             bool bIndexBuffer = HasBuffer(buffer);
 
             if (bIndexBuffer)
             {
-                var result = MessageBox.Show("Found existing Index Buffer!\nPressing 'OK' will replace, pressing 'Cancel' will stop the importing process.", "Toolkit", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
-                bIndexBuffer = (result == DialogResult.OK ? true : false);
+                RemoveBuffer(buffer);
             }
 
-            if (bIndexBuffer)
-            {
-                RemoveBuffer(buffer);
-                AddBuffer(buffer);
-                return true;
-            }
-            else
-            {
-                AddBuffer(buffer);
-                return true;
-            }
+            AddBuffer(buffer);
+            return true;
         }
 
         public IndexBuffer GetBuffer(ulong indexRef)
