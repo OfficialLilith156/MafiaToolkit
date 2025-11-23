@@ -18,6 +18,7 @@ using SharpGLTF.Schema2;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Numerics;
@@ -2999,6 +3000,37 @@ namespace Mafia2Tool
 
             Clipboard.SetText(result);
 
+        }
+
+        private void PasteXYZ_ButtonClick(object sender, EventArgs e)
+        {
+            if (!Clipboard.ContainsText())
+                return;
+
+            string text = Clipboard.GetText().Trim();
+
+            string[] parts = text
+                .Split(new[] { ' ', '\t', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+
+            if (parts.Length >= 3)
+            {
+                try
+                {
+                    decimal x = decimal.Parse(parts[0], CultureInfo.InvariantCulture);
+                    decimal y = decimal.Parse(parts[1], CultureInfo.InvariantCulture);
+                    decimal z = decimal.Parse(parts[2], CultureInfo.InvariantCulture);
+
+                    PositionXTool.Value = x;
+                    PositionYTool.Value = y;
+                    PositionZTool.Value = z;
+                }
+                catch
+                {
+                }
+            }
+            else
+            {
+            }
         }
     }
 }

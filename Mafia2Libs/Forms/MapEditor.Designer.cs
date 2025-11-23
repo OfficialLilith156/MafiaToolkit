@@ -39,7 +39,8 @@ namespace Mafia2Tool
             PositionYTool = new NumericUpDownToolStrip();
             PositionZTool = new NumericUpDownToolStrip();
             CameraSpeedTool = new NumericUpDownToolStrip();
-            CopyXYZ = new System.Windows.Forms.ToolStripSplitButton();
+            toolStripSplitButton1 = new System.Windows.Forms.ToolStripSplitButton();
+            PasteXYZ = new System.Windows.Forms.ToolStripSplitButton();
             Label_FPS = new System.Windows.Forms.ToolStripStatusLabel();
             Label_MemoryUsage = new System.Windows.Forms.ToolStripStatusLabel();
             Label_StatusBar = new System.Windows.Forms.ToolStripStatusLabel();
@@ -74,6 +75,7 @@ namespace Mafia2Tool
             addType4ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             addGroupType1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             addType7ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            deleteAINavigationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             imageList1 = new System.Windows.Forms.ImageList(components);
             RenderPanel = new System.Windows.Forms.Panel();
             MeshBrowser = new System.Windows.Forms.OpenFileDialog();
@@ -81,7 +83,6 @@ namespace Mafia2Tool
             dockPanel1 = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             FrameBrowser = new System.Windows.Forms.OpenFileDialog();
             SaveFileDialog = new System.Windows.Forms.SaveFileDialog();
-            deleteAINavigationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             StatusStrip = new System.Windows.Forms.StatusStrip();
             StatusStrip.SuspendLayout();
             ToolbarStrip.SuspendLayout();
@@ -90,7 +91,7 @@ namespace Mafia2Tool
             // StatusStrip
             // 
             StatusStrip.AutoSize = false;
-            StatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { CurrentModeButton, PositionXTool, PositionYTool, PositionZTool, CameraSpeedTool, CopyXYZ, Label_FPS, Label_MemoryUsage, Label_StatusBar });
+            StatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { CurrentModeButton, PositionXTool, PositionYTool, PositionZTool, CameraSpeedTool, toolStripSplitButton1, PasteXYZ, Label_FPS, Label_MemoryUsage, Label_StatusBar });
             StatusStrip.Location = new System.Drawing.Point(0, 692);
             StatusStrip.Name = "StatusStrip";
             StatusStrip.Padding = new System.Windows.Forms.Padding(1, 0, 16, 0);
@@ -176,17 +177,29 @@ namespace Mafia2Tool
             CameraSpeedTool.Value = new decimal(new int[] { 0, 0, 0, 0 });
             CameraSpeedTool.ValueChanged += CameraSpeedUpdate;
             // 
-            // CopyXYZ
+            // toolStripSplitButton1
             // 
-            CopyXYZ.AutoToolTip = false;
-            CopyXYZ.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            CopyXYZ.Image = (System.Drawing.Image)resources.GetObject("CopyXYZ.Image");
-            CopyXYZ.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            CopyXYZ.ImageTransparentColor = System.Drawing.Color.Magenta;
-            CopyXYZ.Name = "CopyXYZ";
-            CopyXYZ.Size = new System.Drawing.Size(75, 26);
-            CopyXYZ.Text = "Copy XYZ";
-            CopyXYZ.ButtonClick += CopyXYZ_ButtonClick;
+            toolStripSplitButton1.AutoToolTip = false;
+            toolStripSplitButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            toolStripSplitButton1.Image = (System.Drawing.Image)resources.GetObject("toolStripSplitButton1.Image");
+            toolStripSplitButton1.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            toolStripSplitButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            toolStripSplitButton1.Name = "toolStripSplitButton1";
+            toolStripSplitButton1.Size = new System.Drawing.Size(75, 26);
+            toolStripSplitButton1.Text = "Copy XYZ";
+            toolStripSplitButton1.ButtonClick += CopyXYZ_ButtonClick;
+            // 
+            // PasteXYZ
+            // 
+            PasteXYZ.AutoToolTip = false;
+            PasteXYZ.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            PasteXYZ.Image = (System.Drawing.Image)resources.GetObject("PasteXYZ.Image");
+            PasteXYZ.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            PasteXYZ.ImageTransparentColor = System.Drawing.Color.Magenta;
+            PasteXYZ.Name = "PasteXYZ";
+            PasteXYZ.Size = new System.Drawing.Size(75, 26);
+            PasteXYZ.Text = "Paste XYZ";
+            PasteXYZ.ButtonClick += PasteXYZ_ButtonClick;
             // 
             // Label_FPS
             // 
@@ -208,7 +221,7 @@ namespace Mafia2Tool
             // 
             Label_StatusBar.Name = "Label_StatusBar";
             Label_StatusBar.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            Label_StatusBar.Size = new System.Drawing.Size(629, 23);
+            Label_StatusBar.Size = new System.Drawing.Size(523, 23);
             Label_StatusBar.Spring = true;
             Label_StatusBar.Text = "Label_StatusBar";
             Label_StatusBar.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -236,14 +249,14 @@ namespace Mafia2Tool
             // 
             SaveButton.Name = "SaveButton";
             SaveButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S;
-            SaveButton.Size = new System.Drawing.Size(180, 22);
+            SaveButton.Size = new System.Drawing.Size(146, 22);
             SaveButton.Text = "$SAVE";
             SaveButton.Click += SaveButton_Click;
             // 
             // ExitButton
             // 
             ExitButton.Name = "ExitButton";
-            ExitButton.Size = new System.Drawing.Size(180, 22);
+            ExitButton.Size = new System.Drawing.Size(146, 22);
             ExitButton.Text = "$EXIT";
             ExitButton.Click += ExitButton_Click;
             // 
@@ -462,6 +475,13 @@ namespace Mafia2Tool
             addType7ToolStripMenuItem.Text = "Add Type 7";
             addType7ToolStripMenuItem.Click += btnAddType7_Click;
             // 
+            // deleteAINavigationToolStripMenuItem
+            // 
+            deleteAINavigationToolStripMenuItem.Name = "deleteAINavigationToolStripMenuItem";
+            deleteAINavigationToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            deleteAINavigationToolStripMenuItem.Text = "Delete AI Navigation";
+            deleteAINavigationToolStripMenuItem.Click += btnDelete_Click;
+            // 
             // imageList1
             // 
             imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
@@ -499,13 +519,6 @@ namespace Mafia2Tool
             // FrameBrowser
             // 
             FrameBrowser.Filter = "FrameResource|*.fr|Toolkit Frame Data|*.framedata";
-            // 
-            // deleteAINavigationToolStripMenuItem
-            // 
-            deleteAINavigationToolStripMenuItem.Name = "deleteAINavigationToolStripMenuItem";
-            deleteAINavigationToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
-            deleteAINavigationToolStripMenuItem.Text = "Delete AI Navigation";
-            deleteAINavigationToolStripMenuItem.Click += btnDelete_Click;
             // 
             // MapEditor
             // 
@@ -573,11 +586,12 @@ namespace Mafia2Tool
         private System.Windows.Forms.SaveFileDialog SaveFileDialog;
         private System.Windows.Forms.OpenFileDialog AnimFileDialog;
         private System.Windows.Forms.ToolStripStatusLabel Label_StatusBar;
-        private System.Windows.Forms.ToolStripSplitButton CopyXYZ;
+        private System.Windows.Forms.ToolStripSplitButton PasteXYZ;
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
         private System.Windows.Forms.ToolStripMenuItem addType4ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addGroupType1ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addType7ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteAINavigationToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSplitButton toolStripSplitButton1;
     }
 }
