@@ -44,16 +44,11 @@ namespace Mafia2Tool
             saveToolStripMenuItem = new ToolStripMenuItem();
             reloadToolStripMenuItem = new ToolStripMenuItem();
             exitToolStripMenuItem = new ToolStripMenuItem();
-            Button_Tools = new ToolStripDropDownButton();
-            Button_CreateLineGroup = new ToolStripMenuItem();
-            Button_CreateStreamGroup = new ToolStripMenuItem();
             toolStripDropDownButton1 = new ToolStripDropDownButton();
-            addBlockToolStripMenuItem = new ToolStripMenuItem();
-            deleteBlockToolStripMenuItem = new ToolStripMenuItem();
             toolStripMenuItem2 = new ToolStripMenuItem();
             exportBranchToolStripMenuItem = new ToolStripMenuItem();
-            exportAllLinesToolStripMenuItem = new ToolStripMenuItem();
             importAllLinesToolStripMenuItem = new ToolStripMenuItem();
+            exportAllLinesToolStripMenuItem = new ToolStripMenuItem();
             removeAllLinesToolStripMenuItem = new ToolStripMenuItem();
             PropertyGrid_Stream = new PropertyGrid();
             tabControl = new TabControl();
@@ -63,6 +58,13 @@ namespace Mafia2Tool
             StreamBlocksPage = new TabPage();
             blockView = new Mafia2Tool.Controls.MTreeView();
             SearchBox = new TextBox();
+            toolStripDropDownButton2 = new ToolStripDropDownButton();
+            toolStripDropDownButton3 = new ToolStripDropDownButton();
+            addBlockToolStripMenuItem1 = new ToolStripMenuItem();
+            deleteBlockToolStripMenuItem1 = new ToolStripMenuItem();
+            removeStreamGroupToolStripMenuItem = new ToolStripMenuItem();
+            addStreamGroupToolStripMenuItem = new ToolStripMenuItem();
+            addBranchToolStripMenuItem = new ToolStripMenuItem();
             LineContextStrip.SuspendLayout();
             ToolStrip.SuspendLayout();
             tabControl.SuspendLayout();
@@ -135,7 +137,7 @@ namespace Mafia2Tool
             // 
             // ToolStrip
             // 
-            ToolStrip.Items.AddRange(new ToolStripItem[] { fileToolButton, Button_Tools, toolStripDropDownButton1 });
+            ToolStrip.Items.AddRange(new ToolStripItem[] { fileToolButton, toolStripDropDownButton1, toolStripDropDownButton2, toolStripDropDownButton3 });
             ToolStrip.Location = new System.Drawing.Point(0, 0);
             ToolStrip.Name = "ToolStrip";
             ToolStrip.Size = new System.Drawing.Size(1090, 25);
@@ -175,88 +177,48 @@ namespace Mafia2Tool
             exitToolStripMenuItem.Text = "$EXIT";
             exitToolStripMenuItem.Click += ExitButtonPressed;
             // 
-            // Button_Tools
-            // 
-            Button_Tools.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            Button_Tools.DropDownItems.AddRange(new ToolStripItem[] { Button_CreateLineGroup, Button_CreateStreamGroup });
-            Button_Tools.Image = (System.Drawing.Image)resources.GetObject("Button_Tools.Image");
-            Button_Tools.ImageTransparentColor = System.Drawing.Color.Magenta;
-            Button_Tools.Name = "Button_Tools";
-            Button_Tools.Size = new System.Drawing.Size(61, 22);
-            Button_Tools.Text = "$TOOLS";
-            // 
-            // Button_CreateLineGroup
-            // 
-            Button_CreateLineGroup.Name = "Button_CreateLineGroup";
-            Button_CreateLineGroup.ShortcutKeys = Keys.Alt | Keys.A;
-            Button_CreateLineGroup.Size = new System.Drawing.Size(289, 22);
-            Button_CreateLineGroup.Text = "$CREATE_LINE_GROUP";
-            Button_CreateLineGroup.Click += Button_CreateLineGroup_Click;
-            // 
-            // Button_CreateStreamGroup
-            // 
-            Button_CreateStreamGroup.Name = "Button_CreateStreamGroup";
-            Button_CreateStreamGroup.ShortcutKeys = Keys.Alt | Keys.Shift | Keys.A;
-            Button_CreateStreamGroup.Size = new System.Drawing.Size(289, 22);
-            Button_CreateStreamGroup.Text = "$CREATE_STREAM_GROUP";
-            Button_CreateStreamGroup.Click += Button_CreateStreamGroup_Click;
-            // 
             // toolStripDropDownButton1
             // 
             toolStripDropDownButton1.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            toolStripDropDownButton1.DropDownItems.AddRange(new ToolStripItem[] { addBlockToolStripMenuItem, deleteBlockToolStripMenuItem, toolStripMenuItem2, exportBranchToolStripMenuItem, importAllLinesToolStripMenuItem, exportAllLinesToolStripMenuItem, removeAllLinesToolStripMenuItem });
+            toolStripDropDownButton1.DropDownItems.AddRange(new ToolStripItem[] { addBranchToolStripMenuItem, toolStripMenuItem2, exportBranchToolStripMenuItem, importAllLinesToolStripMenuItem, exportAllLinesToolStripMenuItem, removeAllLinesToolStripMenuItem });
             toolStripDropDownButton1.Image = (System.Drawing.Image)resources.GetObject("toolStripDropDownButton1.Image");
             toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             toolStripDropDownButton1.Name = "toolStripDropDownButton1";
-            toolStripDropDownButton1.Size = new System.Drawing.Size(91, 22);
-            toolStripDropDownButton1.Text = "Extra Options";
-            // 
-            // addBlockToolStripMenuItem
-            // 
-            addBlockToolStripMenuItem.Name = "addBlockToolStripMenuItem";
-            addBlockToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            addBlockToolStripMenuItem.Text = "Add Block";
-            addBlockToolStripMenuItem.Click += Button_AddBlock_Click;
-            // 
-            // deleteBlockToolStripMenuItem
-            // 
-            deleteBlockToolStripMenuItem.Name = "deleteBlockToolStripMenuItem";
-            deleteBlockToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            deleteBlockToolStripMenuItem.Text = "Delete Block";
-            deleteBlockToolStripMenuItem.Click += Button_DeleteBlock_Click;
+            toolStripDropDownButton1.Size = new System.Drawing.Size(87, 22);
+            toolStripDropDownButton1.Text = "Stream Lines";
             // 
             // toolStripMenuItem2
             // 
             toolStripMenuItem2.Name = "toolStripMenuItem2";
-            toolStripMenuItem2.Size = new System.Drawing.Size(180, 22);
+            toolStripMenuItem2.Size = new System.Drawing.Size(164, 22);
             toolStripMenuItem2.Text = "Import Branch";
             toolStripMenuItem2.Click += ImportBranch;
             // 
             // exportBranchToolStripMenuItem
             // 
             exportBranchToolStripMenuItem.Name = "exportBranchToolStripMenuItem";
-            exportBranchToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            exportBranchToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
             exportBranchToolStripMenuItem.Text = "Export Branch";
             exportBranchToolStripMenuItem.Click += ExportBranch;
-            // 
-            // exportAllLinesToolStripMenuItem
-            // 
-            exportAllLinesToolStripMenuItem.Name = "exportAllLinesToolStripMenuItem";
-            exportAllLinesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            exportAllLinesToolStripMenuItem.Text = "Export All Lines";
-            exportAllLinesToolStripMenuItem.Click += ExportAllStreamLines;
             // 
             // importAllLinesToolStripMenuItem
             // 
             importAllLinesToolStripMenuItem.Name = "importAllLinesToolStripMenuItem";
-            importAllLinesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            importAllLinesToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
             importAllLinesToolStripMenuItem.Text = "Import All Lines";
             importAllLinesToolStripMenuItem.Click += ImportAllStreamLines;
+            // 
+            // exportAllLinesToolStripMenuItem
+            // 
+            exportAllLinesToolStripMenuItem.Name = "exportAllLinesToolStripMenuItem";
+            exportAllLinesToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            exportAllLinesToolStripMenuItem.Text = "Export All Lines";
+            exportAllLinesToolStripMenuItem.Click += ExportAllStreamLines;
             // 
             // removeAllLinesToolStripMenuItem
             // 
             removeAllLinesToolStripMenuItem.Name = "removeAllLinesToolStripMenuItem";
-            removeAllLinesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            removeAllLinesToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
             removeAllLinesToolStripMenuItem.Text = "Remove All Lines";
             removeAllLinesToolStripMenuItem.Click += DeleteAllStreamLines;
             // 
@@ -346,6 +308,61 @@ namespace Mafia2Tool
             SearchBox.TabIndex = 28;
             SearchBox.KeyPress += OnKeyPressed;
             // 
+            // toolStripDropDownButton2
+            // 
+            toolStripDropDownButton2.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripDropDownButton2.DropDownItems.AddRange(new ToolStripItem[] { addStreamGroupToolStripMenuItem, removeStreamGroupToolStripMenuItem });
+            toolStripDropDownButton2.Image = (System.Drawing.Image)resources.GetObject("toolStripDropDownButton2.Image");
+            toolStripDropDownButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
+            toolStripDropDownButton2.Name = "toolStripDropDownButton2";
+            toolStripDropDownButton2.Size = new System.Drawing.Size(98, 22);
+            toolStripDropDownButton2.Text = "Stream Groups";
+            // 
+            // toolStripDropDownButton3
+            // 
+            toolStripDropDownButton3.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripDropDownButton3.DropDownItems.AddRange(new ToolStripItem[] { addBlockToolStripMenuItem1, deleteBlockToolStripMenuItem1 });
+            toolStripDropDownButton3.Image = (System.Drawing.Image)resources.GetObject("toolStripDropDownButton3.Image");
+            toolStripDropDownButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
+            toolStripDropDownButton3.Name = "toolStripDropDownButton3";
+            toolStripDropDownButton3.Size = new System.Drawing.Size(94, 22);
+            toolStripDropDownButton3.Text = "Stream Blocks";
+            // 
+            // addBlockToolStripMenuItem1
+            // 
+            addBlockToolStripMenuItem1.Name = "addBlockToolStripMenuItem1";
+            addBlockToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            addBlockToolStripMenuItem1.Text = "Add Block";
+            addBlockToolStripMenuItem1.Click += Button_AddBlock_Click;
+            // 
+            // deleteBlockToolStripMenuItem1
+            // 
+            deleteBlockToolStripMenuItem1.Name = "deleteBlockToolStripMenuItem1";
+            deleteBlockToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            deleteBlockToolStripMenuItem1.Text = "Delete Block";
+            deleteBlockToolStripMenuItem1.Click += Button_DeleteBlock_Click;
+            // 
+            // removeStreamGroupToolStripMenuItem
+            // 
+            removeStreamGroupToolStripMenuItem.Name = "removeStreamGroupToolStripMenuItem";
+            removeStreamGroupToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
+            removeStreamGroupToolStripMenuItem.Text = "Delete Stream Group";
+            removeStreamGroupToolStripMenuItem.Click += DeleteStreamGroup_Click;
+            // 
+            // addStreamGroupToolStripMenuItem
+            // 
+            addStreamGroupToolStripMenuItem.Name = "addStreamGroupToolStripMenuItem";
+            addStreamGroupToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
+            addStreamGroupToolStripMenuItem.Text = "Add Stream Group";
+            addStreamGroupToolStripMenuItem.Click += Button_CreateStreamGroup_Click;
+            // 
+            // addBranchToolStripMenuItem
+            // 
+            addBranchToolStripMenuItem.Name = "addBranchToolStripMenuItem";
+            addBranchToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            addBranchToolStripMenuItem.Text = "Add Branch";
+            addBranchToolStripMenuItem.Click += Button_CreateLineGroup_Click;
+            // 
             // StreamEditor
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -393,16 +410,18 @@ namespace Mafia2Tool
         private ToolStripMenuItem MoveItemUpButton;
         private ToolStripMenuItem MoveItemDownButton;
         private ToolStripMenuItem DuplicateLine;
-        private ToolStripDropDownButton Button_Tools;
-        private ToolStripMenuItem Button_CreateLineGroup;
-        private ToolStripMenuItem Button_CreateStreamGroup;
         private ToolStripDropDownButton toolStripDropDownButton1;
-        private ToolStripMenuItem addBlockToolStripMenuItem;
         private ToolStripMenuItem toolStripMenuItem2;
         private ToolStripMenuItem exportBranchToolStripMenuItem;
-        private ToolStripMenuItem deleteBlockToolStripMenuItem;
         private ToolStripMenuItem exportAllLinesToolStripMenuItem;
         private ToolStripMenuItem importAllLinesToolStripMenuItem;
         private ToolStripMenuItem removeAllLinesToolStripMenuItem;
+        private ToolStripDropDownButton toolStripDropDownButton2;
+        private ToolStripMenuItem removeStreamGroupToolStripMenuItem;
+        private ToolStripDropDownButton toolStripDropDownButton3;
+        private ToolStripMenuItem addBlockToolStripMenuItem1;
+        private ToolStripMenuItem deleteBlockToolStripMenuItem1;
+        private ToolStripMenuItem addBranchToolStripMenuItem;
+        private ToolStripMenuItem addStreamGroupToolStripMenuItem;
     }
 }

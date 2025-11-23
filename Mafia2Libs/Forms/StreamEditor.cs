@@ -35,7 +35,6 @@ namespace Mafia2Tool
             Text = Language.GetString("$STREAM_EDITOR_TITLE");
             fileToolButton.Text = Language.GetString("$FILE");
             saveToolStripMenuItem.Text = Language.GetString("$SAVE");
-            Button_Tools.Text = Language.GetString("$TOOLS");
             reloadToolStripMenuItem.Text = Language.GetString("$RELOAD");
             exitToolStripMenuItem.Text = Language.GetString("$EXIT");
             AddLineButton.Text = Language.GetString("$ADD_LINE");
@@ -43,8 +42,6 @@ namespace Mafia2Tool
             DuplicateLine.Text = Language.GetString("$DUPLICATE_LINE");
             MoveItemDownButton.Text = Language.GetString("$MOVE_DOWN");
             MoveItemUpButton.Text = Language.GetString("$MOVE_UP");
-            Button_CreateLineGroup.Text = Language.GetString("$STREAM_EDITOR_CREATE_LINE_GROUP");
-            Button_CreateStreamGroup.Text = Language.GetString("$STREAM_EDITOR_CREATE_STREAM_GROUP");
         }
 
         private void Sort(List<StreamLoader> loaders)
@@ -1001,6 +998,28 @@ namespace Mafia2Tool
                 }
             }
         }
+        private void DeleteStreamGroup_Click(object sender, EventArgs e)
+        {
+            if (groupTree.SelectedNode == null || groupTree.SelectedNode.Tag == null)
+                return;
+
+            groupTree.Nodes.Remove(groupTree.SelectedNode);
+
+            if (stream != null)
+            {
+                var groupsList = stream.Groups?.ToList() ?? new List<StreamGroup>();
+                var groupToRemove = groupTree.SelectedNode.Tag as StreamGroup;
+                if (groupToRemove != null)
+                {
+                    groupsList.Remove(groupToRemove);
+                    stream.Groups = groupsList.ToArray();
+                }
+            }
+
+            Text = Language.GetString("$STREAM_EDITOR_TITLE") + "*";
+            bIsFileEdited = true;
+        }
+
         private void DeleteAllStreamLines(object sender, EventArgs e)
         {
             if (linesTree.Nodes.Count == 0)
