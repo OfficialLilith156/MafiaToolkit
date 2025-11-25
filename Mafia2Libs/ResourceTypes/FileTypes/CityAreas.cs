@@ -160,7 +160,7 @@ namespace ResourceTypes.City
                 get { return name; }
                 set { name = value; }
             }
-            [Browsable(false)]
+            [Browsable(true)]
             public ushort Index1 {
                 get { return index1; }
                 set { index1 = value; }
@@ -169,7 +169,7 @@ namespace ResourceTypes.City
                 get { return areaString1; }
                 set { areaString1 = value; }
             }
-            [Browsable(false)]
+            [Browsable(true)]
             public ushort Index2 {
                 get { return index2; }
                 set { index2 = value; }
