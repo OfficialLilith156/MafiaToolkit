@@ -334,25 +334,70 @@ namespace ResourceTypes.Misc
         }
         public class StreamBlock
         {
-            public int startOffset;
-            public int endOffset;
-            ulong[] hashes;
+            private int startOffset;
+            private int endOffset;
+            private ulong[] hashes;
 
-            public ulong[] Hashes {
-                get { return hashes; }
-                set { hashes = value; }
+            public int StartOffset
+            {
+                get => startOffset;
+                set
+                {
+                    startOffset = value;
+                    ResizeHashes();
+                }
             }
+
+            public int EndOffset
+            {
+                get => endOffset;
+                set
+                {
+                    endOffset = value;
+                    ResizeHashes();
+                }
+            }
+
+            public ulong[] Hashes
+            {
+                get => hashes;
+                set => hashes = value ?? Array.Empty<ulong>();
+            }
+
+            public int Length => EndOffset - StartOffset;
 
             public StreamBlock()
             {
                 startOffset = 0;
                 endOffset = 0;
-                hashes = new ulong[endOffset - startOffset];
+                hashes = Array.Empty<ulong>();
+            }
+
+            public StreamBlock(int startOffset, int endOffset, ulong[] initialHashes = null)
+            {
+                this.startOffset = startOffset;
+                this.endOffset = endOffset;
+                hashes = initialHashes ?? new ulong[endOffset - startOffset];
+            }
+
+            private void ResizeHashes()
+            {
+                int newLength = EndOffset - StartOffset;
+                if (newLength < 0) newLength = 0;
+                if (hashes == null || hashes.Length != newLength)
+                {
+                    var newHashes = new ulong[newLength];
+                    if (hashes != null)
+                    {
+                        Array.Copy(hashes, 0, newHashes, 0, Math.Min(hashes.Length, newLength));
+                    }
+                    hashes = newHashes;
+                }
             }
 
             public override string ToString()
             {
-                return string.Format("{0} {1}", startOffset, endOffset);
+                return $"Block: {StartOffset} - {EndOffset}, Length: {Length}";
             }
         }
 
@@ -510,9 +555,9 @@ namespace ResourceTypes.Misc
             for (int i = 0; i < numBlocks; i++)
             {
                 StreamBlock map = new StreamBlock();
-                map.startOffset = reader.ReadInt32();
-                map.endOffset = reader.ReadInt32();
-                map.Hashes = new ulong[map.endOffset - map.startOffset];
+                map.StartOffset = reader.ReadInt32();
+                map.EndOffset = reader.ReadInt32();
+                map.Hashes = new ulong[map.EndOffset - map.StartOffset];
                 blocks[i] = map;
             }
 
@@ -528,7 +573,7 @@ namespace ResourceTypes.Misc
             for(int i = 0; i < numBlocks; i++)
             {
                 var block = blocks[i];
-                Array.Copy(hashes, block.startOffset, block.Hashes, 0, block.Hashes.Length);
+                Array.Copy(hashes, block.StartOffset, block.Hashes, 0, block.Hashes.Length);
             }
 
             ToolkitAssert.Ensure(reader.BaseStream.Position == poolOffset, "Did not reach the buffer pool starting offset!");

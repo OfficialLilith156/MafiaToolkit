@@ -761,8 +761,8 @@ namespace Mafia2Tool
 
 
             var newBlock = new StreamMapLoader.StreamBlock();
-            newBlock.startOffset = 0;
-            newBlock.endOffset = 0;
+            newBlock.StartOffset = 0;
+            newBlock.EndOffset = 0;
             newBlock.Hashes = new ulong[0];
 
          
@@ -811,8 +811,8 @@ namespace Mafia2Tool
                     if (!blocksList.Remove(blockToRemove))
                     {
                         var candidate = blocksList.FirstOrDefault(b =>
-                            b.startOffset == blockToRemove.startOffset &&
-                            b.endOffset == blockToRemove.endOffset &&
+                            b.StartOffset == blockToRemove.StartOffset &&
+                            b.EndOffset == blockToRemove.EndOffset &&
                             ((b.Hashes == null && blockToRemove.Hashes == null) ||
                              (b.Hashes != null && blockToRemove.Hashes != null && Enumerable.SequenceEqual(b.Hashes, blockToRemove.Hashes)))
                         );
