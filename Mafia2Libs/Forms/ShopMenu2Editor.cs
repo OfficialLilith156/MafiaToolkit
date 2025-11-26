@@ -1,9 +1,11 @@
-﻿using System.IO;
+﻿using ResourceTypes.City;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Utils.Helpers;
 using Utils.Language;
-using ResourceTypes.City;
-using System;
 
 namespace Mafia2Tool
 {
@@ -341,6 +343,96 @@ namespace Mafia2Tool
                 e.SuppressKeyPress = true;
                 RunSearch(SearchBox.Text);
             }
+        }
+
+
+        private void Button_LoadTextDB_OnClick(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Text Database|*.dat";
+            openFileDialog.Multiselect = false;
+            openFileDialog.CheckFileExists = true;
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                string dbPath = openFileDialog.FileName;
+                if (File.Exists(dbPath))
+                {
+                    try
+                    {
+                        var textDBField = typeof(ShopMenu2).GetField("textDB", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                        if (textDBField != null)
+                        {
+                            var newTextDB = new Dictionary<uint, string>();
+                            string[] lines = File.ReadAllLines(dbPath);
+
+                            foreach (var line in lines)
+                            {
+                                if (!string.IsNullOrEmpty(line))
+                                {
+                                    string[] split = line.Split(':');
+                                    split[0] = Regex.Replace(split[0], @"_", "");
+                                    if (uint.TryParse(split[0], out uint id))
+                                        newTextDB.Add(id, split[1]);
+                                }
+                            }
+
+                            textDBField.SetValue(menuData, newTextDB);
+                            UpdateAllLocalisedStrings();
+
+                            //MessageBox.Show("TextDatabase loaded successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        //MessageBox.Show("Error loading TextDatabase:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+        }
+
+        private void UpdateAllLocalisedStrings()
+        {
+            if (menuData.Shops != null)
+            {
+                foreach (var shop in menuData.Shops)
+                {
+                    menuData.GetType().GetMethod("GetFromDB", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                        .Invoke(menuData, new object[] { shop.Unk0 });
+                }
+            }
+
+            if (menuData.ShopItems != null)
+            {
+                foreach (var menu in menuData.ShopItems)
+                {
+                    menuData.GetType().GetMethod("GetFromDB", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                        .Invoke(menuData, new object[] { menu.UnkDB0 });
+
+                    foreach (var item in menu.Items)
+                    {
+                        menuData.GetType().GetMethod("GetFromDB", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                            .Invoke(menuData, new object[] { item.Name });
+
+                        menuData.GetType().GetMethod("GetFromDB", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                            .Invoke(menuData, new object[] { item.ShortDescription });
+
+                        menuData.GetType().GetMethod("GetFromDB", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                            .Invoke(menuData, new object[] { item.UnkDB2 });
+
+                        menuData.GetType().GetMethod("GetFromDB", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                            .Invoke(menuData, new object[] { item.UnkDB3 });
+
+                        menuData.GetType().GetMethod("GetFromDB", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                            .Invoke(menuData, new object[] { item.PromptText });
+
+                        menuData.GetType().GetMethod("GetFromDB", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                            .Invoke(menuData, new object[] { item.UnkDB5 });
+                    }
+                }
+            }
+
+            BuildData(false);
         }
 
         private void RunSearch(string query)

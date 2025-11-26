@@ -50,6 +50,7 @@
             Button_ExportXml = new System.Windows.Forms.ToolStripMenuItem();
             Button_ImportXml = new System.Windows.Forms.ToolStripMenuItem();
             SearchBox = new System.Windows.Forms.TextBox();
+            toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             Context_Menu.SuspendLayout();
             ToolStrip_Main.SuspendLayout();
             SuspendLayout();
@@ -121,7 +122,7 @@
             // 
             // ToolStrip_Main
             // 
-            ToolStrip_Main.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { Button_File, Button_Tools });
+            ToolStrip_Main.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { Button_File, Button_Tools, toolStripButton1 });
             ToolStrip_Main.Location = new System.Drawing.Point(0, 0);
             ToolStrip_Main.Name = "ToolStrip_Main";
             ToolStrip_Main.Size = new System.Drawing.Size(933, 25);
@@ -142,7 +143,7 @@
             // 
             Button_Save.Name = "Button_Save";
             Button_Save.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S;
-            Button_Save.Size = new System.Drawing.Size(180, 22);
+            Button_Save.Size = new System.Drawing.Size(165, 22);
             Button_Save.Text = "$SAVE";
             Button_Save.Click += Button_Save_OnClick;
             // 
@@ -150,14 +151,14 @@
             // 
             Button_Reload.Name = "Button_Reload";
             Button_Reload.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R;
-            Button_Reload.Size = new System.Drawing.Size(180, 22);
+            Button_Reload.Size = new System.Drawing.Size(165, 22);
             Button_Reload.Text = "$RELOAD";
             Button_Reload.Click += Button_Reload_OnClick;
             // 
             // Button_Exit
             // 
             Button_Exit.Name = "Button_Exit";
-            Button_Exit.Size = new System.Drawing.Size(180, 22);
+            Button_Exit.Size = new System.Drawing.Size(165, 22);
             Button_Exit.Text = "$EXIT";
             Button_Exit.Click += Button_Exit_OnClick;
             // 
@@ -219,6 +220,16 @@
             SearchBox.Size = new System.Drawing.Size(152, 23);
             SearchBox.TabIndex = 17;
             // 
+            // toolStripButton1
+            // 
+            toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            toolStripButton1.Image = (System.Drawing.Image)resources.GetObject("toolStripButton1.Image");
+            toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            toolStripButton1.Name = "toolStripButton1";
+            toolStripButton1.Size = new System.Drawing.Size(61, 22);
+            toolStripButton1.Text = "Load Text";
+            toolStripButton1.Click += Button_LoadTextDB_OnClick;
+            // 
             // ShopMenu2Editor
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -263,5 +274,6 @@
         private System.Windows.Forms.ToolStripMenuItem Button_ExportXml;
         private System.Windows.Forms.ToolStripMenuItem Button_ImportXml;
         private System.Windows.Forms.TextBox SearchBox;
+        private System.Windows.Forms.ToolStripButton toolStripButton1;
     }
 }
