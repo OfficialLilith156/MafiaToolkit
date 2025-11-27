@@ -12,7 +12,7 @@ using Utils.Settings;
 using static ResourceTypes.Misc.StreamMapLoader;
 
 namespace Mafia2Tool
-{ 
+{
     public partial class StreamEditor : Form
     {
         private FileInfo file;
@@ -71,20 +71,19 @@ namespace Mafia2Tool
             foreach (TreeNode node in linesTree.Nodes)
             {
                 StreamHeaderGroup HeaderGroup = (StreamHeaderGroup)node.Tag;
-                ToolkitAssert.Ensure(HeaderGroup != null, "We expect to be looking at a valid HeaderGroup.");
 
                 foreach (TreeNode child in node.Nodes)
                 {
                     StreamLine line = (child.Tag as StreamLine);
                     line.lineID = lines.Count;
                     line.Group = HeaderGroup.HeaderName;
-                    
-                    lines.Add(line);
-                    temp = new Dictionary<int, bool>();
 
-                    for (int i = 0; i != currentLoaders.Count; i++)
+                    lines.Add(line);
+                    temp.Clear();
+
+                    foreach (var loader in currentLoaders)
                     {
-                        temp.Add(currentLoaders.ElementAt(i).Key.GetHashCode(), false);
+                        temp[loader.Key] = false;
                     }
 
                     foreach (var loader in currentLoaders)
@@ -94,129 +93,135 @@ namespace Mafia2Tool
                             if (loader.Key == load.GetHashCode())
                             {
                                 temp[loader.Key] = true;
+                                break;
                             }
                         }
                     }
 
-                    for (int i = 0; i != temp.Count;)
+                    int i = 0;
+                    while (i < temp.Count)
                     {
-                        if (temp.ElementAt(i).Value == false)
+                        var item = temp.ElementAt(i);
+                        if (item.Value == false)
                         {
-                            loaders.Add(currentLoaders[temp.ElementAt(i).Key]);
-                            currentLoaders.Remove(temp.ElementAt(i).Key);
-                            temp.Remove(temp.ElementAt(i).Key);
+                            loaders.Add(currentLoaders[item.Key]);
+                            currentLoaders.Remove(item.Key);
+                            temp.Remove(item.Key);
                         }
-                        else i++;
+                        else
+                        {
+                            i++;
+                        }
                     }
 
                     foreach (StreamLoader loader in line.loadList)
                     {
-                        if (!currentLoaders.ContainsKey(loader.GetHashCode()))
+                        int hash = loader.GetHashCode();
+                        if (!currentLoaders.ContainsKey(hash))
                         {
                             loader.start = line.lineID;
                             loader.end = line.lineID;
-                            currentLoaders.Add(loader.GetHashCode(), loader);
-                            temp.Add(loader.GetHashCode(), true);
+                            currentLoaders.Add(hash, loader);
+                            temp[hash] = true;
                         }
                         else
                         {
-                            currentLoaders[loader.GetHashCode()].end = line.lineID;
+                            currentLoaders[hash].end = line.lineID;
                         }
                     }
                 }
             }
-            foreach (var loader in currentLoaders)
-            {
-                loaders.Add(loader.Value);
-            }
 
-            currentLoaders = null;
-            temp = null;
+            loaders.AddRange(currentLoaders.Values);
 
             Sort(loaders);
+
             Dictionary<int, List<StreamLoader>> organised = new Dictionary<int, List<StreamLoader>>();
             List<StreamGroup> groups = new List<StreamGroup>();
 
-            for(int i = 0; i < groupTree.Nodes.Count; i++)
+            for (int i = 0; i < groupTree.Nodes.Count; i++)
             {
                 var group = (groupTree.Nodes[i].Tag as StreamGroup);
-                if (!organised.ContainsKey(i))
+                if (group != null)
                 {
                     organised.Add(i, new List<StreamLoader>());
                     groups.Add(group);
                 }
             }
 
-            foreach (StreamLoader pair in loaders)
+            foreach (StreamLoader loader in loaders)
             {
-                // The main idea of this is to find if the user has changed the group.
-                // We have to iterate through the groups first and find out if this change has indeed happened.
+                bool assigned = false;
+
                 for (int i = 0; i < groups.Count; i++)
                 {
                     var group = groups[i];
-
-                    // If there the user has assigned a preferred group then we can look for that too.
-                    // To make sure we are saving everything necessary, lets just replace everything relating to groups.
-                    if (pair.PreferredGroup == group.Name)
+                    if (loader.PreferredGroup == group.Name)
                     {
-                        pair.AssignedGroup = group.Name;
-                        pair.GroupID = i;
-                        pair.Type = group.Type;
-                        break;
-                    }
-
-                    // So we check if they have modified - if yes, then we reset the group assignment so the toolkit
-                    // treats this as a newly created StreamLoader.                
-                    if (pair.AssignedGroup == group.Name)
-                    {
-                        if(pair.Type != group.Type)
-                        {
-                            pair.AssignedGroup = string.Empty;
-                            pair.GroupID = -1;
-                        }
+                        loader.AssignedGroup = group.Name;
+                        loader.GroupID = i;
+                        loader.Type = group.Type;
+                        assigned = true;
                         break;
                     }
                 }
 
-                // This will handle any non-declared group assignments. 
-                if (string.IsNullOrEmpty(pair.AssignedGroup) && pair.GroupID == -1)
+                if (!assigned)
                 {
-                    if(pair.Type != GroupTypes.Null)
+                    for (int i = 0; i < groups.Count; i++)
                     {
-                        for(int i = 0; i < groups.Count; i++)
+                        var group = groups[i];
+                        if (loader.AssignedGroup == group.Name && loader.Type == group.Type)
                         {
-                            var group = groups[i];
-                            if(group.Type == pair.Type)
-                            {
-                                pair.GroupID = i;
-                                pair.AssignedGroup = group.Name;
-                                break;
-                            }
+                            loader.GroupID = i;
+                            assigned = true;
+                            break;
                         }
                     }
                 }
 
-                if (!organised.ContainsKey(pair.GroupID))
+                if (!assigned && loader.Type != GroupTypes.Null)
                 {
-                    organised.Add(pair.GroupID, new List<StreamLoader>());
-                    organised[pair.GroupID].Add(pair);
+                    for (int i = 0; i < groups.Count; i++)
+                    {
+                        var group = groups[i];
+                        if (group.Type == loader.Type)
+                        {
+                            loader.GroupID = i;
+                            loader.AssignedGroup = group.Name;
+                            assigned = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!assigned && groups.Count > 0)
+                {
+                    loader.GroupID = 0;
+                    loader.AssignedGroup = groups[0].Name;
+                    loader.Type = groups[0].Type;
+                }
+
+                if (organised.ContainsKey(loader.GroupID))
+                {
+                    organised[loader.GroupID].Add(loader);
                 }
                 else
                 {
-                    organised[pair.GroupID].Add(pair);
+                    organised.Add(loader.GroupID, new List<StreamLoader> { loader });
                 }
             }
 
             List<StreamLoader> streamLoaders = new List<StreamLoader>();
-            int idx = 0;
-            foreach (KeyValuePair<int, List<StreamLoader>> pair in organised)
+            foreach (KeyValuePair<int, List<StreamLoader>> pair in organised.OrderBy(x => x.Key))
             {
-
-                var group = groups[idx];
-                group.startOffset = streamLoaders.Count;
-                streamLoaders.AddRange(pair.Value);
-                group.endOffset = streamLoaders.Count - group.startOffset;
-                idx++;
+                if (pair.Key < groups.Count)
+                {
+                    var group = groups[pair.Key];
+                    group.startOffset = streamLoaders.Count;
+                    streamLoaders.AddRange(pair.Value);
+                    group.endOffset = pair.Value.Count;
+                }
             }
 
             stream.Lines = lines.ToArray();
@@ -243,17 +248,26 @@ namespace Mafia2Tool
             }
             for (int i = 0; i < stream.Groups.Length; i++)
             {
-                var line = stream.Groups[i];
+                var group = stream.Groups[i];
                 TreeNode node = new TreeNode();
                 node.Name = "GroupLoader" + i;
-                node.Text = line.Name;
-                node.Tag = line;
+                node.Text = $"[{i}] {group.Name} ({(int)group.Type})";
+                node.Tag = group;
 
-                for (int x = line.startOffset; x < line.startOffset + line.endOffset; x++)
+                for (int x = group.startOffset; x < group.startOffset + group.endOffset; x++)
                 {
-                    var loader = stream.Loaders[x];
-                    loader.AssignedGroup = line.Name;
-                    loader.GroupID = i;
+                    if (x < stream.Loaders.Length)
+                    {
+                        var loader = stream.Loaders[x];
+                        loader.AssignedGroup = group.Name;
+                        loader.GroupID = i;
+
+                        TreeNode loaderNode = new TreeNode();
+                        loaderNode.Name = $"Loader_{x}";
+                        loaderNode.Text = $"[{loader.start}-{loader.end}] {loader.Path}";
+                        loaderNode.Tag = loader;
+                        node.Nodes.Add(loaderNode);
+                    }
                 }
 
                 groupTree.Nodes.Add(node);
@@ -559,7 +573,7 @@ namespace Mafia2Tool
                     linesTree.SelectedNode = node;
                 }
             }
-   
+
             else if (node.Tag is StreamHeaderGroup)
             {
                 int index = linesTree.Nodes.IndexOf(node);
@@ -643,7 +657,7 @@ namespace Mafia2Tool
             Cursor.Current = Cursors.WaitCursor;
             if (e.ChangedItem.Label == "Name")
             {
-                if(tabControl.SelectedTab == StreamLinesPage)
+                if (tabControl.SelectedTab == StreamLinesPage)
                 {
                     TreeNode selected = linesTree.SelectedNode;
                     linesTree.SelectedNode.Text = e.ChangedItem.Value.ToString();
@@ -654,7 +668,7 @@ namespace Mafia2Tool
                     groupTree.SelectedNode.Text = e.ChangedItem.Value.ToString();
                 }
             }
-            else if(e.ChangedItem.Label == "HeaderName")
+            else if (e.ChangedItem.Label == "HeaderName")
             {
                 if (tabControl.SelectedTab == StreamLinesPage)
                 {
@@ -662,7 +676,7 @@ namespace Mafia2Tool
                     linesTree.SelectedNode.Text = e.ChangedItem.Value.ToString();
                 }
             }
-            else if(e.ChangedItem.Label == "PreferredGroup")
+            else if (e.ChangedItem.Label == "PreferredGroup")
             {
                 UpdateStream();
             }
@@ -676,7 +690,7 @@ namespace Mafia2Tool
 
         private void OnKeyUp(object sender, KeyEventArgs e)
         {
-            if(linesTree.Focused)
+            if (linesTree.Focused)
             {
                 if (e.Control && e.KeyCode == Keys.C)
                 {
@@ -761,24 +775,24 @@ namespace Mafia2Tool
 
 
             var newBlock = new StreamMapLoader.StreamBlock();
-            newBlock.StartOffset = 0;
-            newBlock.EndOffset = 0;
+            newBlock.startOffset = 0;
+            newBlock.endOffset = 0;
             newBlock.Hashes = new ulong[0];
 
-         
-            int newIndex = blockView.Nodes.Count; 
+
+            int newIndex = blockView.Nodes.Count;
             TreeNode node = new TreeNode();
             node.Name = "Block" + newIndex;
             node.Text = "Block: " + newIndex;
             node.Tag = newBlock;
             blockView.Nodes.Add(node);
 
-          
+
             var blocksList = stream.Blocks?.ToList() ?? new List<StreamMapLoader.StreamBlock>();
             blocksList.Add(newBlock);
             stream.Blocks = blocksList.ToArray();
 
-     
+
             Text = Language.GetString("$STREAM_EDITOR_TITLE") + "*";
             bIsFileEdited = true;
         }
@@ -811,8 +825,8 @@ namespace Mafia2Tool
                     if (!blocksList.Remove(blockToRemove))
                     {
                         var candidate = blocksList.FirstOrDefault(b =>
-                            b.StartOffset == blockToRemove.StartOffset &&
-                            b.EndOffset == blockToRemove.EndOffset &&
+                            b.startOffset == blockToRemove.startOffset &&
+                            b.endOffset == blockToRemove.endOffset &&
                             ((b.Hashes == null && blockToRemove.Hashes == null) ||
                              (b.Hashes != null && blockToRemove.Hashes != null && Enumerable.SequenceEqual(b.Hashes, blockToRemove.Hashes)))
                         );
@@ -924,7 +938,7 @@ namespace Mafia2Tool
             }
         }
 
-     
+
         private void ImportAllStreamLines(object sender, EventArgs e)
         {
             using (OpenFileDialog ofd = new OpenFileDialog())
@@ -1025,7 +1039,7 @@ namespace Mafia2Tool
             if (linesTree.Nodes.Count == 0)
                 return;
 
-           
+
             var result = MessageBox.Show(
                 "Are you sure you want to delete ALL Stream Lines?",
                 "Confirm Delete",
@@ -1042,7 +1056,7 @@ namespace Mafia2Tool
                 headerNode.Nodes.Clear();
             }
 
-          
+
             if (stream != null)
             {
                 stream.Lines = new StreamMapLoader.StreamLine[0];

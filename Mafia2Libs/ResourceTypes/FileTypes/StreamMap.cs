@@ -72,23 +72,28 @@ namespace ResourceTypes.Misc
         private StreamLoader[] loaders;
         private StreamBlock[] blocks;
 
-        public StreamGroup[] Groups {
+        public StreamGroup[] Groups
+        {
             get { return groups; }
             set { groups = value; }
         }
-        public string[] GroupHeaders {
+        public string[] GroupHeaders
+        {
             get { return groupHeaders; }
             set { groupHeaders = value; }
         }
-        public StreamLine[] Lines {
+        public StreamLine[] Lines
+        {
             get { return lines; }
             set { lines = value; }
         }
-        public StreamLoader[] Loaders {
+        public StreamLoader[] Loaders
+        {
             get { return loaders; }
             set { loaders = value; }
         }
-        public StreamBlock[] Blocks {
+        public StreamBlock[] Blocks
+        {
             get { return blocks; }
             set { blocks = value; }
         }
@@ -108,19 +113,23 @@ namespace ResourceTypes.Misc
             public int endOffset; //end
             public int unk5;
 
-            public string Name {
+            public string Name
+            {
                 get { return name; }
                 set { name = value; }
             }
-            public GroupTypes Type {
+            public GroupTypes Type
+            {
                 get { return type; }
                 set { type = value; }
             }
-            public int Unk01 {
+            public int Unk01
+            {
                 get { return unk01; }
                 set { unk01 = value; }
             }
-            public int Unk05 {
+            public int Unk05
+            {
                 get { return unk5; }
                 set { unk5 = value; }
             }
@@ -150,61 +159,73 @@ namespace ResourceTypes.Misc
             public StreamLoader[] loadList;
 
             [Description("Name of line, this will be used in LUA scripts.")]
-            public string Name {
+            public string Name
+            {
                 get { return name; }
                 set { name = value; }
             }
             [Browsable(false)]
-            public string Group {
+            public string Group
+            {
                 get { return group; }
                 set { group = value; }
             }
             [Description("0 - 6, unknown what they do.")]
-            public int LoadType {
+            public int LoadType
+            {
                 get { return loadType; }
                 set { loadType = value; }
             }
             [Description("Flags, referencing SDSConfig.bin")]
-            public string Flags {
+            public string Flags
+            {
                 get { return flags; }
                 set { flags = value; }
             }
             [Description("Hash #1")]
-            public ulong Unk10 {
+            public ulong Unk10
+            {
                 get { return unk10; }
                 set { unk10 = value; }
             }
             [Description("Hash #2")]
-            public ulong Unk11 {
+            public ulong Unk11
+            {
                 get { return unk11; }
                 set { unk11 = value; }
             }
             [Description("The assets which will loaded when this line is activated.")]
-            public StreamLoader[] LoadList {
+            public StreamLoader[] LoadList
+            {
                 get { return loadList; }
                 set { loadList = value; }
             }
-            public int Unk5 {
+            public int Unk5
+            {
                 get { return unk5; }
                 set { unk5 = value; }
             }
             [Browsable(false)]
-            public int Unk12 {
+            public int Unk12
+            {
                 get { return unk12; }
                 set { unk12 = value; }
             }
             [Browsable(false)]
-            public int Unk13 {
+            public int Unk13
+            {
                 get { return unk13; }
                 set { unk13 = value; }
             }
             [Browsable(false)]
-            public int Unk14 {
+            public int Unk14
+            {
                 get { return unk14; }
                 set { unk14 = value; }
             }
             [Browsable(false)]
-            public int Unk15 {
+            public int Unk15
+            {
                 get { return unk15; }
                 set { unk15 = value; }
             }
@@ -260,43 +281,51 @@ namespace ResourceTypes.Misc
             private string assignedGroup;
 
             [Description("Loading type, 0 - 6.")]
-            public int LoadType {
+            public int LoadType
+            {
                 get { return loadType; }
                 set { loadType = value; }
             }
             [Description("Path to the asset.")]
-            public string Path {
+            public string Path
+            {
                 get { return path; }
                 set { path = value; }
             }
             [Description("Entity name to use in scripts or 'City-1'")]
-            public string Entity {
+            public string Entity
+            {
                 get { return entity; }
                 set { entity = value; }
             }
-            public int LoaderSubID {
+            public int LoaderSubID
+            {
                 get { return loaderSubID; }
                 set { loaderSubID = value; }
             }
             [Browsable(false)]
-            public int LoaderID {
+            public int LoaderID
+            {
                 get { return loaderID; }
                 set { loaderID = value; }
             }
             [Browsable(false)]
             public int GroupID { get; set; }
             [ReadOnly(true), Description("The Assigned group for this line. This is determined when saving the Stream Map file.")]
-            public string AssignedGroup {
+            public string AssignedGroup
+            {
                 get { return assignedGroup; }
                 set { assignedGroup = value; preferredGroup = ""; }
             }
             [Description("When this is set, the 'Type' is ignored and the editor will automatically assign this line to the preferred group. The list is available under the 'Stream Groups' Tab.")]
-            public string PreferredGroup {
+            public string PreferredGroup
+            {
                 set { preferredGroup = value; assignedGroup = ""; }
                 get { return preferredGroup; }
             }
             [Description("The group this asset is under, every group can be seen under 'Stream Groups'")]
-            public GroupTypes Type {
+            public GroupTypes Type
+            {
                 get { return type; }
                 set { type = value; preferredGroup = ""; }
             }
@@ -334,70 +363,26 @@ namespace ResourceTypes.Misc
         }
         public class StreamBlock
         {
-            private int startOffset;
-            private int endOffset;
-            private ulong[] hashes;
-
-            public int StartOffset
-            {
-                get => startOffset;
-                set
-                {
-                    startOffset = value;
-                    ResizeHashes();
-                }
-            }
-
-            public int EndOffset
-            {
-                get => endOffset;
-                set
-                {
-                    endOffset = value;
-                    ResizeHashes();
-                }
-            }
+            public int startOffset;
+            public int endOffset;
+            ulong[] hashes;
 
             public ulong[] Hashes
             {
-                get => hashes;
-                set => hashes = value ?? Array.Empty<ulong>();
+                get { return hashes; }
+                set { hashes = value; }
             }
-
-            public int Length => EndOffset - StartOffset;
 
             public StreamBlock()
             {
                 startOffset = 0;
                 endOffset = 0;
-                hashes = Array.Empty<ulong>();
-            }
-
-            public StreamBlock(int startOffset, int endOffset, ulong[] initialHashes = null)
-            {
-                this.startOffset = startOffset;
-                this.endOffset = endOffset;
-                hashes = initialHashes ?? new ulong[endOffset - startOffset];
-            }
-
-            private void ResizeHashes()
-            {
-                int newLength = EndOffset - StartOffset;
-                if (newLength < 0) newLength = 0;
-                if (hashes == null || hashes.Length != newLength)
-                {
-                    var newHashes = new ulong[newLength];
-                    if (hashes != null)
-                    {
-                        Array.Copy(hashes, 0, newHashes, 0, Math.Min(hashes.Length, newLength));
-                    }
-                    hashes = newHashes;
-                }
+                hashes = new ulong[endOffset - startOffset];
             }
 
             public override string ToString()
             {
-                return $"Block: {StartOffset} - {EndOffset}, Length: {Length}";
+                return string.Format("{0} {1}", startOffset, endOffset);
             }
         }
 
@@ -538,7 +523,7 @@ namespace ResourceTypes.Misc
                 map.start = reader.ReadInt32();
                 map.end = reader.ReadInt32();
                 map.Type = (GroupTypes)reader.ReadInt32();
-                
+
                 map.LoaderSubID = reader.ReadInt32();
                 map.LoaderID = reader.ReadInt32();
                 map.LoadType = reader.ReadInt32();
@@ -555,9 +540,9 @@ namespace ResourceTypes.Misc
             for (int i = 0; i < numBlocks; i++)
             {
                 StreamBlock map = new StreamBlock();
-                map.StartOffset = reader.ReadInt32();
-                map.EndOffset = reader.ReadInt32();
-                map.Hashes = new ulong[map.EndOffset - map.StartOffset];
+                map.startOffset = reader.ReadInt32();
+                map.endOffset = reader.ReadInt32();
+                map.Hashes = new ulong[map.endOffset - map.startOffset];
                 blocks[i] = map;
             }
 
@@ -567,13 +552,13 @@ namespace ResourceTypes.Misc
 
             for (int i = 0; i < numHashes; i++)
             {
-                hashes[i] = reader.ReadUInt64();                                                                                              
+                hashes[i] = reader.ReadUInt64();
             }
 
-            for(int i = 0; i < numBlocks; i++)
+            for (int i = 0; i < numBlocks; i++)
             {
                 var block = blocks[i];
-                Array.Copy(hashes, block.StartOffset, block.Hashes, 0, block.Hashes.Length);
+                Array.Copy(hashes, block.startOffset, block.Hashes, 0, block.Hashes.Length);
             }
 
             ToolkitAssert.Ensure(reader.BaseStream.Position == poolOffset, "Did not reach the buffer pool starting offset!");
@@ -592,105 +577,106 @@ namespace ResourceTypes.Misc
             int loaderIDX = 0;
             foreach (var group in groups)
             {
-                int idx;
-                string groupKey = group.Name.Trim();
-                if (!pool.TryGetValue(groupKey, out idx))
+                int idx = -1;
+                if (!pool.TryGetValue(group.Name, out idx))
                 {
                     idx = size;
-                    pool[groupKey] = size;
-                    size += groupKey.Length + 2;
-                    rawPool += groupKey + '\0' + '\0';
+                    pool.Add(group.Name, size);
+                    size += group.Name.Length + 2;
+                    rawPool += (group.Name + '\0' + '\0');
                 }
-                group.nameIDX = idx;
 
+                group.nameIDX = idx;
                 for (int x = group.startOffset; x < group.startOffset + group.endOffset; x++)
                 {
                     loaderIDX++;
                     var loader = loaders[x];
+                    if (loader.LoaderSubID == 1)
+                    {
+                        loader.LoaderID = x != 0 ? loaders[x - 1].LoaderID : 1;
+                    }
+                    else
+                    {
+                        loader.LoaderID = loaderIDX;
+                    }
 
-                    loader.LoaderID = loader.LoaderSubID == 1 ? (x != 0 ? loaders[x - 1].LoaderID : 1) : loaderIDX;
-
-                    string pathKey = loader.Path.Trim();
-                    if (!pool.TryGetValue(pathKey, out idx))
+                    idx = -1;
+                    if (!pool.TryGetValue(loader.Path, out idx))
                     {
                         idx = size;
-                        pool[pathKey] = size;
-                        size += pathKey.Length + 2;
-                        rawPool += pathKey + '\0' + '\0';
+                        pool.Add(loader.Path, size);
+                        size += loader.Path.Length + 2;
+                        rawPool += (loader.Path + '\0' + '\0');
                     }
                     loader.pathIDX = idx;
-
-                    string entityKey = loader.Entity.Replace('|', '\0').Trim();
-                    if (!pool.TryGetValue(entityKey, out idx))
+                    if (!pool.TryGetValue(loader.Entity, out idx))
                     {
                         idx = size;
-                        pool[entityKey] = size;
-
+                        pool.Add(loader.Entity, size);
                         string[] splits = loader.Entity.Split('|');
-                        rawPool += entityKey + '\0' + '\0';
-                        size += loader.Entity.Length + 2;
+                        string entity = loader.Entity.Replace('|', '\0');
 
+                        rawPool += (entity + '\0' + '\0');
+                        size += loader.Entity.Length + 2;
                         if (splits.Length > 5)
                         {
-                            rawPool += '\0';
+                            rawPool += ('\0');
                             size++;
                         }
                     }
                     loader.entityIDX = idx;
+
                 }
             }
 
             List<string> newGH = new List<string>();
             List<ulong> hashGH = new List<ulong>();
-            string prevGroupName = "";
-
+            string groupName = "";
             foreach (var line in lines)
             {
-                int idx;
+                int idx = -1;
 
-                string groupKey = line.Group.Trim();
-                if (prevGroupName != groupKey)
+                if (groupName != line.Group)
                 {
-                    prevGroupName = groupKey;
-
-                    if (!pool.TryGetValue(groupKey, out idx))
+                    groupName = line.Group;
+                    if (!pool.TryGetValue(line.Group, out idx))
                     {
-                        idx = size;
-                        pool[groupKey] = size;
-                        size += groupKey.Length + 2;
-                        rawPool += groupKey + '\0' + '\0';
+                        pool.Add(line.Group, size);
+                        line.groupID = newGH.Count;
+                        newGH.Add(line.Group);
+                        hashGH.Add((ulong)size);
+                        size += line.Group.Length + 2;
+                        rawPool += (line.Group + '\0' + '\0');
                     }
-
-                    line.groupID = newGH.Count;
-                    newGH.Add(line.Group);
-                    hashGH.Add((ulong)idx);
+                    else
+                    {
+                        line.groupID = newGH.Count;
+                        newGH.Add(line.Group);
+                        hashGH.Add((ulong)idx);
+                    }
                 }
                 else
                 {
                     line.groupID = newGH.Count - 1;
                 }
-
-                string nameKey = line.Name.Trim();
-                if (!pool.TryGetValue(nameKey, out idx))
+                if (!pool.TryGetValue(line.Name, out idx))
                 {
                     idx = size;
-                    pool[nameKey] = size;
-                    size += nameKey.Length + 2;
-                    rawPool += nameKey + '\0' + '\0';
+                    pool.Add(line.Name, size);
+                    size += line.Name.Length + 2;
+                    rawPool += (line.Name + '\0' + '\0');
                 }
                 line.nameIDX = idx;
-
-                string flagsKey = line.Flags.Replace('|', '\0').Trim();
-                if (!pool.TryGetValue(flagsKey, out idx))
+                if (!pool.TryGetValue(line.Flags, out idx))
                 {
                     idx = size;
-                    pool[flagsKey] = size;
+                    pool.Add(line.Flags, size);
                     size += line.Flags.Length + 3;
-                    rawPool += flagsKey + '\0' + '\0' + '\0';
+                    string flags = line.Flags.Replace('|', '\0');
+                    rawPool += (flags + '\0' + '\0' + '\0');
                 }
                 line.flagIDX = idx;
             }
-
             groupHeaders = newGH.ToArray();
             upGroupHeaders = hashGH.ToArray();
         }
