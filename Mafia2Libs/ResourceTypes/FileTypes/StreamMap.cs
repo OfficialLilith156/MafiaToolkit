@@ -684,40 +684,9 @@ namespace ResourceTypes.Misc
         public void WriteToFile()
         {
             Update();
-            //var oldString = file.FullName.Remove(file.FullName.Length - 4, 4);
-            //oldString += "_old.bin";
-            //File.Copy(file.FullName, oldString, true);
-
-            string dir = Path.GetDirectoryName(file.FullName);
-            string name = Path.GetFileNameWithoutExtension(file.FullName);
-            string ext = Path.GetExtension(file.FullName);
-
-            string pattern = $"{name}_*.bin";
-            var existingBackups = Directory.GetFiles(dir, pattern);
-
-            int maxIndex = 0;
-
-            foreach (var backup in existingBackups)
-            {
-                string fileName = Path.GetFileNameWithoutExtension(backup);
-
-                int idxStart = fileName.LastIndexOf("_") + "_".Length;
-                if (idxStart > 0)
-                {
-                    if (int.TryParse(fileName.Substring(idxStart), out int number))
-                    {
-                        if (number > maxIndex)
-                            maxIndex = number;
-                    }
-                }
-            }
-
-            int nextIndex = maxIndex + 1;
-
-            string backupFile = Path.Combine(dir, $"{name}_{nextIndex}{ext}");
-
-            File.Copy(file.FullName, backupFile, true);
-
+            var oldString = file.FullName.Remove(file.FullName.Length - 4, 4);
+            oldString += "_old.bin";
+            File.Copy(file.FullName, oldString, true);
             using (BinaryWriter writer = new BinaryWriter(File.Open(file.FullName, FileMode.Create)))
             {
                 InternalWriteToFile(writer);
