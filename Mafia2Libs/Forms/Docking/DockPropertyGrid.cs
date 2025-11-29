@@ -20,10 +20,11 @@ namespace Forms.Docking
         private object currentObject;
         private TextureEntry currentEntry;
         private Dictionary<TextureEntry, MaterialStruct> currentMaterials;
+        private ContextMenuStrip materialContextMenu;
         private decimal savedValueX;
         private decimal savedValueY;
         private decimal savedValueZ;
-
+        private MaterialStruct? copiedMaterial = null;
         public bool IsEntryReady;
 
         public event EventHandler<EventArgs> OnObjectUpdated;
@@ -45,6 +46,14 @@ namespace Forms.Docking
             RotationXNumeric.ValueChanged += InvertZRotation_ValueChanged;
             RotationYNumeric.ValueChanged += InvertZRotation_ValueChanged;
             RotationZNumeric.ValueChanged += InvertZRotation_ValueChanged;
+
+            materialContextMenu = new ContextMenuStrip();
+            var copyItem = new ToolStripMenuItem("Copy");
+            var pasteItem = new ToolStripMenuItem("Paste");
+            copyItem.Click += buttonCopyMaterial_Click;
+            pasteItem.Click += buttonPasteMaterial_Click;
+            materialContextMenu.Items.AddRange(new ToolStripItem[] { copyItem, pasteItem });
+            MatViewPanel.ContextMenuStrip = materialContextMenu;
         }
 
         private void Localise()
@@ -122,7 +131,67 @@ namespace Forms.Docking
                 hasLoadedMaterials = true;
             }
         }
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData == (Keys.Control | Keys.C))
+            {
+                CopySelectedMaterial();
+                return true;
+            }
+            else if (keyData == (Keys.Control | Keys.V))
+            {
+                PasteMaterialToSelected();
+                return true;
+            }
 
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        private void CopySelectedMaterial()
+        {
+            if (currentEntry != null && currentMaterials.ContainsKey(currentEntry))
+            {
+                copiedMaterial = new MaterialStruct(currentMaterials[currentEntry]);
+                Clipboard.SetText(copiedMaterial.MaterialName);
+            }
+        }
+        private void PasteMaterialToSelected()
+        {
+            if (currentEntry != null && copiedMaterial != null)
+            {
+                IMaterial mat = MaterialsManager.LookupMaterialByHash(copiedMaterial.MaterialHash);
+                if (mat != null)
+                {
+                    currentMaterials[currentEntry].MaterialName = mat.GetMaterialName();
+                    currentMaterials[currentEntry].MaterialHash = mat.GetMaterialHash();
+                    currentEntry.SetMaterial(mat);
+                    OnObjectUpdated(currentEntry, EventArgs.Empty);
+                }
+            }
+        }
+
+        private void buttonCopyMaterial_Click(object sender, EventArgs e)
+        {
+            if (currentEntry != null && currentMaterials.ContainsKey(currentEntry))
+            {
+                copiedMaterial = new MaterialStruct(currentMaterials[currentEntry]);
+                Clipboard.SetText(copiedMaterial.MaterialName);
+            }
+        }
+        private void buttonPasteMaterial_Click(object sender, EventArgs e)
+        {
+            if (currentEntry != null && copiedMaterial != null)
+            {
+                IMaterial mat = MaterialsManager.LookupMaterialByHash(copiedMaterial.MaterialHash);
+                if (mat != null)
+                {
+                    currentMaterials[currentEntry].MaterialName = mat.GetMaterialName();
+                    currentMaterials[currentEntry].MaterialHash = mat.GetMaterialHash();
+                    currentEntry.SetMaterial(mat);
+                    OnObjectUpdated(currentEntry, EventArgs.Empty);
+                }
+            }
+        }
         private void SetTransformEdit()
         {
             IsEntryReady = false;
@@ -224,7 +293,7 @@ namespace Forms.Docking
             // Create our browser; once the user has finished with this menu they should? have a material.
             string MaterialName = "";
             IMaterial OurMaterial = Entry.GetMaterial();
-            if(OurMaterial != null)
+            if (OurMaterial != null)
             {
                 MaterialName = OurMaterial.GetMaterialName();
             }
