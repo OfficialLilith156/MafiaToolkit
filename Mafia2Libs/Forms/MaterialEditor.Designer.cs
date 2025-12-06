@@ -36,9 +36,9 @@
             toolButton = new System.Windows.Forms.ToolStripDropDownButton();
             Button_AddMaterial = new System.Windows.Forms.ToolStripMenuItem();
             Button_Delete = new System.Windows.Forms.ToolStripMenuItem();
+            dUPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             Button_MergeMTL = new System.Windows.Forms.ToolStripMenuItem();
             Button_ExportSelected = new System.Windows.Forms.ToolStripMenuItem();
-            dUPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             Button_Debug = new System.Windows.Forms.ToolStripDropDownButton();
             Button_DumpTextures = new System.Windows.Forms.ToolStripMenuItem();
             GirdView_Materials = new System.Windows.Forms.DataGridView();
@@ -59,6 +59,7 @@
             MergeButton = new System.Windows.Forms.Button();
             OverwriteListBox = new System.Windows.Forms.CheckedListBox();
             MTLSaveDialog = new System.Windows.Forms.SaveFileDialog();
+            addMaterialsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)GirdView_Materials).BeginInit();
             Panel_Main.SuspendLayout();
@@ -161,6 +162,13 @@
             Button_Delete.Text = "$DELETE_SEL_MAT";
             Button_Delete.Click += Button_Delete_Click;
             // 
+            // dUPToolStripMenuItem
+            // 
+            dUPToolStripMenuItem.Name = "dUPToolStripMenuItem";
+            dUPToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            dUPToolStripMenuItem.Text = "Duplicate Material";
+            dUPToolStripMenuItem.Click += DuplicateMaterial;
+            // 
             // Button_MergeMTL
             // 
             Button_MergeMTL.Name = "Button_MergeMTL";
@@ -175,17 +183,10 @@
             Button_ExportSelected.Text = "$EXPORT_SELECTED";
             Button_ExportSelected.Click += Button_ExportedSelected_Click;
             // 
-            // dUPToolStripMenuItem
-            // 
-            dUPToolStripMenuItem.Name = "dUPToolStripMenuItem";
-            dUPToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
-            dUPToolStripMenuItem.Text = "Duplicate Material";
-            dUPToolStripMenuItem.Click += DuplicateMaterial;
-            // 
             // Button_Debug
             // 
             Button_Debug.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            Button_Debug.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { Button_DumpTextures });
+            Button_Debug.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { Button_DumpTextures, addMaterialsToolStripMenuItem });
             Button_Debug.Image = (System.Drawing.Image)resources.GetObject("Button_Debug.Image");
             Button_Debug.ImageTransparentColor = System.Drawing.Color.Magenta;
             Button_Debug.Name = "Button_Debug";
@@ -390,6 +391,13 @@
             // 
             MTLSaveDialog.Filter = "Material Library|*.mtl";
             // 
+            // addMaterialsToolStripMenuItem
+            // 
+            addMaterialsToolStripMenuItem.Name = "addMaterialsToolStripMenuItem";
+            addMaterialsToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            addMaterialsToolStripMenuItem.Text = "Add Materials";
+            addMaterialsToolStripMenuItem.Click += Button_AddMaterialsFromFolder_Click;
+            // 
             // MaterialEditor
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -453,5 +461,6 @@
         private System.Windows.Forms.ToolStripDropDownButton Button_Debug;
         private System.Windows.Forms.ToolStripMenuItem Button_DumpTextures;
         private System.Windows.Forms.ToolStripMenuItem dUPToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem addMaterialsToolStripMenuItem;
     }
 }
