@@ -45,7 +45,7 @@ namespace Mafia2Tool.Forms
             numericShaderHash.Maximum = decimal.MaxValue;
             numericShaderHash.Value = 3388704532;
 
-            checkedFlags.SetItemChecked(0, true); 
+            checkedFlags.SetItemChecked(0, true);
             checkedFlags.SetItemChecked(3, true);
             numericShaderHash.Maximum = decimal.MaxValue;
             TextID.Text = "S000";
@@ -83,6 +83,11 @@ namespace Mafia2Tool.Forms
             }
 
             return flags;
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

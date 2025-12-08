@@ -44,6 +44,7 @@
             RowIndexLabel = new System.Windows.Forms.ToolStripStatusLabel();
             Label_DataType = new System.Windows.Forms.ToolStripStatusLabel();
             Label_ValueDataType = new System.Windows.Forms.ToolStripStatusLabel();
+            SearchBox = new System.Windows.Forms.TextBox();
             toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)DataGrid).BeginInit();
             statusStrip1.SuspendLayout();
@@ -74,7 +75,7 @@
             SaveButton.Name = "SaveButton";
             SaveButton.ShortcutKeyDisplayString = "";
             SaveButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S;
-            SaveButton.Size = new System.Drawing.Size(180, 22);
+            SaveButton.Size = new System.Drawing.Size(165, 22);
             SaveButton.Text = "$SAVE";
             SaveButton.Click += SaveOnClick;
             // 
@@ -82,14 +83,14 @@
             // 
             ReloadButton.Name = "ReloadButton";
             ReloadButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R;
-            ReloadButton.Size = new System.Drawing.Size(180, 22);
+            ReloadButton.Size = new System.Drawing.Size(165, 22);
             ReloadButton.Text = "$RELOAD";
             ReloadButton.Click += ReloadOnClick;
             // 
             // ExitButton
             // 
             ExitButton.Name = "ExitButton";
-            ExitButton.Size = new System.Drawing.Size(180, 22);
+            ExitButton.Size = new System.Drawing.Size(165, 22);
             ExitButton.Text = "$EXIT";
             ExitButton.Click += ExitButtonOnClick;
             // 
@@ -175,11 +176,20 @@
             Label_ValueDataType.Size = new System.Drawing.Size(111, 17);
             Label_ValueDataType.Text = "$VALUE_DATA_TYPE";
             // 
+            // SearchBox
+            // 
+            SearchBox.Location = new System.Drawing.Point(183, 3);
+            SearchBox.Name = "SearchBox";
+            SearchBox.Size = new System.Drawing.Size(139, 23);
+            SearchBox.TabIndex = 18;
+            SearchBox.TextChanged += SearchBox_TextChanged;
+            // 
             // TableEditor
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(933, 519);
+            Controls.Add(SearchBox);
             Controls.Add(statusStrip1);
             Controls.Add(toolStrip1);
             Controls.Add(DataGrid);
@@ -214,5 +224,6 @@
         private System.Windows.Forms.ToolStripMenuItem DeleteRowButton;
         private System.Windows.Forms.ToolStripLabel Label_Version;
         private System.Windows.Forms.ToolStripStatusLabel Label_ValueDataType;
+        private System.Windows.Forms.TextBox SearchBox;
     }
 }

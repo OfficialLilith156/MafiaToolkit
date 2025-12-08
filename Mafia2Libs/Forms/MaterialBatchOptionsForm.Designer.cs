@@ -35,12 +35,10 @@
             numericUNK0 = new System.Windows.Forms.NumericUpDown();
             label1 = new System.Windows.Forms.Label();
             label2 = new System.Windows.Forms.Label();
-            label3 = new System.Windows.Forms.Label();
             label4 = new System.Windows.Forms.Label();
             label5 = new System.Windows.Forms.Label();
             label6 = new System.Windows.Forms.Label();
             numericUNK1 = new System.Windows.Forms.NumericUpDown();
-            numericUNK2 = new System.Windows.Forms.NumericUpDown();
             numericUNK3 = new System.Windows.Forms.NumericUpDown();
             numericUNK4 = new System.Windows.Forms.NumericUpDown();
             numericUNK5 = new System.Windows.Forms.NumericUpDown();
@@ -61,7 +59,6 @@
             label14 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)numericUNK0).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUNK1).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)numericUNK2).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUNK3).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUNK4).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUNK5).BeginInit();
@@ -130,41 +127,35 @@
             label2.TabIndex = 6;
             label2.Text = "Unk1";
             // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Location = new System.Drawing.Point(12, 68);
-            label3.Name = "label3";
-            label3.Size = new System.Drawing.Size(34, 15);
-            label3.TabIndex = 7;
-            label3.Text = "Unk2";
-            // 
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new System.Drawing.Point(12, 97);
+            label4.Location = new System.Drawing.Point(12, 68);
             label4.Name = "label4";
             label4.Size = new System.Drawing.Size(34, 15);
             label4.TabIndex = 8;
             label4.Text = "Unk3";
+            label4.Click += label4_Click;
             // 
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new System.Drawing.Point(12, 126);
+            label5.Location = new System.Drawing.Point(12, 97);
             label5.Name = "label5";
             label5.Size = new System.Drawing.Size(34, 15);
             label5.TabIndex = 9;
             label5.Text = "Unk4";
+            label5.Click += this.label5_Click;
             // 
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new System.Drawing.Point(12, 155);
+            label6.Location = new System.Drawing.Point(12, 126);
             label6.Name = "label6";
             label6.Size = new System.Drawing.Size(34, 15);
             label6.TabIndex = 10;
             label6.Text = "Unk5";
+            label6.Click += this.label6_Click;
             // 
             // numericUNK1
             // 
@@ -173,33 +164,29 @@
             numericUNK1.Size = new System.Drawing.Size(120, 23);
             numericUNK1.TabIndex = 11;
             // 
-            // numericUNK2
-            // 
-            numericUNK2.Location = new System.Drawing.Point(52, 66);
-            numericUNK2.Name = "numericUNK2";
-            numericUNK2.Size = new System.Drawing.Size(120, 23);
-            numericUNK2.TabIndex = 12;
-            // 
             // numericUNK3
             // 
-            numericUNK3.Location = new System.Drawing.Point(52, 95);
+            numericUNK3.Location = new System.Drawing.Point(52, 66);
             numericUNK3.Name = "numericUNK3";
             numericUNK3.Size = new System.Drawing.Size(120, 23);
             numericUNK3.TabIndex = 13;
+            numericUNK3.ValueChanged += this.numericUNK3_ValueChanged;
             // 
             // numericUNK4
             // 
-            numericUNK4.Location = new System.Drawing.Point(52, 124);
+            numericUNK4.Location = new System.Drawing.Point(52, 95);
             numericUNK4.Name = "numericUNK4";
             numericUNK4.Size = new System.Drawing.Size(120, 23);
             numericUNK4.TabIndex = 14;
+            numericUNK4.ValueChanged += this.numericUNK4_ValueChanged;
             // 
             // numericUNK5
             // 
-            numericUNK5.Location = new System.Drawing.Point(52, 153);
+            numericUNK5.Location = new System.Drawing.Point(52, 124);
             numericUNK5.Name = "numericUNK5";
             numericUNK5.Size = new System.Drawing.Size(120, 23);
             numericUNK5.TabIndex = 15;
+            numericUNK5.ValueChanged += this.numericUNK5_ValueChanged;
             // 
             // TextID
             // 
@@ -293,34 +280,38 @@
             // label13
             // 
             label13.AutoSize = true;
-            label13.Location = new System.Drawing.Point(12, 184);
+            label13.Location = new System.Drawing.Point(12, 155);
             label13.Name = "label13";
             label13.Size = new System.Drawing.Size(54, 15);
             label13.TabIndex = 27;
             label13.Text = "ShaderID";
+            label13.Click += this.label13_Click;
             // 
             // numericShaderID
             // 
-            numericShaderID.Location = new System.Drawing.Point(72, 184);
+            numericShaderID.Location = new System.Drawing.Point(72, 155);
             numericShaderID.Name = "numericShaderID";
             numericShaderID.Size = new System.Drawing.Size(120, 23);
             numericShaderID.TabIndex = 28;
+            numericShaderID.ValueChanged += this.numericShaderID_ValueChanged;
             // 
             // numericShaderHash
             // 
-            numericShaderHash.Location = new System.Drawing.Point(88, 213);
+            numericShaderHash.Location = new System.Drawing.Point(88, 184);
             numericShaderHash.Name = "numericShaderHash";
             numericShaderHash.Size = new System.Drawing.Size(120, 23);
             numericShaderHash.TabIndex = 29;
+            numericShaderHash.ValueChanged += this.numericShaderHash_ValueChanged;
             // 
             // label14
             // 
             label14.AutoSize = true;
-            label14.Location = new System.Drawing.Point(12, 215);
+            label14.Location = new System.Drawing.Point(12, 186);
             label14.Name = "label14";
             label14.Size = new System.Drawing.Size(70, 15);
             label14.TabIndex = 30;
             label14.Text = "ShaderHash";
+            label14.Click += this.label14_Click;
             // 
             // MaterialBatchOptionsForm
             // 
@@ -345,12 +336,10 @@
             Controls.Add(numericUNK5);
             Controls.Add(numericUNK4);
             Controls.Add(numericUNK3);
-            Controls.Add(numericUNK2);
             Controls.Add(numericUNK1);
             Controls.Add(label6);
             Controls.Add(label5);
             Controls.Add(label4);
-            Controls.Add(label3);
             Controls.Add(label2);
             Controls.Add(label1);
             Controls.Add(numericUNK0);
@@ -360,9 +349,9 @@
             Controls.Add(TextSamplerStates);
             Name = "MaterialBatchOptionsForm";
             Text = "MaterialBatchOptionsForm";
+            Load += this.MaterialBatchOptionsForm_Load;
             ((System.ComponentModel.ISupportInitialize)numericUNK0).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUNK1).EndInit();
-            ((System.ComponentModel.ISupportInitialize)numericUNK2).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUNK3).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUNK4).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUNK5).EndInit();
@@ -381,12 +370,10 @@
         private System.Windows.Forms.NumericUpDown numericUNK0;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.NumericUpDown numericUNK1;
-        private System.Windows.Forms.NumericUpDown numericUNK2;
         private System.Windows.Forms.NumericUpDown numericUNK3;
         private System.Windows.Forms.NumericUpDown numericUNK4;
         private System.Windows.Forms.NumericUpDown numericUNK5;

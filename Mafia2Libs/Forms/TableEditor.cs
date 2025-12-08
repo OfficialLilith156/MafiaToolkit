@@ -244,6 +244,30 @@ namespace Mafia2Tool
             }
         }
 
+        private void SearchBox_TextChanged(object sender, EventArgs e)
+        {
+            string query = SearchBox.Text?.Trim();
+
+            DataGrid.ClearSelection();
+
+            if (string.IsNullOrEmpty(query))
+                return;
+
+            foreach (DataGridViewRow row in DataGrid.Rows)
+            {
+                foreach (DataGridViewCell cell in row.Cells)
+                {
+                    if (cell.Value != null &&
+                        cell.Value.ToString().IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        cell.Selected = true;
+                        DataGrid.FirstDisplayedScrollingRowIndex = row.Index;
+                        return; 
+                    }
+                }
+            }
+        }
+
         private void CellContent_Changed(object sender, DataGridViewCellEventArgs e)
         {
             MTableColumn Column = (DataGrid.Columns[e.ColumnIndex] as MTableColumn);
