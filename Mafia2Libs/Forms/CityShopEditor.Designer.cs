@@ -59,6 +59,7 @@
             ContextPaste = new System.Windows.Forms.ToolStripMenuItem();
             Button_MoveUp = new System.Windows.Forms.ToolStripMenuItem();
             Button_MoveDown = new System.Windows.Forms.ToolStripMenuItem();
+            textBoxSearch = new System.Windows.Forms.TextBox();
             CollisionContext.SuspendLayout();
             toolStrip1.SuspendLayout();
             TabControl.SuspendLayout();
@@ -308,11 +309,20 @@
             Button_MoveDown.Size = new System.Drawing.Size(260, 22);
             Button_MoveDown.Text = "$MOVE_DOWN";
             // 
+            // textBoxSearch
+            // 
+            textBoxSearch.Location = new System.Drawing.Point(229, 4);
+            textBoxSearch.Name = "textBoxSearch";
+            textBoxSearch.Size = new System.Drawing.Size(145, 23);
+            textBoxSearch.TabIndex = 19;
+            textBoxSearch.KeyDown += textBoxSearch_KeyDown;
+            // 
             // CityShopEditor
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(933, 519);
+            Controls.Add(textBoxSearch);
             Controls.Add(TreeView_CityShop);
             Controls.Add(toolStrip1);
             Controls.Add(TabControl);
@@ -364,5 +374,6 @@
         private System.Windows.Forms.ToolStripMenuItem ContextPaste;
         private System.Windows.Forms.ToolStripMenuItem Button_MoveUp;
         private System.Windows.Forms.ToolStripMenuItem Button_MoveDown;
+        private System.Windows.Forms.TextBox textBoxSearch;
     }
 }

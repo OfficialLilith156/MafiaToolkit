@@ -17,7 +17,8 @@ namespace Mafia2Tool
         private CityShops.AreaData currentData;
 
         private bool bIsFileEdited = false;
-
+        private List<TreeNode> searchResults = new List<TreeNode>();
+        private int currentSearchIndex = -1;
         public CityShopEditor(FileInfo file)
         {
             InitializeComponent();
@@ -327,7 +328,51 @@ namespace Mafia2Tool
                 FileIsEdited();
             }
         }
+        private void textBoxSearch_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                string searchText = textBoxSearch.Text.Trim();
+                if (string.IsNullOrEmpty(searchText))
+                    return;
 
+                if (searchResults.Count == 0 || searchResults[0].Text.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) < 0)
+                {
+                    searchResults = FindAllNodesByName(TreeView_CityShop.Nodes, searchText);
+                    currentSearchIndex = -1;
+                }
+
+                if (searchResults.Count == 0)
+                {
+                    return;
+                }
+
+                currentSearchIndex++;
+                if (currentSearchIndex >= searchResults.Count)
+                    currentSearchIndex = 0;
+
+                TreeNode node = searchResults[currentSearchIndex];
+                TreeView_CityShop.SelectedNode = node;
+                node.Expand();
+                node.EnsureVisible();
+
+                e.Handled = true; 
+            }
+        }
+
+
+        private List<TreeNode> FindAllNodesByName(TreeNodeCollection nodes, string name)
+        {
+            List<TreeNode> results = new List<TreeNode>();
+            foreach (TreeNode node in nodes)
+            {
+                if (node.Text.IndexOf(name, StringComparison.OrdinalIgnoreCase) >= 0)
+                    results.Add(node);
+
+                results.AddRange(FindAllNodesByName(node.Nodes, name));
+            }
+            return results;
+        }
         private void CityShopEditor_Closing(object sender, FormClosingEventArgs e)
         {
             if (bIsFileEdited)
