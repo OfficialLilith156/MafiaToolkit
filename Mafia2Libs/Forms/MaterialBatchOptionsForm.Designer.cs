@@ -145,7 +145,7 @@
             label5.Size = new System.Drawing.Size(34, 15);
             label5.TabIndex = 9;
             label5.Text = "Unk4";
-            label5.Click += this.label5_Click;
+
             // 
             // label6
             // 
@@ -155,7 +155,6 @@
             label6.Size = new System.Drawing.Size(34, 15);
             label6.TabIndex = 10;
             label6.Text = "Unk5";
-            label6.Click += this.label6_Click;
             // 
             // numericUNK1
             // 
@@ -170,7 +169,7 @@
             numericUNK3.Name = "numericUNK3";
             numericUNK3.Size = new System.Drawing.Size(120, 23);
             numericUNK3.TabIndex = 13;
-            numericUNK3.ValueChanged += this.numericUNK3_ValueChanged;
+
             // 
             // numericUNK4
             // 
@@ -178,7 +177,7 @@
             numericUNK4.Name = "numericUNK4";
             numericUNK4.Size = new System.Drawing.Size(120, 23);
             numericUNK4.TabIndex = 14;
-            numericUNK4.ValueChanged += this.numericUNK4_ValueChanged;
+
             // 
             // numericUNK5
             // 
@@ -186,7 +185,7 @@
             numericUNK5.Name = "numericUNK5";
             numericUNK5.Size = new System.Drawing.Size(120, 23);
             numericUNK5.TabIndex = 15;
-            numericUNK5.ValueChanged += this.numericUNK5_ValueChanged;
+
             // 
             // TextID
             // 
@@ -285,7 +284,6 @@
             label13.Size = new System.Drawing.Size(54, 15);
             label13.TabIndex = 27;
             label13.Text = "ShaderID";
-            label13.Click += this.label13_Click;
             // 
             // numericShaderID
             // 
@@ -293,7 +291,7 @@
             numericShaderID.Name = "numericShaderID";
             numericShaderID.Size = new System.Drawing.Size(120, 23);
             numericShaderID.TabIndex = 28;
-            numericShaderID.ValueChanged += this.numericShaderID_ValueChanged;
+
             // 
             // numericShaderHash
             // 
@@ -301,7 +299,7 @@
             numericShaderHash.Name = "numericShaderHash";
             numericShaderHash.Size = new System.Drawing.Size(120, 23);
             numericShaderHash.TabIndex = 29;
-            numericShaderHash.ValueChanged += this.numericShaderHash_ValueChanged;
+
             // 
             // label14
             // 
@@ -311,7 +309,7 @@
             label14.Size = new System.Drawing.Size(70, 15);
             label14.TabIndex = 30;
             label14.Text = "ShaderHash";
-            label14.Click += this.label14_Click;
+
             // 
             // MaterialBatchOptionsForm
             // 
@@ -349,7 +347,7 @@
             Controls.Add(TextSamplerStates);
             Name = "MaterialBatchOptionsForm";
             Text = "MaterialBatchOptionsForm";
-            Load += this.MaterialBatchOptionsForm_Load;
+
             ((System.ComponentModel.ISupportInitialize)numericUNK0).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUNK1).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUNK3).EndInit();

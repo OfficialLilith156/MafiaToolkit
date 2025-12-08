@@ -387,9 +387,10 @@ namespace Mafia2Tool
                 ReflectionHelpers.Copy(branchClipboard.Data.Data, ref clonedInternal);
 
                 newData.Data = clonedInternal as IActorExtraDataInterface;
-                newEntry.Data = newData;
-                newEntry.DataID = (short)actors.ExtraData.Count;
+
                 actors.ExtraData.Add(newData);
+                newEntry.DataID = (short)(actors.ExtraData.Count - 1);
+                newEntry.Data = newData;
             }
 
             TreeNode node = new TreeNode(newEntry.EntityName) { Tag = newEntry };
@@ -603,17 +604,14 @@ namespace Mafia2Tool
             if (string.IsNullOrWhiteSpace(query))
                 return;
 
-            TreeNode foundNode = FindNode(ActorTreeView.Nodes, query);
+
+            TreeNode foundNode = FindNode(items.Nodes, query);
 
             if (foundNode != null)
             {
                 ActorTreeView.SelectedNode = foundNode;
                 ActorTreeView.Focus();
                 foundNode.EnsureVisible();
-            }
-            else
-            {
-                //MessageBox.Show("Ничего не найдено.");
             }
         }
 
@@ -810,32 +808,28 @@ namespace Mafia2Tool
 
         private void RenumberDataIDsByTreeOrder()
         {
-            if (actors == null || items == null || items.Nodes.Count == 0)
-            {
-                //MessageBox.Show("Нет элементов для перенумерации.");
+            if (actors == null || items == null)
                 return;
-            }
 
-            short newId = 0;
+            List<ActorExtraData> newList = new List<ActorExtraData>();
+            Dictionary<ActorExtraData, short> remap = new Dictionary<ActorExtraData, short>();
 
             foreach (TreeNode node in items.Nodes)
             {
-                if (node?.Tag is ActorEntry entry)
+                if (node.Tag is ActorEntry entry && entry.Data != null)
                 {
-                    if (entry.DataID != -1 && entry.DataID < actors.ExtraData.Count)
+                    if (!remap.ContainsKey(entry.Data))
                     {
-                        entry.DataID = newId;
-                        newId++;
+                        remap[entry.Data] = (short)newList.Count;
+                        newList.Add(entry.Data);
                     }
+
+                    entry.DataID = remap[entry.Data];
                 }
             }
 
-            ActorGrid.Refresh();
-            Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
-            bIsFileEdited = true;
-
-            //MessageBox.Show($"DataID перенумерованы в порядке дерева: 0 .. {newId - 1}.", "Готово");
+            actors.ExtraData = newList;
         }
-        
+
     }
 }
