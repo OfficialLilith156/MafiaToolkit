@@ -1,5 +1,6 @@
 ﻿using Forms.EditorControls;
 using Gibbed.Illusion.FileFormats.Hashing;
+using Mafia2Tool.Forms;
 using ResourceTypes.Materials;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using System.Windows.Forms;
 using Utils.Extensions;
 using Utils.Language;
 using Utils.Settings;
+
 using Utils.Types;
 
 namespace Mafia2Tool
@@ -20,6 +22,7 @@ namespace Mafia2Tool
         private int currentSearchType;
 
         private bool bIsFileEdited = false;
+        public System.Windows.Forms.TextBox TextUNKZERO;
 
         public MaterialEditor(FileInfo file)
         {
@@ -522,50 +525,65 @@ namespace Mafia2Tool
             {
                 folderDialog.Description = "Select folder containing .dds textures";
 
-                if (folderDialog.ShowDialog() == DialogResult.OK)
+                if (folderDialog.ShowDialog() != DialogResult.OK)
+                    return;
+
+                MaterialBatchOptionsForm options = new MaterialBatchOptionsForm();
+                if (options.ShowDialog() != DialogResult.OK)
+                    return;
+
+                MaterialFlags selectedFlags = options.GetSelectedFlags();
+
+                string folderPath = folderDialog.SelectedPath;
+                string[] ddsFiles = Directory.GetFiles(folderPath, "*.dds", SearchOption.TopDirectoryOnly);
+
+                if (ddsFiles.Length == 0)
                 {
-                    string folderPath = folderDialog.SelectedPath;
-                    string[] ddsFiles = Directory.GetFiles(folderPath, "*.dds", SearchOption.TopDirectoryOnly);
-
-                    if (ddsFiles.Length == 0)
-                    {
-                        MessageBox.Show("No .dds textures found in the selected folder.", "Info");
-                        return;
-                    }
-
-                    foreach (string texturePath in ddsFiles)
-                    {
-                        string fileNameWithExt = Path.GetFileName(texturePath);
-                        string fileNameWithoutExt = Path.GetFileNameWithoutExtension(texturePath);
-
-                        ulong hash = FNV64.Hash(fileNameWithoutExt);
-                        if (mtl.Materials.ContainsKey(hash))
-                            continue;
-
-                        Material_v57 mat = new Material_v57();
-                        mat.SetName(fileNameWithoutExt);
-
-                        mat.Unk0 = 128;
-
-                        MaterialSampler_v57 sampler = new MaterialSampler_v57
-                        {
-                            ID = "S000",
-                            TexType = 2,
-                            TextureName = new HashName(fileNameWithExt),
-                            SamplerStates = new byte[] { 3, 3, 2, 0, 0, 0 },
-                            UnkZero = 0
-                        };
-
-                        mat.Samplers.Add(sampler);
-
-                        mtl.Materials.Add(mat.GetMaterialHash(), mat);
-                    }
-
-                    FetchMaterials();
-                    FileIsEdited();
-
-                    MessageBox.Show($"{ddsFiles.Length} materials created from textures.", "Done");
+                    MessageBox.Show("No .dds textures found in the selected folder.", "Info");
+                    return;
                 }
+
+                foreach (string texturePath in ddsFiles)
+                {
+                    string fileNameWithExt = Path.GetFileName(texturePath);
+                    string fileNameWithoutExt = Path.GetFileNameWithoutExtension(texturePath);
+
+                    ulong hash = FNV64.Hash(fileNameWithoutExt);
+                    if (mtl.Materials.ContainsKey(hash))
+                        continue;
+
+                    Material_v57 mat = new Material_v57();
+                    mat.SetName(fileNameWithoutExt);
+
+                    mat.Unk0 = (byte)options.Unk0;
+                    mat.Unk1 = (byte)options.Unk1;
+                    mat.Unk3 = (byte)options.Unk3;
+                    mat.Unk4 = options.Unk4;
+                    mat.Unk5 = options.Unk5;
+                    mat.ShaderID = options.ShaderID;
+                    mat.ShaderHash = options.ShaderHash;
+
+                    mat.Flags = selectedFlags;
+
+                    MaterialSampler_v57 sampler = new MaterialSampler_v57
+                    {
+                        ID = options.SamplerID,
+                        TexType = (byte)options.TexTypeValue,
+                        SamplerStates = options.SamplerStates.Split(',').Select(byte.Parse).ToArray(),
+                        UnkSet0 = options.UnkSet0.Split(',').Select(s => int.Parse(s.Trim())).ToArray(),
+                        UnkSet1 = options.UnkSet1.Split(',').Select(s => int.Parse(s.Trim())).ToArray(),
+                        TextureName = new HashName(fileNameWithExt),
+                        UnkZero = (byte)options.UnkZero
+                    };
+
+                    mat.Samplers.Add(sampler);
+                    mtl.Materials.Add(mat.GetMaterialHash(), mat);
+                }
+
+                FetchMaterials();
+                FileIsEdited();
+
+                MessageBox.Show($"{ddsFiles.Length} materials created from textures.", "Done");
             }
         }
 

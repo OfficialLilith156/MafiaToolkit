@@ -83,6 +83,8 @@ namespace Mafia2Tool
             dockPanel1 = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             FrameBrowser = new System.Windows.Forms.OpenFileDialog();
             SaveFileDialog = new System.Windows.Forms.SaveFileDialog();
+            toolStripDropDownButton2 = new System.Windows.Forms.ToolStripDropDownButton();
+            addModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             StatusStrip = new System.Windows.Forms.StatusStrip();
             StatusStrip.SuspendLayout();
             ToolbarStrip.SuspendLayout();
@@ -221,14 +223,14 @@ namespace Mafia2Tool
             // 
             Label_StatusBar.Name = "Label_StatusBar";
             Label_StatusBar.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            Label_StatusBar.Size = new System.Drawing.Size(523, 23);
+            Label_StatusBar.Size = new System.Drawing.Size(554, 23);
             Label_StatusBar.Spring = true;
             Label_StatusBar.Text = "Label_StatusBar";
             Label_StatusBar.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // ToolbarStrip
             // 
-            ToolbarStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { FileButton, EditButton, ViewButton, OptionsButton, WindowButton, toolStripDropDownButton1 });
+            ToolbarStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { FileButton, EditButton, ViewButton, OptionsButton, WindowButton, toolStripDropDownButton1, toolStripDropDownButton2 });
             ToolbarStrip.Location = new System.Drawing.Point(0, 0);
             ToolbarStrip.Name = "ToolbarStrip";
             ToolbarStrip.Size = new System.Drawing.Size(1420, 25);
@@ -520,6 +522,24 @@ namespace Mafia2Tool
             // 
             FrameBrowser.Filter = "FrameResource|*.fr|Toolkit Frame Data|*.framedata";
             // 
+            // toolStripDropDownButton2
+            // 
+            toolStripDropDownButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            toolStripDropDownButton2.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { addModelToolStripMenuItem });
+            toolStripDropDownButton2.Image = (System.Drawing.Image)resources.GetObject("toolStripDropDownButton2.Image");
+            toolStripDropDownButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
+            toolStripDropDownButton2.Name = "toolStripDropDownButton2";
+            toolStripDropDownButton2.Size = new System.Drawing.Size(85, 22);
+            toolStripDropDownButton2.Text = "Debug Tools";
+            // 
+            // addModelToolStripMenuItem
+            // 
+            addModelToolStripMenuItem.Name = "addModelToolStripMenuItem";
+            addModelToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
+            addModelToolStripMenuItem.Text = "Add Models to the Scene";
+            addModelToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            addModelToolStripMenuItem.Click += AssignAllToSceneFolderButton_Click;
+            // 
             // MapEditor
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -593,5 +613,7 @@ namespace Mafia2Tool
         private System.Windows.Forms.ToolStripMenuItem addType7ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteAINavigationToolStripMenuItem;
         private System.Windows.Forms.ToolStripSplitButton toolStripSplitButton1;
+        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton2;
+        private System.Windows.Forms.ToolStripMenuItem addModelToolStripMenuItem;
     }
 }

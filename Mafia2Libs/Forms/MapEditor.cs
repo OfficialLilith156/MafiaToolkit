@@ -878,7 +878,134 @@ namespace Mafia2Tool
                 Console.WriteLine("Saved Changes Succesfully");
             }
         }
+        private bool ParentIsEmpty(ParentInfo p)
+        {
 
+            if (p == null) return true;
+
+            bool indexEmpty = p.Index == -1;
+            bool refIdEmpty = p.RefID == -1;     
+            bool refIdZero = p.RefID == 0;       
+
+            return indexEmpty || refIdEmpty || refIdZero;
+        }
+
+        private bool HasNoParents(FrameObjectBase obj)
+        {
+            return ParentIsEmpty(obj.ParentIndex1) && ParentIsEmpty(obj.ParentIndex2);
+        }
+
+        private void AssignAllToSceneFolderButton_Click(object sender, EventArgs e)
+        {
+            TreeNode selectedNode = dSceneTree.SelectedNode;
+            if (!(selectedNode?.Tag is FrameHeaderScene targetScene))
+            {
+                MessageBox.Show("Please select a Scene Folder node in the tree.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var modelsToAssign = new List<FrameObjectBase>();
+
+            foreach (var kvp in SceneData.FrameResource.FrameObjects)
+            {
+                var frameObj = kvp.Value as FrameObjectBase;
+
+                if (frameObj is FrameObjectSingleMesh || frameObj is FrameObjectModel)
+                {
+                    if (HasNoParents(frameObj))
+                    {
+                        modelsToAssign.Add(frameObj);
+                    }
+                }
+            }
+
+            if (modelsToAssign.Count == 0)
+            {
+                MessageBox.Show("There are no models without parents.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            var parentChoice = MessageBox.Show(
+                "Assign to ParentIndex1?\n\n" +
+                "Yes = ParentIndex1\n" +
+                "No = ParentIndex2\n" +
+                "Cancel = Assign BOTH parents",
+                "Choose Parents",
+                MessageBoxButtons.YesNoCancel,
+                MessageBoxIcon.Question);
+
+            bool assignParent1 = false;
+            bool assignParent2 = false;
+
+            if (parentChoice == DialogResult.Yes)
+            {
+                assignParent1 = true;
+            }
+            else if (parentChoice == DialogResult.No)
+            {
+                assignParent2 = true;
+            }
+            else if (parentChoice == DialogResult.Cancel)
+            {
+                assignParent1 = true;
+                assignParent2 = true;
+            }
+            else
+            {
+                return;
+            }
+
+            string assignText = assignParent1 && assignParent2 ? "Parent1 + Parent2"
+                              : assignParent1 ? "Parent1"
+                              : "Parent2";
+
+            var result = MessageBox.Show(
+                $"Assign {modelsToAssign.Count} models to scene '{targetScene.Name}' using {assignText}?",
+                "Confirm",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (result != DialogResult.Yes)
+                return;
+
+            foreach (var model in modelsToAssign)
+            {
+                if (assignParent1)
+                {
+                    SceneData.FrameResource.SetParentOfObject(
+                        ParentInfo.ParentType.ParentIndex1,
+                        model,
+                        targetScene
+                    );
+                }
+
+                if (assignParent2)
+                {
+                    SceneData.FrameResource.SetParentOfObject(
+                        ParentInfo.ParentType.ParentIndex2,
+                        model,
+                        targetScene
+                    );
+                }
+
+                TreeNode[] oldNodes = dSceneTree.TreeView.Nodes.Find(model.RefID.ToString(), true);
+                foreach (var oldNode in oldNodes)
+                {
+                    if (oldNode.Parent != null)
+                        oldNode.Parent.Nodes.Remove(oldNode);
+                }
+
+                TreeNode newNode = new TreeNode(model.ToString())
+                {
+                    Tag = model,
+                    Name = model.RefID.ToString()
+                };
+
+                dSceneTree.AddToTree(newNode, selectedNode);
+            }
+
+            MessageBox.Show($"{modelsToAssign.Count} models assigned.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
         private IRenderer BuildRenderObjectFromFrame(FrameObjectBase fObject, Dictionary<int, IRenderer> assets)
         {
             fObject.ConstructRenderable();
@@ -3001,6 +3128,8 @@ namespace Mafia2Tool
             Clipboard.SetText(result);
 
         }
+        
+
 
         private void PasteXYZ_ButtonClick(object sender, EventArgs e)
         {
