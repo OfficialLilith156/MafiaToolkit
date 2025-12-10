@@ -32,7 +32,7 @@ namespace Rendering.Core
         private Matrix4x4 Transform
         {
             get
-            { 
+            {
                 Matrix4x4 m = new();
                 m.Translation = origin;
                 return m;
@@ -46,21 +46,35 @@ namespace Rendering.Core
         public SpatialGrid(GraphicsClass InGraphics, KynogonRuntimeMesh mesh)
         {
             OwnGraphicsClass = InGraphics;
-
             bIsReady = true;
-            var min = new Vector3(mesh.BoundMin, float.MinValue);
-            var max = new Vector3(mesh.BoundMax, float.MaxValue);
+
+
+            float minZ = float.MaxValue;
+            float maxZ = float.MinValue;
+
+            for (int i = 0; i < mesh.Cells.Length; i++)
+            {
+                KynogonRuntimeMesh.Cell cell = mesh.Cells[i];
+                foreach (var set in cell.Sets)
+                {
+                    if (set.X < minZ)
+                        minZ = set.X;
+                    if (set.Y > maxZ)
+                        maxZ = set.Y;
+                }
+            }
+
+
+            var min = new Vector3(mesh.BoundMin.X, mesh.BoundMin.Y, minZ);
+            var max = new Vector3(mesh.BoundMax.X, mesh.BoundMax.Y, maxZ);
 
             gridBounds = new BoundingBox(min, max);
 
             width = mesh.CellSizeY;
             height = mesh.CellSizeX;
-            origin = new Vector3(gridBounds.Min.X, gridBounds.Min.Y, 0.0f);
+            origin = new Vector3(gridBounds.Min.X, gridBounds.Min.Y, gridBounds.Min.Z);
             cellSize = new Vector2(gridBounds.GetWidth() / width, gridBounds.GetHeight() / height);
             cells = new SpatialCell[width * height];
-
-            Vector3 TempMin = gridBounds.Min;
-            Vector3 TempMax = gridBounds.Max;
 
             var index = 0;
             for (int i = 0; i < width; i++)
@@ -69,30 +83,35 @@ namespace Rendering.Core
                 {
                     KynogonRuntimeMesh.Cell cell = mesh.Cells[index];
 
+                    float cellMinZ = float.MaxValue;
+                    float cellMaxZ = float.MinValue;
                     foreach (var set in cell.Sets)
                     {
-                        if (gridBounds.Min.Z < set.X)
-                        {
-                            TempMin.Z = set.X;
-                        }
-                        if (gridBounds.Max.Z > set.Y)
-                        {
-                            TempMax.Z = set.Y;
-                        }
+                        if (set.X < cellMinZ)
+                            cellMinZ = set.X;
+                        if (set.Y > cellMaxZ)
+                            cellMaxZ = set.Y;
                     }
 
-                    // Construct cell extents
-                    Vector3 Min = new Vector3(origin.X + cellSize.X * x, origin.Y + cellSize.Y * i, 0.0f);
-                    Vector3 Max = new Vector3(origin.X + cellSize.X * (x + 1), origin.Y + cellSize.Y * (i + 1), 0.0f);
+                    Vector3 Min = new Vector3(
+                        origin.X + cellSize.X * x,
+                        origin.Y + cellSize.Y * i,
+                        cellMinZ
+                    );
+                    Vector3 Max = new Vector3(
+                        origin.X + cellSize.X * (x + 1),
+                        origin.Y + cellSize.Y * (i + 1),
+                        cellMaxZ
+                    );
+
                     BoundingBox CellExtents = new BoundingBox(Min, Max);
 
-                    // Construct Init params
                     SpatialCell_ObjDataParams InitParams = new SpatialCell_ObjDataParams();
                     InitParams.OwnGraphics = OwnGraphicsClass;
                     InitParams.CellExtents = CellExtents;
                     InitParams.CellInfo = cell;
 
-                    // Construct ObjData cell
+                    // Создаем ячейку
                     SpatialCell_ObjData ObjDataCell = new SpatialCell_ObjData(InitParams);
                     ObjDataCell.PreInitialise();
                     cells[index] = ObjDataCell;
@@ -180,28 +199,27 @@ namespace Rendering.Core
                     cells[currentCell].Render(device, deviceContext, camera);
                 }
 
-                
+
                 foreach (var cell in cells)
                 {
                     cell.Render(device, deviceContext, camera);
                 }
 
-                /*cellBoundingBox.Render(device, deviceContext, camera);
+                cellBoundingBox.Render(device, deviceContext, camera);
                 currentCell = GetCell(camera.Position);
-                //cells[currentCell].Render(device, deviceContext, camera);
+                cells[currentCell].Render(device, deviceContext, camera);
                 //Debug.WriteLine(cells[currentCell].BoundingBox.ToString());
                 if (previousCell != currentCell)
                 {
                     BoundingBox newBounds = cells[currentCell].BoundingBox;
-                    newBounds.Min.Z = gridBounds.Min.Z;
-                    newBounds.Max.Z = gridBounds.Max.Z;
+                    newBounds = gridBounds;
 
                     cellBoundingBox.Update(newBounds);
                     cellBoundingBox.UpdateBuffers(device, deviceContext);
                     previousCell = currentCell;
                 }
                 boundingBox.Render(device, deviceContext, camera);
-                */
+
             }
         }
 
@@ -235,7 +253,7 @@ namespace Rendering.Core
         {
             TreeNode[] ChildCells = new TreeNode[cells.Length];
 
-            for(int i = 0; i < cells.Length; i++)
+            for (int i = 0; i < cells.Length; i++)
             {
                 TreeNode Child = new TreeNode();
                 Child.Text = string.Format("CELL {0}", i);
