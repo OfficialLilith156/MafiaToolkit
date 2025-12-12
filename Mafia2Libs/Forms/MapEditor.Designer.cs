@@ -76,6 +76,9 @@ namespace Mafia2Tool
             addGroupType1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             addType7ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             deleteAINavigationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripDropDownButton2 = new System.Windows.Forms.ToolStripDropDownButton();
+            addModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            batchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             imageList1 = new System.Windows.Forms.ImageList(components);
             RenderPanel = new System.Windows.Forms.Panel();
             MeshBrowser = new System.Windows.Forms.OpenFileDialog();
@@ -83,8 +86,6 @@ namespace Mafia2Tool
             dockPanel1 = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             FrameBrowser = new System.Windows.Forms.OpenFileDialog();
             SaveFileDialog = new System.Windows.Forms.SaveFileDialog();
-            toolStripDropDownButton2 = new System.Windows.Forms.ToolStripDropDownButton();
-            addModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             StatusStrip = new System.Windows.Forms.StatusStrip();
             StatusStrip.SuspendLayout();
             ToolbarStrip.SuspendLayout();
@@ -484,6 +485,31 @@ namespace Mafia2Tool
             deleteAINavigationToolStripMenuItem.Text = "Delete AI Navigation";
             deleteAINavigationToolStripMenuItem.Click += btnDelete_Click;
             // 
+            // toolStripDropDownButton2
+            // 
+            toolStripDropDownButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            toolStripDropDownButton2.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { addModelToolStripMenuItem, batchToolStripMenuItem });
+            toolStripDropDownButton2.Image = (System.Drawing.Image)resources.GetObject("toolStripDropDownButton2.Image");
+            toolStripDropDownButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
+            toolStripDropDownButton2.Name = "toolStripDropDownButton2";
+            toolStripDropDownButton2.Size = new System.Drawing.Size(85, 22);
+            toolStripDropDownButton2.Text = "Debug Tools";
+            // 
+            // addModelToolStripMenuItem
+            // 
+            addModelToolStripMenuItem.Name = "addModelToolStripMenuItem";
+            addModelToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
+            addModelToolStripMenuItem.Text = "Add Models to the Scene";
+            addModelToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            addModelToolStripMenuItem.Click += AssignAllToSceneFolderButton_Click;
+            // 
+            // batchToolStripMenuItem
+            // 
+            batchToolStripMenuItem.Name = "batchToolStripMenuItem";
+            batchToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
+            batchToolStripMenuItem.Text = "Changing parents of models";
+            batchToolStripMenuItem.Click += BatchSetParentButton_Click;
+            // 
             // imageList1
             // 
             imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
@@ -521,24 +547,6 @@ namespace Mafia2Tool
             // FrameBrowser
             // 
             FrameBrowser.Filter = "FrameResource|*.fr|Toolkit Frame Data|*.framedata";
-            // 
-            // toolStripDropDownButton2
-            // 
-            toolStripDropDownButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            toolStripDropDownButton2.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { addModelToolStripMenuItem });
-            toolStripDropDownButton2.Image = (System.Drawing.Image)resources.GetObject("toolStripDropDownButton2.Image");
-            toolStripDropDownButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
-            toolStripDropDownButton2.Name = "toolStripDropDownButton2";
-            toolStripDropDownButton2.Size = new System.Drawing.Size(85, 22);
-            toolStripDropDownButton2.Text = "Debug Tools";
-            // 
-            // addModelToolStripMenuItem
-            // 
-            addModelToolStripMenuItem.Name = "addModelToolStripMenuItem";
-            addModelToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
-            addModelToolStripMenuItem.Text = "Add Models to the Scene";
-            addModelToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            addModelToolStripMenuItem.Click += AssignAllToSceneFolderButton_Click;
             // 
             // MapEditor
             // 
@@ -615,5 +623,6 @@ namespace Mafia2Tool
         private System.Windows.Forms.ToolStripSplitButton toolStripSplitButton1;
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton2;
         private System.Windows.Forms.ToolStripMenuItem addModelToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem batchToolStripMenuItem;
     }
 }

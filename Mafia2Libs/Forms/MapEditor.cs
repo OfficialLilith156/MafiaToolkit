@@ -1,5 +1,6 @@
 ﻿using Forms.Docking;
 using Forms.EditorControls;
+using Mafia2Tool.Forms;
 using Rendering.Core;
 using Rendering.Factories;
 using Rendering.Graphics;
@@ -1867,7 +1868,57 @@ namespace Mafia2Tool
         {
             Button_ImportFrame.Enabled = true;
         }
+        private void BatchSetParentButton_Click(object sender, EventArgs e)
+        {
+            var window = new MultiSelectParentWindow(SceneData.FrameResource, SceneData.FrameNameTable);
+            if (window.ShowDialog(this) == DialogResult.OK && window.SelectedObjects.Count > 0)
+            {
+                ListWindow parentSelector = new ListWindow();
+                parentSelector.PopulateForm(window.SelectedParentType, SceneData.FrameResource);
+                if (parentSelector.ShowDialog(this) != DialogResult.OK)
+                    return;
 
+                FrameEntry newParent = parentSelector.chosenObject as FrameEntry;
+
+                foreach (var obj in window.SelectedObjects)
+                {
+                    SceneData.FrameResource.SetParentOfObject(window.SelectedParentType, obj, newParent);
+
+                    TreeNode[] oldNodes = dSceneTree.TreeView.Nodes.Find(obj.RefID.ToString(), true);
+                    foreach (TreeNode oldNode in oldNodes)
+                    {
+                        if (oldNode.Parent != null)
+                            oldNode.Parent.Nodes.Remove(oldNode);
+                    }
+
+                    TreeNode newNode = new TreeNode(obj.ToString())
+                    {
+                        Tag = obj,
+                        Name = obj.RefID.ToString()
+                    };
+
+                    TreeNode parentNodeInTree = null;
+                    if (newParent != null)
+                    {
+                        TreeNode[] parentNodes = dSceneTree.TreeView.Nodes.Find(newParent.RefID.ToString(), true);
+                        parentNodeInTree = parentNodes.Length > 0 ? parentNodes[0] : frameResourceRoot;
+                    }
+
+                    dSceneTree.AddToTree(newNode, parentNodeInTree ?? frameResourceRoot);
+                    ApplyChangesToRenderable(obj);
+                }
+
+               
+                TreeNode selected = dSceneTree.SelectedNode;
+                if (selected?.Tag is FrameObjectBase selectedObj && window.SelectedObjects.Contains(selectedObj))
+                {
+                    dPropertyGrid.SetObject(null);
+                    dPropertyGrid.SetObject(selectedObj);
+                }
+
+                //MessageBox.Show($"{window.SelectedObjects.Count} objects updated.", "Success", MessageBoxButtons.OK);
+            }
+        }
         private void UpdateObjectParentsRecurse(TreeNode parent, FrameObjectBase entry)
         {
             foreach (var child in entry.Children)
