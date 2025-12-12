@@ -8,7 +8,7 @@ using Vortice.Mathematics;
 
 namespace ResourceTypes.Navigation
 {
-    public class AIWorld_Type9 : IType
+    public class AIWorld_Type9 : IType //Pedestrian crossing
     {
         public byte Unk0 { get; set; }
         public uint Unk1 { get; set; }
@@ -81,7 +81,7 @@ namespace ResourceTypes.Navigation
             base.ConstructRenderable(BBoxBatcher);
 
             RenderBoundingBox navigationBox = new RenderBoundingBox();
-            navigationBox.SetColour(System.Drawing.Color.Blue);
+            navigationBox.SetColour(System.Drawing.Color.LightGray);
             navigationBox.Init(new BoundingBox(new Vector3(-0.5f), new Vector3(0.5f)));
             navigationBox.SetTransform(Matrix4x4.CreateTranslation(Unk2));
 
@@ -93,7 +93,7 @@ namespace ResourceTypes.Navigation
             base.PopulateTreeNode();
 
             TreeNode ThisNode = new TreeNode();
-            ThisNode.Text = string.Format("Type9 - {0}", Unk1);
+            ThisNode.Text = string.Format($"Pedestrian crossing (Unk1:{Unk1}, ID:{ID})");
             ThisNode.Name = RefID.ToString();
             ThisNode.Tag = this;
 

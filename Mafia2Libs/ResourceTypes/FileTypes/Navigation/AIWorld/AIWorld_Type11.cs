@@ -8,7 +8,7 @@ using Vortice.Mathematics;
 
 namespace ResourceTypes.Navigation
 {
-    public class AIWorld_Type11 : IType
+    public class AIWorld_Type11 : IType // Hiding NPC
     {
         public byte Unk0 { get; set; }
         public Vector3 Unk1 { get; set; }
@@ -61,7 +61,7 @@ namespace ResourceTypes.Navigation
             base.ConstructRenderable(BBoxBatcher);
 
             RenderBoundingBox navigationBox = new RenderBoundingBox();
-            navigationBox.SetColour(System.Drawing.Color.LightBlue);
+            navigationBox.SetColour(System.Drawing.Color.Red);
             navigationBox.Init(new BoundingBox(new Vector3(-0.5f), new Vector3(0.5f)));
             navigationBox.SetTransform(Matrix4x4.CreateTranslation(Unk1));
 
@@ -73,7 +73,7 @@ namespace ResourceTypes.Navigation
             base.PopulateTreeNode();
 
             TreeNode ThisNode = new TreeNode();
-            ThisNode.Text = "Type11";
+            ThisNode.Text = $"NPCShelters (Unk0:{Unk0}, ID:{ID})";
             ThisNode.Name = RefID.ToString();
             ThisNode.Tag = this;
 

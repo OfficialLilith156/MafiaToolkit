@@ -1520,20 +1520,135 @@ namespace Mafia2Tool
                 return;
 
             TreeNode selectedNode = dSceneTree.SelectedNode;
-            if (selectedNode?.Tag is AIWorld_Type1 selectedGroup)
+
+            if (selectedNode?.Tag is AIWorld_Type1 group)
             {
-                IType newPoint = AIWorld_Factory.ConstructByTypeID(selectedGroup.World, 4);
-                selectedGroup.AddPoint(newPoint);
+                IType newPoint = AIWorld_Factory.ConstructByTypeID(group.World, 4);
+                group.AddPoint(newPoint);
 
                 TreeNode newNode = newPoint.PopulateTreeNode();
                 selectedNode.Nodes.Add(newNode);
                 selectedNode.Expand();
                 dSceneTree.SelectedNode = newNode;
+                return;
             }
-            else
+
+            if (selectedNode?.Tag is AIWorld world)
             {
-                MessageBox.Show("Select the Type1 group in the tree.");
+                IType newPoint = AIWorld_Factory.ConstructByTypeID(world, 4);
+                world.AIPoints.Add(newPoint);
+                world.RequestPrimitiveBatchUpdate();
+
+                TreeNode newNode = newPoint.PopulateTreeNode();
+                selectedNode.Nodes.Add(newNode);
+                selectedNode.Expand();
+                dSceneTree.SelectedNode = newNode;
+                return;
             }
+
+            MessageBox.Show("Select AIWorld or a Type1 group.");
+        }
+        private void btnAddType11_Click(object sender, EventArgs e)
+        {
+            if (dSceneTree == null)
+                return;
+
+            TreeNode selectedNode = dSceneTree.SelectedNode;
+
+            if (selectedNode?.Tag is AIWorld_Type1 group)
+            {
+                IType newPoint = AIWorld_Factory.ConstructByTypeID(group.World, 11);
+                group.AddPoint(newPoint);
+
+                TreeNode newNode = newPoint.PopulateTreeNode();
+                selectedNode.Nodes.Add(newNode);
+                selectedNode.Expand();
+                dSceneTree.SelectedNode = newNode;
+                return;
+            }
+
+            if (selectedNode?.Tag is AIWorld world)
+            {
+                IType newPoint = AIWorld_Factory.ConstructByTypeID(world, 11);
+                world.AIPoints.Add(newPoint);
+                world.RequestPrimitiveBatchUpdate();
+
+                TreeNode newNode = newPoint.PopulateTreeNode();
+                selectedNode.Nodes.Add(newNode);
+                selectedNode.Expand();
+                dSceneTree.SelectedNode = newNode;
+                return;
+            }
+
+            MessageBox.Show("Select AIWorld or a Type1 group.");
+        }
+        private void btnAddType8_Click(object sender, EventArgs e)
+        {
+            if (dSceneTree == null)
+                return;
+
+            TreeNode selectedNode = dSceneTree.SelectedNode;
+
+            if (selectedNode?.Tag is AIWorld_Type1 group)
+            {
+                IType newPoint = AIWorld_Factory.ConstructByTypeID(group.World, 8);
+                group.AddPoint(newPoint);
+
+                TreeNode newNode = newPoint.PopulateTreeNode();
+                selectedNode.Nodes.Add(newNode);
+                selectedNode.Expand();
+                dSceneTree.SelectedNode = newNode;
+                return;
+            }
+
+            if (selectedNode?.Tag is AIWorld world)
+            {
+                IType newPoint = AIWorld_Factory.ConstructByTypeID(world, 8);
+                world.AIPoints.Add(newPoint);
+                world.RequestPrimitiveBatchUpdate();
+
+                TreeNode newNode = newPoint.PopulateTreeNode();
+                selectedNode.Nodes.Add(newNode);
+                selectedNode.Expand();
+                dSceneTree.SelectedNode = newNode;
+                return;
+            }
+
+            MessageBox.Show("Select AIWorld or a Type1 group.");
+        }
+        private void btnAddType9_Click(object sender, EventArgs e)
+        {
+            if (dSceneTree == null)
+                return;
+
+            TreeNode selectedNode = dSceneTree.SelectedNode;
+
+            if (selectedNode?.Tag is AIWorld_Type1 group)
+            {
+                IType newPoint = AIWorld_Factory.ConstructByTypeID(group.World, 9);
+                group.AddPoint(newPoint);
+
+                TreeNode newNode = newPoint.PopulateTreeNode();
+                selectedNode.Nodes.Add(newNode);
+                selectedNode.Expand();
+                dSceneTree.SelectedNode = newNode;
+                return;
+            }
+
+            if (selectedNode?.Tag is AIWorld world)
+            {
+                IType newPoint = AIWorld_Factory.ConstructByTypeID(world, 9);
+                world.AIPoints.Add(newPoint);
+                world.RequestPrimitiveBatchUpdate();
+
+                TreeNode newNode = newPoint.PopulateTreeNode();
+                selectedNode.Nodes.Add(newNode);
+                selectedNode.Expand();
+                dSceneTree.SelectedNode = newNode;
+                return;
+            }
+
+            MessageBox.Show("Select AIWorld or a Type1 group.");
         }
 
         private void btnAddType7_Click(object sender, EventArgs e)
@@ -1543,21 +1658,34 @@ namespace Mafia2Tool
 
             TreeNode selectedNode = dSceneTree.SelectedNode;
 
-            if (selectedNode?.Tag is AIWorld_Type1 selectedGroup)
+            if (selectedNode?.Tag is AIWorld_Type1 group)
             {
-                IType newPoint = AIWorld_Factory.ConstructByTypeID(selectedGroup.World, 7);
-                selectedGroup.AddPoint(newPoint);
+                IType newPoint = AIWorld_Factory.ConstructByTypeID(group.World, 7);
+                group.AddPoint(newPoint);
 
                 TreeNode newNode = newPoint.PopulateTreeNode();
                 selectedNode.Nodes.Add(newNode);
                 selectedNode.Expand();
                 dSceneTree.SelectedNode = newNode;
+                return;
             }
-            else
+
+            if (selectedNode?.Tag is AIWorld world)
             {
-                MessageBox.Show("Select the Type1 group in the tree.");
+                IType newPoint = AIWorld_Factory.ConstructByTypeID(world, 7);
+                world.AIPoints.Add(newPoint);
+                world.RequestPrimitiveBatchUpdate();
+
+                TreeNode newNode = newPoint.PopulateTreeNode();
+                selectedNode.Nodes.Add(newNode);
+                selectedNode.Expand();
+                dSceneTree.SelectedNode = newNode;
+                return;
             }
+
+            MessageBox.Show("Select AIWorld or a Type1 group.");
         }
+
 
         private void Button_AddType1Group_Click(object sender, EventArgs e)
         {

@@ -10,7 +10,7 @@ using static SharpGLTF.Scenes.LightBuilder;
 
 namespace ResourceTypes.Navigation
 {
-    public class AIWorld_Type4 : IType
+    public class AIWorld_Type4 : IType //Shelters for the player + NPC
     {
         public byte Unk0 { get; set; }
 
@@ -140,7 +140,7 @@ namespace ResourceTypes.Navigation
             base.ConstructRenderable(BBoxBatcher);
 
             RenderBoundingBox navigationBox = new RenderBoundingBox();
-            navigationBox.SetColour(System.Drawing.Color.White);
+            navigationBox.SetColour(System.Drawing.Color.Blue);
             navigationBox.Init(new BoundingBox(new Vector3(-0.5f), new Vector3(0.5f)));
             Vector3 rotRad = new Vector3(
                 Rotation.X * (MathF.PI / 180f),
@@ -160,7 +160,7 @@ namespace ResourceTypes.Navigation
             base.PopulateTreeNode();
 
             TreeNode ThisNode = new TreeNode();
-            ThisNode.Text = string.Format("Type4: {0}", ID);
+            ThisNode.Text = string.Format($"Shelters (ID:{ID})");
             ThisNode.Name = RefID.ToString();
             ThisNode.Tag = this;
 

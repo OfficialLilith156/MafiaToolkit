@@ -99,23 +99,7 @@ namespace Forms.Docking
             }
         }
 
-        public void AddType4ToSelectedGroup()
-        {
-            if (SelectedNode?.Tag is AIWorld_Type1 selectedGroup)
-            {
-                IType newPoint = AIWorld_Factory.ConstructByTypeID(selectedGroup.World, 4);
-                selectedGroup.AddPoint(newPoint);
-
-                TreeNode newNode = newPoint.PopulateTreeNode();
-                SelectedNode.Nodes.Add(newNode);
-                SelectedNode.Expand();
-                SelectedNode = newNode;
-            }
-            else
-            {
-                MessageBox.Show("Select the Type1 group to add an element.");
-            }
-        }
+        
 
 
         public void DeleteSelectedNode()

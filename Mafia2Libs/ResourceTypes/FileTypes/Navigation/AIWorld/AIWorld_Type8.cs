@@ -7,7 +7,7 @@ using Vortice.Mathematics;
 
 namespace ResourceTypes.Navigation
 {
-    public class AIWorld_Type8 : AIWorld_Type9
+    public class AIWorld_Type8 : AIWorld_Type9 //SideWALK
     {
         public uint Unk6 { get; set; }
 
@@ -39,7 +39,7 @@ namespace ResourceTypes.Navigation
             // NB: Base class is not called here as it may result in PrimitiveBatch.AddObject conflict
 
             RenderBoundingBox navigationBox = new RenderBoundingBox();
-            navigationBox.SetColour(System.Drawing.Color.Blue);
+            navigationBox.SetColour(System.Drawing.Color.Aqua);
             navigationBox.Init(new BoundingBox(new Vector3(-0.5f), new Vector3(0.5f)));
             navigationBox.SetTransform(Matrix4x4.CreateTranslation(Unk2));
 
@@ -51,7 +51,7 @@ namespace ResourceTypes.Navigation
             base.PopulateTreeNode();
 
             TreeNode ThisNode = new TreeNode();
-            ThisNode.Text = string.Format("Type8 - {0}", Unk1);
+            ThisNode.Text = string.Format($"Sidewalk (Unk1:{Unk1}, ID:{ID})");
             ThisNode.Name = RefID.ToString();
             ThisNode.Tag = this;
 

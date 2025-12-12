@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace ResourceTypes.Navigation
 {
-    public class AIWorld_Type1 : IType
+    public class AIWorld_Type1 : IType // Group
     {
         public byte Unk01 { get; set; }
         public List<IType> AIPoints { get; set; }
@@ -86,7 +86,7 @@ namespace ResourceTypes.Navigation
             base.PopulateTreeNode();
 
             TreeNode ThisNode = new TreeNode();
-            ThisNode.Text = "Type1 Group";
+            ThisNode.Text = "Group 1";
             ThisNode.Name = RefID.ToString();
             ThisNode.Tag = this;
 

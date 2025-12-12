@@ -72,9 +72,12 @@ namespace Mafia2Tool
             ObjectPropertiesButton = new System.Windows.Forms.ToolStripMenuItem();
             ViewOptionProperties = new System.Windows.Forms.ToolStripMenuItem();
             toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
-            addType4ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             addGroupType1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            addType4ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             addType7ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            addType8ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            addType9ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            addType11ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             deleteAINavigationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripDropDownButton2 = new System.Windows.Forms.ToolStripDropDownButton();
             addModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -449,7 +452,7 @@ namespace Mafia2Tool
             // toolStripDropDownButton1
             // 
             toolStripDropDownButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { addType4ToolStripMenuItem, addGroupType1ToolStripMenuItem, addType7ToolStripMenuItem, deleteAINavigationToolStripMenuItem });
+            toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { addGroupType1ToolStripMenuItem, addType4ToolStripMenuItem, addType7ToolStripMenuItem, addType8ToolStripMenuItem, addType9ToolStripMenuItem, addType11ToolStripMenuItem, deleteAINavigationToolStripMenuItem });
             toolStripDropDownButton1.Image = (System.Drawing.Image)resources.GetObject("toolStripDropDownButton1.Image");
             toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             toolStripDropDownButton1.Name = "toolStripDropDownButton1";
@@ -457,26 +460,47 @@ namespace Mafia2Tool
             toolStripDropDownButton1.Text = "Navigation";
             toolStripDropDownButton1.ToolTipText = "Navigation";
             // 
-            // addType4ToolStripMenuItem
-            // 
-            addType4ToolStripMenuItem.Name = "addType4ToolStripMenuItem";
-            addType4ToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
-            addType4ToolStripMenuItem.Text = "Add Type 4";
-            addType4ToolStripMenuItem.Click += btnAddType4_Click;
-            // 
             // addGroupType1ToolStripMenuItem
             // 
             addGroupType1ToolStripMenuItem.Name = "addGroupType1ToolStripMenuItem";
             addGroupType1ToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
-            addGroupType1ToolStripMenuItem.Text = "Add Group Type1";
+            addGroupType1ToolStripMenuItem.Text = "Add Group";
             addGroupType1ToolStripMenuItem.Click += Button_AddType1Group_Click;
+            // 
+            // addType4ToolStripMenuItem
+            // 
+            addType4ToolStripMenuItem.Name = "addType4ToolStripMenuItem";
+            addType4ToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            addType4ToolStripMenuItem.Text = "Add Shelters";
+            addType4ToolStripMenuItem.Click += btnAddType4_Click;
             // 
             // addType7ToolStripMenuItem
             // 
             addType7ToolStripMenuItem.Name = "addType7ToolStripMenuItem";
             addType7ToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
-            addType7ToolStripMenuItem.Text = "Add Type 7";
+            addType7ToolStripMenuItem.Text = "Add Obstacles";
             addType7ToolStripMenuItem.Click += btnAddType7_Click;
+            // 
+            // addType8ToolStripMenuItem
+            // 
+            addType8ToolStripMenuItem.Name = "addType8ToolStripMenuItem";
+            addType8ToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            addType8ToolStripMenuItem.Text = "Add Sidewalk";
+            addType8ToolStripMenuItem.Click += btnAddType8_Click;
+            // 
+            // addType9ToolStripMenuItem
+            // 
+            addType9ToolStripMenuItem.Name = "addType9ToolStripMenuItem";
+            addType9ToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
+            addType9ToolStripMenuItem.Text = "Add Pedestrian crossing";
+            addType9ToolStripMenuItem.Click += btnAddType9_Click;
+            // 
+            // addType11ToolStripMenuItem
+            // 
+            addType11ToolStripMenuItem.Name = "addType11ToolStripMenuItem";
+            addType11ToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
+            addType11ToolStripMenuItem.Text = "Add NPCShelters";
+            addType11ToolStripMenuItem.Click += btnAddType11_Click;
             // 
             // deleteAINavigationToolStripMenuItem
             // 
@@ -624,5 +648,8 @@ namespace Mafia2Tool
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton2;
         private System.Windows.Forms.ToolStripMenuItem addModelToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem batchToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem addType11ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem addType8ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem addType9ToolStripMenuItem;
     }
 }

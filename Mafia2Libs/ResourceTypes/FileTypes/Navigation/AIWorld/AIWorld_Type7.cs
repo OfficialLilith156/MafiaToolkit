@@ -11,7 +11,7 @@ using Vortice.Mathematics;
 
 namespace ResourceTypes.Navigation
 {
-    public class AIWorld_Type7 : IType
+    public class AIWorld_Type7 : IType //Obstacles
     {
         public ushort Unk0 { get; set; }
 
@@ -167,7 +167,7 @@ namespace ResourceTypes.Navigation
             if (MathF.Abs(max.Z - min.Z) < 0.0001f) max.Z = min.Z + 0.01f;
 
             RenderBoundingBox navigationBox = new RenderBoundingBox();
-            navigationBox.SetColour(System.Drawing.Color.Yellow);
+            navigationBox.SetColour(System.Drawing.Color.Green);
 
             BoundingBox BBox = new BoundingBox(min, max);
 
@@ -183,7 +183,7 @@ namespace ResourceTypes.Navigation
         public override TreeNode PopulateTreeNode()
         {
             TreeNode node = new TreeNode();
-            node.Text = $"Type7 ({Unk0})";
+            node.Text = $"Obstacles (Unk0:{Unk0}, ID:{ID})";
             node.Name = RefID.ToString();
             node.Tag = this;
 
