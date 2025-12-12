@@ -6,6 +6,7 @@ using System.Xml.Linq;
 using Gibbed.Illusion.FileFormats.Hashing;
 using ResourceTypes.Prefab;
 using ResourceTypes.Prefab.CrashObject;
+using System.Text.RegularExpressions;
 using Utils.Helpers;
 using Utils.Helpers.Reflection;
 using Utils.Language;
@@ -30,7 +31,7 @@ namespace Mafia2Tool
             prefabFile = file;
             SearchBox.KeyDown += SearchBox_KeyDown;
         }
-
+        
         private void Localise()
         {
             Text = Language.GetString("$PREFAB_EDITOR_TITLE");
@@ -198,7 +199,25 @@ namespace Mafia2Tool
         private void Button_Delete_Click(object sender, EventArgs e) => Delete();
         private void Button_Save_Click(object sender, EventArgs e) => Save();
         private void Context_Delete_Click(object sender, EventArgs e) => Delete();
-        private void Grid_Prefabs_OnPropertyValueChanged(object s, PropertyValueChangedEventArgs e) => Grid_Prefabs.Refresh();
+        private void Grid_Prefabs_OnPropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        {
+            if (e.ChangedItem.Value is string str)
+            {
+                e.ChangedItem.PropertyDescriptor.SetValue(
+                    Grid_Prefabs.SelectedObject,
+                    NormalizeSpaces(str)
+                );
+            }
+
+            Grid_Prefabs.Refresh();
+        }
+        private static string NormalizeSpaces(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+                return string.Empty;
+
+            return Regex.Replace(input.Trim(), @"\s+", " ");
+        }
 
         private void PrefabEditor_Closing(object sender, FormClosingEventArgs e)
         {
@@ -326,6 +345,8 @@ namespace Mafia2Tool
                 //MessageBox.Show("Ничего не найдено.");
             }
         }
+
+        
 
         private TreeNode FindNode(TreeNodeCollection nodes, string query)
         {
