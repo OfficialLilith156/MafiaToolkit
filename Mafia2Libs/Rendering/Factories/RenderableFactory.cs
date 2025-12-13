@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
-using Rendering.Graphics;
+﻿using Rendering.Graphics;
 using ResourceTypes.BufferPools;
 using ResourceTypes.FrameResource;
+using ResourceTypes.ItemDesc;
 using ResourceTypes.Navigation;
+using System.Collections.Generic;
 using System.Numerics;
 using Vortice.Mathematics;
 
@@ -17,6 +18,32 @@ namespace Rendering.Factories
             RenderBox.SetTransform(WorldTransform);
             return RenderBox;
         }
+        public static RenderBoundingBox BuildBoundingBoxFromBox(CollisionBox box, Matrix4x4 transform)
+        {
+
+            var min = -box.Extents;
+            var max = box.Extents;
+            var bbox = new BoundingBox(min, max);
+            return BuildBoundingBox(bbox, transform);
+        }
+
+        public static RenderBoundingBox BuildBoundingSphere(CollisionSphere sphere, Matrix4x4 transform)
+        {
+
+            var r = sphere.Radius;
+            var size = new Vector3(r, r, r);
+            var bbox = new BoundingBox(-size, size);
+            return BuildBoundingBox(bbox, transform);
+        }
+
+        public static RenderBoundingBox BuildBoundingCapsule(CollisionCapsule capsule, Matrix4x4 transform)
+        {
+
+            var extents = new Vector3(capsule.Radius, capsule.HalfHeight, capsule.Radius);
+            var bbox = new BoundingBox(-extents, extents);
+            return BuildBoundingBox(bbox, transform);
+        }
+
 
         public static RenderPlane3D BuildPlane3D(Vector4[] Planes, Matrix4x4 WorldTransform)
         {

@@ -5,6 +5,8 @@ namespace ResourceTypes.ItemDesc
     public class CollisionSphere
     {
         float radius;
+        public float Radius => radius;
+        public float Diameter => radius * 2f;
 
         public CollisionSphere(BinaryReader reader)
         {

@@ -1247,6 +1247,11 @@ namespace Mafia2Tool
 
             return null;
         }
+        private string Vec3(Vector3 v)
+        {
+            return $"({v.X:0.#####}, {v.Y:0.#####}, {v.Z:0.#####})";
+        }
+        
 
         private void BuildRenderObjects()
         {
@@ -1433,7 +1438,7 @@ namespace Mafia2Tool
                 collisionRoot.Collapse(false);
             }
 
-            if (SceneData.ItemDescs != null && SceneData.ItemDescs.Length > 0) //В будущем планируеться сделать рендер но это маловероятно!!!
+            if (SceneData.ItemDescs != null && SceneData.ItemDescs.Length > 0)
             {
                 TreeNode itemDescRoot = new TreeNode("Item Descriptions");
                 itemDescRoot.Tag = "Folder";
@@ -1441,23 +1446,118 @@ namespace Mafia2Tool
                 for (int i = 0; i < SceneData.ItemDescs.Length; i++)
                 {
                     var itemDesc = SceneData.ItemDescs[i];
-                    TreeNode node = new TreeNode($"ItemDesc {i} | Hash: {itemDesc.frameRef}");
-                    node.Tag = itemDesc;
-                    if (itemDesc.colType == ResourceTypes.ItemDesc.CollisionTypes.Convex && itemDesc.collision != null)
+
+                    TreeNode itemNode = new TreeNode(
+                        $"ItemDesc [{i}] | FrameRef: {itemDesc.frameRef}"
+                    );
+                    itemNode.Tag = itemDesc;
+
+         
+                    TreeNode infoNode = new TreeNode("Info");
+                    infoNode.Tag = "Folder";
+
+                    infoNode.Nodes.Add($"Collision Type: {GetCollisionTypeName(itemDesc.colType)}");
+                    infoNode.Nodes.Add($"Collision Type: {itemDesc.colType}");
+                    infoNode.Nodes.Add($"Material: {itemDesc.colMaterial}");
+                    infoNode.Nodes.Add($"ID Hash: {itemDesc.idHash}");
+                    itemNode.Nodes.Add(infoNode);
+
+
+                    if (itemDesc.collision != null)
                     {
+                        TreeNode collisionNode = new TreeNode("Collision");
+                        collisionNode.Tag = itemDesc.collision;
+
+                        IRenderer render = null;
                         int refID = RefManager.GetNewRefID();
-                        RenderStaticCollision render = new RenderStaticCollision();
-                        render.SetTransform(itemDesc.Matrix);
-                        render.ConvertCollisionToRender((ResourceTypes.ItemDesc.CollisionConvex)itemDesc.collision);
-                        assets.Add(refID, render);
-                        node.Name = refID.ToString();
+
+                        switch (itemDesc.colType)
+                        {
+                            case CollisionTypes.Box:
+                                render = RenderableFactory.BuildBoundingBoxFromBox(
+                                    (CollisionBox)itemDesc.collision, itemDesc.Matrix);
+                                break;
+                            case CollisionTypes.Sphere:
+                                render = RenderableFactory.BuildBoundingSphere(
+                                    (CollisionSphere)itemDesc.collision, itemDesc.Matrix);
+                                break;
+                            case CollisionTypes.Capsule:
+                                render = RenderableFactory.BuildBoundingCapsule(
+                                    (CollisionCapsule)itemDesc.collision, itemDesc.Matrix);
+                                break;
+                            case CollisionTypes.Convex:
+                                var rsc = new RenderStaticCollision();
+                                rsc.SetTransform(itemDesc.Matrix);
+                                rsc.ConvertCollisionToRender((CollisionConvex)itemDesc.collision);
+                                render = rsc;
+                                break;
+                        }
+
+                        if (render != null)
+                        {
+                            assets.Add(refID, render);
+                            itemNode.Name = refID.ToString(); 
+                        }
+
+                        collisionNode.Nodes.Add($"Renderable: {render != null}");
+                        itemNode.Nodes.Add(collisionNode);
+                    }
+                    if (itemDesc.collision != null)
+                    {
+                        TreeNode detailsNode = new TreeNode("Collision Details");
+
+                        switch (itemDesc.colType)
+                        {
+                            case CollisionTypes.Box:
+                                {
+                                    var box = (CollisionBox)itemDesc.collision;
+
+                                    detailsNode.Nodes.Add($"Extents (Half Size): {Vec3(box.Extents)}");
+                                    detailsNode.Nodes.Add($"Size: {Vec3(box.Size)}");
+                                    break;
+                                }
+
+                            case CollisionTypes.Sphere:
+                                {
+                                    var sphere = (CollisionSphere)itemDesc.collision;
+
+                                    detailsNode.Nodes.Add($"Radius: {sphere.Radius:0.###}");
+                                    detailsNode.Nodes.Add($"Diameter: {sphere.Diameter:0.###}");
+                                    break;
+                                }
+
+                            case CollisionTypes.Capsule:
+                                {
+                                    var capsule = (CollisionCapsule)itemDesc.collision;
+
+                                    detailsNode.Nodes.Add($"Radius: {capsule.Radius:0.###}");
+                                    detailsNode.Nodes.Add($"Half Height: {capsule.HalfHeight:0.###}");
+                                    detailsNode.Nodes.Add($"Height: {capsule.Height:0.###}");
+                                    detailsNode.Nodes.Add($"Full Height: {capsule.FullHeight:0.###}");
+                                    break;
+                                }
+
+                            case CollisionTypes.Convex:
+                                {
+                                    var convex = (CollisionConvex)itemDesc.collision;
+
+                                    detailsNode.Nodes.Add($"Vertices: {convex.Vertices.Count}");
+                                    detailsNode.Nodes.Add($"Hull Center: {Vec3(convex.HullCenter)}");
+                                    detailsNode.Nodes.Add($"BBox Min: {Vec3(convex.Min)}");
+                                    detailsNode.Nodes.Add($"BBox Max: {Vec3(convex.Max)}");
+                                    detailsNode.Nodes.Add($"BBox Size: {Vec3(convex.Size)}");
+                                    break;
+                                }
+                        }
+
+                        itemNode.Nodes.Add(detailsNode);
                     }
 
-                    itemDescRoot.Nodes.Add(node);
+                    itemDescRoot.Nodes.Add(itemNode);
                 }
+
                 dSceneTree.AddToTree(itemDescRoot);
             }
-
 
             if (SceneData.ATLoader != null)
             {
@@ -1579,6 +1679,23 @@ namespace Mafia2Tool
 
                 dSceneTree.AddToTree(translokatorRoot);
                 Graphics.BuildTranslokatorGrid(SceneData.Translokator);
+            }
+        }
+       
+        private string GetCollisionTypeName(ResourceTypes.ItemDesc.CollisionTypes type)
+        {
+            switch (type)
+            {
+                case ResourceTypes.ItemDesc.CollisionTypes.Box:
+                    return "Box (Cube)";
+                case ResourceTypes.ItemDesc.CollisionTypes.Sphere:
+                    return "Sphere";
+                case ResourceTypes.ItemDesc.CollisionTypes.Capsule:
+                    return "Capsule";
+                case ResourceTypes.ItemDesc.CollisionTypes.Convex:
+                    return "Convex Mesh";
+                default:
+                    return "Unknown";
             }
         }
 
@@ -2067,7 +2184,7 @@ namespace Mafia2Tool
                     UpdateSelectedEventArgs Arguments = new UpdateSelectedEventArgs();
                     Arguments.RefID = int.Parse(selected.Name);
                     Graphics.OnSelectedObjectUpdated(this, Arguments);
-                }
+                }           
                 else if (selected.Tag is Instance)
                 {
                     Instance instance = (selected.Tag as Instance);
@@ -2089,6 +2206,14 @@ namespace Mafia2Tool
                         {
                             Graphics.InstanceGizmo.UpdateInstanceBuffer(instance, Graphics.GetId3D11Device());
                         }
+                    }
+                }
+                else if (selected.Tag is ItemDescLoader itemDesc)
+                {
+                    if (int.TryParse(selected.Name, out int refID) && Graphics.Assets.TryGetValue(refID, out IRenderer asset))
+                    {
+                        asset.SetTransform(itemDesc.Matrix);
+                        Graphics.SelectEntry(refID);
                     }
                 }
             }

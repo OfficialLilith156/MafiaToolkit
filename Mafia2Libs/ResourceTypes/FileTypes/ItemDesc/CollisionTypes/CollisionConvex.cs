@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Numerics;
 using Utils.VorticeUtils;
 
@@ -45,7 +46,30 @@ namespace ResourceTypes.ItemDesc
         byte[] quantizationBoxBuffer;
         float[] unkTailFloats;
 
+        public IReadOnlyList<Vector3> Vertices => vertices;
+        public Vector3 HullCenter => hullCentre;
+        public Vector3 Size => Max - Min;
+        public Vector3 Min
+        {
+            get
+            {
+                Vector3 min = new Vector3(float.MaxValue);
+                foreach (var v in vertices)
+                    min = Vector3.Min(min, v);
+                return min;
+            }
+        }
 
+        public Vector3 Max
+        {
+            get
+            {
+                Vector3 max = new Vector3(float.MinValue);
+                foreach (var v in vertices)
+                    max = Vector3.Max(max, v);
+                return max;
+            }
+        }
         public CollisionConvex(BinaryReader reader)
         {
             ReadFromFile(reader);

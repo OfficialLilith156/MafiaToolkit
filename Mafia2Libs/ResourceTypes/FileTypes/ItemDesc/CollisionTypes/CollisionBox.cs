@@ -7,6 +7,8 @@ namespace ResourceTypes.ItemDesc
     public class CollisionBox
     {
         private Vector3 vector;
+        public Vector3 Extents => vector;
+        public Vector3 Size => vector * 2f;
 
         public CollisionBox(BinaryReader reader)
         {

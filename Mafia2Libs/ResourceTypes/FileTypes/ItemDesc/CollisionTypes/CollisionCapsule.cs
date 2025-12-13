@@ -5,6 +5,11 @@ namespace ResourceTypes.ItemDesc
     public class CollisionCapsule
     {
         float[] floats = new float[2];
+        public float Radius => floats[0];
+        public float HalfHeight => floats[1];
+
+        public float Height => floats[1] * 2f;
+        public float FullHeight => Height + Radius * 2f;
 
         public CollisionCapsule(BinaryReader reader)
         {
