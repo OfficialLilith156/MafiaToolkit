@@ -1,4 +1,7 @@
-﻿using System.IO;
+﻿using ResourceTypes.Actors;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
 using System.Numerics;
 using Utils;
 using Utils.Logging;
@@ -11,14 +14,16 @@ namespace ResourceTypes.ItemDesc
     // it then followings with a 1, 10, and the a 1.0f.
     public class ItemDescLoader
     {
-        public ulong frameRef; //links into FrameResources. Only checked collisions.
-        public byte unk_byte; //ALWAYS 2
-        public CollisionTypes colType;
-        public ulong idHash;
-        public short colMaterial;
-        public Matrix4x4 Matrix;
-        public byte unkByte;
-        public object collision;
+        public ulong FrameRef { get; set; }
+        public byte UnkByte1 { get; set; }
+        public CollisionTypes ColType { get; set; }
+        public ulong IdHash { get; set; }
+        public short ColMaterial { get; set; }
+
+        [Browsable (false)]
+        public Matrix4x4 Matrix { get; set; }
+        public byte UnkByte2 { get; set; }
+        public object[] Collisions { get; set; }
 
         public string FileName { get; private set; }
 
@@ -36,42 +41,42 @@ namespace ResourceTypes.ItemDesc
 
         public void ReadFromFile(BinaryReader reader)
         {
-            frameRef = reader.ReadUInt64();
-            unk_byte = reader.ReadByte();
-            colType = (CollisionTypes)reader.ReadByte();
-            idHash = reader.ReadUInt64();
-            colMaterial = reader.ReadInt16();
+            FrameRef = reader.ReadUInt64();
+            UnkByte1 = reader.ReadByte();
+            ColType = (CollisionTypes)reader.ReadByte();
+            IdHash = reader.ReadUInt64();
+            ColMaterial = reader.ReadInt16();
             Matrix = MatrixUtils.ReadFromFile(reader);
-            unkByte = reader.ReadByte();
+            UnkByte2 = reader.ReadByte();
 
-            if (colType == CollisionTypes.Box)
-                collision = new CollisionBox(reader);
-            else if (colType == CollisionTypes.Sphere)
-                collision = new CollisionSphere(reader);
-            else if (colType == CollisionTypes.Capsule)
-                collision = new CollisionCapsule(reader);
-            else if (colType == CollisionTypes.Convex)
-                collision = new CollisionConvex(reader);
+            if (ColType == CollisionTypes.Box)
+                Collisions = new object[] { new CollisionBox(reader) };
+            else if (ColType == CollisionTypes.Sphere)
+                Collisions = new object[] { new CollisionSphere(reader) };
+            else if (ColType == CollisionTypes.Capsule)
+                Collisions = new object[] { new CollisionCapsule(reader) };
+            else if (ColType == CollisionTypes.Convex)
+                Collisions = new object[] { new CollisionConvex(reader) };
             else
-                Log.WriteLine("Failed to parse collision type " + colType, LoggingTypes.WARNING, LogCategoryTypes.FUNCTION);
+                Log.WriteLine("Failed to parse collision type " + ColType, LoggingTypes.WARNING, LogCategoryTypes.FUNCTION);
         }
 
         public void OverwriteConvexWithCooked(string cookedName, string output)
         {
-            if (colType == CollisionTypes.Convex)
+            if (ColType == CollisionTypes.Convex)
             {
                 //FBXHelper.CookConvexCollision("uncooked.bin", "cooked.bin");
                 byte[] data = File.ReadAllBytes(cookedName);
 
                 using (BinaryWriter writer = new BinaryWriter(File.Open(output, FileMode.Create)))
                 {
-                    writer.Write(frameRef);
-                    writer.Write(unk_byte);
-                    writer.Write((byte)colType);
-                    writer.Write(idHash);
-                    writer.Write(colMaterial);
+                    writer.Write(FrameRef);
+                    writer.Write(UnkByte1);
+                    writer.Write((byte)ColType);
+                    writer.Write(IdHash);
+                    writer.Write(ColMaterial);
                     Matrix.WriteToFile(writer);
-                    writer.Write(unkByte);
+                    writer.Write(UnkByte2);
                     writer.Write((ushort)data.Length);
                     writer.Write(data);
                 }
@@ -81,10 +86,47 @@ namespace ResourceTypes.ItemDesc
             }
             
         }
+        public void WriteToFile(BinaryWriter writer)
+        {
+   
+            writer.Write(FrameRef);
+            writer.Write(UnkByte1);
+            writer.Write((byte)ColType);
+            writer.Write(IdHash);
+            writer.Write(ColMaterial);
+            Matrix.WriteToFile(writer);
+
+            writer.Write(UnkByte2);
+
+            if (Collisions != null && Collisions.Length > 0)
+            {
+                foreach (var col in Collisions)
+                {
+                    switch (col)
+                    {
+                        case CollisionBox box:
+                            box.WriteToFile(writer);
+                            break;
+                        case CollisionSphere sphere:
+                            sphere.WriteToFile(writer);
+                            break;
+                        case CollisionCapsule capsule:
+                            capsule.WriteToFile(writer);
+                            break;
+                        case CollisionConvex convex:
+                            convex.WriteToFile(writer);
+                            break;
+                        default:
+                            Log.WriteLine("Unknown collision type", LoggingTypes.WARNING, LogCategoryTypes.FUNCTION);
+                            break;
+                    }
+                }
+            }
+        }
 
         public override string ToString()
         {
-            return string.Format("{0}, {1}", frameRef, colType);
+            return string.Format("{0}, {1}", FrameRef, ColType);
         }
     }
 }

@@ -66,7 +66,7 @@ namespace ResourceTypes.FrameResource
         {
             foreach(ItemDescLoader ItemDesc in OwningResource.SceneData.ItemDescs)
             {
-                if(ItemDesc.frameRef == _Hash)
+                if(ItemDesc.FrameRef == _Hash)
                 {
                     this.ItemDesc = ItemDesc;
                     break;

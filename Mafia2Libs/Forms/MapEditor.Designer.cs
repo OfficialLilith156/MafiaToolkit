@@ -101,6 +101,8 @@ namespace Mafia2Tool
             dockPanel1 = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             FrameBrowser = new System.Windows.Forms.OpenFileDialog();
             SaveFileDialog = new System.Windows.Forms.SaveFileDialog();
+            saveAllItemDescToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            saveItemDescSelectedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             StatusStrip = new System.Windows.Forms.StatusStrip();
             StatusStrip.SuspendLayout();
             ToolbarStrip.SuspendLayout();
@@ -560,7 +562,7 @@ namespace Mafia2Tool
             // toolStripDropDownButton4
             // 
             toolStripDropDownButton4.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            toolStripDropDownButton4.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { saveSceneToolStripMenuItem, saveCollisionToolStripMenuItem, saveTranslocatorToolStripMenuItem, saveActorToolStripMenuItem, saveOBJDataToolStripMenuItem, saveAIWorldToolStripMenuItem });
+            toolStripDropDownButton4.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { saveSceneToolStripMenuItem, saveCollisionToolStripMenuItem, saveTranslocatorToolStripMenuItem, saveActorToolStripMenuItem, saveOBJDataToolStripMenuItem, saveAIWorldToolStripMenuItem, saveAllItemDescToolStripMenuItem, saveItemDescSelectedToolStripMenuItem });
             toolStripDropDownButton4.Image = (System.Drawing.Image)resources.GetObject("toolStripDropDownButton4.Image");
             toolStripDropDownButton4.ImageTransparentColor = System.Drawing.Color.Magenta;
             toolStripDropDownButton4.Name = "toolStripDropDownButton4";
@@ -570,42 +572,42 @@ namespace Mafia2Tool
             // saveSceneToolStripMenuItem
             // 
             saveSceneToolStripMenuItem.Name = "saveSceneToolStripMenuItem";
-            saveSceneToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            saveSceneToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
             saveSceneToolStripMenuItem.Text = "Save Scene";
             saveSceneToolStripMenuItem.Click += SaveButtonScene_Click;
             // 
             // saveCollisionToolStripMenuItem
             // 
             saveCollisionToolStripMenuItem.Name = "saveCollisionToolStripMenuItem";
-            saveCollisionToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            saveCollisionToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
             saveCollisionToolStripMenuItem.Text = "Save Collision";
             saveCollisionToolStripMenuItem.Click += SaveButtonCollision_Click;
             // 
             // saveTranslocatorToolStripMenuItem
             // 
             saveTranslocatorToolStripMenuItem.Name = "saveTranslocatorToolStripMenuItem";
-            saveTranslocatorToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            saveTranslocatorToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
             saveTranslocatorToolStripMenuItem.Text = "Save Translocator";
             saveTranslocatorToolStripMenuItem.Click += SaveButtonTranslocator_Click;
             // 
             // saveActorToolStripMenuItem
             // 
             saveActorToolStripMenuItem.Name = "saveActorToolStripMenuItem";
-            saveActorToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            saveActorToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
             saveActorToolStripMenuItem.Text = "Save Actor";
             saveActorToolStripMenuItem.Click += SaveButtonActor_Click;
             // 
             // saveOBJDataToolStripMenuItem
             // 
             saveOBJDataToolStripMenuItem.Name = "saveOBJDataToolStripMenuItem";
-            saveOBJDataToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            saveOBJDataToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
             saveOBJDataToolStripMenuItem.Text = "Save OBJData";
             saveOBJDataToolStripMenuItem.Click += SaveButtonOBJDataClick;
             // 
             // saveAIWorldToolStripMenuItem
             // 
             saveAIWorldToolStripMenuItem.Name = "saveAIWorldToolStripMenuItem";
-            saveAIWorldToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            saveAIWorldToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
             saveAIWorldToolStripMenuItem.Text = "Save AIWorld";
             saveAIWorldToolStripMenuItem.Click += SaveButtonAIWorldClick;
             // 
@@ -671,6 +673,20 @@ namespace Mafia2Tool
             // FrameBrowser
             // 
             FrameBrowser.Filter = "FrameResource|*.fr|Toolkit Frame Data|*.framedata";
+            // 
+            // saveAllItemDescToolStripMenuItem
+            // 
+            saveAllItemDescToolStripMenuItem.Name = "saveAllItemDescToolStripMenuItem";
+            saveAllItemDescToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            saveAllItemDescToolStripMenuItem.Text = "Save All ItemDesc";
+            saveAllItemDescToolStripMenuItem.Click += SaveButtonItemDesc_Click;
+            // 
+            // saveItemDescSelectedToolStripMenuItem
+            // 
+            saveItemDescSelectedToolStripMenuItem.Name = "saveItemDescSelectedToolStripMenuItem";
+            saveItemDescSelectedToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            saveItemDescSelectedToolStripMenuItem.Text = "Save ItemDesc selected ";
+            saveItemDescSelectedToolStripMenuItem.Click += SaveButtonSelItemDesc_Click;
             // 
             // MapEditor
             // 
@@ -763,5 +779,7 @@ namespace Mafia2Tool
         private System.Windows.Forms.ToolStripMenuItem saveActorToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveOBJDataToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveAIWorldToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveAllItemDescToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveItemDescSelectedToolStripMenuItem;
     }
 }

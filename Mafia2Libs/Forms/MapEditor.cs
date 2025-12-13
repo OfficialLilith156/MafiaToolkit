@@ -70,7 +70,6 @@ namespace Mafia2Tool
         private TreeNode AIWorldRoot;
         private TreeNode OBJDataRoot;
         private TreeNode translokatorRoot;
-
         private MouseButtons dragButton;
 
         private bool bSelectMode = false;
@@ -484,6 +483,8 @@ namespace Mafia2Tool
         private void SaveButton_Click(object sender, EventArgs e) => Save();
         private void SaveButtonScene_Click(object sender, EventArgs e) => SaveScene();
         private void SaveButtonCollision_Click(object sender, EventArgs e) => SaveCollision();
+        private void SaveButtonItemDesc_Click(object sender, EventArgs e) => SaveCollisionItemDesc();
+        private void SaveButtonSelItemDesc_Click(object sender, EventArgs e) => SaveSELCollisionItemDesc();
         private void SaveButtonTranslocator_Click(object sender, EventArgs e) => SaveTranslocator();
         private void SaveButtonActor_Click(object sender, EventArgs e) => SaveActor();
         private void SaveButtonOBJDataClick(object sender, EventArgs e) => SaveOBJData();
@@ -1074,6 +1075,111 @@ namespace Mafia2Tool
                 Console.WriteLine("Saved Changes Succesfully");
             }
         }
+        
+        private void SaveCollisionItemDesc()
+        {
+            if (SceneData.ItemDescs == null || SceneData.ItemDescs.Length == 0)
+            {
+                MessageBox.Show("No ItemDescs to save.", "Toolkit", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            DialogResult result = MessageBox.Show(
+                "Do you want to save all defined collisions for all ItemDescs?",
+                "Toolkit",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question
+            );
+
+            if (result != DialogResult.Yes) return;
+
+            Cursor.Current = Cursors.WaitCursor;
+
+            foreach (var item in SceneData.ItemDescs)
+            {
+                string path = Path.Combine(SceneData.ScenePath, item.FileName);
+
+                using (BinaryWriter writer = new BinaryWriter(File.Open(path, FileMode.Create)))
+                {
+   
+                    writer.Write(item.FrameRef);
+                    writer.Write(item.UnkByte1);
+                    writer.Write((byte)item.ColType);
+                    writer.Write(item.IdHash);
+                    writer.Write(item.ColMaterial);
+                    item.Matrix.WriteToFile(writer);
+                    writer.Write(item.UnkByte2);
+
+                    if (item.Collisions != null && item.Collisions.Length > 0)
+                    {
+                        foreach (var col in item.Collisions)
+                        {
+                            switch (col)
+                            {
+                                case CollisionBox box:
+                                    box.WriteToFile(writer);
+                                    break;
+                                case CollisionSphere sphere:
+                                    sphere.WriteToFile(writer);
+                                    break;
+                                case CollisionCapsule capsule:
+                                    capsule.WriteToFile(writer);
+                                    break;
+                                case CollisionConvex convex:
+                                    convex.WriteToFile(writer);
+                                    break;
+                                default:
+                                    Console.WriteLine($"Skipping unknown collision type in {item.FileName}");
+                                    break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            Cursor.Current = Cursors.Default;
+            Console.WriteLine("Saved all defined collisions successfully.");
+        }
+ 
+
+
+        private void SaveSELCollisionItemDesc()
+        {
+            if (dSceneTree.SelectedNode == null)
+            {
+                MessageBox.Show("Please select an ItemDesc to save.", "Toolkit", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (dSceneTree.SelectedNode.Tag is ItemDescLoader selectedItem)
+            {
+                DialogResult result = MessageBox.Show(
+                    $"Do you want to save changes to {selectedItem.FileName}?",
+                    "Toolkit",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question
+                );
+
+                if (result == DialogResult.Yes)
+                {
+                    Cursor.Current = Cursors.WaitCursor;
+
+                    string path = Path.Combine(SceneData.ScenePath, selectedItem.FileName);
+                    using (BinaryWriter writer = new BinaryWriter(File.Open(path, FileMode.Create)))
+                    {
+                        selectedItem.WriteToFile(writer);
+                    }
+
+                    Cursor.Current = Cursors.Default;
+                    Console.WriteLine($"Saved {selectedItem.FileName} successfully.");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Selected node is not an ItemDesc.", "Toolkit", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
 
         private void SaveScene()
         {
@@ -1438,6 +1544,126 @@ namespace Mafia2Tool
                 collisionRoot.Collapse(false);
             }
 
+            //if (SceneData.ItemDescs != null && SceneData.ItemDescs.Length > 0) //Пригодиться на черный день))))
+            //{
+            //    TreeNode itemDescRoot = new TreeNode("Item Descriptions");
+            //    itemDescRoot.Tag = "Folder";
+
+            //    for (int i = 0; i < SceneData.ItemDescs.Length; i++)
+            //    {
+            //        var itemDesc = SceneData.ItemDescs[i];
+
+            //        TreeNode itemNode = new TreeNode(
+            //            $"ItemDesc [{i}] | FrameRef: {itemDesc.FrameRef}"
+            //        );
+            //        itemNode.Tag = itemDesc;
+
+
+            //        TreeNode infoNode = new TreeNode("Info");
+            //        infoNode.Tag = "Folder";
+
+            //        infoNode.Nodes.Add($"Collision Type: {GetCollisionTypeName(itemDesc.ColType)}");
+            //        infoNode.Nodes.Add($"Collision Type: {itemDesc.ColType}");
+            //        infoNode.Nodes.Add($"Material: {itemDesc.ColMaterial}");
+            //        infoNode.Nodes.Add($"ID Hash: {itemDesc.IdHash}");
+            //        itemNode.Nodes.Add(infoNode);
+
+
+            //        if (itemDesc.Collision != null)
+            //        {
+            //            TreeNode collisionNode = new TreeNode("Collision");
+            //            collisionNode.Tag = itemDesc.Collision;
+
+            //            IRenderer render = null;
+            //            int refID = RefManager.GetNewRefID();
+
+            //            switch (itemDesc.ColType)
+            //            {
+            //                case CollisionTypes.Box:
+            //                    render = RenderableFactory.BuildBoundingBoxFromBox(
+            //                        (CollisionBox)itemDesc.Collision, itemDesc.Matrix);
+            //                    break;
+            //                case CollisionTypes.Sphere:
+            //                    render = RenderableFactory.BuildBoundingSphere(
+            //                        (CollisionSphere)itemDesc.Collision, itemDesc.Matrix);
+            //                    break;
+            //                case CollisionTypes.Capsule:
+            //                    render = RenderableFactory.BuildBoundingCapsule(
+            //                        (CollisionCapsule)itemDesc.Collision, itemDesc.Matrix);
+            //                    break;
+            //                case CollisionTypes.Convex:
+            //                    var rsc = new RenderStaticCollision();
+            //                    rsc.SetTransform(itemDesc.Matrix);
+            //                    rsc.ConvertCollisionToRender((CollisionConvex)itemDesc.Collision);
+            //                    render = rsc;
+            //                    break;
+            //            }
+
+            //            if (render != null)
+            //            {
+            //                assets.Add(refID, render);
+            //                itemNode.Name = refID.ToString(); 
+            //            }
+
+            //            collisionNode.Nodes.Add($"Renderable: {render != null}");
+            //            itemNode.Nodes.Add(collisionNode);
+            //        }
+            //        if (itemDesc.Collision != null)
+            //        {
+            //            TreeNode detailsNode = new TreeNode("Collision Details");
+
+            //            switch (itemDesc.ColType)
+            //            {
+            //                case CollisionTypes.Box:
+            //                    {
+            //                        var box = (CollisionBox)itemDesc.Collision;
+
+            //                        detailsNode.Nodes.Add($"Extents (Half Size): {Vec3(box.Extents)}");
+            //                        detailsNode.Nodes.Add($"Size: {Vec3(box.Size)}");
+            //                        break;
+            //                    }
+
+            //                case CollisionTypes.Sphere:
+            //                    {
+            //                        var sphere = (CollisionSphere)itemDesc.Collision;
+
+            //                        detailsNode.Nodes.Add($"Radius: {sphere.Radius:0.###}");
+            //                        detailsNode.Nodes.Add($"Diameter: {sphere.Diameter:0.###}");
+            //                        break;
+            //                    }
+
+            //                case CollisionTypes.Capsule:
+            //                    {
+            //                        var capsule = (CollisionCapsule)itemDesc.Collision;
+
+            //                        detailsNode.Nodes.Add($"Radius: {capsule.Radius:0.###}");
+            //                        detailsNode.Nodes.Add($"Half Height: {capsule.HalfHeight:0.###}");
+            //                        detailsNode.Nodes.Add($"Height: {capsule.Height:0.###}");
+            //                        detailsNode.Nodes.Add($"Full Height: {capsule.FullHeight:0.###}");
+            //                        break;
+            //                    }
+
+            //                case CollisionTypes.Convex:
+            //                    {
+            //                        var convex = (CollisionConvex)itemDesc.Collision;
+
+            //                        detailsNode.Nodes.Add($"Vertices: {convex.Vertices.Count}");
+            //                        detailsNode.Nodes.Add($"Hull Center: {Vec3(convex.HullCenter)}");
+            //                        detailsNode.Nodes.Add($"BBox Min: {Vec3(convex.Min)}");
+            //                        detailsNode.Nodes.Add($"BBox Max: {Vec3(convex.Max)}");
+            //                        detailsNode.Nodes.Add($"BBox Size: {Vec3(convex.Size)}");
+            //                        break;
+            //                    }
+            //            }
+
+            //            itemNode.Nodes.Add(detailsNode);
+            //        }
+
+            //        itemDescRoot.Nodes.Add(itemNode);
+            //    }
+
+            //    dSceneTree.AddToTree(itemDescRoot);
+            //}
             if (SceneData.ItemDescs != null && SceneData.ItemDescs.Length > 0)
             {
                 TreeNode itemDescRoot = new TreeNode("Item Descriptions");
@@ -1445,112 +1671,85 @@ namespace Mafia2Tool
 
                 for (int i = 0; i < SceneData.ItemDescs.Length; i++)
                 {
-                    var itemDesc = SceneData.ItemDescs[i];
+                    var currentItem = SceneData.ItemDescs[i];
 
-                    TreeNode itemNode = new TreeNode(
-                        $"ItemDesc [{i}] | FrameRef: {itemDesc.frameRef}"
-                    );
-                    itemNode.Tag = itemDesc;
+                    TreeNode itemNode = new TreeNode($"ItemDesc [{i}] | FrameRef: {currentItem.FrameRef}");
+                    itemNode.Tag = currentItem;
 
-         
-                    TreeNode infoNode = new TreeNode("Info");
-                    infoNode.Tag = "Folder";
-
-                    infoNode.Nodes.Add($"Collision Type: {GetCollisionTypeName(itemDesc.colType)}");
-                    infoNode.Nodes.Add($"Collision Type: {itemDesc.colType}");
-                    infoNode.Nodes.Add($"Material: {itemDesc.colMaterial}");
-                    infoNode.Nodes.Add($"ID Hash: {itemDesc.idHash}");
+                    TreeNode infoNode = new TreeNode("Info") { Tag = "Folder" };
+                    infoNode.Nodes.Add($"Collision Type: {GetCollisionTypeName(currentItem.ColType)}");
+                    infoNode.Nodes.Add($"Collision Type: {currentItem.ColType}");
+                    infoNode.Nodes.Add($"Material: {currentItem.ColMaterial}");
+                    infoNode.Nodes.Add($"ID Hash: {currentItem.IdHash}");
                     itemNode.Nodes.Add(infoNode);
 
-
-                    if (itemDesc.collision != null)
+                    if (currentItem.Collisions != null && currentItem.Collisions.Length > 0)
                     {
-                        TreeNode collisionNode = new TreeNode("Collision");
-                        collisionNode.Tag = itemDesc.collision;
+                        TreeNode collisionsNode = new TreeNode("Collisions") { Tag = "Folder" };
 
-                        IRenderer render = null;
-                        int refID = RefManager.GetNewRefID();
-
-                        switch (itemDesc.colType)
+                        for (int colIndex = 0; colIndex < currentItem.Collisions.Length; colIndex++)
                         {
-                            case CollisionTypes.Box:
-                                render = RenderableFactory.BuildBoundingBoxFromBox(
-                                    (CollisionBox)itemDesc.collision, itemDesc.Matrix);
-                                break;
-                            case CollisionTypes.Sphere:
-                                render = RenderableFactory.BuildBoundingSphere(
-                                    (CollisionSphere)itemDesc.collision, itemDesc.Matrix);
-                                break;
-                            case CollisionTypes.Capsule:
-                                render = RenderableFactory.BuildBoundingCapsule(
-                                    (CollisionCapsule)itemDesc.collision, itemDesc.Matrix);
-                                break;
-                            case CollisionTypes.Convex:
+                            var col = currentItem.Collisions[colIndex];
+                            TreeNode collisionNode = new TreeNode($"Collision [{colIndex}]") { Tag = col };
+
+                            IRenderer render = null;
+                            int refID = RefManager.GetNewRefID();
+
+                            if (col is CollisionBox box)
+                                render = RenderableFactory.BuildBoundingBoxFromBox(box, currentItem.Matrix);
+                            else if (col is CollisionSphere sphere)
+                                render = RenderableFactory.BuildBoundingSphere(sphere, currentItem.Matrix);
+                            else if (col is CollisionCapsule capsule)
+                                render = RenderableFactory.BuildBoundingCapsule(capsule, currentItem.Matrix);
+                            else if (col is CollisionConvex convex)
+                            {
                                 var rsc = new RenderStaticCollision();
-                                rsc.SetTransform(itemDesc.Matrix);
-                                rsc.ConvertCollisionToRender((CollisionConvex)itemDesc.collision);
+                                rsc.SetTransform(currentItem.Matrix);
+                                rsc.ConvertCollisionToRender(convex);
                                 render = rsc;
-                                break;
+                            }
+
+                            if (render != null)
+                            {
+                                assets.Add(refID, render);
+                                collisionNode.Name = refID.ToString();
+                            }
+
+                            collisionNode.Nodes.Add($"Renderable: {render != null}");
+
+                            TreeNode detailsNode = new TreeNode("Collision Details");
+
+                            if (col is CollisionBox b)
+                            {
+                                detailsNode.Nodes.Add($"Extents (Half Size): {Vec3(b.Extents)}");
+                                detailsNode.Nodes.Add($"Size: {Vec3(b.Size)}");
+                            }
+                            else if (col is CollisionSphere s)
+                            {
+                                detailsNode.Nodes.Add($"Radius: {s.Radius:0.###}");
+                                detailsNode.Nodes.Add($"Diameter: {s.Diameter:0.###}");
+                            }
+                            else if (col is CollisionCapsule c)
+                            {
+                                detailsNode.Nodes.Add($"Radius: {c.Radius:0.###}");
+                                detailsNode.Nodes.Add($"Half Height: {c.HalfHeight:0.###}");
+                                detailsNode.Nodes.Add($"Height: {c.Height:0.###}");
+                                detailsNode.Nodes.Add($"Full Height: {c.FullHeight:0.###}");
+                            }
+                            else if (col is CollisionConvex cv)
+                            {
+                                detailsNode.Nodes.Add($"Vertices: {cv.Vertices.Count}");
+                                detailsNode.Nodes.Add($"Hull Center: {Vec3(cv.HullCenter)}");
+                                detailsNode.Nodes.Add($"BBox Min: {Vec3(cv.Min)}");
+                                detailsNode.Nodes.Add($"BBox Max: {Vec3(cv.Max)}");
+                                detailsNode.Nodes.Add($"BBox Size: {Vec3(cv.Size)}");
+                            }
+
+                            collisionNode.Nodes.Add(detailsNode);
+                            collisionsNode.Nodes.Add(collisionNode);
                         }
 
-                        if (render != null)
-                        {
-                            assets.Add(refID, render);
-                            itemNode.Name = refID.ToString(); 
-                        }
-
-                        collisionNode.Nodes.Add($"Renderable: {render != null}");
-                        itemNode.Nodes.Add(collisionNode);
-                    }
-                    if (itemDesc.collision != null)
-                    {
-                        TreeNode detailsNode = new TreeNode("Collision Details");
-
-                        switch (itemDesc.colType)
-                        {
-                            case CollisionTypes.Box:
-                                {
-                                    var box = (CollisionBox)itemDesc.collision;
-
-                                    detailsNode.Nodes.Add($"Extents (Half Size): {Vec3(box.Extents)}");
-                                    detailsNode.Nodes.Add($"Size: {Vec3(box.Size)}");
-                                    break;
-                                }
-
-                            case CollisionTypes.Sphere:
-                                {
-                                    var sphere = (CollisionSphere)itemDesc.collision;
-
-                                    detailsNode.Nodes.Add($"Radius: {sphere.Radius:0.###}");
-                                    detailsNode.Nodes.Add($"Diameter: {sphere.Diameter:0.###}");
-                                    break;
-                                }
-
-                            case CollisionTypes.Capsule:
-                                {
-                                    var capsule = (CollisionCapsule)itemDesc.collision;
-
-                                    detailsNode.Nodes.Add($"Radius: {capsule.Radius:0.###}");
-                                    detailsNode.Nodes.Add($"Half Height: {capsule.HalfHeight:0.###}");
-                                    detailsNode.Nodes.Add($"Height: {capsule.Height:0.###}");
-                                    detailsNode.Nodes.Add($"Full Height: {capsule.FullHeight:0.###}");
-                                    break;
-                                }
-
-                            case CollisionTypes.Convex:
-                                {
-                                    var convex = (CollisionConvex)itemDesc.collision;
-
-                                    detailsNode.Nodes.Add($"Vertices: {convex.Vertices.Count}");
-                                    detailsNode.Nodes.Add($"Hull Center: {Vec3(convex.HullCenter)}");
-                                    detailsNode.Nodes.Add($"BBox Min: {Vec3(convex.Min)}");
-                                    detailsNode.Nodes.Add($"BBox Max: {Vec3(convex.Max)}");
-                                    detailsNode.Nodes.Add($"BBox Size: {Vec3(convex.Size)}");
-                                    break;
-                                }
-                        }
-
-                        itemNode.Nodes.Add(detailsNode);
+                        itemNode.Nodes.Add(collisionsNode);
                     }
 
                     itemDescRoot.Nodes.Add(itemNode);
@@ -1558,6 +1757,7 @@ namespace Mafia2Tool
 
                 dSceneTree.AddToTree(itemDescRoot);
             }
+
 
             if (SceneData.ATLoader != null)
             {
@@ -2149,7 +2349,7 @@ namespace Mafia2Tool
             frames.Clear();
             frameIndexes.Clear();
         }
-
+        
         private void ApplyEntryChanges(object sender, EventArgs e)
         {
             if (dPropertyGrid.IsEntryReady)
