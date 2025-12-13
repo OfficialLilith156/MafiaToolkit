@@ -10,6 +10,7 @@ using ResourceTypes.BufferPools;
 using ResourceTypes.Collisions;
 using ResourceTypes.FrameNameTable;
 using ResourceTypes.FrameResource;
+using ResourceTypes.ItemDesc;
 using ResourceTypes.Materials;
 using ResourceTypes.ModelHelpers.ModelExporter;
 using ResourceTypes.Navigation;
@@ -1112,6 +1113,7 @@ namespace Mafia2Tool
                 for (int i = 0; i < SceneData.OBJData.Length; i++)
                 {
                     data[i] = (OBJData)SceneData.OBJData[i].Data;
+                    
                 }
 
                 TreeNode Grids = Graphics.SetNavigationGrid(data);
@@ -1159,7 +1161,7 @@ namespace Mafia2Tool
                 }
 
                 dSceneTree.AddToTree(AIWorldRoot);
-            }
+            }        
             if (SceneData.Collisions != null)
             {
                 TreeNode node = new TreeNode("Collision Data");
@@ -1202,6 +1204,33 @@ namespace Mafia2Tool
                 dSceneTree.AddToTree(node);
                 collisionRoot.Collapse(false);
             }
+
+            if (SceneData.ItemDescs != null && SceneData.ItemDescs.Length > 0) //В будущем планируеться сделать рендер но это маловероятно!!!
+            {
+                TreeNode itemDescRoot = new TreeNode("Item Descriptions");
+                itemDescRoot.Tag = "Folder";
+
+                for (int i = 0; i < SceneData.ItemDescs.Length; i++)
+                {
+                    var itemDesc = SceneData.ItemDescs[i];
+                    TreeNode node = new TreeNode($"ItemDesc {i} | Hash: {itemDesc.frameRef}");
+                    node.Tag = itemDesc;
+                    if (itemDesc.colType == ResourceTypes.ItemDesc.CollisionTypes.Convex && itemDesc.collision != null)
+                    {
+                        int refID = RefManager.GetNewRefID();
+                        RenderStaticCollision render = new RenderStaticCollision();
+                        render.SetTransform(itemDesc.Matrix);
+                        render.ConvertCollisionToRender((ResourceTypes.ItemDesc.CollisionConvex)itemDesc.collision);
+                        assets.Add(refID, render);
+                        node.Name = refID.ToString();
+                    }
+
+                    itemDescRoot.Nodes.Add(node);
+                }
+                dSceneTree.AddToTree(itemDescRoot);
+            }
+
+
             if (SceneData.ATLoader != null)
             {
                 animalTrafficRoot = new TreeNode("Animal Traffic Paths");
@@ -1904,53 +1933,41 @@ namespace Mafia2Tool
 
         private void Pick(int sx, int sy)
         {
-            PickOutParams OutParams = Graphics.Pick(sx, sy, RenderPanel.Size.Width, RenderPanel.Size.Height);
-            dViewProperties.SetPickInfo(OutParams);
-            if (OutParams.LowestInstanceID != -1)
-            {
-                TreeNode[] instancenodes = dSceneTree.Find(OutParams.LowestInstanceID.ToString(), true);
-                if (instancenodes.Length > 0)
-                {
-                    dSceneTree.SelectedNode = instancenodes[0];
-                    TreeViewUpdateSelected();
-                }
-            }
-            else
-            {
-                TreeNode[] nodes = dSceneTree.Find(OutParams.LowestRefID.ToString(), true);
+            PickOutParams outParams = Graphics.Pick(
+                sx, sy,
+                RenderPanel.Size.Width,
+                RenderPanel.Size.Height);
 
+            if (outParams.LowestInstanceID != -1)
+            {
+                var nodes = dSceneTree.Find(outParams.LowestInstanceID.ToString(), true);
                 if (nodes.Length > 0)
                 {
                     dSceneTree.SelectedNode = nodes[0];
-
-                    if (dSceneTree.SelectedNode.Tag is FrameObjectBase obj)
-                    {
-                        int Parent1Index = obj.ParentIndex1.Index;
-                        int Parent2Index = obj.ParentIndex2.Index;
-
-                        while (Parent1Index != -1 && Parent2Index != -1)
-                        {
-                            if (dSceneTree.SelectedNode.Parent != null)
-                            {
-                                dSceneTree.SelectedNode = dSceneTree.SelectedNode.Parent;
-
-                                if (dSceneTree.SelectedNode.Tag is FrameObjectBase obj2)
-                                {
-                                    Parent1Index = obj2.ParentIndex1.Index;
-                                    Parent2Index = obj2.ParentIndex2.Index;
-                                }
-                            }
-                            else
-                            {
-                                break;
-                            }
-                        }
-                    }
-
                     TreeViewUpdateSelected();
                 }
+                return;
+            }
+
+
+            if (outParams.LowestRefID != -1)
+            {
+                var nodes = dSceneTree.Find(outParams.LowestRefID.ToString(), true);
+                if (nodes.Length == 0)
+                    return;
+
+                var node = nodes[0];
+
+
+                if (node.Tag is FrameObjectDummy)
+                    return;
+
+                dSceneTree.SelectedNode = node;
+                TreeViewUpdateSelected();
             }
         }
+
+
 
         public void Shutdown()
         {
