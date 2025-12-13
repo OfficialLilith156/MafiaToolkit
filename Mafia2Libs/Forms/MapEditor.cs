@@ -1,6 +1,7 @@
 ﻿using Forms.Docking;
 using Forms.EditorControls;
 using Mafia2Tool.Forms;
+using Microsoft.VisualBasic;
 using Rendering.Core;
 using Rendering.Factories;
 using Rendering.Graphics;
@@ -481,6 +482,12 @@ namespace Mafia2Tool
         private void OnAfterSelect(object sender, TreeViewEventArgs e) => TreeViewUpdateSelected();
         private void ExitButton_Click(object sender, EventArgs e) => Close();
         private void SaveButton_Click(object sender, EventArgs e) => Save();
+        private void SaveButtonScene_Click(object sender, EventArgs e) => SaveScene();
+        private void SaveButtonCollision_Click(object sender, EventArgs e) => SaveCollision();
+        private void SaveButtonTranslocator_Click(object sender, EventArgs e) => SaveTranslocator();
+        private void SaveButtonActor_Click(object sender, EventArgs e) => SaveActor();
+        private void SaveButtonOBJDataClick(object sender, EventArgs e) => SaveOBJData();
+        private void SaveButtonAIWorldClick(object sender, EventArgs e) => SaveAIWorld();
         private void PropertyGridOnClicked(object sender, EventArgs e) => dPropertyGrid.Show(dockPanel1, DockState.DockRight);
         private void SceneTreeOnClicked(object sender, EventArgs e) => dSceneTree.Show(dockPanel1, DockState.DockLeft);
         private void CurrentModeButton_ButtonClick(object sender, EventArgs e) => SwitchMode(!bSelectMode);
@@ -890,6 +897,217 @@ namespace Mafia2Tool
                 Console.WriteLine("Saved Changes Succesfully");
             }
         }
+        private void SaveTranslocator()
+        {
+            DialogResult result = MessageBox.Show("Do you want to save your changes?", "Toolkit", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
+            {
+                Cursor.Current = Cursors.WaitCursor;
+
+
+                if (SceneData.Translokator != null && ToolkitSettings.Experimental)
+                {
+                    TranslokatorLoader translokator = SceneData.Translokator;
+                    translokator.Grids = new Grid[translokatorRoot.Nodes[1].GetNodeCount(false)];
+                    for (int i = 0; i < translokator.Grids.Length; i++)
+                    {
+                        Grid grid = (translokatorRoot.Nodes[1].Nodes[i].Tag as Grid);
+                        translokator.Grids[i] = grid;
+                    }
+
+                    translokator.ObjectGroups = new ObjectGroup[translokatorRoot.Nodes[0].GetNodeCount(false)];
+                    for (int i = 0; i < translokator.ObjectGroups.Length; i++)
+                    {
+                        ObjectGroup objectGroup = (translokatorRoot.Nodes[0].Nodes[i].Tag as ObjectGroup);
+                        objectGroup.Objects = new ResourceTypes.Translokator.Object[translokatorRoot.Nodes[0].Nodes[i].GetNodeCount(false)];
+                        for (int y = 0; y < objectGroup.Objects.Length; y++)
+                        {
+                            ResourceTypes.Translokator.Object obj = (translokatorRoot.Nodes[0].Nodes[i].Nodes[y].Tag as ResourceTypes.Translokator.Object);
+                            obj.Instances = new Instance[translokatorRoot.Nodes[0].Nodes[i].Nodes[y].GetNodeCount(false)];
+                            for (int z = 0; z < obj.Instances.Length; z++)
+                            {
+                                Instance instance = (translokatorRoot.Nodes[0].Nodes[i].Nodes[y].Nodes[z].Tag as Instance);
+                                obj.Instances[z] = instance;
+                            }
+                            objectGroup.Objects[y] = obj;
+                        }
+
+                        translokator.ObjectGroups[i] = objectGroup;
+                    }
+                    translokator.WriteToFile(new FileInfo(SceneData.sdsContent.GetResourceFiles("Translokator", true)[0]));
+                }
+                Cursor.Current = Cursors.Default;
+
+                Console.WriteLine("Saved Changes Succesfully");
+            }
+        }
+
+        private void SaveCollision()
+        {
+            DialogResult result = MessageBox.Show("Do you want to save your changes?", "Toolkit", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
+            {
+                Cursor.Current = Cursors.WaitCursor;
+                
+                if (SceneData.Collisions != null)
+                {
+                    Collision collision = new Collision();
+                    collision.Name = SceneData.Collisions.Name;
+                    for (int i = 0; i != collisionRoot.Nodes.Count; i++)
+                    {
+                        TreeNode node = collisionRoot.Nodes[i];
+                        Collision.CollisionModel collisionModel = (node.Tag as Collision.CollisionModel);
+                        collision.Models.Add(collisionModel.Hash, collisionModel);
+
+                        for (int x = 0; x != node.Nodes.Count; x++)
+                        {
+                            TreeNode child = node.Nodes[x];
+                            Collision.Placement placement = (child.Tag as Collision.Placement);
+                            collision.Placements.Add(placement);
+                        }
+                    }
+
+                    SceneData.Collisions = collision;
+                    SceneData.Collisions.WriteToFile();
+                }
+
+
+                Cursor.Current = Cursors.Default;
+
+                Console.WriteLine("Saved Changes Succesfully");
+            }
+        }
+
+        private void SaveAIWorld()
+        {
+            DialogResult result = MessageBox.Show("Do you want to save your changes?", "Toolkit", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
+            {
+                Cursor.Current = Cursors.WaitCursor;
+
+
+                if (SceneData.AIWorlds != null && ToolkitSettings.Experimental)
+                {
+                    foreach (NAVData navData in SceneData.AIWorlds)
+                    {
+                        if (navData.Data is AIWorld aiWorld)
+                        {
+                            foreach (TreeNode rootNode in dSceneTree.TreeView.Nodes)
+                            {
+                                if (rootNode.Tag == aiWorld)
+                                {
+
+                                    aiWorld.Types1.Clear();
+
+                                    foreach (TreeNode groupNode in rootNode.Nodes)
+                                    {
+                                        if (groupNode.Tag is AIWorld_Type1 group)
+                                        {
+                                            group.AIPoints.Clear();
+
+                                            foreach (TreeNode pointNode in groupNode.Nodes)
+                                            {
+                                                if (pointNode.Tag is IType point)
+                                                {
+                                                    group.AIPoints.Add(point);
+                                                }
+                                            }
+
+                                            aiWorld.Types1.Add(group);
+                                        }
+                                    }
+                                }
+                            }
+
+                            navData.WriteToFile();
+                        }
+                    }
+                }
+
+
+                Cursor.Current = Cursors.Default;
+
+                Console.WriteLine("Saved Changes Succesfully");
+            }
+        }
+        private void SaveOBJData()
+        {
+            DialogResult result = MessageBox.Show("Do you want to save your changes?", "Toolkit", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
+            {
+                Cursor.Current = Cursors.WaitCursor;
+                if (SceneData.OBJData != null && ToolkitSettings.Experimental)
+                {
+                    for (int i = 0; i < SceneData.OBJData.Length; i++)
+                    {
+                        var obj = SceneData.OBJData[i];
+                        obj.WriteToFile();
+                    }
+                }
+                Cursor.Current = Cursors.Default;
+                Console.WriteLine("Saved Changes Succesfully");
+            }
+        }
+        private void SaveActor()
+        {
+            DialogResult result = MessageBox.Show("Do you want to save your changes?", "Toolkit", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
+            {
+                Cursor.Current = Cursors.WaitCursor;             
+
+                if (SceneData.Actors != null && ToolkitSettings.Experimental)
+                {
+                    for (int i = 0; i < SceneData.Actors.Length; i++)
+                    {
+                        FixActorDefintions(SceneData.Actors[i]);
+                        SceneData.Actors[i].WriteToFile();
+                    }
+                }
+
+                Cursor.Current = Cursors.Default;
+
+                Console.WriteLine("Saved Changes Succesfully");
+            }
+        }
+
+        private void SaveScene()
+        {
+            DialogResult result = MessageBox.Show("Do you want to save your changes (without collisions)?",
+                                                  "Toolkit", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
+            {
+                Cursor.Current = Cursors.WaitCursor;
+
+                using (BinaryWriter writer = new BinaryWriter(File.Open(fileLocation.FullName, FileMode.Create)))
+                {
+                    SceneData.FrameResource.WriteToFile(writer);
+                }
+
+                using (BinaryWriter writer = new BinaryWriter(File.Open(SceneData.FrameNameTable.FileName, FileMode.Create)))
+                {
+                    FrameNameTable nameTable = new FrameNameTable();
+                    nameTable.FileName = SceneData.FrameNameTable.FileName;
+                    nameTable.BuildDataFromResource(SceneData.FrameResource);
+                    nameTable.WriteToFile(writer);
+                    SceneData.FrameNameTable = nameTable;
+                }
+
+                SanitizeBuffers();
+                SceneData.IndexBufferPool.WriteToFile();
+                SceneData.VertexBufferPool.WriteToFile();       
+                SceneData.UpdateResourceType();
+                Cursor.Current = Cursors.Default;
+
+                Console.WriteLine("Saved Changes Succesfully");
+            }
+        }
+
         private bool ParentIsEmpty(ParentInfo p)
         {
 
@@ -1364,6 +1582,32 @@ namespace Mafia2Tool
             }
         }
 
+        private void btnMoveNAV_Click(object sender, EventArgs e)
+        {
+            if (dSceneTree.SelectedNode != null && dSceneTree.SelectedNode.Tag is RenderNav nav)
+            {
+                try
+                {
+                    string inputX = Interaction.InputBox("Введите смещение по X:", "Move NAV", "0");
+                    string inputY = Interaction.InputBox("Введите смещение по Y:", "Move NAV", "0");
+                    string inputZ = Interaction.InputBox("Введите смещение по Z:", "Move NAV", "0");
+
+                    float dx = float.Parse(inputX);
+                    float dy = float.Parse(inputY);
+                    float dz = float.Parse(inputZ);
+
+                    nav.MoveAllVertices(dx, dy, dz);
+                }
+                catch
+                {
+                    MessageBox.Show("Некорректный ввод!");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Выберите NAV для перемещения");
+            }
+        }
         public void InstanceTranslokatorPart(Dictionary<int, IRenderer> assets, FrameObjectBase refframe, Matrix4x4 ParentTransform, Instance instance, bool updateInstanceBuffers = false)
         {
             var refTransform = ComputeWorldTransform(refframe.LocalTransform, ParentTransform);

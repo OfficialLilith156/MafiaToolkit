@@ -48,6 +48,7 @@ namespace Mafia2Tool
             FileButton = new System.Windows.Forms.ToolStripDropDownButton();
             SaveButton = new System.Windows.Forms.ToolStripMenuItem();
             ExitButton = new System.Windows.Forms.ToolStripMenuItem();
+            saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             EditButton = new System.Windows.Forms.ToolStripDropDownButton();
             AddButton = new System.Windows.Forms.ToolStripMenuItem();
             Button_ImportFrame = new System.Windows.Forms.ToolStripMenuItem();
@@ -79,6 +80,17 @@ namespace Mafia2Tool
             addType9ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             addType11ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             deleteAINavigationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripDropDownButton3 = new System.Windows.Forms.ToolStripDropDownButton();
+            addNodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            deleteNodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            moveGroupNodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripDropDownButton4 = new System.Windows.Forms.ToolStripDropDownButton();
+            saveSceneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            saveCollisionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            saveTranslocatorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            saveActorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            saveOBJDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            saveAIWorldToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripDropDownButton2 = new System.Windows.Forms.ToolStripDropDownButton();
             addModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             batchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -234,7 +246,7 @@ namespace Mafia2Tool
             // 
             // ToolbarStrip
             // 
-            ToolbarStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { FileButton, EditButton, ViewButton, OptionsButton, WindowButton, toolStripDropDownButton1, toolStripDropDownButton2 });
+            ToolbarStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { FileButton, EditButton, ViewButton, OptionsButton, WindowButton, toolStripDropDownButton1, toolStripDropDownButton3, toolStripDropDownButton4, toolStripDropDownButton2 });
             ToolbarStrip.Location = new System.Drawing.Point(0, 0);
             ToolbarStrip.Name = "ToolbarStrip";
             ToolbarStrip.Size = new System.Drawing.Size(1420, 25);
@@ -244,7 +256,7 @@ namespace Mafia2Tool
             // FileButton
             // 
             FileButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            FileButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { SaveButton, ExitButton });
+            FileButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { SaveButton, ExitButton, saveToolStripMenuItem });
             FileButton.Image = (System.Drawing.Image)resources.GetObject("FileButton.Image");
             FileButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             FileButton.Name = "FileButton";
@@ -255,16 +267,22 @@ namespace Mafia2Tool
             // 
             SaveButton.Name = "SaveButton";
             SaveButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S;
-            SaveButton.Size = new System.Drawing.Size(146, 22);
-            SaveButton.Text = "$SAVE";
+            SaveButton.Size = new System.Drawing.Size(155, 22);
+            SaveButton.Text = "Save All";
             SaveButton.Click += SaveButton_Click;
             // 
             // ExitButton
             // 
             ExitButton.Name = "ExitButton";
-            ExitButton.Size = new System.Drawing.Size(146, 22);
+            ExitButton.Size = new System.Drawing.Size(155, 22);
             ExitButton.Text = "$EXIT";
             ExitButton.Click += ExitButton_Click;
+            // 
+            // saveToolStripMenuItem
+            // 
+            saveToolStripMenuItem.Name = "saveToolStripMenuItem";
+            saveToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
+            saveToolStripMenuItem.Text = "Save Scene";
             // 
             // EditButton
             // 
@@ -509,6 +527,88 @@ namespace Mafia2Tool
             deleteAINavigationToolStripMenuItem.Text = "Delete AI Navigation";
             deleteAINavigationToolStripMenuItem.Click += btnDelete_Click;
             // 
+            // toolStripDropDownButton3
+            // 
+            toolStripDropDownButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            toolStripDropDownButton3.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { addNodeToolStripMenuItem, deleteNodeToolStripMenuItem, moveGroupNodeToolStripMenuItem });
+            toolStripDropDownButton3.Image = (System.Drawing.Image)resources.GetObject("toolStripDropDownButton3.Image");
+            toolStripDropDownButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
+            toolStripDropDownButton3.Name = "toolStripDropDownButton3";
+            toolStripDropDownButton3.Size = new System.Drawing.Size(125, 22);
+            toolStripDropDownButton3.Text = "Navigation OBJData";
+            toolStripDropDownButton3.ToolTipText = "Navigation OBJData";
+            // 
+            // addNodeToolStripMenuItem
+            // 
+            addNodeToolStripMenuItem.Name = "addNodeToolStripMenuItem";
+            addNodeToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            addNodeToolStripMenuItem.Text = "Add Node";
+            // 
+            // deleteNodeToolStripMenuItem
+            // 
+            deleteNodeToolStripMenuItem.Name = "deleteNodeToolStripMenuItem";
+            deleteNodeToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            deleteNodeToolStripMenuItem.Text = "Delete Node";
+            // 
+            // moveGroupNodeToolStripMenuItem
+            // 
+            moveGroupNodeToolStripMenuItem.Name = "moveGroupNodeToolStripMenuItem";
+            moveGroupNodeToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            moveGroupNodeToolStripMenuItem.Text = "Move Group Node";
+            moveGroupNodeToolStripMenuItem.Click += btnMoveNAV_Click;
+            // 
+            // toolStripDropDownButton4
+            // 
+            toolStripDropDownButton4.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            toolStripDropDownButton4.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { saveSceneToolStripMenuItem, saveCollisionToolStripMenuItem, saveTranslocatorToolStripMenuItem, saveActorToolStripMenuItem, saveOBJDataToolStripMenuItem, saveAIWorldToolStripMenuItem });
+            toolStripDropDownButton4.Image = (System.Drawing.Image)resources.GetObject("toolStripDropDownButton4.Image");
+            toolStripDropDownButton4.ImageTransparentColor = System.Drawing.Color.Magenta;
+            toolStripDropDownButton4.Name = "toolStripDropDownButton4";
+            toolStripDropDownButton4.Size = new System.Drawing.Size(98, 22);
+            toolStripDropDownButton4.Text = "Save by choice";
+            // 
+            // saveSceneToolStripMenuItem
+            // 
+            saveSceneToolStripMenuItem.Name = "saveSceneToolStripMenuItem";
+            saveSceneToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            saveSceneToolStripMenuItem.Text = "Save Scene";
+            saveSceneToolStripMenuItem.Click += SaveButtonScene_Click;
+            // 
+            // saveCollisionToolStripMenuItem
+            // 
+            saveCollisionToolStripMenuItem.Name = "saveCollisionToolStripMenuItem";
+            saveCollisionToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            saveCollisionToolStripMenuItem.Text = "Save Collision";
+            saveCollisionToolStripMenuItem.Click += SaveButtonCollision_Click;
+            // 
+            // saveTranslocatorToolStripMenuItem
+            // 
+            saveTranslocatorToolStripMenuItem.Name = "saveTranslocatorToolStripMenuItem";
+            saveTranslocatorToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            saveTranslocatorToolStripMenuItem.Text = "Save Translocator";
+            saveTranslocatorToolStripMenuItem.Click += SaveButtonTranslocator_Click;
+            // 
+            // saveActorToolStripMenuItem
+            // 
+            saveActorToolStripMenuItem.Name = "saveActorToolStripMenuItem";
+            saveActorToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            saveActorToolStripMenuItem.Text = "Save Actor";
+            saveActorToolStripMenuItem.Click += SaveButtonActor_Click;
+            // 
+            // saveOBJDataToolStripMenuItem
+            // 
+            saveOBJDataToolStripMenuItem.Name = "saveOBJDataToolStripMenuItem";
+            saveOBJDataToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            saveOBJDataToolStripMenuItem.Text = "Save OBJData";
+            saveOBJDataToolStripMenuItem.Click += SaveButtonOBJDataClick;
+            // 
+            // saveAIWorldToolStripMenuItem
+            // 
+            saveAIWorldToolStripMenuItem.Name = "saveAIWorldToolStripMenuItem";
+            saveAIWorldToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            saveAIWorldToolStripMenuItem.Text = "Save AIWorld";
+            saveAIWorldToolStripMenuItem.Click += SaveButtonAIWorldClick;
+            // 
             // toolStripDropDownButton2
             // 
             toolStripDropDownButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
@@ -651,5 +751,17 @@ namespace Mafia2Tool
         private System.Windows.Forms.ToolStripMenuItem addType11ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addType8ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addType9ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton3;
+        private System.Windows.Forms.ToolStripMenuItem addNodeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem deleteNodeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem moveGroupNodeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
+        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton4;
+        private System.Windows.Forms.ToolStripMenuItem saveSceneToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveCollisionToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveTranslocatorToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveActorToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveOBJDataToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveAIWorldToolStripMenuItem;
     }
 }

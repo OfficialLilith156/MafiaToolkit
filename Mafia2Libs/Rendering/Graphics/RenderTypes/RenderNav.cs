@@ -35,6 +35,23 @@ namespace Rendering.Graphics
             string ConnectionList = string.Format("NavConnectionList_{0}", RefManager.GetNewRefID());
             PointConnectionsBatch = new PrimitiveBatch(PrimitiveType.Line, ConnectionList);
         }
+        public void MoveAllVertices(float dx, float dy, float dz)
+        {
+            if (data == null) return;
+
+            foreach (var vertex in data.vertices)
+            {
+                vertex.Position += new System.Numerics.Vector3(dx, dy, dz);
+            }
+
+            for (int i = 0; i < BoundingBoxes.Count; i++)
+            {
+                BoundingBoxes[i].SetTransform(System.Numerics.Matrix4x4.CreateTranslation(data.vertices[i].Position));
+            }
+
+            PathVertexBatch?.SetIsDirty();
+            PointConnectionsBatch?.SetIsDirty();
+        }
 
         public void Init(OBJData data)
         {
