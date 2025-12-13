@@ -783,6 +783,16 @@ namespace Mafia2Tool
                     }
                 }
 
+                if (SceneData.OBJData != null && ToolkitSettings.Experimental)
+                {
+                    for (int i = 0; i < SceneData.OBJData.Length; i++)
+                    {
+                        var obj = SceneData.OBJData[i];
+                        obj.WriteToFile(); 
+                    }
+                }
+
+
                 if (SceneData.AIWorlds != null && ToolkitSettings.Experimental)
                 {
                     foreach (NAVData navData in SceneData.AIWorlds)
