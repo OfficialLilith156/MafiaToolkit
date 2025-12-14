@@ -46,6 +46,8 @@ namespace Mafia2Tool
         public TranslokatorLoader Translokator;
         public PrefabLoader Prefabs;
         public string ScenePath = "";
+        public ulong FrameRef;
+
 
         public SDSContentFile sdsContent;
         private bool isBigEndian;
@@ -293,7 +295,54 @@ namespace Mafia2Tool
             }
 
         }
-        
+        public void ImportItemDescForNode(TreeNode frnode, SceneData importedScene)
+        {
+            if (importedScene.ItemDescs == null || importedScene.ItemDescs.Length == 0)
+                return;
+
+            HashSet<ulong> hashes = new HashSet<ulong>();
+            CollectCollisionHashes(frnode, hashes);
+
+            if (hashes.Count == 0)
+                return;
+
+            var filtered = importedScene.ItemDescs.Where(id => hashes.Contains(id.FrameRef)).ToList();
+
+            if (filtered.Count == 0)
+                return;
+
+            var groupedByFile = filtered.GroupBy(id => id.FileName);
+
+            foreach (var group in groupedByFile)
+            {
+                string outFile = Path.Combine(ScenePath, group.Key);
+
+                if (File.Exists(outFile))
+                    continue;
+
+                using (BinaryWriter writer = new BinaryWriter(File.Open(outFile, FileMode.Create)))
+                {
+                    foreach (var item in group)
+                        item.WriteToFile(writer);
+                }
+            }
+
+            UpdateResourceType();
+        }
+
+        private void CollectCollisionHashes(TreeNode node, HashSet<ulong> hashes)
+        {
+            if (node?.Tag is FrameObjectCollision collision)
+            {
+                if (collision.Hash != 0)
+                    hashes.Add(collision.Hash);
+            }
+
+            foreach (TreeNode child in node.Nodes)
+                CollectCollisionHashes(child, hashes);
+        }
+
+
         private bool TextureCheck(string importTextureName, string ImportScenePath)//done like this in case sdscontent wasn't updated, accurate option
         {
             //checking if importing texture exists

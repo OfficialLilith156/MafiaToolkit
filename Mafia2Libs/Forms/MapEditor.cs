@@ -2561,7 +2561,7 @@ namespace Mafia2Tool
             Graphics.Camera.Position = dSceneTree.JumpToHelper();
             UpdatePositionElement(Graphics.Camera.Position);
         }
-
+        
         private void ImportButton_Click(object sender, EventArgs e)
         {
             var frnode = dImportSceneTree.SelectedNode;
@@ -2584,10 +2584,14 @@ namespace Mafia2Tool
 
 
             }
+            if (parent != null)
+            {
+                SceneData.ImportItemDescForNode(frnode, ImportedScene);
+            }
             dSceneTree.AddToTree(parent, frameResourceRoot);
             ConvertNodeToFrame(parent);
         }
-
+       
         private void CancelButton_Click(object sender, EventArgs e)
         {
             Button_ImportFrame.Enabled = true;
