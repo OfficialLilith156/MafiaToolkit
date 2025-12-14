@@ -137,6 +137,7 @@
     <Compile Update="Controls\MListView.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Update="Controls\RenderSky.cs" />
     <Compile Update="Controls\RenderOptions.cs">
       <SubType>UserControl</SubType>
     </Compile>

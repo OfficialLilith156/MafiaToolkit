@@ -70,6 +70,15 @@ namespace Rendering.Graphics
                         return (File.Exists(mip) && bUseMIPs ? mip : path);
                     }
                 }
+                if (!string.IsNullOrEmpty(ToolkitSettings.TexturePath5) || Directory.Exists(ToolkitSettings.TexturePath5))
+                {
+                    path = Path.Combine(ToolkitSettings.TexturePath5, fileName);
+                    if (File.Exists(path))
+                    {
+                        string mip = Path.Combine(ToolkitSettings.TexturePath5, "MIP_" + fileName);
+                        return (File.Exists(mip) && bUseMIPs ? mip : path);
+                    }
+                }
             }
             path = Path.Combine("Resources", "texture.dds");
             if (File.Exists(path))

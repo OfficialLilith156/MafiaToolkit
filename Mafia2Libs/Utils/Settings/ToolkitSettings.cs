@@ -28,6 +28,7 @@ namespace Utils.Settings
         public static string TexturePath2;
         public static string TexturePath3;
         public static string TexturePath4;
+        public static string TexturePath5;
         public static bool Experimental;
         public static bool bNavigation;
         public static bool bTranslokatorTint;
@@ -75,6 +76,7 @@ namespace Utils.Settings
             TexturePath2 = ReadKey("TexturePath2", "ModelViewer");
             TexturePath3 = ReadKey("TexturePath3", "ModelViewer");
             TexturePath4 = ReadKey("TexturePath4", "ModelViewer");
+            TexturePath5 = ReadKey("TexturePath5", "ModelViewer");
             CustomStateText = ReadKey("CustomStateText", "Discord", "Developing mods.");
             bool.TryParse(ReadKey("Enabled", "Discord", "True"), out DiscordEnabled);
             bool.TryParse(ReadKey("ElapsedTimeEnabled", "Discord", "True"), out DiscordElapsedTimeEnabled);

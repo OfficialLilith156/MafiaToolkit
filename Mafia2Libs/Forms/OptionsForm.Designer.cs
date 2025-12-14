@@ -32,6 +32,7 @@
             System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("$SDS_OPTIONS");
             System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("$MATERIAL_LIBS");
             System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("$RENDER");
+            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("RenderSky");
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OptionsForm));
             treeView1 = new System.Windows.Forms.TreeView();
             splitContainer1 = new System.Windows.Forms.SplitContainer();
@@ -54,7 +55,9 @@
             treeNode3.Text = "$MATERIAL_LIBS";
             treeNode4.Name = "$RENDER";
             treeNode4.Text = "$RENDER";
-            treeView1.Nodes.AddRange(new System.Windows.Forms.TreeNode[] { treeNode1, treeNode2, treeNode3, treeNode4 });
+            treeNode5.Name = "RenderSky";
+            treeNode5.Text = "RenderSky";
+            treeView1.Nodes.AddRange(new System.Windows.Forms.TreeNode[] { treeNode1, treeNode2, treeNode3, treeNode4, treeNode5 });
             treeView1.Size = new System.Drawing.Size(245, 357);
             treeView1.TabIndex = 0;
             treeView1.NodeMouseClick += NodeMouseClick;
@@ -86,7 +89,7 @@
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "OptionsForm";
-            Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            Padding = new System.Windows.Forms.Padding(6);
             Text = "$OPTIONS";
             splitContainer1.Panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();

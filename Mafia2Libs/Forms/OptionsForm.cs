@@ -55,6 +55,9 @@ namespace Mafia2Tool
                 case 3:
                     SwapOptionControls(new RenderOptions());
                     break;
+                case 4:
+                    SwapOptionControls(new RenderSky());
+                    break;
             }
         }
     }

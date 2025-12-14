@@ -87,10 +87,11 @@
             RenderGroup.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             RenderGroup.Name = "RenderGroup";
             RenderGroup.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            RenderGroup.Size = new System.Drawing.Size(455, 314);
+            RenderGroup.Size = new System.Drawing.Size(455, 315);
             RenderGroup.TabIndex = 2;
             RenderGroup.TabStop = false;
             RenderGroup.Text = "$RENDER_OPTIONS";
+            
             // 
             // TexDirectoryBox2
             // 
@@ -344,7 +345,7 @@
             Controls.Add(RenderGroup);
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             Name = "RenderOptions";
-            Size = new System.Drawing.Size(455, 312);
+            Size = new System.Drawing.Size(455, 318);
             RenderGroup.ResumeLayout(false);
             RenderGroup.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)FieldOfViewNumDown).EndInit();
