@@ -100,6 +100,7 @@ namespace Mafia2Tool
             dockPanel1 = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             FrameBrowser = new System.Windows.Forms.OpenFileDialog();
             SaveFileDialog = new System.Windows.Forms.SaveFileDialog();
+            updateActorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             StatusStrip = new System.Windows.Forms.StatusStrip();
             StatusStrip.SuspendLayout();
             ToolbarStrip.SuspendLayout();
@@ -266,14 +267,14 @@ namespace Mafia2Tool
             // 
             SaveButton.Name = "SaveButton";
             SaveButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S;
-            SaveButton.Size = new System.Drawing.Size(180, 22);
+            SaveButton.Size = new System.Drawing.Size(155, 22);
             SaveButton.Text = "Save All";
             SaveButton.Click += SaveButton_Click;
             // 
             // ExitButton
             // 
             ExitButton.Name = "ExitButton";
-            ExitButton.Size = new System.Drawing.Size(180, 22);
+            ExitButton.Size = new System.Drawing.Size(155, 22);
             ExitButton.Text = "$EXIT";
             ExitButton.Click += ExitButton_Click;
             // 
@@ -331,14 +332,14 @@ namespace Mafia2Tool
             // ViewTopButton
             // 
             ViewTopButton.Name = "ViewTopButton";
-            ViewTopButton.Size = new System.Drawing.Size(180, 22);
+            ViewTopButton.Size = new System.Drawing.Size(126, 22);
             ViewTopButton.Text = "$TOP";
             ViewTopButton.Click += OnViewTopButtonClicked;
             // 
             // ViewFrontButton
             // 
             ViewFrontButton.Name = "ViewFrontButton";
-            ViewFrontButton.Size = new System.Drawing.Size(180, 22);
+            ViewFrontButton.Size = new System.Drawing.Size(126, 22);
             ViewFrontButton.Text = "$FRONT";
             ViewFrontButton.Click += OnViewFrontButtonClicked;
             // 
@@ -346,7 +347,7 @@ namespace Mafia2Tool
             // 
             ViewSideButton.Enabled = false;
             ViewSideButton.Name = "ViewSideButton";
-            ViewSideButton.Size = new System.Drawing.Size(180, 22);
+            ViewSideButton.Size = new System.Drawing.Size(126, 22);
             ViewSideButton.Text = "$SIDE";
             ViewSideButton.Visible = false;
             ViewSideButton.Click += OnViewSideButtonClicked;
@@ -355,7 +356,7 @@ namespace Mafia2Tool
             // 
             ViewBottomButton.Enabled = false;
             ViewBottomButton.Name = "ViewBottomButton";
-            ViewBottomButton.Size = new System.Drawing.Size(180, 22);
+            ViewBottomButton.Size = new System.Drawing.Size(126, 22);
             ViewBottomButton.Text = "$BOTTOM";
             ViewBottomButton.Visible = false;
             ViewBottomButton.Click += OnViewBottomButtonClicked;
@@ -364,7 +365,7 @@ namespace Mafia2Tool
             // 
             ViewSide2Button.Enabled = false;
             ViewSide2Button.Name = "ViewSide2Button";
-            ViewSide2Button.Size = new System.Drawing.Size(180, 22);
+            ViewSide2Button.Size = new System.Drawing.Size(126, 22);
             ViewSide2Button.Text = "$SIDE 2";
             ViewSide2Button.Visible = false;
             ViewSide2Button.Click += OnViewSide2ButtonClicked;
@@ -534,7 +535,7 @@ namespace Mafia2Tool
             // moveGroupNodeToolStripMenuItem
             // 
             moveGroupNodeToolStripMenuItem.Name = "moveGroupNodeToolStripMenuItem";
-            moveGroupNodeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            moveGroupNodeToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             moveGroupNodeToolStripMenuItem.Text = "Move Group Node";
             moveGroupNodeToolStripMenuItem.Click += btnMoveNAV_Click;
             // 
@@ -607,7 +608,7 @@ namespace Mafia2Tool
             // toolStripDropDownButton2
             // 
             toolStripDropDownButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            toolStripDropDownButton2.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { addModelToolStripMenuItem, batchToolStripMenuItem });
+            toolStripDropDownButton2.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { addModelToolStripMenuItem, batchToolStripMenuItem, updateActorToolStripMenuItem });
             toolStripDropDownButton2.Image = (System.Drawing.Image)resources.GetObject("toolStripDropDownButton2.Image");
             toolStripDropDownButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
             toolStripDropDownButton2.Name = "toolStripDropDownButton2";
@@ -757,5 +758,6 @@ namespace Mafia2Tool
         private System.Windows.Forms.ToolStripMenuItem saveAIWorldToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveAllItemDescToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveItemDescSelectedToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem updateActorToolStripMenuItem;
     }
 }

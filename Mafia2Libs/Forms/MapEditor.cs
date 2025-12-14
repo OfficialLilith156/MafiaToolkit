@@ -452,7 +452,7 @@ namespace Mafia2Tool
                 Graphics = new GraphicsClass();
                 Graphics.PreInit(handle);
                 BuildRenderObjects();
-                result = Graphics.InitScene(RenderPanel.Width, RenderPanel.Height);
+                result = Graphics.InitScene(RenderPanel.Width, RenderPanel.Height);              
             }
 
             if (Input == null)
@@ -1783,27 +1783,55 @@ namespace Mafia2Tool
             {
                 LoadActorFiles();
             }
-
-            foreach (var actor in SceneData.Actors) 
+           
+            foreach (var actor in SceneData.Actors)
             {
                 foreach (var entry in actor.Items)
                 {
                     if (entry.ActorTypeName == "LightEntity" || entry.ActorTypeID == (int)ActorTypes.LightEntity)
                     {
                         Vector3 position = entry.Position;
-                        Vector3 size = new Vector3(0.05f);
 
+                        Vector3 size = new Vector3(0.05f);
                         BoundingBox box = new BoundingBox(position - size, position + size);
                         RenderBoundingBox renderBox = new RenderBoundingBox();
                         renderBox.Init(box);
 
-                        int refID = RefManager.GetNewRefID();
-                        assets.Add(refID, renderBox);
+                        int refIDBox = RefManager.GetNewRefID();
+                        assets.Add(refIDBox, renderBox);
 
+                        Vector3 start = position;
+                        Vector3 gameDirection = Vector3.Transform(Vector3.UnitY, entry.Rotation);
+
+
+                        Vector3 editorDirection = new Vector3(
+                            -gameDirection.X,
+                             gameDirection.Y,
+                            -gameDirection.Z
+                        );
+
+                        Vector3 endEditor = start + editorDirection * 0.5f;
+
+                        RenderLine lightDirLine = new RenderLine();
+                        lightDirLine.SetUnselectedColour(System.Drawing.Color.Yellow);
+                        lightDirLine.Init(new Vector3[] { start, endEditor });
+
+                        int refIDLine = RefManager.GetNewRefID();
+                        assets.Add(refIDLine, lightDirLine);
+
+                        
                         TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
                         if (foundNodes.Length > 0)
                         {
-                            foundNodes[0].Name = refID.ToString();
+                            TreeNode boxNode = new TreeNode("Light Box");
+                            boxNode.Name = refIDBox.ToString();
+                            boxNode.Tag = renderBox;
+                            foundNodes[0].Nodes.Add(boxNode);
+
+                            TreeNode lineNode = new TreeNode("Light Direction");
+                            lineNode.Name = refIDLine.ToString();
+                            lineNode.Tag = lightDirLine;
+                            foundNodes[0].Nodes.Add(lineNode);
                         }
                     }
                 }
@@ -3933,9 +3961,7 @@ namespace Mafia2Tool
             Clipboard.SetText(result);
 
         }
-        
-
-
+    
         private void PasteXYZ_ButtonClick(object sender, EventArgs e)
         {
             if (!Clipboard.ContainsText())
