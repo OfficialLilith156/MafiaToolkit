@@ -15,6 +15,7 @@ using ResourceTypes.ItemDesc;
 using ResourceTypes.Materials;
 using ResourceTypes.ModelHelpers.ModelExporter;
 using ResourceTypes.Navigation;
+using SysColor = System.Drawing.Color;
 using ResourceTypes.Navigation.Traffic;
 using ResourceTypes.Translokator;
 using SharpGLTF.Schema2;
@@ -1783,6 +1784,31 @@ namespace Mafia2Tool
                 LoadActorFiles();
             }
 
+            foreach (var actor in SceneData.Actors) 
+            {
+                foreach (var entry in actor.Items)
+                {
+                    if (entry.ActorTypeName == "LightEntity" || entry.ActorTypeID == (int)ActorTypes.LightEntity)
+                    {
+                        Vector3 position = entry.Position;
+                        Vector3 size = new Vector3(0.05f);
+
+                        BoundingBox box = new BoundingBox(position - size, position + size);
+                        RenderBoundingBox renderBox = new RenderBoundingBox();
+                        renderBox.Init(box);
+
+                        int refID = RefManager.GetNewRefID();
+                        assets.Add(refID, renderBox);
+
+                        TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
+                        if (foundNodes.Length > 0)
+                        {
+                            foundNodes[0].Name = refID.ToString();
+                        }
+                    }
+                }
+            }
+
             for (int i = 0; i < SceneData.FrameNameTable.FrameData.Length; i++)
             {
                 FrameNameTable.Data data = SceneData.FrameNameTable.FrameData[i];
@@ -2067,12 +2093,12 @@ namespace Mafia2Tool
                         typeNode.Nodes.Add(itemNode);
                         actorFile.Nodes.Add(typeNode);
                     }
+
+                    FixActorDefintions(actor);
                 }
 
-                FixActorDefintions(actor);
+                dSceneTree.AddToTree(actorRoot);
             }
-
-            dSceneTree.AddToTree(actorRoot);
         }
 
         private void TreeViewUpdateSelected()
