@@ -48,7 +48,6 @@ namespace Mafia2Tool
             FileButton = new System.Windows.Forms.ToolStripDropDownButton();
             SaveButton = new System.Windows.Forms.ToolStripMenuItem();
             ExitButton = new System.Windows.Forms.ToolStripMenuItem();
-            saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             EditButton = new System.Windows.Forms.ToolStripDropDownButton();
             AddButton = new System.Windows.Forms.ToolStripMenuItem();
             Button_ImportFrame = new System.Windows.Forms.ToolStripMenuItem();
@@ -81,8 +80,6 @@ namespace Mafia2Tool
             addType11ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             deleteAINavigationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripDropDownButton3 = new System.Windows.Forms.ToolStripDropDownButton();
-            addNodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            deleteNodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             moveGroupNodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripDropDownButton4 = new System.Windows.Forms.ToolStripDropDownButton();
             saveSceneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -91,6 +88,8 @@ namespace Mafia2Tool
             saveActorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             saveOBJDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             saveAIWorldToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            saveAllItemDescToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            saveItemDescSelectedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripDropDownButton2 = new System.Windows.Forms.ToolStripDropDownButton();
             addModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             batchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -101,8 +100,6 @@ namespace Mafia2Tool
             dockPanel1 = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             FrameBrowser = new System.Windows.Forms.OpenFileDialog();
             SaveFileDialog = new System.Windows.Forms.SaveFileDialog();
-            saveAllItemDescToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            saveItemDescSelectedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             StatusStrip = new System.Windows.Forms.StatusStrip();
             StatusStrip.SuspendLayout();
             ToolbarStrip.SuspendLayout();
@@ -258,7 +255,7 @@ namespace Mafia2Tool
             // FileButton
             // 
             FileButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            FileButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { SaveButton, ExitButton, saveToolStripMenuItem });
+            FileButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { SaveButton, ExitButton });
             FileButton.Image = (System.Drawing.Image)resources.GetObject("FileButton.Image");
             FileButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             FileButton.Name = "FileButton";
@@ -269,22 +266,16 @@ namespace Mafia2Tool
             // 
             SaveButton.Name = "SaveButton";
             SaveButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S;
-            SaveButton.Size = new System.Drawing.Size(155, 22);
+            SaveButton.Size = new System.Drawing.Size(180, 22);
             SaveButton.Text = "Save All";
             SaveButton.Click += SaveButton_Click;
             // 
             // ExitButton
             // 
             ExitButton.Name = "ExitButton";
-            ExitButton.Size = new System.Drawing.Size(155, 22);
+            ExitButton.Size = new System.Drawing.Size(180, 22);
             ExitButton.Text = "$EXIT";
             ExitButton.Click += ExitButton_Click;
-            // 
-            // saveToolStripMenuItem
-            // 
-            saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            saveToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
-            saveToolStripMenuItem.Text = "Save Scene";
             // 
             // EditButton
             // 
@@ -340,14 +331,14 @@ namespace Mafia2Tool
             // ViewTopButton
             // 
             ViewTopButton.Name = "ViewTopButton";
-            ViewTopButton.Size = new System.Drawing.Size(126, 22);
+            ViewTopButton.Size = new System.Drawing.Size(180, 22);
             ViewTopButton.Text = "$TOP";
             ViewTopButton.Click += OnViewTopButtonClicked;
             // 
             // ViewFrontButton
             // 
             ViewFrontButton.Name = "ViewFrontButton";
-            ViewFrontButton.Size = new System.Drawing.Size(126, 22);
+            ViewFrontButton.Size = new System.Drawing.Size(180, 22);
             ViewFrontButton.Text = "$FRONT";
             ViewFrontButton.Click += OnViewFrontButtonClicked;
             // 
@@ -355,7 +346,7 @@ namespace Mafia2Tool
             // 
             ViewSideButton.Enabled = false;
             ViewSideButton.Name = "ViewSideButton";
-            ViewSideButton.Size = new System.Drawing.Size(126, 22);
+            ViewSideButton.Size = new System.Drawing.Size(180, 22);
             ViewSideButton.Text = "$SIDE";
             ViewSideButton.Visible = false;
             ViewSideButton.Click += OnViewSideButtonClicked;
@@ -364,7 +355,7 @@ namespace Mafia2Tool
             // 
             ViewBottomButton.Enabled = false;
             ViewBottomButton.Name = "ViewBottomButton";
-            ViewBottomButton.Size = new System.Drawing.Size(126, 22);
+            ViewBottomButton.Size = new System.Drawing.Size(180, 22);
             ViewBottomButton.Text = "$BOTTOM";
             ViewBottomButton.Visible = false;
             ViewBottomButton.Click += OnViewBottomButtonClicked;
@@ -373,7 +364,7 @@ namespace Mafia2Tool
             // 
             ViewSide2Button.Enabled = false;
             ViewSide2Button.Name = "ViewSide2Button";
-            ViewSide2Button.Size = new System.Drawing.Size(126, 22);
+            ViewSide2Button.Size = new System.Drawing.Size(180, 22);
             ViewSide2Button.Text = "$SIDE 2";
             ViewSide2Button.Visible = false;
             ViewSide2Button.Click += OnViewSide2ButtonClicked;
@@ -532,7 +523,7 @@ namespace Mafia2Tool
             // toolStripDropDownButton3
             // 
             toolStripDropDownButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            toolStripDropDownButton3.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { addNodeToolStripMenuItem, deleteNodeToolStripMenuItem, moveGroupNodeToolStripMenuItem });
+            toolStripDropDownButton3.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { moveGroupNodeToolStripMenuItem });
             toolStripDropDownButton3.Image = (System.Drawing.Image)resources.GetObject("toolStripDropDownButton3.Image");
             toolStripDropDownButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
             toolStripDropDownButton3.Name = "toolStripDropDownButton3";
@@ -540,22 +531,10 @@ namespace Mafia2Tool
             toolStripDropDownButton3.Text = "Navigation OBJData";
             toolStripDropDownButton3.ToolTipText = "Navigation OBJData";
             // 
-            // addNodeToolStripMenuItem
-            // 
-            addNodeToolStripMenuItem.Name = "addNodeToolStripMenuItem";
-            addNodeToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
-            addNodeToolStripMenuItem.Text = "Add Node";
-            // 
-            // deleteNodeToolStripMenuItem
-            // 
-            deleteNodeToolStripMenuItem.Name = "deleteNodeToolStripMenuItem";
-            deleteNodeToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
-            deleteNodeToolStripMenuItem.Text = "Delete Node";
-            // 
             // moveGroupNodeToolStripMenuItem
             // 
             moveGroupNodeToolStripMenuItem.Name = "moveGroupNodeToolStripMenuItem";
-            moveGroupNodeToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            moveGroupNodeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             moveGroupNodeToolStripMenuItem.Text = "Move Group Node";
             moveGroupNodeToolStripMenuItem.Click += btnMoveNAV_Click;
             // 
@@ -610,6 +589,20 @@ namespace Mafia2Tool
             saveAIWorldToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
             saveAIWorldToolStripMenuItem.Text = "Save AIWorld";
             saveAIWorldToolStripMenuItem.Click += SaveButtonAIWorldClick;
+            // 
+            // saveAllItemDescToolStripMenuItem
+            // 
+            saveAllItemDescToolStripMenuItem.Name = "saveAllItemDescToolStripMenuItem";
+            saveAllItemDescToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            saveAllItemDescToolStripMenuItem.Text = "Save All ItemDesc";
+            saveAllItemDescToolStripMenuItem.Click += SaveButtonItemDesc_Click;
+            // 
+            // saveItemDescSelectedToolStripMenuItem
+            // 
+            saveItemDescSelectedToolStripMenuItem.Name = "saveItemDescSelectedToolStripMenuItem";
+            saveItemDescSelectedToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            saveItemDescSelectedToolStripMenuItem.Text = "Save ItemDesc selected ";
+            saveItemDescSelectedToolStripMenuItem.Click += SaveButtonSelItemDesc_Click;
             // 
             // toolStripDropDownButton2
             // 
@@ -673,20 +666,6 @@ namespace Mafia2Tool
             // FrameBrowser
             // 
             FrameBrowser.Filter = "FrameResource|*.fr|Toolkit Frame Data|*.framedata";
-            // 
-            // saveAllItemDescToolStripMenuItem
-            // 
-            saveAllItemDescToolStripMenuItem.Name = "saveAllItemDescToolStripMenuItem";
-            saveAllItemDescToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
-            saveAllItemDescToolStripMenuItem.Text = "Save All ItemDesc";
-            saveAllItemDescToolStripMenuItem.Click += SaveButtonItemDesc_Click;
-            // 
-            // saveItemDescSelectedToolStripMenuItem
-            // 
-            saveItemDescSelectedToolStripMenuItem.Name = "saveItemDescSelectedToolStripMenuItem";
-            saveItemDescSelectedToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
-            saveItemDescSelectedToolStripMenuItem.Text = "Save ItemDesc selected ";
-            saveItemDescSelectedToolStripMenuItem.Click += SaveButtonSelItemDesc_Click;
             // 
             // MapEditor
             // 
@@ -768,10 +747,7 @@ namespace Mafia2Tool
         private System.Windows.Forms.ToolStripMenuItem addType8ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addType9ToolStripMenuItem;
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton3;
-        private System.Windows.Forms.ToolStripMenuItem addNodeToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem deleteNodeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem moveGroupNodeToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton4;
         private System.Windows.Forms.ToolStripMenuItem saveSceneToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveCollisionToolStripMenuItem;
