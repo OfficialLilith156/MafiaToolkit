@@ -77,6 +77,8 @@ namespace Mafia2Tool
         private float selectTimer = 0.0f;
         private bool bHideChildren = false;
 
+        private TreeNode navigationGridsNode = null;
+
         private Dictionary<string, int> NamesAndDuplicationStore;
 
         public MapEditor(FileInfo info, SceneData sceneData)
@@ -348,46 +350,52 @@ namespace Mafia2Tool
             if (node.Tag != null)
             {
                 bool bIsFrame = FrameResource.IsFrameType(node.Tag);
-
                 int result = -1;
                 int.TryParse(node.Name, out result);
+                bool isVisible = node.Checked && node.CheckIfParentsAreValid();
 
                 if (bHideChildren && (node != parent))
                 {
                     node.Checked = parent.Checked;
+                    isVisible = parent.Checked && parent.CheckIfParentsAreValid();
                 }
 
-                // Update rendered counterpart
-                int refID = (bIsFrame) ? (node.Tag as FrameEntry).RefID : result;
-
-                if (!bIsFrame)
+                if (node.Tag is RenderNav renderNav)
                 {
-                    if (node.Tag is Instance && node.Parent.Tag is Object trObject)
+                    renderNav.SetVisible(isVisible);
+                }
+                else if (node == OBJDataRoot)
+                {
+                    foreach (TreeNode child in node.Nodes)
                     {
-                        UpdateInstanceVisualisation(node, trObject, node.Checked && node.CheckIfParentsAreValid());
+                        if (child.Tag is RenderNav nav)
+                        {
+                            nav.SetVisible(isVisible);
+                        }
                     }
-                    else if (node.Tag is Grid trGrid)
-                    {
-                        bool enabled = node.Checked && node.CheckIfParentsAreValid();
+                }
 
-                        if (enabled)
-                        {
-                            RebuildTranslokatorGrids();
-                        }
-                        else
-                        {
-                            int trGridIndex = Array.IndexOf(SceneData.Translokator.Grids, trGrid);
-                            Graphics.SetTranslokatorGridEnabled(trGridIndex, enabled);
-                        }
+                else if (node.Tag is Instance && node.Parent?.Tag is Object trObject)
+                {
+                    UpdateInstanceVisualisation(node, trObject, isVisible);
+                }
+                else if (node.Tag is Grid trGrid)
+                {
+                    bool enabled = isVisible;
+                    if (enabled)
+                    {
+                        RebuildTranslokatorGrids();
                     }
                     else
                     {
-                        Graphics.SetAssetVisibility(refID, node.Checked && node.CheckIfParentsAreValid());
+                        int trGridIndex = Array.IndexOf(SceneData.Translokator.Grids, trGrid);
+                        Graphics.SetTranslokatorGridEnabled(trGridIndex, enabled);
                     }
                 }
                 else
                 {
-                    Graphics.SetAssetVisibility(refID, node.Checked && node.CheckIfParentsAreValid());
+                    int refID = bIsFrame ? (node.Tag as FrameEntry).RefID : result;
+                    Graphics.SetAssetVisibility(refID, isVisible);
                 }
             }
 

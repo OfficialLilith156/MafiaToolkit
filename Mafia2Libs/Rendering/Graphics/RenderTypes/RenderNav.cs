@@ -15,12 +15,13 @@ namespace Rendering.Graphics
         private GraphicsClass OwnGraphics;
 
         // Variables related to the Path Vertices
-        private PrimitiveBatch PathVertexBatch = null;
+        public PrimitiveBatch PathVertexBatch { get; private set; }
+        public PrimitiveBatch PointConnectionsBatch { get; private set; }
         private List<RenderBoundingBox> BoundingBoxes;
         private int SelectedIndex;
 
         // Variables relating to connections between points
-        private PrimitiveBatch PointConnectionsBatch = null;
+       
         private List<RenderLine> ConnectionsList;
 
         public RenderNav(GraphicsClass InGraphicsClass)
@@ -125,11 +126,40 @@ namespace Rendering.Graphics
 
             return navigationLine;
         }
+        
 
         public override void InitBuffers(ID3D11Device d3d, ID3D11DeviceContext deviceContext) { }
 
-        public override void Render(ID3D11Device device, ID3D11DeviceContext deviceContext, Camera camera) { }
+        public override void Render(ID3D11Device device, ID3D11DeviceContext deviceContext, Camera camera)
+        {
 
+        }
+        public void SetVisible(bool visible)
+        {
+            if (visible)
+            {
+                if (PathVertexBatch != null)
+                {
+                    OwnGraphics.OurPrimitiveManager.AddPrimitiveBatch(PathVertexBatch);
+                }
+                if (PointConnectionsBatch != null)
+                {
+                    OwnGraphics.OurPrimitiveManager.AddPrimitiveBatch(PointConnectionsBatch);
+                }
+            }
+            else
+            {        
+                if (PathVertexBatch != null)
+                {
+                    OwnGraphics.OurPrimitiveManager.RemovePrimitiveBatch(PathVertexBatch);
+                }
+                if (PointConnectionsBatch != null)
+                {
+                    OwnGraphics.OurPrimitiveManager.RemovePrimitiveBatch(PointConnectionsBatch);
+                }
+            }
+            DoRender = visible;
+        }
         public override void Select() { }
 
         public override void SetTransform(Matrix4x4 matrix)
