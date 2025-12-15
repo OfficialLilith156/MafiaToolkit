@@ -1815,7 +1815,7 @@ namespace Mafia2Tool
                         Vector3 editorDirection = new Vector3(
                             -gameDirection.X,
                              gameDirection.Y,
-                            -gameDirection.Z
+                            -gameDirection.Z 
                         );
 
                         Vector3 endEditor = start + editorDirection * 0.5f;
