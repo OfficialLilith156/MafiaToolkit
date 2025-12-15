@@ -1806,19 +1806,20 @@ namespace Mafia2Tool
                         RenderBoundingBox renderSmallBox = new RenderBoundingBox();
                         renderSmallBox.Init(smallBox);
 
+
                         int refIDSmallBox = RefManager.GetNewRefID();
                         assets.Add(refIDSmallBox, renderSmallBox);
 
                         Vector3 start = position;
-                        Vector3 gameDirection = Vector3.Transform(Vector3.UnitY, entry.Rotation);
+                        Vector3 gameDirection = Vector3.Transform(start, entry.Rotation);
 
-                        Vector3 editorDirection = new Vector3(
-                            -gameDirection.X,
-                             gameDirection.Y,
-                            -gameDirection.Z
-                        );
+                        //Vector3 editorDirection = new Vector3(
+                        //    -gameDirection.X,
+                        //     gameDirection.Y,
+                        //    -gameDirection.Z
+                        //);
 
-                        Vector3 endEditor = start + editorDirection * 0.5f;
+                        Vector3 endEditor = start + gameDirection / 15.5f;
 
                         RenderLine lightDirLine = new RenderLine();
                         lightDirLine.SetUnselectedColour(System.Drawing.Color.Yellow);
