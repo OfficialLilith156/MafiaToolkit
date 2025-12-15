@@ -1810,61 +1810,64 @@ namespace Mafia2Tool
                         int refIDSmallBox = RefManager.GetNewRefID();
                         assets.Add(refIDSmallBox, renderSmallBox);
 
-                        //Vector3 start = position;
-                        //Vector3 gameDirection = Vector3.Transform(start, entry.Rotation);
+                        Vector3 start = position;
+                        Vector3 gameDirection = Vector3.Transform(start, entry.Rotation);
 
-                        ////Vector3 editorDirection = new Vector3(
-                        ////    -gameDirection.X,
-                        ////     gameDirection.Y,
-                        ////    -gameDirection.Z
-                        ////);
+                        //Vector3 editorDirection = new Vector3(
+                        //    -gameDirection.X,
+                        //     gameDirection.Y,
+                        //    -gameDirection.Z
+                        //);
 
-                        //Vector3 endEditor = start + gameDirection / 85.5f;
+                        Vector3 endEditor = start + gameDirection / 15.5f;
 
-                        //RenderLine lightDirLine = new RenderLine();
-                        //lightDirLine.SetUnselectedColour(System.Drawing.Color.Yellow);
-                        //lightDirLine.Init(new Vector3[] { start, endEditor });
+                        RenderLine lightDirLine = new RenderLine();
+                        lightDirLine.SetUnselectedColour(System.Drawing.Color.Yellow);
+                        lightDirLine.Init(new Vector3[] { start, endEditor });
 
-                        //int refIDLine = RefManager.GetNewRefID();
-                        //assets.Add(refIDLine, lightDirLine);
+                        int refIDLine = RefManager.GetNewRefID();
+                        assets.Add(refIDLine, lightDirLine);
 
-                        //RefIDToActorEntry[refIDSmallBox] = entry;
-                        //RefIDToActorEntry[refIDLine] = entry;
+                        RefIDToActorEntry[refIDSmallBox] = entry;
+                        RefIDToActorEntry[refIDLine] = entry;
 
                         TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
-                        //if (foundNodes.Length > 0)
-                        //{
-                        //    TreeNode boxNode = new TreeNode("Light Box");
-                        //    boxNode.Name = refIDSmallBox.ToString();
-                        //    foundNodes[0].Nodes.Add(boxNode);
+                        if (foundNodes.Length > 0)
+                        {
+                            TreeNode boxNode = new TreeNode("Light Box");
+                            boxNode.Name = refIDSmallBox.ToString();
+                            boxNode.Tag = renderSmallBox;
+                            foundNodes[0].Nodes.Add(boxNode);
 
-                        //    TreeNode lineNode = new TreeNode("Light Direction");
-                        //    lineNode.Name = refIDLine.ToString();
-                        //    foundNodes[0].Nodes.Add(lineNode);
-                        //}
+                            TreeNode lineNode = new TreeNode("Light Direction");
+                            lineNode.Name = refIDLine.ToString();
+                            lineNode.Tag = lightDirLine;
+                            foundNodes[0].Nodes.Add(lineNode);
+                        }
 
                         if (entry.Data != null && entry.Data.Data is ActorLight light)
                         {
-                            Vector3 start = light.UnkMatrix0Translation;
-
-
-
-                            Vector3 gameDirection = Vector3.Transform(start, light.UnkMatrix0Quaternion);
-                            Vector3 endEditor = light.UnkMatrix1Translation;
-
-                            RenderLine lightDirLine = new RenderLine();
-                            lightDirLine.SetUnselectedColour(System.Drawing.Color.Yellow);
-                            lightDirLine.Init(new Vector3[] { start, endEditor });
-
-
-                            int refIDLine = RefManager.GetNewRefID();
-                            assets.Add(refIDLine, lightDirLine);
                             Vector3 min = light.BoundaryBoxMinimum;
                             Vector3 max = light.BoundaryBoxMaximum;
 
+                            Vector3[] corners =
+                            {
+                                new Vector3(min.X, min.Y, min.Z),
+                                new Vector3(max.X, min.Y, min.Z),
+                                new Vector3(min.X, max.Y, min.Z),
+                                new Vector3(max.X, max.Y, min.Z),
+                                new Vector3(min.X, min.Y, max.Z),
+                                new Vector3(max.X, min.Y, max.Z),
+                                new Vector3(min.X, max.Y, max.Z),
+                                new Vector3(max.X, max.Y, max.Z),
+                            };
+
                             Matrix4x4 world = light.UnkMatrix0;
 
-                            BoundingBox worldBBox = new BoundingBox(min, max);
+                            for (int i = 0; i < corners.Length; i++)
+                                corners[i] = Vector3.Transform(corners[i], world);
+
+                            BoundingBox worldBBox = BoundingBox.CreateFromPoints(corners);
 
                             RenderBoundingBox renderBBox = new RenderBoundingBox();
                             renderBBox.Init(worldBBox);        
@@ -1875,15 +1878,6 @@ namespace Mafia2Tool
 
                             if (foundNodes.Length > 0)
                             {
-
-                                TreeNode boxNode = new TreeNode("Light Box");
-                                boxNode.Name = refIDSmallBox.ToString();
-                                foundNodes[0].Nodes.Add(boxNode);
-
-                                TreeNode lineNode = new TreeNode("Light Direction");
-                                lineNode.Name = refIDLine.ToString();
-                                foundNodes[0].Nodes.Add(lineNode);
-
                                 TreeNode bboxNode = new TreeNode("Light BoundingBox");
                                 bboxNode.Name = refID.ToString();
                                 bboxNode.Tag = renderBBox;
