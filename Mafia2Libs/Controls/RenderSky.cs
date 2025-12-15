@@ -45,7 +45,6 @@ namespace Forms.OptionControls
             {
                 using (FolderBrowserDialog folderDialog = new FolderBrowserDialog())
                 {
-                    folderDialog.Description = "Выберите папку для текстуры";
                     if (folderDialog.ShowDialog() == DialogResult.OK)
                     {
                         selectedFolder = folderDialog.SelectedPath;
@@ -75,11 +74,10 @@ namespace Forms.OptionControls
                     try
                     {
                         File.Copy(sourceFile, destFile, true);
-                        MessageBox.Show("Текстура успешно скопирована и переименована!");
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("Ошибка при копировании файла: " + ex.Message);
+
                     }
 
                     TexDirectoryBox5.Text = selectedFolder;

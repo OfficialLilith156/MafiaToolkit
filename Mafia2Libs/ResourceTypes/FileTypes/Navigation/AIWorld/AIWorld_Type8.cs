@@ -41,7 +41,7 @@ namespace ResourceTypes.Navigation
             RenderBoundingBox navigationBox = new RenderBoundingBox();
             navigationBox.SetColour(System.Drawing.Color.Aqua);
             navigationBox.Init(new BoundingBox(new Vector3(-0.5f), new Vector3(0.5f)));
-            navigationBox.SetTransform(Matrix4x4.CreateTranslation(Unk2));
+            navigationBox.SetTransform(Matrix4x4.CreateTranslation(Position));
 
             BBoxBatcher.AddObject(RefID, navigationBox);
         }
@@ -60,7 +60,7 @@ namespace ResourceTypes.Navigation
 
         public override Vector3 GetPosition()
         {
-            return Unk2;
+            return Position;
         }
     }
 }

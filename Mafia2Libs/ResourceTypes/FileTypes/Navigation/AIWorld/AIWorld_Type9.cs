@@ -12,14 +12,14 @@ namespace ResourceTypes.Navigation
     {
         public byte Unk0 { get; set; }
         public uint Unk1 { get; set; }
-        public Vector3 Unk2 { get; set; }
+        public Vector3 Position { get; set; }
         public float Unk3 { get; set; }
         public float Unk4 { get; set; }
         public uint[] Unk5 { get; set; }
 
         public AIWorld_Type9(AIWorld InWorld) : base(InWorld)
         {
-            Unk2 = Vector3.Zero;
+            Position = Vector3.Zero;
             Unk5 = new uint[0];
         }
 
@@ -29,7 +29,7 @@ namespace ResourceTypes.Navigation
 
             Unk0 = Reader.ReadByte();
             Unk1 = Reader.ReadUInt32();
-            Unk2 = Vector3Utils.ReadFromFile(Reader);
+            Position = Vector3Utils.ReadFromFile(Reader);
             Unk3 = Reader.ReadSingle();
             Unk4 = Reader.ReadSingle();
 
@@ -47,7 +47,7 @@ namespace ResourceTypes.Navigation
 
             Writer.Write(Unk0);
             Writer.Write(Unk1);
-            Unk2.WriteToFile(Writer);
+            Position.WriteToFile(Writer);
             Writer.Write(Unk3);
             Writer.Write(Unk4);
 
@@ -65,7 +65,7 @@ namespace ResourceTypes.Navigation
             Writer.WriteLine("Type 9:");
             Writer.WriteLine("Unk0: {0}", Unk0);
             Writer.WriteLine("Unk1: {0}", Unk1);
-            Writer.WriteLine("Unk2: {0}", Unk2.ToString());
+            Writer.WriteLine("Position: {0}", Position.ToString());
             Writer.WriteLine("Unk3: {0}", Unk3);
             Writer.WriteLine("Unk4: {0}", Unk4);
 
@@ -83,7 +83,7 @@ namespace ResourceTypes.Navigation
             RenderBoundingBox navigationBox = new RenderBoundingBox();
             navigationBox.SetColour(System.Drawing.Color.LightGray);
             navigationBox.Init(new BoundingBox(new Vector3(-0.5f), new Vector3(0.5f)));
-            navigationBox.SetTransform(Matrix4x4.CreateTranslation(Unk2));
+            navigationBox.SetTransform(Matrix4x4.CreateTranslation(Position));
 
             BBoxBatcher.AddObject(RefID, navigationBox);
         }
@@ -102,7 +102,7 @@ namespace ResourceTypes.Navigation
 
         public override Vector3 GetPosition()
         {
-            return Unk2;
+            return Position;
         }
     }
 }
