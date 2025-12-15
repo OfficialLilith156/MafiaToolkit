@@ -1792,26 +1792,25 @@ namespace Mafia2Tool
             {
                 LoadActorFiles();
             }
-           
+
             foreach (var actor in SceneData.Actors)
             {
                 foreach (var entry in actor.Items)
-                {
+                {                  
                     if (entry.ActorTypeName == "LightEntity" || entry.ActorTypeID == (int)ActorTypes.LightEntity)
                     {
                         Vector3 position = entry.Position;
 
                         Vector3 size = new Vector3(0.05f);
-                        BoundingBox box = new BoundingBox(position - size, position + size);
-                        RenderBoundingBox renderBox = new RenderBoundingBox();
-                        renderBox.Init(box);
+                        BoundingBox smallBox = new BoundingBox(position - size, position + size);
+                        RenderBoundingBox renderSmallBox = new RenderBoundingBox();
+                        renderSmallBox.Init(smallBox);
 
-                        int refIDBox = RefManager.GetNewRefID();
-                        assets.Add(refIDBox, renderBox);
+                        int refIDSmallBox = RefManager.GetNewRefID();
+                        assets.Add(refIDSmallBox, renderSmallBox);
 
                         Vector3 start = position;
                         Vector3 gameDirection = Vector3.Transform(Vector3.UnitY, entry.Rotation);
-
 
                         Vector3 editorDirection = new Vector3(
                             -gameDirection.X,
@@ -1828,22 +1827,61 @@ namespace Mafia2Tool
                         int refIDLine = RefManager.GetNewRefID();
                         assets.Add(refIDLine, lightDirLine);
 
-                        RefIDToActorEntry[refIDBox] = entry;
+                        RefIDToActorEntry[refIDSmallBox] = entry;
                         RefIDToActorEntry[refIDLine] = entry;
-
 
                         TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
                         if (foundNodes.Length > 0)
                         {
                             TreeNode boxNode = new TreeNode("Light Box");
-                            boxNode.Name = refIDBox.ToString();
-                            boxNode.Tag = renderBox;
+                            boxNode.Name = refIDSmallBox.ToString();
+                            boxNode.Tag = renderSmallBox;
                             foundNodes[0].Nodes.Add(boxNode);
 
                             TreeNode lineNode = new TreeNode("Light Direction");
                             lineNode.Name = refIDLine.ToString();
                             lineNode.Tag = lightDirLine;
                             foundNodes[0].Nodes.Add(lineNode);
+                        }
+
+                        if (entry.Data != null && entry.Data.Data is ActorLight light)
+                        {
+                            Vector3 min = light.BoundaryBoxMinimum;
+                            Vector3 max = light.BoundaryBoxMaximum;
+
+                            Vector3[] corners =
+                            {
+                                new Vector3(min.X, min.Y, min.Z),
+                                new Vector3(max.X, min.Y, min.Z),
+                                new Vector3(min.X, max.Y, min.Z),
+                                new Vector3(max.X, max.Y, min.Z),
+                                new Vector3(min.X, min.Y, max.Z),
+                                new Vector3(max.X, min.Y, max.Z),
+                                new Vector3(min.X, max.Y, max.Z),
+                                new Vector3(max.X, max.Y, max.Z),
+                            };
+
+                            Matrix4x4 world = light.UnkMatrix0;
+
+                            for (int i = 0; i < corners.Length; i++)
+                                corners[i] = Vector3.Transform(corners[i], world);
+
+                            BoundingBox worldBBox = BoundingBox.CreateFromPoints(corners);
+
+                            RenderBoundingBox renderBBox = new RenderBoundingBox();
+                            renderBBox.Init(worldBBox);        
+
+                            int refID = RefManager.GetNewRefID();
+                            assets.Add(refID, renderBBox);
+                            RefIDToActorEntry[refID] = entry;
+
+                            if (foundNodes.Length > 0)
+                            {
+                                TreeNode bboxNode = new TreeNode("Light BoundingBox");
+                                bboxNode.Name = refID.ToString();
+                                bboxNode.Tag = renderBBox;
+                                foundNodes[0].Nodes.Add(bboxNode);
+                            }
                         }
                     }
                 }
