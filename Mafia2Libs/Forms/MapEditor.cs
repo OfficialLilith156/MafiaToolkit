@@ -1796,7 +1796,7 @@ namespace Mafia2Tool
             foreach (var actor in SceneData.Actors)
             {
                 foreach (var entry in actor.Items)
-                {                  
+                {
                     if (entry.ActorTypeName == "LightEntity" || entry.ActorTypeID == (int)ActorTypes.LightEntity)
                     {
                         Vector3 position = entry.Position;
@@ -1810,12 +1810,12 @@ namespace Mafia2Tool
                         assets.Add(refIDSmallBox, renderSmallBox);
 
                         Vector3 start = position;
-                        Vector3 gameDirection = Vector3.Transform(Vector3.UnitY, entry.Rotation);
+                        Vector3 gameDirection = Vector3.Transform(start, entry.Rotation);
 
                         Vector3 editorDirection = new Vector3(
                             -gameDirection.X,
                              gameDirection.Y,
-                            -gameDirection.Z 
+                            -gameDirection.Z
                         );
 
                         Vector3 endEditor = start + editorDirection * 0.5f;
@@ -1849,27 +1849,10 @@ namespace Mafia2Tool
                             Vector3 min = light.BoundaryBoxMinimum;
                             Vector3 max = light.BoundaryBoxMaximum;
 
-                            Vector3[] corners =
-                            {
-                                new Vector3(min.X, min.Y, min.Z),
-                                new Vector3(max.X, min.Y, min.Z),
-                                new Vector3(min.X, max.Y, min.Z),
-                                new Vector3(max.X, max.Y, min.Z),
-                                new Vector3(min.X, min.Y, max.Z),
-                                new Vector3(max.X, min.Y, max.Z),
-                                new Vector3(min.X, max.Y, max.Z),
-                                new Vector3(max.X, max.Y, max.Z),
-                            };
-
-                            Matrix4x4 world = light.UnkMatrix0;
-
-                            for (int i = 0; i < corners.Length; i++)
-                                corners[i] = Vector3.Transform(corners[i], world);
-
-                            BoundingBox worldBBox = BoundingBox.CreateFromPoints(corners);
+                            BoundingBox worldBBox = new BoundingBox(min, max);
 
                             RenderBoundingBox renderBBox = new RenderBoundingBox();
-                            renderBBox.Init(worldBBox);        
+                            renderBBox.Init(worldBBox);
 
                             int refID = RefManager.GetNewRefID();
                             assets.Add(refID, renderBBox);
