@@ -76,6 +76,7 @@ namespace Mafia2Tool
         private bool bSelectMode = false;
         private float selectTimer = 0.0f;
         private bool bHideChildren = false;
+        private Dictionary<int, ActorEntry> RefIDToActorEntry = new Dictionary<int, ActorEntry>();
 
         private TreeNode navigationGridsNode = null;
 
@@ -1827,7 +1828,10 @@ namespace Mafia2Tool
                         int refIDLine = RefManager.GetNewRefID();
                         assets.Add(refIDLine, lightDirLine);
 
-                        
+                        RefIDToActorEntry[refIDBox] = entry;
+                        RefIDToActorEntry[refIDLine] = entry;
+
+
                         TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
                         if (foundNodes.Length > 0)
                         {
@@ -2111,11 +2115,12 @@ namespace Mafia2Tool
                 for (int c = 0; c < actor.Items.Count; c++)
                 {
                     var item = actor.Items[c];
-                    TreeNode itemNode = new TreeNode("actor_" + z + "-" + c);
-                    itemNode.Text = item.EntityName;
+                   
+                    TreeNode itemNode = new TreeNode(item.EntityName);
+                    itemNode.Name = "actor_" + item.EntityName;
                     itemNode.Tag = item;
 
-                    var typeString = string.Format("actorType_" + item.ActorTypeName);
+                    var typeString = "actorType_" + item.ActorTypeName;
                     var foundnodes = actorFile.Nodes.Find(typeString, false);
                     if (foundnodes.Length > 0)
                     {
@@ -2162,6 +2167,17 @@ namespace Mafia2Tool
             else if (node.Tag is Instance instance)
             {
                 Graphics.SelectInstance(instance.RefID);
+            }
+            else if (node.Tag is ActorEntry actorEntry)
+            {
+                foreach (TreeNode child in node.Nodes)
+                {
+                    if (int.TryParse(child.Name, out int refID))
+                    {
+                        Graphics.SelectEntry(refID);
+                        break; 
+                    }
+                }
             }
             else
             {
@@ -2574,11 +2590,9 @@ namespace Mafia2Tool
 
         private void Pick(int sx, int sy)
         {
-            PickOutParams outParams = Graphics.Pick(
-                sx, sy,
-                RenderPanel.Size.Width,
-                RenderPanel.Size.Height);
+            PickOutParams outParams = Graphics.Pick(sx, sy, RenderPanel.Size.Width, RenderPanel.Size.Height);
 
+           
             if (outParams.LowestInstanceID != -1)
             {
                 var nodes = dSceneTree.Find(outParams.LowestInstanceID.ToString(), true);
@@ -2593,13 +2607,26 @@ namespace Mafia2Tool
 
             if (outParams.LowestRefID != -1)
             {
-                var nodes = dSceneTree.Find(outParams.LowestRefID.ToString(), true);
-                if (nodes.Length == 0)
+                int refID = outParams.LowestRefID;
+
+               
+                if (RefIDToActorEntry.TryGetValue(refID, out ActorEntry actorEntry))
+                {
+                   
+                    TreeNode[] actorNodes = dSceneTree.TreeView.Nodes.Find("actor_" + actorEntry.EntityName, true);
+                    if (actorNodes.Length > 0)
+                    {
+                        dSceneTree.SelectedNode = actorNodes[0];
+                        TreeViewUpdateSelected();
+                        return;
+                    }
+                }
+
+                var standardNodes = dSceneTree.Find(refID.ToString(), true);
+                if (standardNodes.Length == 0)
                     return;
 
-                var node = nodes[0];
-
-
+                var node = standardNodes[0];
                 if (node.Tag is FrameObjectDummy)
                     return;
 
