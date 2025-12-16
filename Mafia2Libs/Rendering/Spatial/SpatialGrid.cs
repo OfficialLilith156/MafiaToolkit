@@ -65,8 +65,8 @@ namespace Rendering.Core
             }
 
 
-            var min = new Vector3(mesh.BoundMin.X, mesh.BoundMin.Y, minZ);
-            var max = new Vector3(mesh.BoundMax.X, mesh.BoundMax.Y, maxZ);
+            var min = new Vector3(mesh.BoundMinX, mesh.BoundMinY, minZ);
+            var max = new Vector3(mesh.BoundMaxX, mesh.BoundMaxY, maxZ);
 
             gridBounds = new BoundingBox(min, max);
 
@@ -258,7 +258,6 @@ namespace Rendering.Core
                 TreeNode Child = new TreeNode();
                 Child.Text = string.Format("CELL {0}", i);
                 Child.Name = cells[i].GetRefID().ToString();
-                Child.Tag = cells[i];
                 ChildCells[i] = Child;
             }
 
