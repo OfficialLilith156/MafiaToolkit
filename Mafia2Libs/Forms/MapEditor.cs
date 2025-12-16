@@ -2647,6 +2647,7 @@ namespace Mafia2Tool
                 FrameObjectSector sector = (obj as FrameObjectSector);
                 sector.FillPlanesArray();
                 RenderBoundingBox bbox = (Graphics.GetAsset(obj.RefID) as RenderBoundingBox);
+                bbox.SetTransform(sector.WorldTransform);
                 bbox.Update(sector.Bounds);
             }
             else if (obj is FrameObjectSingleMesh)
