@@ -170,6 +170,7 @@ namespace Rendering.Graphics
                 navigationGrids[i].Initialise(D3D.Device, D3D.DeviceContext);
                 Grids[i] = navigationGrids[i].GetTreeNodes();
                 Grids[i].Text = string.Format("Grid: {0}", i);
+                Grids[i].Tag = data[i].runtimeMesh;
             }
 
             TreeNode Parent = new TreeNode("Navigation Grids");

@@ -361,6 +361,22 @@ namespace Mafia2Tool
                     isVisible = parent.Checked && parent.CheckIfParentsAreValid();
                 }
 
+
+                if (node.Tag is RenderNavCell renderNavGrid)
+                {
+                    renderNavGrid.SetVisibility(isVisible);
+                }
+                else if (node == OBJDataRoot)
+                {
+                    foreach (TreeNode child in node.Nodes)
+                    {
+                        if (child.Tag is RenderNavCell nav)
+                        {
+                            nav.SetVisibility(isVisible);
+                        }
+                    }
+                }
+
                 if (node.Tag is RenderNav renderNav)
                 {
                     renderNav.SetVisible(isVisible);
@@ -1462,7 +1478,6 @@ namespace Mafia2Tool
                 for (int i = 0; i < SceneData.OBJData.Length; i++)
                 {
                     data[i] = (OBJData)SceneData.OBJData[i].Data;
-                    
                 }
 
                 TreeNode Grids = Graphics.SetNavigationGrid(data);
@@ -1471,6 +1486,8 @@ namespace Mafia2Tool
                 for (int i = 0; i < SceneData.OBJData.Length; i++)
                 {
                     var obj = (SceneData.OBJData[i].Data as OBJData);
+                    if (obj == null) continue;
+
                     RenderNav navigationPoints = new RenderNav(Graphics);
                     navigationPoints.Init(obj);
 
@@ -1479,13 +1496,103 @@ namespace Mafia2Tool
                     navNode.Name = "NAV_OBJ_DATA";
                     navNode.Tag = navigationPoints;
 
-                    for (int x = 0; x < obj.vertices.Length; x++)
+                    // Добавляем вершины
+                    if (obj.vertices != null)
                     {
-                        TreeNode childNode = new TreeNode();
-                        childNode.Text = string.Format("NAVNode: {0}", obj.vertices[x].Unk7);
-                        childNode.Name = "NAV_INDEXED_NODE";
-                        childNode.Tag = obj.vertices[x];
-                        navNode.Nodes.Add(childNode);
+                        for (int x = 0; x < obj.vertices.Length; x++)
+                        {
+                            TreeNode childNode = new TreeNode();
+                            childNode.Text = string.Format("NAVNode: {0}", obj.vertices[x].Unk7);
+                            childNode.Name = "NAV_INDEXED_NODE";
+                            childNode.Tag = obj.vertices[x];
+                            navNode.Nodes.Add(childNode);
+                        }
+                    }
+
+                    // Добавляем ячейки из runtimeMesh
+                    if (obj.runtimeMesh != null && obj.runtimeMesh.Cells != null)
+                    {
+                        for (int cellIndex = 0; cellIndex < obj.runtimeMesh.Cells.Length; cellIndex++)
+                        {
+                            KynogonRuntimeMesh.Cell cell = obj.runtimeMesh.Cells[cellIndex];
+
+                            TreeNode cellNode = new TreeNode();
+                            cellNode.Text = string.Format("Cell: {0}, Sets: {1}", cellIndex, cell.Sets?.Length ?? 0);
+                            cellNode.Name = "NAV_CELL_NODE";
+                            cellNode.Tag = cell; // Сохраняем всю ячейку
+
+                            // Добавляем наборы внутри ячейки
+                            if (cell.Sets != null)
+                            {
+                                for (int setIndex = 0; setIndex < cell.Sets.Length; setIndex++)
+                                {
+                                    var set = cell.Sets[setIndex];
+                                    TreeNode setNode = new TreeNode();
+                                    setNode.Text = string.Format("Set: {0}", setIndex);
+                                    setNode.Name = "NAV_SET_NODE";
+                                    setNode.Tag = set;
+
+                                    // Добавляем unk12Boxes если есть
+                                    if (set.unk12Boxes != null)
+                                    {
+                                        for (int boxIndex = 0; boxIndex < set.unk12Boxes.Length; boxIndex++)
+                                        {
+                                            RenderNavCell navCell = new RenderNavCell(Graphics);
+                                            TreeNode boxNode = new TreeNode();
+                                            boxNode.Text = string.Format("BoxUNK12: {0}", boxIndex);
+                                            boxNode.Name = "NAV_BOX_NODE";
+                                            boxNode.Tag = set.unk12Boxes[boxIndex].B1;
+                                            setNode.Nodes.Add(boxNode);
+                                            //navCell.Update();
+                                        }
+                                    }
+
+
+                                    if (set.unk10Boxes != null)
+                                    {
+                                        for (int boxIndex = 0; boxIndex < set.unk10Boxes.Length; boxIndex++)
+                                        {
+                                            TreeNode boxNode = new TreeNode();
+                                            boxNode.Text = string.Format("BoxUNK10: {0}", boxIndex);
+                                            boxNode.Name = "NAV_BOX_NODE";
+                                            boxNode.Tag = set.unk10Boxes[boxIndex].B1;
+                                            setNode.Nodes.Add(boxNode);
+                                        }
+                                    }
+
+                                    if (set.unk14Boxes != null)
+                                    {
+                                        for (int boxIndex = 0; boxIndex < set.unk14Boxes.Length; boxIndex++)
+                                        {
+                                            TreeNode boxNode = new TreeNode();
+                                            boxNode.Text = string.Format("BoxUNK14: {0}", boxIndex);
+                                            boxNode.Name = "NAV_BOX_NODE";
+                                            boxNode.Tag = set.unk14Boxes[boxIndex].Points;
+                                            setNode.Nodes.Add(boxNode);
+                                        }
+                                    }
+
+
+                                    if (set.unk18Set != null)
+                                    {
+                                        for (int boxIndex = 0; boxIndex < set.unk18Set.Length; boxIndex++)
+                                        {
+                                            TreeNode boxNode = new TreeNode();
+                                            boxNode.Text = string.Format("BoxUNK18: {0}", boxIndex);
+                                            boxNode.Name = "NAV_BOX_NODE";
+                                            boxNode.Tag = set.unk18Set[boxIndex].Points;
+                                            setNode.Nodes.Add(boxNode);
+                                        }
+                                    }
+
+
+
+                                    cellNode.Nodes.Add(setNode);
+                                }
+                            }
+
+                            navNode.Nodes.Add(cellNode);
+                        }
                     }
 
                     OBJDataRoot.Nodes.Add(navNode);
