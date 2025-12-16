@@ -8,14 +8,14 @@ using Utils.StringHelpers;
 
 namespace ResourceTypes.Navigation
 {
-    public struct Unk10DataSet
+    public class Unk10DataSet
     {
         public BoundingBox B1;
         public int UnkOffset;
         public int Unk20;
     }
 
-    public struct Unk12DataSet
+    public class Unk12DataSet
     {
         public BoundingBox B1;
         public int Unk01; //-1?
@@ -25,13 +25,13 @@ namespace ResourceTypes.Navigation
         public float Unk05;
     }
 
-    public struct Unk14DataSet
+    public class Unk14DataSet
     {
         public int Offset;
         public Vector3[] Points;
     }
 
-    public struct Unk18DataSet
+    public class Unk18DataSet
     {
         public float Unk0;
         public float Unk1;
@@ -40,7 +40,7 @@ namespace ResourceTypes.Navigation
         public Vector3[] Points;
     }
 
-    public struct UnkSet0
+    public class UnkSet0
     {
         public float X;
         public float Y;
@@ -82,7 +82,7 @@ namespace ResourceTypes.Navigation
     }
 
     [TypeConverter(typeof(ExpandableObjectConverter))]
-    public class KynogonRuntimeMesh
+    public class KynogonRuntimeMesh : INavigationData
     {
         public class Cell
         {
@@ -99,18 +99,117 @@ namespace ResourceTypes.Navigation
         public int Unk1 { get; set; }
         public float Unk2 { get; set; }
         public float Unk3 { get; set; }
-        public Vector2 BoundMin { get; set; }
-        public Vector2 BoundMax { get; set; }
+        private Vector2 boundMin;
+        private Vector2 boundMax;
+
+        [Browsable(true)]
+        [Category("Bounds")]
+        [Description("Minimum bound X coordinate")]
+        public float BoundMinX
+        {
+            get => boundMin.X;
+            set => boundMin.X = value;
+        }
+
+        [Browsable(true)]
+        [Category("Bounds")]
+        [Description("Minimum bound Y coordinate")]
+        public float BoundMinY
+        {
+            get => boundMin.Y;
+            set => boundMin.Y = value;
+        }
+
+        [Browsable(true)]
+        [Category("Bounds")]
+        [Description("Maximum bound X coordinate")]
+        public float BoundMaxX
+        {
+            get => boundMax.X;
+            set => boundMax.X = value;
+        }
+
+        [Browsable(true)]
+        [Category("Bounds")]
+        [Description("Maximum bound Y coordinate")]
+        public float BoundMaxY
+        {
+            get => boundMax.Y;
+            set => boundMax.Y = value;
+        }
+
+        [Browsable(true)]
+        [Category("Grid Properties")]
+        [Description("Cell size in X direction")]
         public int CellSizeX { get; set; }
+
+        [Browsable(true)]
+        [Category("Grid Properties")]
+        [Description("Cell size in Y direction")]
         public int CellSizeY { get; set; }
+
+        [Browsable(true)]
+        [Category("Grid Properties")]
+        [Description("Radius value")]
         public float Radius { get; set; }
-        public int Unk4;
+
+        // Заменяем поле Unk4 на свойство
+        private int unk4;
+        [Browsable(true)]
+        [Category("Grid Properties")]
+        [Description("Unknown value 4")]
+        public int Unk4
+        {
+            get => unk4;
+            set => unk4 = value;
+        }
+
+        [Browsable(true)]
+        [Category("Grid Properties")]
+        [Description("Height value")]
         public int Height { get; set; }
 
-        public int Offset;
-        public int[] Grid;
-        public Cell[] Cells;
+        // Делаем Offset свойством вместо поля
+        private int offset;
+        [Browsable(true)]
+        [Category("Grid Properties")]
+        [Description("Offset value")]
+        public int Offset
+        {
+            get => offset;
+            set => offset = value;
+        }
 
+        // Добавляем свойства для массивов (только для чтения)
+        private int[] grid;
+        [Browsable(false)] // Скрываем из PropertyGrid, так как это массив
+        public int[] Grid
+        {
+            get => grid;
+            set => grid = value;
+        }
+
+        [Browsable(true)]
+        [Category("Arrays")]
+        [Description("Grid array length")]
+        [ReadOnly(true)]
+        public int GridLength => grid?.Length ?? 0;
+
+        private Cell[] cells;
+        [Browsable(false)] // Скрываем из PropertyGrid, так как это массив
+        public Cell[] Cells
+        {
+            get => cells;
+            set => cells = value;
+        }
+
+        [Browsable(true)]
+        [Category("Arrays")]
+        [Description("Cells array length")]
+        [ReadOnly(true)]
+        public int CellsLength => cells?.Length ?? 0;
+
+        // Обновляем метод ReadFromFile для использования свойств
         public void ReadFromFile(BinaryReader reader)
         {
             //KynogonRuntimeMesh
@@ -138,37 +237,36 @@ namespace ResourceTypes.Navigation
             float boundMaxX = reader.ReadSingle();
             float boundMaxY = -reader.ReadSingle();
             float boundMinY = -reader.ReadSingle();
-
-            BoundMin = new Vector2(boundMinX, boundMinY);
-            BoundMax = new Vector2(boundMaxX, boundMaxY);
+            BoundMinX = boundMinX;
+            BoundMinY = boundMinY;
+            BoundMaxX = boundMaxX;
+            BoundMaxY = boundMaxY;
 
             //BoundingBox = BoundingBoxExtenders.ReadFromFile(reader);
             CellSizeX = reader.ReadInt32();
             CellSizeY = reader.ReadInt32();
             Radius = reader.ReadSingle();
-            Unk4 = reader.ReadInt32();
+            Unk4 = reader.ReadInt32(); // Теперь это свойство
             Height = reader.ReadInt32();
-            Offset = reader.ReadInt32(); //this is a potential offset;
-            Grid = new int[(CellSizeX * CellSizeY)];
-            Cells = new Cell[Grid.Length];
+            Offset = reader.ReadInt32(); // Теперь это свойство
 
-            for (int i = 0; i < Grid.Length; i++)
+            grid = new int[(CellSizeX * CellSizeY)];
+            cells = new Cell[grid.Length];
+
+            for (int i = 0; i < grid.Length; i++)
             {
-                Grid[i] = reader.ReadInt32();
+                grid[i] = reader.ReadInt32();
             }
 
             int end = reader.ReadInt32();
             int Count = 0;
 
-            for (int i = 0; i < Cells.Length; i++)
+            for (int i = 0; i < cells.Length; i++)
             {
-                //if (i + 1 >= Cells.Length)
-                //    break;
-
                 Cell cell = new Cell();
                 int numSet0 = reader.ReadInt32();
                 cell.Sets = new UnkSet0[numSet0];
-                Cells[i] = cell;
+                cells[i] = cell;
 
                 if (numSet0 == 0)
                     continue;
@@ -227,7 +325,7 @@ namespace ResourceTypes.Navigation
                         unk10Set.B1 = BoundingBoxExtenders.ReadFromFile(reader);
                         unk10Set.UnkOffset = reader.ReadInt32(); // offset is next set in next cell? 
 
-                       //  Linked cell?
+                        //  Linked cell?
                         unk10Set.Unk20 = reader.ReadInt32(); // really unsure on what this is
                         set.unk10Boxes[x] = unk10Set;
                     }
@@ -299,12 +397,12 @@ namespace ResourceTypes.Navigation
                     {
                         set.EdgeBoxes[x] = BoundingBoxExtenders.ReadFromFile(reader);
                     }
-                    
+
                     // 7th set of boxes
                     set.unk18Set = new Unk18DataSet[set.NumUnk18Boxes];
                     if (set.NumUnk18Boxes > 0)
                     {
-                        set.unk18End = reader.ReadInt32();                    
+                        set.unk18End = reader.ReadInt32();
                         for (int x = 0; x < set.NumUnk18Boxes; x++)
                         {
                             Unk18DataSet dataSet = new Unk18DataSet();
@@ -312,7 +410,7 @@ namespace ResourceTypes.Navigation
                             dataSet.Unk1 = reader.ReadSingle();
                             dataSet.Unk2 = reader.ReadSingle();
                             dataSet.Offset = reader.ReadInt32();
-                            
+
                             set.unk18Set[x] = dataSet;
                         }
 
@@ -326,7 +424,7 @@ namespace ResourceTypes.Navigation
                             var count = size / 12;
                             dataSet.Points = new Vector3[count];
 
-                            for(int f = 0; f < dataSet.Points.Length; f++)
+                            for (int f = 0; f < dataSet.Points.Length; f++)
                             {
                                 dataSet.Points[f] = Vector3Utils.ReadFromFile(reader);
                             }
@@ -340,25 +438,9 @@ namespace ResourceTypes.Navigation
                     cell.Sets[z] = set;
                 }
             }
-
-            /*uint UnkFooter0 = reader.ReadUInt32();
-            if(UnkFooter0 == 0)
-            {
-                throw new NotImplementedException();
-            }
-
-            uint OffsetToFooter = reader.ReadUInt32(); // should be same as reader.position - kynogon mesh start
-            uint FooterPadding = reader.ReadUInt32(); // Usually zero for me.
-            string FooterName = StringHelpers.ReadString(reader); // A null terminated string.
-            uint FooterUnk0 = reader.ReadUInt32(); // Size of string. Goes _after_ the string has been stored.
-            uint FooterMagic = reader.ReadUInt32(); // should be 0x1213F001
-            ToolkitAssert.Ensure(FooterMagic == 0x1213F001, "Didn't reach end of file.");
-            */
-
-            //File.WriteAllLines("model.obj", data.ToArray());
-
         }
 
+        // Обновляем метод WriteToFile
         public void WriteToFile(NavigationWriter writer)
         {
             long MESH_START = writer.BaseStream.Position;
@@ -372,30 +454,30 @@ namespace ResourceTypes.Navigation
             writer.Write(Unk2);
             writer.Write(Unk3);
 
-            writer.Write(BoundMin.X);
-            writer.Write(BoundMax.X);
-            writer.Write(-BoundMax.Y);
-            writer.Write(-BoundMin.Y);
+            writer.Write(BoundMinX);
+            writer.Write(BoundMaxX);
+            writer.Write(-BoundMaxY);
+            writer.Write(-BoundMinY);
 
             writer.Write(CellSizeX);
             writer.Write(CellSizeY);
             writer.Write(Radius);
-            writer.Write(Unk4);
+            writer.Write(Unk4); // Теперь это свойство
             writer.Write(Height);
-            writer.Write(Offset);
+            writer.Write(Offset); // Теперь это свойство
 
-            for (int i = 0; i < Grid.Length; i++)
+            for (int i = 0; i < grid.Length; i++)
             {
                 writer.PushLooseObjectPtr("GRID_OFFSET_" + i, MESH_START);
             }
 
             writer.PushLooseObjectPtr("GRID_END", MESH_START);
 
-            for (int i = 0; i < Grid.Length; i++)
+            for (int i = 0; i < grid.Length; i++)
             {
                 writer.SolveLooseObjectPtr("GRID_OFFSET_" + i);
 
-                Cell cell = Cells[i];
+                Cell cell = cells[i];
                 writer.Write(cell.Sets.Length);
 
                 if (cell.Sets.Length == 0)
@@ -566,8 +648,8 @@ namespace ResourceTypes.Navigation
             Writer.Write("Unk1: {0}", Unk1);
             Writer.Write("Unk2: {0}", Unk2);
             Writer.Write("Unk3: {0}", Unk3);
-            Writer.Write("BoundMin: {0}", BoundMin.ToString());
-            Writer.Write("BoundMax: {0}", BoundMax.ToString());
+            //Writer.Write("BoundMin: {0}", BoundMin.ToString());
+            //Writer.Write("BoundMax: {0}", BoundMax.ToString());
             Writer.Write("CellSizeX: {0}", CellSizeX);
             Writer.Write("CellSizeY: {0}", CellSizeY);
             Writer.Write("Radius: {0}", Radius);
