@@ -1012,57 +1012,134 @@ namespace Mafia2Tool
 
         private void SaveAIWorld()
         {
-            DialogResult result = MessageBox.Show("Do you want to save your changes?", "Toolkit", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (MessageBox.Show("Save AIWorld?", "Toolkit", MessageBoxButtons.YesNo) != DialogResult.Yes)
+                return;
 
-            if (result == DialogResult.Yes)
+            Cursor.Current = Cursors.WaitCursor;
+
+            try
             {
-                Cursor.Current = Cursors.WaitCursor;
+                //Console.WriteLine("=== AIWorld Save ===");
 
-
-                if (SceneData.AIWorlds != null && ToolkitSettings.Experimental)
+                if (SceneData?.AIWorlds == null)
                 {
-                    foreach (NAVData navData in SceneData.AIWorlds)
+                    //MessageBox.Show("No AIWorlds to save", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                int savedCount = 0;
+
+                foreach (NAVData navData in SceneData.AIWorlds)
+                {
+                    try
                     {
-                        if (navData.Data is AIWorld aiWorld)
+                        if (navData?.Data is AIWorld aiWorld)
                         {
-                            foreach (TreeNode rootNode in dSceneTree.TreeView.Nodes)
+                            Console.WriteLine($"\nProcessing: {aiWorld.PartName}");
+
+                            SyncAIWorldCollections(aiWorld);
+
+                            navData.WriteToFile();
+                            savedCount++;
+
+                            //Console.WriteLine($"Saved: {aiWorld.PartName} ({aiWorld.AIPoints.Count} points, {aiWorld.Types1.Count} groups)");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        //Console.WriteLine($"Error saving AIWorld: {ex.Message}");
+                    }
+                }
+
+                //Console.WriteLine($"\nTotal saved: {savedCount} AIWorld(s)");
+                //Console.WriteLine("=== Save Complete ===");
+
+                //MessageBox.Show($"Saved {savedCount} AIWorld(s)", "Success",
+                              //MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                //MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //Console.WriteLine($"Fatal error: {ex}");
+            }
+            finally
+            {
+                Cursor.Current = Cursors.Default;
+            }
+        }
+
+        private void SyncAIWorldCollections(AIWorld aiWorld)
+        {
+            try
+            {
+                //Console.WriteLine($"  Syncing AIWorld collections...");
+
+                if (dSceneTree == null || dSceneTree.TreeView == null || dSceneTree.TreeView.Nodes == null)
+                {
+                    //Console.WriteLine($"    Tree not available, using existing data");
+                    return;
+                }
+
+                TreeNode worldNode = null;
+                foreach (TreeNode rootNode in dSceneTree.TreeView.Nodes)
+                {
+                    if (rootNode != null && object.ReferenceEquals(rootNode.Tag, aiWorld))
+                    {
+                        worldNode = rootNode;
+                        break;
+                    }
+                }
+
+                if (worldNode == null)
+                {
+                    //Console.WriteLine($"    AIWorld node not found in tree, using existing data");
+                    return;
+                }
+
+                //Console.WriteLine($"    Found node with {worldNode.Nodes.Count} children");
+
+                aiWorld.AIPoints.Clear();
+                aiWorld.Types1.Clear();
+
+                foreach (TreeNode childNode in worldNode.Nodes)
+                {
+                    if (childNode?.Tag is IType aiPoint)
+                    {
+                        aiWorld.AIPoints.Add(aiPoint);
+
+                        if (aiPoint is AIWorld_Type1 type1Group)
+                        {
+                            aiWorld.Types1.Add(type1Group);
+
+                            if (type1Group.AIPoints != null)
                             {
-                                if (rootNode.Tag == aiWorld)
+                                foreach (IType childPoint in type1Group.AIPoints)
                                 {
-
-                                    aiWorld.Types1.Clear();
-
-                                    foreach (TreeNode groupNode in rootNode.Nodes)
+                                    if (!aiWorld.AIPoints.Contains(childPoint))
                                     {
-                                        if (groupNode.Tag is AIWorld_Type1 group)
-                                        {
-                                            group.AIPoints.Clear();
-
-                                            foreach (TreeNode pointNode in groupNode.Nodes)
-                                            {
-                                                if (pointNode.Tag is IType point)
-                                                {
-                                                    group.AIPoints.Add(point);
-                                                }
-                                            }
-
-                                            aiWorld.Types1.Add(group);
-                                        }
+                                        aiWorld.AIPoints.Add(childPoint);
                                     }
                                 }
                             }
 
-                            navData.WriteToFile();
+                            //Console.WriteLine($"      Added Type1Group with {type1Group.AIPoints.Count} children");
+                        }
+                        else
+                        {
+                            //Console.WriteLine($"      Added point type: {aiPoint.GetType().Name}");
                         }
                     }
                 }
 
-
-                Cursor.Current = Cursors.Default;
-
-                Console.WriteLine("Saved Changes Succesfully");
+                //Console.WriteLine($"    Sync complete: {aiWorld.AIPoints.Count} points, {aiWorld.Types1.Count} groups");
+            }
+            catch (Exception ex)
+            {
+                //Console.WriteLine($"    ERROR during sync: {ex.Message}");
             }
         }
+
+
         private void SaveOBJData()
         {
             DialogResult result = MessageBox.Show("Do you want to save your changes?", "Toolkit", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
@@ -3087,6 +3164,10 @@ namespace Mafia2Tool
                 dSceneTree.RemoveNode(node);
                 Graphics.DeleteAsset(int.Parse(node.Name));
             }
+            else if (node.Tag is IType aiPoint)
+            {
+                DeleteAIPoint(node);
+            }
             else if (node.Tag.GetType() == typeof(Collision.CollisionModel))
             {
                 dSceneTree.RemoveNode(node);
@@ -3116,6 +3197,29 @@ namespace Mafia2Tool
                     DeleteTRObject(node.FirstNode);
                 }
                 dSceneTree.RemoveNode(node);
+            }
+        }
+        private void DeleteAIPoint(TreeNode node)
+        {
+            if (node.Tag is IType aiPoint)
+            {
+                if (node.Parent?.Tag is AIWorld_Type1 parentGroup)
+                {
+                    parentGroup.AIPoints.Remove(aiPoint);
+
+                    if (parentGroup.World != null)
+                    {
+                        parentGroup.World.AIPoints.Remove(aiPoint);
+                        parentGroup.World.RequestPrimitiveBatchUpdate();
+                    }
+                }
+                else if (node.Parent?.Tag is AIWorld parentWorld)
+                {
+                    parentWorld.AIPoints.Remove(aiPoint);
+                    parentWorld.RequestPrimitiveBatchUpdate();
+                }
+
+                node.Parent?.Nodes.Remove(node);
             }
         }
 

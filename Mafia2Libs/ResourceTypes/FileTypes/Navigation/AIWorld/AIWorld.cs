@@ -15,7 +15,7 @@ namespace ResourceTypes.Navigation
     {
         public int Unk03 { get; set; }
         public int Unk05 { get; set; } // same as Unk3
-        public List<AIWorld_Type1> Types1 { get; set; }
+        public List<AIWorld_Type1> Types1 { get; private set; }
         public string PartName { get; set; }
         public string KynogonString { get; set; }
         public List<IType> AIPoints { get; private set; }
@@ -43,11 +43,33 @@ namespace ResourceTypes.Navigation
         public AIWorld(BinaryReader reader)
         {
             AIPoints = new List<IType>();
- 
 
+            Types1 = new List<AIWorld_Type1>();
             ReadFromFile(reader);
         }
-        
+        public void RemovePoint(IType point)
+        {
+            AIPoints.Remove(point);
+
+            if (point is AIWorld_Type1 type1Group)
+            {
+                Types1.Remove(type1Group);
+
+                foreach (IType childPoint in type1Group.AIPoints)
+                {
+                    AIPoints.Remove(childPoint);
+                }
+            }
+
+            RequestPrimitiveBatchUpdate();
+        }
+        public void RemovePointFromGroup(IType point, AIWorld_Type1 group)
+        {
+            group.AIPoints.Remove(point);
+            AIPoints.Remove(point);
+            RequestPrimitiveBatchUpdate();
+        }
+
 
         public void ReadFromFile(BinaryReader reader)
         {

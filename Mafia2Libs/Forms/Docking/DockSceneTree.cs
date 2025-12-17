@@ -99,26 +99,54 @@ namespace Forms.Docking
             }
         }
 
-        
+
 
 
         public void DeleteSelectedNode()
         {
             if (TreeView_Explorer.SelectedNode == null) return;
 
-         
             if (TreeView_Explorer.SelectedNode.Tag is IType selectedPoint)
             {
-              
-                var parentWorld = selectedPoint.World; 
-                parentWorld.DeletePoint(selectedPoint);
+                var parentNode = TreeView_Explorer.SelectedNode.Parent;
 
+                if (parentNode != null && parentNode.Tag is AIWorld_Type1 parentGroup)
+                {
+                    parentGroup.AIPoints.Remove(selectedPoint);
+
+                    if (parentGroup.World != null)
+                    {
+                        parentGroup.World.AIPoints.Remove(selectedPoint);
+                        parentGroup.World.RequestPrimitiveBatchUpdate();
+                    }
+                }
+                else if (selectedPoint.World != null)
+                {
+                    selectedPoint.World.AIPoints.Remove(selectedPoint);
+                    selectedPoint.World.RequestPrimitiveBatchUpdate();
+                }
 
                 TreeView_Explorer.Nodes.Remove(TreeView_Explorer.SelectedNode);
             }
             else if (TreeView_Explorer.SelectedNode.Tag is AIWorld world)
             {
-                
+            }
+            else if (TreeView_Explorer.SelectedNode.Tag is AIWorld_Type1 group)
+            {
+                if (group.World != null)
+                {
+                    group.World.AIPoints.Remove(group);
+                    group.World.Types1.Remove(group);
+
+                    foreach (IType childPoint in group.AIPoints)
+                    {
+                        group.World.AIPoints.Remove(childPoint);
+                    }
+
+                    group.World.RequestPrimitiveBatchUpdate();
+                }
+
+                TreeView_Explorer.Nodes.Remove(TreeView_Explorer.SelectedNode);
             }
         }
 
