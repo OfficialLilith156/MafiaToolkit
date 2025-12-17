@@ -1916,26 +1916,7 @@ namespace Mafia2Tool
                         int refIDSmallBox = RefManager.GetNewRefID();
                         assets.Add(refIDSmallBox, renderSmallBox);
 
-                        Vector3 start = position;
-                        Vector3 gameDirection = Vector3.Transform(start, entry.Rotation);
-
-                        Vector3 editorDirection = new Vector3(
-                            -gameDirection.X,
-                             gameDirection.Y,
-                            -gameDirection.Z
-                        );
-
-                        Vector3 endEditor = start + editorDirection * 0.5f;
-
-                        RenderLine lightDirLine = new RenderLine();
-                        lightDirLine.SetUnselectedColour(System.Drawing.Color.Yellow);
-                        lightDirLine.Init(new Vector3[] { start, endEditor });
-
-                        int refIDLine = RefManager.GetNewRefID();
-                        assets.Add(refIDLine, lightDirLine);
-
                         RefIDToActorEntry[refIDSmallBox] = entry;
-                        RefIDToActorEntry[refIDLine] = entry;
 
                         TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
                         if (foundNodes.Length > 0)
@@ -1944,11 +1925,6 @@ namespace Mafia2Tool
                             boxNode.Name = refIDSmallBox.ToString();
                             boxNode.Tag = renderSmallBox;
                             foundNodes[0].Nodes.Add(boxNode);
-
-                            TreeNode lineNode = new TreeNode("Light Direction");
-                            lineNode.Name = refIDLine.ToString();
-                            lineNode.Tag = lightDirLine;
-                            foundNodes[0].Nodes.Add(lineNode);
                         }
 
                         if (entry.Data != null && entry.Data.Data is ActorLight light)
