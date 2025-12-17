@@ -163,6 +163,9 @@
     <Compile Update="Forms\ATPEditor.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="Forms\RotateAIGroupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Remove="Rendering\Graphics\RenderTypes\Instances\**" />
   </ItemGroup>
   <ItemGroup>

@@ -79,6 +79,10 @@ namespace Mafia2Tool
             addType9ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             addType11ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             deleteAINavigationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            importXMLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            exportXmlToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            moveAIGroupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            rotateAIToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripDropDownButton3 = new System.Windows.Forms.ToolStripDropDownButton();
             moveGroupNodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripDropDownButton4 = new System.Windows.Forms.ToolStripDropDownButton();
@@ -93,6 +97,7 @@ namespace Mafia2Tool
             toolStripDropDownButton2 = new System.Windows.Forms.ToolStripDropDownButton();
             addModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             batchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            updateActorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             imageList1 = new System.Windows.Forms.ImageList(components);
             RenderPanel = new System.Windows.Forms.Panel();
             MeshBrowser = new System.Windows.Forms.OpenFileDialog();
@@ -100,7 +105,6 @@ namespace Mafia2Tool
             dockPanel1 = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             FrameBrowser = new System.Windows.Forms.OpenFileDialog();
             SaveFileDialog = new System.Windows.Forms.SaveFileDialog();
-            updateActorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             StatusStrip = new System.Windows.Forms.StatusStrip();
             StatusStrip.SuspendLayout();
             ToolbarStrip.SuspendLayout();
@@ -464,7 +468,7 @@ namespace Mafia2Tool
             // toolStripDropDownButton1
             // 
             toolStripDropDownButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { addGroupType1ToolStripMenuItem, addType4ToolStripMenuItem, addType7ToolStripMenuItem, addType8ToolStripMenuItem, addType9ToolStripMenuItem, addType11ToolStripMenuItem, deleteAINavigationToolStripMenuItem });
+            toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { addGroupType1ToolStripMenuItem, addType4ToolStripMenuItem, addType7ToolStripMenuItem, addType8ToolStripMenuItem, addType9ToolStripMenuItem, addType11ToolStripMenuItem, deleteAINavigationToolStripMenuItem, importXMLToolStripMenuItem, exportXmlToolStripMenuItem, moveAIGroupToolStripMenuItem, rotateAIToolStripMenuItem });
             toolStripDropDownButton1.Image = (System.Drawing.Image)resources.GetObject("toolStripDropDownButton1.Image");
             toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             toolStripDropDownButton1.Name = "toolStripDropDownButton1";
@@ -520,6 +524,34 @@ namespace Mafia2Tool
             deleteAINavigationToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             deleteAINavigationToolStripMenuItem.Text = "Delete AI Navigation";
             deleteAINavigationToolStripMenuItem.Click += btnDelete_Click;
+            // 
+            // importXMLToolStripMenuItem
+            // 
+            importXMLToolStripMenuItem.Name = "importXMLToolStripMenuItem";
+            importXMLToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
+            importXMLToolStripMenuItem.Text = "Import XML";
+            importXMLToolStripMenuItem.Click += ImportAIWorldXMLButton_Click;
+            // 
+            // exportXmlToolStripMenuItem
+            // 
+            exportXmlToolStripMenuItem.Name = "exportXmlToolStripMenuItem";
+            exportXmlToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
+            exportXmlToolStripMenuItem.Text = "Export Xml";
+            exportXmlToolStripMenuItem.Click += ExportAIWorldXMLButton_Click;
+            // 
+            // moveAIGroupToolStripMenuItem
+            // 
+            moveAIGroupToolStripMenuItem.Name = "moveAIGroupToolStripMenuItem";
+            moveAIGroupToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
+            moveAIGroupToolStripMenuItem.Text = "Move AI Group";
+            moveAIGroupToolStripMenuItem.Click += MoveAIGroupButton_Click;
+            // 
+            // rotateAIToolStripMenuItem
+            // 
+            rotateAIToolStripMenuItem.Name = "rotateAIToolStripMenuItem";
+            rotateAIToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
+            rotateAIToolStripMenuItem.Text = "Rotate AI";
+            rotateAIToolStripMenuItem.Click += RotateAIGroupZButton_Click;
             // 
             // toolStripDropDownButton3
             // 
@@ -629,6 +661,11 @@ namespace Mafia2Tool
             batchToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
             batchToolStripMenuItem.Text = "Changing parents of models";
             batchToolStripMenuItem.Click += BatchSetParentButton_Click;
+            // 
+            // updateActorToolStripMenuItem
+            // 
+            updateActorToolStripMenuItem.Name = "updateActorToolStripMenuItem";
+            updateActorToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
             // 
             // imageList1
             // 
@@ -759,5 +796,9 @@ namespace Mafia2Tool
         private System.Windows.Forms.ToolStripMenuItem saveAllItemDescToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveItemDescSelectedToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem updateActorToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem importXMLToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem exportXmlToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem moveAIGroupToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem rotateAIToolStripMenuItem;
     }
 }

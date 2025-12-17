@@ -15,7 +15,6 @@ using ResourceTypes.ItemDesc;
 using ResourceTypes.Materials;
 using ResourceTypes.ModelHelpers.ModelExporter;
 using ResourceTypes.Navigation;
-using SysColor = System.Drawing.Color;
 using ResourceTypes.Navigation.Traffic;
 using ResourceTypes.Translokator;
 using SharpGLTF.Schema2;
@@ -26,8 +25,11 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Reflection;
+using System.Text;
 using System.Windows.Controls.Primitives;
 using System.Windows.Forms;
+using System.Xml;
 using Toolkit.Core;
 using Utils.Extensions;
 using Utils.Language;
@@ -42,6 +44,7 @@ using static ResourceTypes.Navigation.AIWorld;
 using static UnluacNET.TableLiteral;
 using Collision = ResourceTypes.Collisions.Collision;
 using Object = ResourceTypes.Translokator.Object;
+using SysColor = System.Drawing.Color;
 
 namespace Mafia2Tool
 {
@@ -4101,7 +4104,936 @@ namespace Mafia2Tool
             Clipboard.SetText(result);
 
         }
-    
+
+        private void ImportAIWorldXMLButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                OpenFileDialog openDialog = new OpenFileDialog();
+                openDialog.Filter = "XML Files (*.xml)|*.xml|All Files (*.*)|*.*";
+                openDialog.Title = "Select AIWorld XML file to import";
+
+                if (openDialog.ShowDialog() == DialogResult.OK)
+                {
+                    Cursor.Current = Cursors.WaitCursor;
+
+                    TreeNode selectedNode = dSceneTree.SelectedNode;
+                    AIWorld targetWorld = null;
+
+                    if (selectedNode?.Tag is AIWorld world)
+                    {
+                        targetWorld = world;
+                    }
+                    else if (selectedNode?.Parent?.Tag is AIWorld parentWorld)
+                    {
+                        targetWorld = parentWorld;
+                    }
+                    else if (AIWorldRoot != null && AIWorldRoot.Nodes.Count > 0)
+                    {
+                        targetWorld = AIWorldRoot.Nodes[0].Tag as AIWorld;
+                    }
+
+                    if (targetWorld == null)
+                    {
+                        MessageBox.Show("Please select an AIWorld node to import into.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
+                    ImportAIWorldFromXML(openDialog.FileName, targetWorld);
+
+                    Cursor.Current = Cursors.Default;
+                    MessageBox.Show("AIWorld imported successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                Cursor.Current = Cursors.Default;
+                MessageBox.Show($"Error importing AIWorld: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Console.WriteLine($"Import AIWorld XML error: {ex}");
+            }
+        }
+
+        private void ExportAIWorldXMLButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                TreeNode selectedNode = dSceneTree.SelectedNode;
+                AIWorld targetWorld = null;
+
+                if (selectedNode?.Tag is AIWorld world)
+                {
+                    targetWorld = world;
+                }
+                else if (selectedNode?.Parent?.Tag is AIWorld parentWorld)
+                {
+                    targetWorld = parentWorld;
+                }
+
+                if (targetWorld == null)
+                {
+                    MessageBox.Show("Please select an AIWorld node to export.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                SaveFileDialog saveDialog = new SaveFileDialog();
+                saveDialog.Filter = "XML Files (*.xml)|*.xml|All Files (*.*)|*.*";
+                saveDialog.Title = "Save AIWorld as XML";
+                saveDialog.FileName = $"{targetWorld.PartName}_AIWorld.xml";
+
+                if (saveDialog.ShowDialog() == DialogResult.OK)
+                {
+                    Cursor.Current = Cursors.WaitCursor;
+
+                    ExportAIWorldToXML(targetWorld, saveDialog.FileName);
+
+                    Cursor.Current = Cursors.Default;
+                    MessageBox.Show($"AIWorld exported to {saveDialog.FileName}", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                Cursor.Current = Cursors.Default;
+                MessageBox.Show($"Error exporting AIWorld: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Console.WriteLine($"Export AIWorld XML error: {ex}");
+            }
+        }
+
+        private void ImportAIWorldFromXML(string xmlFilePath, AIWorld targetWorld)
+        {
+            try
+            {
+                XmlDocument xmlDoc = new XmlDocument();
+                xmlDoc.Load(xmlFilePath);
+
+                targetWorld.AIPoints.Clear();
+
+                XmlNode worldNode = xmlDoc.SelectSingleNode("AIWorld");
+                if (worldNode != null)
+                {
+                    if (worldNode.SelectSingleNode("PartName") != null)
+                        targetWorld.PartName = worldNode.SelectSingleNode("PartName").InnerText;
+
+                    if (worldNode.SelectSingleNode("KynogonString") != null)
+                        targetWorld.KynogonString = worldNode.SelectSingleNode("KynogonString").InnerText;
+
+                    if (worldNode.SelectSingleNode("OriginStream") != null)
+                        targetWorld.OriginStream = worldNode.SelectSingleNode("OriginStream").InnerText;
+
+                    XmlNodeList aiPointNodes = worldNode.SelectNodes("AIPoints/AIPoint");
+                    foreach (XmlNode pointNode in aiPointNodes)
+                    {
+                        ushort typeID = ushort.Parse(pointNode.Attributes["TypeID"].Value);
+                        IType newPoint = AIWorld_Factory.ConstructByTypeID(targetWorld, typeID);
+
+                        if (newPoint != null)
+                        {
+                            switch (typeID)
+                            {
+                                case 1:
+                                    var type1 = newPoint as AIWorld_Type1;
+                                    if (type1 != null)
+                                    {
+                                        if (pointNode.SelectSingleNode("Unk01") != null)
+                                            type1.Unk01 = byte.Parse(pointNode.SelectSingleNode("Unk01").InnerText);
+
+                                        XmlNodeList childPoints = pointNode.SelectNodes("ChildPoints/ChildPoint");
+                                        foreach (XmlNode childNode in childPoints)
+                                        {
+                                            ushort childTypeID = ushort.Parse(childNode.Attributes["TypeID"].Value);
+                                            IType childPoint = AIWorld_Factory.ConstructByTypeID(targetWorld, childTypeID);
+
+                                            if (childPoint != null)
+                                            {
+                                                LoadAIPointPropertiesByType(childPoint, childNode);
+                                                type1.AIPoints.Add(childPoint);
+                                            }
+                                        }
+                                    }
+                                    break;
+
+                                case 4:
+                                    var type4 = newPoint as AIWorld_Type4;
+                                    if (type4 != null)
+                                    {
+                                        LoadVector3Property(type4, "Position", pointNode);
+                                        LoadVector3Property(type4, "Rotation", pointNode);
+                                        LoadVector3Property(type4, "Direction", pointNode);
+
+                                        if (pointNode.SelectSingleNode("Unk0") != null)
+                                            type4.Unk0 = byte.Parse(pointNode.SelectSingleNode("Unk0").InnerText);
+                                        
+
+                                        if (pointNode.SelectSingleNode("ID") != null)
+                                            type4.ID = uint.Parse(pointNode.SelectSingleNode("ID").InnerText);
+
+                                        if (pointNode.SelectSingleNode("LinkID_2") != null)
+                                            type4.LinkID_2 = uint.Parse(pointNode.SelectSingleNode("LinkID_2").InnerText);
+
+                                        if (pointNode.SelectSingleNode("LinkID_3") != null)
+                                            type4.LinkID_3 = uint.Parse(pointNode.SelectSingleNode("LinkID_3").InnerText);
+
+                                        if (pointNode.SelectSingleNode("Length") != null)
+                                            type4.Length = float.Parse(pointNode.SelectSingleNode("Length").InnerText, CultureInfo.InvariantCulture);
+
+                                        if (pointNode.SelectSingleNode("Flags") != null)
+                                            type4.Flags = byte.Parse(pointNode.SelectSingleNode("Flags").InnerText);
+
+                                        if (pointNode.SelectSingleNode("Unk7") != null)
+                                            type4.Unk7 = byte.Parse(pointNode.SelectSingleNode("Unk7").InnerText);
+
+                                        if (pointNode.SelectSingleNode("Unk9") != null)
+                                            type4.Unk9 = byte.Parse(pointNode.SelectSingleNode("Unk9").InnerText);
+
+                                        //XmlNode unk8Node = pointNode.SelectSingleNode("Unk8");
+                                        //if (unk8Node != null)
+                                        //{
+                                        //    XmlNodeList valueNodes = unk8Node.SelectNodes("Value");
+                                        //    type4.Unk8 = new uint[valueNodes.Count];
+                                        //    for (int i = 0; i < valueNodes.Count; i++)
+                                        //    {
+                                        //        type4.Unk8[i] = uint.Parse(valueNodes[i].InnerText);
+                                        //    }
+                                        //}
+                                    }
+                                    break;
+
+                                case 7:
+                                    var type7 = newPoint as AIWorld_Type7;
+                                    if (type7 != null)
+                                    {
+                                        LoadVector3Property(type7, "Position", pointNode);
+                                        LoadVector3Property(type7, "Direction", pointNode);
+                                        LoadVector3Property(type7, "Unk2", pointNode);
+                                        LoadVector3Property(type7, "Minimum", pointNode);
+                                        LoadVector3Property(type7, "Maximum", pointNode);
+
+                                        if (pointNode.SelectSingleNode("Unk0") != null)
+                                            type7.Unk0 = ushort.Parse(pointNode.SelectSingleNode("Unk0").InnerText);
+
+                                        if (pointNode.SelectSingleNode("Unk3") != null)
+                                            type7.Unk3 = uint.Parse(pointNode.SelectSingleNode("Unk3").InnerText);
+                                    }
+                                    break;
+
+                                case 8:
+                                    var type8 = newPoint as AIWorld_Type8;
+                                    if (type8 != null)
+                                    {
+                                        LoadType9Properties(type8, pointNode);
+
+                                        if (pointNode.SelectSingleNode("Unk6") != null)
+                                            type8.Unk6 = uint.Parse(pointNode.SelectSingleNode("Unk6").InnerText);
+                                    }
+                                    break;
+
+                                case 9:
+                                    var type9 = newPoint as AIWorld_Type9;
+                                    if (type9 != null)
+                                    {
+                                        LoadType9Properties(type9, pointNode);
+                                    }
+                                    break;
+
+                                case 11:
+                                    var type11 = newPoint as AIWorld_Type11;
+                                    if (type11 != null)
+                                    {
+                                        LoadVector3Property(type11, "Unk1", pointNode);
+                                        LoadVector3Property(type11, "Unk2", pointNode);
+                                        LoadVector3Property(type11, "Unk3", pointNode);
+
+                                        if (pointNode.SelectSingleNode("Unk0") != null)
+                                            type11.Unk0 = byte.Parse(pointNode.SelectSingleNode("Unk0").InnerText);
+
+                                        if (pointNode.SelectSingleNode("Unk4") != null)
+                                            type11.Unk4 = uint.Parse(pointNode.SelectSingleNode("Unk4").InnerText);
+                                    }
+                                    break;
+                            }
+
+                            targetWorld.AIPoints.Add(newPoint);
+                        }
+                    }
+                }
+
+                UpdateAIWorldTreeNode(targetWorld);
+
+                targetWorld.RequestPrimitiveBatchUpdate();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Failed to import AIWorld from XML: {ex.Message}", ex);
+            }
+        }
+
+        private void LoadType9Properties(AIWorld_Type9 type9, XmlNode parentNode)
+        {
+            LoadVector3Property(type9, "Position", parentNode);
+
+            if (parentNode.SelectSingleNode("Unk0") != null)
+                type9.Unk0 = byte.Parse(parentNode.SelectSingleNode("Unk0").InnerText);
+
+            if (parentNode.SelectSingleNode("Unk1") != null)
+                type9.Unk1 = uint.Parse(parentNode.SelectSingleNode("Unk1").InnerText);
+
+            if (parentNode.SelectSingleNode("Unk3") != null)
+                type9.Unk3 = float.Parse(parentNode.SelectSingleNode("Unk3").InnerText, CultureInfo.InvariantCulture);
+
+            if (parentNode.SelectSingleNode("Unk4") != null)
+                type9.Unk4 = float.Parse(parentNode.SelectSingleNode("Unk4").InnerText, CultureInfo.InvariantCulture);
+
+            XmlNode unk5Node = parentNode.SelectSingleNode("Unk5");
+            if (unk5Node != null)
+            {
+                XmlNodeList valueNodes = unk5Node.SelectNodes("Value");
+                type9.Unk5 = new uint[valueNodes.Count];
+                for (int i = 0; i < valueNodes.Count; i++)
+                {
+                    type9.Unk5[i] = uint.Parse(valueNodes[i].InnerText);
+                }
+            }
+        }
+
+        private void LoadAIPointPropertiesByType(IType aiPoint, XmlNode parentNode)
+        {
+            if (aiPoint is AIWorld_Type4 type4)
+            {
+                LoadVector3Property(type4, "Direction", parentNode);
+
+                if (parentNode.SelectSingleNode("Flag") != null)
+                    type4.Flags = byte.Parse(parentNode.SelectSingleNode("Flag").InnerText);
+
+                if (parentNode.SelectSingleNode("ID") != null)
+                    type4.ID = uint.Parse(parentNode.SelectSingleNode("ID").InnerText);
+                
+                if (parentNode.SelectSingleNode("Length") != null)
+                    type4.Length = float.Parse(parentNode.SelectSingleNode("Length").InnerText, CultureInfo.InvariantCulture);
+
+                if (parentNode.SelectSingleNode("LinkID_2") != null)
+                    type4.LinkID_2 = uint.Parse(parentNode.SelectSingleNode("LinkID_2").InnerText);
+
+                if (parentNode.SelectSingleNode("LinkID_3") != null)
+                    type4.LinkID_3 = uint.Parse(parentNode.SelectSingleNode("LinkID_3").InnerText);
+
+                LoadVector3Property(type4, "Position", parentNode);
+
+                LoadVector3Property(type4, "Rotation", parentNode);
+
+                if (parentNode.SelectSingleNode("Unk0") != null)
+                    type4.Unk0 = byte.Parse(parentNode.SelectSingleNode("Unk0").InnerText);
+
+                if (parentNode.SelectSingleNode("Unk7") != null)
+                    type4.Unk7 = byte.Parse(parentNode.SelectSingleNode("Unk7").InnerText);
+
+                //if (parentNode.SelectSingleNode("Unk0") != null) //Надо научиться считывать UInt32
+                //type4.Unk0 = byte.Parse(parentNode.SelectSingleNode("Unk0").InnerText);
+
+                if (parentNode.SelectSingleNode("Unk9") != null)
+                    type4.Unk9 = uint.Parse(parentNode.SelectSingleNode("Unk9").InnerText);
+
+            }
+            else if (aiPoint is AIWorld_Type7 type7)
+            {
+                LoadVector3Property(type7, "Position", parentNode);
+                LoadVector3Property(type7, "Direction", parentNode);
+                LoadVector3Property(type7, "Minimum", parentNode);
+                LoadVector3Property(type7, "Maximum", parentNode);
+
+                if (parentNode.SelectSingleNode("Unk0") != null)
+                    type7.Unk0 = ushort.Parse(parentNode.SelectSingleNode("Unk0").InnerText);
+            }
+            else if (aiPoint is AIWorld_Type9 type9)
+            {
+                LoadVector3Property(type9, "Position", parentNode);
+
+                if (parentNode.SelectSingleNode("Unk0") != null)
+                    type9.Unk0 = byte.Parse(parentNode.SelectSingleNode("Unk0").InnerText);
+
+                if (parentNode.SelectSingleNode("Unk1") != null)
+                    type9.Unk1 = uint.Parse(parentNode.SelectSingleNode("Unk1").InnerText);
+            }
+            else if (aiPoint is AIWorld_Type11 type11)
+            {
+                LoadVector3Property(type11, "Unk1", parentNode);
+
+                if (parentNode.SelectSingleNode("Unk0") != null)
+                    type11.Unk0 = byte.Parse(parentNode.SelectSingleNode("Unk0").InnerText);
+            }
+        }
+
+        private void ExportAIWorldToXML(AIWorld world, string xmlFilePath)
+        {
+            try
+            {
+                XmlDocument xmlDoc = new XmlDocument();
+                XmlDeclaration xmlDeclaration = xmlDoc.CreateXmlDeclaration("1.0", "UTF-8", null);
+                xmlDoc.AppendChild(xmlDeclaration);
+
+                XmlElement rootElement = xmlDoc.CreateElement("AIWorld");
+                xmlDoc.AppendChild(rootElement);
+
+                AddXmlElement(xmlDoc, rootElement, "PartName", world.PartName);
+                AddXmlElement(xmlDoc, rootElement, "KynogonString", world.KynogonString);
+                AddXmlElement(xmlDoc, rootElement, "OriginStream", world.OriginStream);
+
+                XmlElement aiPointsElement = xmlDoc.CreateElement("AIPoints");
+                rootElement.AppendChild(aiPointsElement);
+
+                foreach (IType aiPoint in world.AIPoints)
+                {
+                    XmlElement pointElement = xmlDoc.CreateElement("AIPoint");
+                    ushort typeID = AIWorld_Factory.GetIDByType(aiPoint);
+                    pointElement.SetAttribute("TypeID", typeID.ToString());
+
+                    switch (typeID)
+                    {
+                        case 1:
+                            var type1 = aiPoint as AIWorld_Type1;
+                            if (type1 != null)
+                            {
+                                AddXmlElement(xmlDoc, pointElement, "Unk01", type1.Unk01.ToString());
+
+                                if (type1.AIPoints.Count > 0)
+                                {
+                                    XmlElement childPointsElement = xmlDoc.CreateElement("ChildPoints");
+                                    pointElement.AppendChild(childPointsElement);
+
+                                    foreach (IType childPoint in type1.AIPoints)
+                                    {
+                                        ushort childTypeID = AIWorld_Factory.GetIDByType(childPoint);
+                                        XmlElement childElement = xmlDoc.CreateElement("ChildPoint");
+                                        childElement.SetAttribute("TypeID", childTypeID.ToString());
+
+                                        SaveAIPointPropertiesByType(childPoint, xmlDoc, childElement);
+                                        childPointsElement.AppendChild(childElement);
+                                    }
+                                }
+                            }
+                            break;
+                        
+                    }
+
+                    aiPointsElement.AppendChild(pointElement);
+                }
+
+                using (XmlTextWriter writer = new XmlTextWriter(xmlFilePath, Encoding.UTF8))
+                {
+                    writer.Formatting = Formatting.Indented;
+                    xmlDoc.Save(writer);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Failed to export AIWorld to XML: {ex.Message}", ex);
+            }
+        }
+        
+        private void AddXmlElement(XmlDocument xmlDoc, XmlElement parent, string name, string value)
+        {
+            if (!string.IsNullOrEmpty(value))
+            {
+                XmlElement element = xmlDoc.CreateElement(name);
+                element.InnerText = value;
+                parent.AppendChild(element);
+            }
+        }
+
+        private void AddVector3Element(XmlDocument xmlDoc, XmlElement parent, string name, Vector3 vector)
+        {
+            XmlElement vectorElement = xmlDoc.CreateElement(name);
+
+            AddXmlElement(xmlDoc, vectorElement, "X", vector.X.ToString(CultureInfo.InvariantCulture));
+            AddXmlElement(xmlDoc, vectorElement, "Y", vector.Y.ToString(CultureInfo.InvariantCulture));
+            AddXmlElement(xmlDoc, vectorElement, "Z", vector.Z.ToString(CultureInfo.InvariantCulture));
+
+            parent.AppendChild(vectorElement);
+        }
+
+        private void LoadVector3Property(object obj, string propertyName, XmlNode parentNode)
+        {
+            XmlNode vectorNode = parentNode.SelectSingleNode(propertyName);
+            if (vectorNode != null)
+            {
+                try
+                {
+                    float x = float.Parse(vectorNode.SelectSingleNode("X").InnerText, CultureInfo.InvariantCulture);
+                    float y = float.Parse(vectorNode.SelectSingleNode("Y").InnerText, CultureInfo.InvariantCulture);
+                    float z = float.Parse(vectorNode.SelectSingleNode("Z").InnerText, CultureInfo.InvariantCulture);
+
+                    var property = obj.GetType().GetProperty(propertyName);
+                    if (property != null && property.CanWrite)
+                    {
+                        property.SetValue(obj, new Vector3(x, y, z));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Failed to load Vector3 property {propertyName}: {ex.Message}");
+                }
+            }
+        }
+
+        private void SaveAIPointPropertiesByType(IType aiPoint, XmlDocument xmlDoc, XmlElement parentElement)
+        {
+            ushort typeID = AIWorld_Factory.GetIDByType(aiPoint);
+
+            switch (typeID)
+            {
+                case 4:
+                    var type4 = aiPoint as AIWorld_Type4;
+                    if (type4 != null)
+                    {
+                        AddVector3Element(xmlDoc, parentElement, "Direction", type4.Direction);
+                        AddXmlElement(xmlDoc, parentElement, "Flag", type4.Flags.ToString());
+                        AddXmlElement(xmlDoc, parentElement, "ID", type4.ID.ToString());
+                        AddXmlElement(xmlDoc, parentElement, "Length", type4.Length.ToString());
+                        AddXmlElement(xmlDoc, parentElement, "LinkID_2", type4.LinkID_2.ToString());
+                        AddXmlElement(xmlDoc, parentElement, "LinkID_3", type4.LinkID_3.ToString());
+                        AddVector3Element(xmlDoc, parentElement, "Position", type4.Position);
+                        AddVector3Element(xmlDoc, parentElement, "Rotation", type4.Rotation);
+                        AddXmlElement(xmlDoc, parentElement, "Unk0", type4.Unk0.ToString());
+                        AddXmlElement(xmlDoc, parentElement, "Unk7", type4.Unk7.ToString());
+                        //AddXmlElement(xmlDoc, parentElement, "Unk8", type4.Unk8.ToString());        //Value UInt32 нужно будет потом считать                                                              
+                        AddXmlElement(xmlDoc, parentElement, "Unk9", type4.Unk9.ToString());
+
+                    }
+                    break;
+
+                case 7:
+                    var type7 = aiPoint as AIWorld_Type7;
+                    if (type7 != null)
+                    {
+                        AddVector3Element(xmlDoc, parentElement, "Maximum", type7.Maximum);
+                        AddVector3Element(xmlDoc, parentElement, "Minimum", type7.Minimum);                     
+                        AddVector3Element(xmlDoc, parentElement, "Direction", type7.Direction);
+                        AddVector3Element(xmlDoc, parentElement, "Position", type7.Position);
+                        AddXmlElement(xmlDoc, parentElement, "Unk0", type7.Unk0.ToString());
+                        AddXmlElement(xmlDoc, parentElement, "Unk2", type7.Unk2.ToString());
+                        AddXmlElement(xmlDoc, parentElement, "Unk3", type7.Unk3.ToString());
+                    }
+                    break;
+                case 8:
+                    var type8 = aiPoint as AIWorld_Type8;
+                    if (type8 != null)
+                    {
+                        AddVector3Element(xmlDoc, parentElement, "Position", type8.Position);
+                        AddXmlElement(xmlDoc, parentElement, "Unk0", type8.Unk0.ToString());
+                        AddXmlElement(xmlDoc, parentElement, "Unk1", type8.Unk1.ToString());
+                        AddXmlElement(xmlDoc, parentElement, "Unk3", type8.Unk3.ToString());
+                        AddXmlElement(xmlDoc, parentElement, "Unk4", type8.Unk4.ToString());
+                        AddXmlElement(xmlDoc, parentElement, "Unk5", type8.Unk5.ToString());      //Value UInt32 нужно будет потом считать
+                        AddXmlElement(xmlDoc, parentElement, "Unk6", type8.Unk6.ToString());
+                    }
+                    break;
+
+                case 9:
+                    var type9 = aiPoint as AIWorld_Type9;
+                    if (type9 != null)
+                    {
+                        AddVector3Element(xmlDoc, parentElement, "Position", type9.Position);
+                        AddXmlElement(xmlDoc, parentElement, "Unk0", type9.Unk0.ToString());
+                        AddXmlElement(xmlDoc, parentElement, "Unk1", type9.Unk1.ToString());
+                        AddXmlElement(xmlDoc, parentElement, "Unk3", type9.Unk3.ToString());
+                        AddXmlElement(xmlDoc, parentElement, "Unk4", type9.Unk4.ToString());
+                        AddXmlElement(xmlDoc, parentElement, "Unk5", type9.Unk5.ToString());      //Value UInt32 нужно будет потом считать
+                    }
+                    break;
+
+                case 11:
+                    var type11 = aiPoint as AIWorld_Type11;
+                    if (type11 != null)
+                    {
+                        AddXmlElement(xmlDoc, parentElement, "Unk0", type11.Unk0.ToString());
+                        AddVector3Element(xmlDoc, parentElement, "Unk1", type11.Unk1);
+                        AddVector3Element(xmlDoc, parentElement, "Unk2", type11.Unk2);
+                        AddVector3Element(xmlDoc, parentElement, "Unk3", type11.Unk3);
+                        AddXmlElement(xmlDoc, parentElement, "Unk4", type11.Unk4.ToString());
+                    }
+                    break;
+            }
+        }
+
+        private void UpdateAIWorldTreeNode(AIWorld world)
+        {
+            foreach (TreeNode rootNode in dSceneTree.TreeView.Nodes)
+            {
+                if (rootNode.Tag == world)
+                {
+                    rootNode.Nodes.Clear();
+
+                    foreach (IType aiPoint in world.AIPoints)
+                    {
+                        TreeNode pointNode = aiPoint.PopulateTreeNode();
+                        if (pointNode != null)
+                        {
+                            rootNode.Nodes.Add(pointNode);
+
+                            if (aiPoint is AIWorld_Type1 group)
+                            {
+                                foreach (IType childPoint in group.AIPoints)
+                                {
+                                    TreeNode childNode = childPoint.PopulateTreeNode();
+                                    pointNode.Nodes.Add(childNode);
+                                }
+                            }
+                        }
+                    }
+
+                    rootNode.Expand();
+                    break;
+                }
+            }
+        }
+
+        private void RotateAIGroupZButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                TreeNode selectedNode = dSceneTree.SelectedNode;
+
+                List<IType> pointsToRotate = new List<IType>();
+                AIWorld targetWorld = null;
+                string groupName = "";
+                Vector3 centerPoint = Vector3.Zero;
+
+                if (selectedNode?.Tag is AIWorld world)
+                {
+                    targetWorld = world;
+                    pointsToRotate.AddRange(world.AIPoints);
+                    groupName = $"AIWorld '{world.PartName}'";
+                    centerPoint = CalculateCenterPoint(world.AIPoints);
+                }
+                else if (selectedNode?.Tag is AIWorld_Type1 group)
+                {
+                    targetWorld = group.World;
+                    pointsToRotate.AddRange(group.AIPoints);
+                    groupName = $"Group '{selectedNode.Text}'";
+                    centerPoint = CalculateCenterPoint(group.AIPoints);
+                }
+                else if (selectedNode?.Parent?.Tag is AIWorld worldFromParent)
+                {
+                    targetWorld = worldFromParent;
+                    pointsToRotate.AddRange(worldFromParent.AIPoints);
+                    groupName = $"AIWorld '{worldFromParent.PartName}'";
+                    centerPoint = CalculateCenterPoint(worldFromParent.AIPoints);
+                }
+                else
+                {
+                    MessageBox.Show("Please select an AIWorld or AIWorld_Type1 group to rotate.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                if (pointsToRotate.Count == 0)
+                {
+                    MessageBox.Show("No AI points to rotate.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                using (RotateAIGroupForm rotateForm = new RotateAIGroupForm(
+                    groupName, pointsToRotate.Count, centerPoint))
+                {
+                    if (rotateForm.ShowDialog() == DialogResult.OK)
+                    {
+                        Cursor.Current = Cursors.WaitCursor;
+
+                        float angleDegrees = rotateForm.AngleDegrees;
+                        Vector3 rotationCenter = rotateForm.RotationCenter;
+                        bool rotateChildren = rotateForm.RotateChildren;
+                        bool updateRotations = rotateForm.UpdateRotations;
+
+                        RotateAIGroupZ(pointsToRotate, angleDegrees, rotationCenter, rotateChildren, updateRotations);
+
+                        UpdateAIWorldTreeNode(targetWorld);
+                        targetWorld.RequestPrimitiveBatchUpdate();
+
+                        Cursor.Current = Cursors.Default;
+
+                        MessageBox.Show($"Rotated {pointsToRotate.Count} AI points by {angleDegrees}° around ({rotationCenter.X}, {rotationCenter.Y}, {rotationCenter.Z})", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Cursor.Current = Cursors.Default;
+                MessageBox.Show($"Error rotating AI group: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Console.WriteLine($"Rotate AI group error: {ex}");
+            }
+        }
+
+        private Vector3 CalculateCenterPoint(List<IType> aiPoints)
+        {
+            if (aiPoints.Count == 0)
+                return Vector3.Zero;
+
+            Vector3 sum = Vector3.Zero;
+            int count = 0;
+
+            foreach (IType point in aiPoints)
+            {
+                Vector3 position = GetAIPointPosition(point);
+                if (position != Vector3.Zero)
+                {
+                    sum += position;
+                    count++;
+                }
+            }
+
+            return count > 0 ? sum / count : Vector3.Zero;
+        }
+
+        private Vector3 GetAIPointPosition(IType aiPoint)
+        {
+            if (aiPoint is AIWorld_Type9 type9)
+                return type9.Position;
+            else if (aiPoint is AIWorld_Type4 type4)
+                return type4.Position;
+            else if (aiPoint is AIWorld_Type7 type7)
+                return type7.Position;
+            else if (aiPoint is AIWorld_Type11 type11)
+                return type11.Unk1;
+            else if (aiPoint is AIWorld_Type1 type1)
+                return CalculateCenterPoint(type1.AIPoints);
+
+            return Vector3.Zero;
+        }
+
+        private void RotateAIGroupZ(List<IType> pointsToRotate, float angleDegrees, Vector3 rotationCenter, bool rotateChildren = true, bool updateRotations = true)
+        {
+            foreach (IType point in pointsToRotate)
+            {
+                RotateAIPointZ(point, angleDegrees, rotationCenter, rotateChildren, updateRotations);
+            }
+        }
+
+        private void RotateAIPointZ(IType aiPoint, float angleDegrees, Vector3 rotationCenter, bool rotateChildren, bool updateRotations)
+        {
+            float angleRadians = angleDegrees * (MathF.PI / 180f);
+
+            RotatePointAroundZ(aiPoint, angleRadians, rotationCenter, updateRotations);
+
+            if (aiPoint is AIWorld_Type1 type1 && rotateChildren)
+            {
+                foreach (IType childPoint in type1.AIPoints)
+                {
+                    RotateAIPointZ(childPoint, angleDegrees, rotationCenter, rotateChildren, updateRotations);
+                }
+            }
+        }
+
+        private void RotatePointAroundZ(IType aiPoint, float angleRadians, Vector3 rotationCenter, bool updateRotations)
+        {
+            float cosA = MathF.Cos(angleRadians);
+            float sinA = MathF.Sin(angleRadians);
+
+            if (aiPoint is AIWorld_Type9 type9)
+            {
+                Vector3 relativePos = type9.Position - rotationCenter;
+                float newX = relativePos.X * cosA - relativePos.Y * sinA;
+                float newY = relativePos.X * sinA + relativePos.Y * cosA;
+                type9.Position = new Vector3(newX, newY, relativePos.Z) + rotationCenter;
+            }
+            else if (aiPoint is AIWorld_Type4 type4)
+            {
+                Vector3 relativePos = type4.Position - rotationCenter;
+                float newX = relativePos.X * cosA - relativePos.Y * sinA;
+                float newY = relativePos.X * sinA + relativePos.Y * cosA;
+                type4.Position = new Vector3(newX, newY, relativePos.Z) + rotationCenter;
+
+                if (updateRotations)
+                {
+                    type4.Rotation = new Vector3(
+                        type4.Rotation.X,
+                        type4.Rotation.Y,
+                        type4.Rotation.Z + (angleRadians * (180f / MathF.PI))
+                    );
+
+                    Vector3 dir = type4.Direction;
+                    float newDirX = dir.X * cosA - dir.Y * sinA;
+                    float newDirY = dir.X * sinA + dir.Y * cosA;
+                    type4.Direction = new Vector3(newDirX, newDirY, dir.Z);
+                }
+            }
+            else if (aiPoint is AIWorld_Type7 type7)
+            {
+                Vector3 relativePos = type7.Position - rotationCenter;
+                float newX = relativePos.X * cosA - relativePos.Y * sinA;
+                float newY = relativePos.X * sinA + relativePos.Y * cosA;
+                type7.Position = new Vector3(newX, newY, relativePos.Z) + rotationCenter;
+
+                if (updateRotations)
+                {
+                    Vector3 dir = type7.Direction;
+                    float newDirX = dir.X * cosA - dir.Y * sinA;
+                    float newDirY = dir.X * sinA + dir.Y * cosA;
+                    type7.Direction = new Vector3(newDirX, newDirY, dir.Z);
+
+                    Vector3 boxCenter = (type7.Minimum + type7.Maximum) * 0.5f;
+                    Vector3 relativeBoxCenter = boxCenter - rotationCenter;
+                    float newBoxCenterX = relativeBoxCenter.X * cosA - relativeBoxCenter.Y * sinA;
+                    float newBoxCenterY = relativeBoxCenter.X * sinA + relativeBoxCenter.Y * cosA;
+                    Vector3 newBoxCenter = new Vector3(newBoxCenterX, newBoxCenterY, relativeBoxCenter.Z) + rotationCenter;
+
+                    Vector3 boxSize = type7.Maximum - type7.Minimum;
+
+                    type7.Minimum = newBoxCenter - (boxSize * 0.5f);
+                    type7.Maximum = newBoxCenter + (boxSize * 0.5f);
+                }
+            }
+            else if (aiPoint is AIWorld_Type11 type11)
+            {
+                type11.Unk1 = RotateVectorAroundZ(type11.Unk1, angleRadians, rotationCenter);
+                type11.Unk2 = RotateVectorAroundZ(type11.Unk2, angleRadians, rotationCenter);
+                type11.Unk3 = RotateVectorAroundZ(type11.Unk3, angleRadians, rotationCenter);
+            }
+
+            ApplyRotationToVectorProperties(aiPoint, angleRadians, rotationCenter, updateRotations);
+        }
+        private Vector3 RotateVectorAroundZ(Vector3 vector, float angleRadians, Vector3 rotationCenter)
+        {
+            Vector3 relativeVec = vector - rotationCenter;
+            float cosA = MathF.Cos(angleRadians);
+            float sinA = MathF.Sin(angleRadians);
+
+            float newX = relativeVec.X * cosA - relativeVec.Y * sinA;
+            float newY = relativeVec.X * sinA + relativeVec.Y * cosA;
+
+            return new Vector3(newX, newY, relativeVec.Z) + rotationCenter;
+        }
+        private void ApplyRotationToVectorProperties(IType aiPoint, float angleRadians, Vector3 rotationCenter, bool updateRotations)
+        {
+            var properties = aiPoint.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+            foreach (var property in properties)
+            {
+                if (property.PropertyType == typeof(Vector3) && property.CanRead && property.CanWrite)
+                {
+                    string propName = property.Name;
+                    if (propName == "Position" || propName == "Rotation" || propName == "Direction" ||
+                        propName == "Minimum" || propName == "Maximum" ||
+                        propName == "Unk1" || propName == "Unk2" || propName == "Unk3")
+                        continue;
+
+                    try
+                    {
+                        Vector3 currentValue = (Vector3)property.GetValue(aiPoint);
+                        Vector3 newValue = RotateVectorAroundZ(currentValue, angleRadians, rotationCenter);
+                        property.SetValue(aiPoint, newValue);
+                    }
+                    catch { }
+                }
+            }
+        }
+        private void MoveAIGroupButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                TreeNode selectedNode = dSceneTree.SelectedNode;
+
+                List<IType> pointsToMove = new List<IType>();
+                AIWorld targetWorld = null;
+                string groupName = "";
+
+                if (selectedNode?.Tag is AIWorld world)
+                {
+                    targetWorld = world;
+                    pointsToMove.AddRange(world.AIPoints);
+                    groupName = $"AIWorld '{world.PartName}'";
+                }
+                else if (selectedNode?.Tag is AIWorld_Type1 group)
+                {
+                    targetWorld = group.World;
+                    pointsToMove.AddRange(group.AIPoints);
+                    groupName = $"Group '{selectedNode.Text}'";
+                }
+                else if (selectedNode?.Parent?.Tag is AIWorld worldFromParent)
+                {
+                    targetWorld = worldFromParent;
+                    pointsToMove.AddRange(worldFromParent.AIPoints);
+                    groupName = $"AIWorld '{worldFromParent.PartName}'";
+                }
+                else if (selectedNode?.Parent?.Parent?.Tag is AIWorld worldFromGrandParent)
+                {
+                    targetWorld = worldFromGrandParent;
+                    pointsToMove.AddRange(worldFromGrandParent.AIPoints);
+                    groupName = $"AIWorld '{worldFromGrandParent.PartName}'";
+                }
+                else
+                {
+                    MessageBox.Show("Please select an AIWorld or AIWorld_Type1 group to move.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                if (pointsToMove.Count == 0)
+                {
+                    MessageBox.Show("No AI points to move.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                MoveAIGroupForm moveForm = new MoveAIGroupForm(groupName, pointsToMove.Count);
+
+                if (moveForm.ShowDialog() == DialogResult.OK)
+                {
+                    Cursor.Current = Cursors.WaitCursor;
+
+                    Vector3 offset = moveForm.GetOffset();
+                    bool moveChildren = moveForm.MoveChildren;
+
+                    MoveAIGroup(pointsToMove, offset, moveChildren);
+
+                    UpdateAIWorldTreeNode(targetWorld);
+                    targetWorld.RequestPrimitiveBatchUpdate();
+
+                    Cursor.Current = Cursors.Default;
+
+                    MessageBox.Show($"Moved {pointsToMove.Count} AI points by ({offset.X}, {offset.Y}, {offset.Z})", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+
+                moveForm.Dispose();
+            }
+            catch (Exception ex)
+            {
+                Cursor.Current = Cursors.Default;
+                MessageBox.Show($"Error moving AI group: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Console.WriteLine($"Move AI group error: {ex}");
+            }
+        }
+        private void MoveAIGroup(List<IType> pointsToMove, Vector3 offset, bool moveChildren = true)
+        {
+            foreach (IType point in pointsToMove)
+            {
+                MoveAIPoint(point, offset, moveChildren);
+            }
+        }
+        private void MoveAIPoint(IType aiPoint, Vector3 offset, bool moveChildren = true)
+        {
+            if (aiPoint is AIWorld_Type9 type9)
+            {
+                type9.Position += offset;
+            }
+            else if (aiPoint is AIWorld_Type4 type4)
+            {
+                type4.Position += offset;
+            }
+            else if (aiPoint is AIWorld_Type7 type7)
+            {
+                type7.Position += offset;
+            }
+            else if (aiPoint is AIWorld_Type11 type11)
+            {
+                type11.Unk1 += offset;
+                type11.Unk2 += offset;
+                type11.Unk3 += offset;
+            }
+            else if (aiPoint is AIWorld_Type1 type1 && moveChildren)
+            {
+                foreach (IType childPoint in type1.AIPoints)
+                {
+                    MoveAIPoint(childPoint, offset, moveChildren);
+                }
+            }
+        }
+        
+
         private void PasteXYZ_ButtonClick(object sender, EventArgs e)
         {
             if (!Clipboard.ContainsText())
