@@ -36,8 +36,8 @@ namespace ResourceTypes.Navigation
             }
         }
         public uint ID { get; set; }
-        public uint LinkID_2 { get; set; }
-        public uint LinkID_3 { get; set; }
+        public uint LinkID_Left { get; set; }
+        public uint LinkID_Right { get; set; }
 
         private Vector3 _direction;
         public Vector3 Direction
@@ -71,8 +71,8 @@ namespace ResourceTypes.Navigation
             Position = Vector3Utils.ReadFromFile(Reader);
             Rotation = Vector3Utils.ReadFromFile(Reader);
             ID = Reader.ReadUInt32();
-            LinkID_2 = Reader.ReadUInt32();
-            LinkID_3 = Reader.ReadUInt32();
+            LinkID_Left = Reader.ReadUInt32();
+            LinkID_Right = Reader.ReadUInt32();
             Direction = Vector3Utils.ReadFromFile(Reader);
             Length = Reader.ReadSingle();
             Flags = Reader.ReadByte();
@@ -96,8 +96,8 @@ namespace ResourceTypes.Navigation
             Position.WriteToFile(Writer);
             Rotation.WriteToFile(Writer);
             Writer.Write(ID);
-            Writer.Write(LinkID_2);
-            Writer.Write(LinkID_3);
+            Writer.Write(LinkID_Left);
+            Writer.Write(LinkID_Right);
             Direction.WriteToFile(Writer);
             Writer.Write(Length);
             Writer.Write(Flags);
@@ -121,8 +121,8 @@ namespace ResourceTypes.Navigation
             Writer.WriteLine("Position: {0}", Position);
             Writer.WriteLine("Rotation: {0}", Rotation);
             Writer.WriteLine("ID: {0}", ID);
-            Writer.WriteLine("Link_2: {0}", LinkID_2);
-            Writer.WriteLine("Link_3: {0}", LinkID_3);
+            Writer.WriteLine("Link_Left: {0}", LinkID_Left);
+            Writer.WriteLine("Link_Right: {0}", LinkID_Right);
             Writer.WriteLine("Direction: {0}", Direction);
             Writer.WriteLine("Length: {0}", Length);
             Writer.WriteLine("Flags: {0}", Flags);

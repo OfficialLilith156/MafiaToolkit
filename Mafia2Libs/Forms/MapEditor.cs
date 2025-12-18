@@ -4370,11 +4370,11 @@ namespace Mafia2Tool
                                         if (pointNode.SelectSingleNode("ID") != null)
                                             type4.ID = uint.Parse(pointNode.SelectSingleNode("ID").InnerText);
 
-                                        if (pointNode.SelectSingleNode("LinkID_2") != null)
-                                            type4.LinkID_2 = uint.Parse(pointNode.SelectSingleNode("LinkID_2").InnerText);
+                                        if (pointNode.SelectSingleNode("LinkID_Left") != null)
+                                            type4.LinkID_Left = uint.Parse(pointNode.SelectSingleNode("LinkID_Left").InnerText);
 
-                                        if (pointNode.SelectSingleNode("LinkID_3") != null)
-                                            type4.LinkID_3 = uint.Parse(pointNode.SelectSingleNode("LinkID_3").InnerText);
+                                        if (pointNode.SelectSingleNode("LinkID_Right") != null)
+                                            type4.LinkID_Right = uint.Parse(pointNode.SelectSingleNode("LinkID_Right").InnerText);
 
                                         if (pointNode.SelectSingleNode("Length") != null)
                                             type4.Length = float.Parse(pointNode.SelectSingleNode("Length").InnerText, CultureInfo.InvariantCulture);
@@ -4513,11 +4513,11 @@ namespace Mafia2Tool
                 if (parentNode.SelectSingleNode("Length") != null)
                     type4.Length = float.Parse(parentNode.SelectSingleNode("Length").InnerText, CultureInfo.InvariantCulture);
 
-                if (parentNode.SelectSingleNode("LinkID_2") != null)
-                    type4.LinkID_2 = uint.Parse(parentNode.SelectSingleNode("LinkID_2").InnerText);
+                if (parentNode.SelectSingleNode("LinkID_Left") != null)
+                    type4.LinkID_Left = uint.Parse(parentNode.SelectSingleNode("LinkID_Left").InnerText);
 
-                if (parentNode.SelectSingleNode("LinkID_3") != null)
-                    type4.LinkID_3 = uint.Parse(parentNode.SelectSingleNode("LinkID_3").InnerText);
+                if (parentNode.SelectSingleNode("LinkID_Right") != null)
+                    type4.LinkID_Right = uint.Parse(parentNode.SelectSingleNode("LinkID_Right").InnerText);
 
                 LoadVector3Property(type4, "Position", parentNode);
 
@@ -4691,8 +4691,8 @@ namespace Mafia2Tool
                         AddXmlElement(xmlDoc, parentElement, "Flag", type4.Flags.ToString());
                         AddXmlElement(xmlDoc, parentElement, "ID", type4.ID.ToString());
                         AddXmlElement(xmlDoc, parentElement, "Length", type4.Length.ToString());
-                        AddXmlElement(xmlDoc, parentElement, "LinkID_2", type4.LinkID_2.ToString());
-                        AddXmlElement(xmlDoc, parentElement, "LinkID_3", type4.LinkID_3.ToString());
+                        AddXmlElement(xmlDoc, parentElement, "LinkID_Left", type4.LinkID_Left.ToString());
+                        AddXmlElement(xmlDoc, parentElement, "LinkID_3", type4.LinkID_Right.ToString());
                         AddVector3Element(xmlDoc, parentElement, "Position", type4.Position);
                         AddVector3Element(xmlDoc, parentElement, "Rotation", type4.Rotation);
                         AddXmlElement(xmlDoc, parentElement, "Unk0", type4.Unk0.ToString());
