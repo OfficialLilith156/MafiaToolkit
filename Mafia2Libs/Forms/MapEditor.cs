@@ -2030,6 +2030,36 @@ namespace Mafia2Tool
                             }
                         }
                     }
+                    if (entry.ActorTypeName == "C_Blocker" || entry.ActorTypeID == (int)ActorTypes.Blocker)
+                    {
+                        if (entry.Data != null && entry.Data.Data is ActorBlocker blocker)
+                        {
+                            Vector3 position = entry.Position;
+                            Vector3 bboxSize = blocker.BBox;
+
+                            Vector3 halfSize = bboxSize * 0.5f;
+                            BoundingBox blockerBox = new BoundingBox(
+                                position - halfSize,
+                                position + halfSize
+                            );
+
+                            RenderBoundingBox renderBlockerBox = new RenderBoundingBox();
+                            renderBlockerBox.Init(blockerBox);
+
+                            int refID = RefManager.GetNewRefID();
+                            assets.Add(refID, renderBlockerBox);
+                            RefIDToActorEntry[refID] = entry;
+
+                            TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
+                            if (foundNodes.Length > 0)
+                            {
+                                TreeNode boxNode = new TreeNode("Blocker BBox");
+                                boxNode.Name = refID.ToString();
+                                boxNode.Tag = renderBlockerBox;
+                                foundNodes[0].Nodes.Add(boxNode);
+                            }
+                        }
+                    }
                 }
             }
 
@@ -2646,7 +2676,35 @@ namespace Mafia2Tool
                     UpdateSelectedEventArgs Arguments = new UpdateSelectedEventArgs();
                     Arguments.RefID = int.Parse(selected.Name);
                     Graphics.OnSelectedObjectUpdated(this, Arguments);
-                }           
+                }
+                else if (selected.Tag is ActorEntry actorEntry)
+                {
+                    selected.Text = actorEntry.ToString();
+                    dPropertyGrid.UpdateObject();
+
+                    if (actorEntry.Data != null && actorEntry.Data.Data is ActorBlocker blocker)
+                    {
+                        foreach (TreeNode child in selected.Nodes)
+                        {
+                            if (child.Name.StartsWith("Blocker BBox") && int.TryParse(child.Name, out int refID))
+                            {
+                                if (Graphics.Assets.TryGetValue(refID, out IRenderer asset) && asset is RenderBoundingBox renderBox)
+                                {
+                                    Vector3 position = actorEntry.Position;
+                                    Vector3 bboxSize = blocker.BBox;
+                                    Vector3 halfSize = bboxSize * 0.5f;
+                                    BoundingBox newBox = new BoundingBox(
+                                        position - halfSize,
+                                        position + halfSize
+                                    );
+
+                                    renderBox.Update(newBox);
+                                    renderBox.SetTransform(Matrix4x4.CreateTranslation(position));
+                                }
+                            }
+                        }
+                    }
+                }
                 else if (selected.Tag is Instance)
                 {
                     Instance instance = (selected.Tag as Instance);
