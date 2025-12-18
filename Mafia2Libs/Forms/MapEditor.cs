@@ -2060,6 +2060,40 @@ namespace Mafia2Tool
                             }
                         }
                     }
+                    if (entry.ActorTypeName == "Detector" || entry.ActorTypeID == (int)ActorTypes.C_ActorDetector)
+                    {
+                        if (entry.Data != null && entry.Data.Data is ActorActorDetector detector)
+                        {
+                            Vector3 position = entry.Position;
+
+                            Vector3 halfSize = new Vector3(
+                                detector.SizeX * 0.5f,
+                                detector.SizeY * 0.5f,
+                                detector.SizeZ * 0.5f
+                            );
+
+                            BoundingBox detectorBox = new BoundingBox(
+                                position - halfSize,
+                                position + halfSize
+                            );
+
+                            RenderBoundingBox renderDetectorBox = new RenderBoundingBox();
+                            renderDetectorBox.Init(detectorBox);
+
+                            int refID = RefManager.GetNewRefID();
+                            assets.Add(refID, renderDetectorBox);
+                            RefIDToActorEntry[refID] = entry;
+
+                            TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
+                            if (foundNodes.Length > 0)
+                            {
+                                TreeNode boxNode = new TreeNode("Detector Box");
+                                boxNode.Name = refID.ToString();
+                                boxNode.Tag = renderDetectorBox;
+                                foundNodes[0].Nodes.Add(boxNode);
+                            }
+                        }
+                    }
                 }
             }
 
@@ -2693,6 +2727,33 @@ namespace Mafia2Tool
                                     Vector3 position = actorEntry.Position;
                                     Vector3 bboxSize = blocker.BBox;
                                     Vector3 halfSize = bboxSize * 0.5f;
+                                    BoundingBox newBox = new BoundingBox(
+                                        position - halfSize,
+                                        position + halfSize
+                                    );
+
+                                    renderBox.Update(newBox);
+                                    renderBox.SetTransform(Matrix4x4.CreateTranslation(position));
+                                }
+                            }
+
+                        }
+                    }
+                    else if (actorEntry.Data != null && actorEntry.Data.Data is ActorActorDetector detector)
+                    {
+                        foreach (TreeNode child in selected.Nodes)
+                        {
+                            if (child.Text == "Detector Box" && int.TryParse(child.Name, out int refID))
+                            {
+                                if (Graphics.Assets.TryGetValue(refID, out IRenderer asset) && asset is RenderBoundingBox renderBox)
+                                {
+                                    Vector3 position = actorEntry.Position;
+                                    Vector3 halfSize = new Vector3(
+                                        detector.SizeX * 0.5f,
+                                        detector.SizeY * 0.5f,
+                                        detector.SizeZ * 0.5f
+                                    );
+
                                     BoundingBox newBox = new BoundingBox(
                                         position - halfSize,
                                         position + halfSize
