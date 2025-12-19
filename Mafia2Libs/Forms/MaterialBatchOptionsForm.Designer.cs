@@ -135,7 +135,6 @@
             label4.Size = new System.Drawing.Size(34, 15);
             label4.TabIndex = 8;
             label4.Text = "Unk3";
-            label4.Click += label4_Click;
             // 
             // label5
             // 

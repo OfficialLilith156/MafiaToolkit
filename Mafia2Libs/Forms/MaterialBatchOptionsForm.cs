@@ -29,8 +29,6 @@ namespace Mafia2Tool.Forms
         public ulong ShaderID => (ulong)numericShaderID.Value;
         public uint ShaderHash => (uint)numericShaderHash.Value;
 
-
-
         public MaterialBatchOptionsForm()
         {
             InitializeComponent();
@@ -44,7 +42,6 @@ namespace Mafia2Tool.Forms
             numericShaderID.Value = 4894707398632176459;
             numericShaderHash.Maximum = decimal.MaxValue;
             numericShaderHash.Value = 3388704532;
-
             checkedFlags.SetItemChecked(0, true);
             checkedFlags.SetItemChecked(3, true);
             numericShaderHash.Maximum = decimal.MaxValue;
@@ -54,9 +51,8 @@ namespace Mafia2Tool.Forms
             TextUNKSET0.Text = "0,0";
             TextUNKSET1.Text = "0,0";
             TextUNKZERO.Text = "0";
-
-
         }
+
         private void buttonOk_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.OK;
@@ -68,26 +64,19 @@ namespace Mafia2Tool.Forms
             DialogResult = DialogResult.Cancel;
             Close();
         }
+
         public MaterialFlags GetSelectedFlags()
         {
             MaterialFlags flags = 0;
-
             foreach (var item in checkedFlags.CheckedItems)
             {
                 string flagName = item.ToString();
-
                 if (Enum.TryParse(flagName, out MaterialFlags parsedFlag))
                 {
                     flags |= parsedFlag;
                 }
             }
-
             return flags;
-        }
-
-        private void label4_Click(object sender, EventArgs e)
-        {
-
         }
     }
 }
