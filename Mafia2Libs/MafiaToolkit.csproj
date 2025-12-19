@@ -305,9 +305,6 @@
     <Content Include="Shaders\LightVS.hlsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Update="Resources\Splash.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="Resources\Toolkit.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -24,20 +24,12 @@ namespace Mafia2Tool
         private FileInfo launcher;
         private Game game;
         private FileFrameResource CachedFrameResourceFile;
-
         private FileSystemWatcher DirectoryWatcher;
 
         public GameExplorer()
         {
             InitializeComponent();
             LoadForm();
-        }
-
-        public void PreloadData()
-        {
-            SplashForm splash = new SplashForm();
-            splash.Show();
-            splash.Refresh();
         }
 
         public void LoadForm()
@@ -64,7 +56,6 @@ namespace Mafia2Tool
             dropdownView.Text = Language.GetString("$VIEW");
             dropdownTools.Text = Language.GetString("$TOOLS");
             dropdownAbout.Text = Language.GetString("$ABOUT");
-
             AboutButton.Text = Language.GetString("$ABOUT");
             Text = Language.GetString("$MII_TK_GAME_EXPLORER");
             FolderUpButton.ToolTipText = Language.GetString("$UP_TOOLTIP");
@@ -103,7 +94,6 @@ namespace Mafia2Tool
             UnpackCurrentSDSButton.Text = Language.GetString("$PACK_SELECTED_SDS");
             UnpackAllSDSButton.Text = Language.GetString("$UNPACK_ALL_SDS");
             SelectGameButton.Text = Language.GetString("$SELECT_GAME");
-
             Button_UnpackSDS.Text = Language.GetString("$UNPACK");
             Button_UnpackSDS.ToolTipText = Language.GetString("$UNPACK");
             Button_PackSDS.Text = Language.GetString("$PACK");
@@ -117,11 +107,9 @@ namespace Mafia2Tool
         public void InitExplorerSettings()
         {
             folderView.Nodes.Clear();
-
             game = GameStorage.Instance.GetSelectedGame();
             pcDirectory = new DirectoryInfo(game.Directory);
             launcher = new FileInfo(pcDirectory.FullName + "/" + GameStorage.GetExecutableName(game.GameType));
-
             if(!launcher.Exists)
             {
                 DialogResult result = MessageBox.Show("Could not find executable! Would you like to change the selected game?", "Toolkit", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
@@ -132,14 +120,12 @@ namespace Mafia2Tool
                 //Close();
                 return;
             }
-
             InitTreeView();
         }
 
         private void InitTreeView()
         {
             infoText.Text = "Building folders..";
-
             if (game.GameType != GamesEnumerator.MafiaIII && game.GameType != GamesEnumerator.MafiaI_DE)
             {
                 rootDirectory = pcDirectory.Parent;
@@ -148,7 +134,6 @@ namespace Mafia2Tool
             {
                 rootDirectory = pcDirectory;
             }
-
             TreeNode rootTreeNode = new TreeNode(rootDirectory.Name);
             rootTreeNode.Tag = rootDirectory;
             folderView.Nodes.Add(rootTreeNode);
@@ -185,12 +170,10 @@ namespace Mafia2Tool
                 node.Name = subDirectory.Name;
                 node.Tag = subDirectory;
                 node.ImageIndex = 0;
-
                 if (subDirectory.GetDirectories().Length > 0)
                 {
                     node.Nodes.Add("Dummy Node");
                 }
-
                 rootTreeNode.Nodes.Add(node);
             }
         }
@@ -201,12 +184,10 @@ namespace Mafia2Tool
             SetPackUnpackButtonEnabled(false);
             Button_OpenMapEditor.Enabled = false;
             CachedFrameResourceFile = null;
-
             infoText.Text = "Loading Directory..";
             fileListView.Items.Clear();
             ListViewItem.ListViewSubItem[] subItems;
             ListViewItem item = null;
-
             if (!directory.Exists)
             {               
                 string FolderPath = directory.FullName;
@@ -229,13 +210,10 @@ namespace Mafia2Tool
                     }
                 }
             }
-
             DirectoryBase directoryInfo = new DirectoryBase(directory);
-
             foreach (DirectoryInfo dir in directory.GetDirectories())
             {
                 DirectoryBase childInfo = new DirectoryBase(dir);
-
                 if (searchMode && !string.IsNullOrEmpty(filename))
                 {
                     if (!dir.Name.Contains(filename))
@@ -254,7 +232,6 @@ namespace Mafia2Tool
                 item.SubItems.AddRange(subItems);
                 fileListView.Items.Add(item);
             }
-
             foreach (FileInfo info in directory.GetFiles())
             {
                 if (!imageBank.Images.ContainsKey(info.Extension))
@@ -265,7 +242,6 @@ namespace Mafia2Tool
                         imageBank.Images.Add(info.Extension, icon);
                     }
                 }
-
                 if (searchMode && !string.IsNullOrEmpty(filename))
                 {
                     if (!info.Name.Contains(filename))
@@ -273,15 +249,12 @@ namespace Mafia2Tool
                         continue;
                     }
                 }
-
                 var file = FileFactory.ConstructFromFileInfo(info);
-
                 if(file is FileFrameResource)
                 {
                     CachedFrameResourceFile = file as FileFrameResource;
                     Button_OpenMapEditor.Enabled = true;
                 }
-
                 item = new ListViewItem(info.Name, imageBank.Images.IndexOfKey(info.Extension));
                 item.Tag = file;
                 subItems = new ListViewItem.ListViewSubItem[]
@@ -290,23 +263,18 @@ namespace Mafia2Tool
                     new ListViewItem.ListViewSubItem(item, file.GetFileSizeAsString()),
                     new ListViewItem.ListViewSubItem(item, file.GetLastTimeWrite()),
                 };
-
                 directoryInfo.AddLoadedFile(file);
                 item.SubItems.AddRange(subItems);
                 fileListView.Items.Add(item);
             }
-
             infoText.Text = "Done loading directory.";
             currentDirectory = directory;
             string directoryPath = directory.FullName.Remove(0, directory.FullName.IndexOf(rootDirectory.Name)).TrimEnd('\\');
-
             FolderPath.Text = directoryPath;
             fileListView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
-
             // We have to remove the AfterExpand event before we expand the node.
             folderView.AfterExpand -= FolderViewAfterExpand;
             TreeNode folderNode = folderView.Nodes.FindTreeNodeByFullPath(directoryPath);
-
             if (folderNode != null)
             {
                 folderNode.Nodes.Clear();
@@ -318,20 +286,17 @@ namespace Mafia2Tool
 
                 MessageBox.Show("Failed to find directory in FolderView!", "Toolkit", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
-
             folderView.AfterExpand += FolderViewAfterExpand;
         }
 
         private void OpenSDSDirectory(FileInfo file, bool openDirectory = true)
         {
             string extractedFolder = Path.Combine(file.Directory.FullName, "extracted");
-
             if (openDirectory)
             {
                 var directory = file.Directory;
                 string path = directory.FullName.Remove(0, directory.FullName.IndexOf(rootDirectory.Name, StringComparison.InvariantCultureIgnoreCase)).TrimEnd('\\');
                 TreeNode node = folderView.Nodes.FindTreeNodeByFullPath(path);
-
                 if(!node.Nodes.ContainsKey("extracted"))
                 {
                     var extracted = new TreeNode("extracted");
@@ -344,7 +309,6 @@ namespace Mafia2Tool
                 {
                     node.Nodes["extracted"].Nodes.Add(file.Name);
                 }
-
                 OpenDirectory(new DirectoryInfo(Path.Combine(extractedFolder, file.Name)));
                 infoText.Text = "Opened SDS..";
             }  
@@ -353,7 +317,6 @@ namespace Mafia2Tool
         private void toolStrip1_Resize(object sender, EventArgs e)
         {
             int width = toolStrip2.DisplayRectangle.Width;
-
             foreach (ToolStripItem tsi in toolStrip2.Items)
             {
                 if (tsi != FolderPath)
@@ -362,9 +325,9 @@ namespace Mafia2Tool
                     width -= tsi.Margin.Horizontal;
                 }
             }
-
             FolderPath.Width = Math.Max(0, width - FolderPath.Margin.Horizontal);
         }
+
         private void listView1_ItemActivate(object sender, EventArgs e)
         {
             if (fileListView.SelectedItems.Count > 0)
@@ -384,12 +347,10 @@ namespace Mafia2Tool
                     return false;
                 }
             }
-
             if(!asset.Open())
             {
                 return false;
             }
-
             if (asset is FileSDS)
             {           
                 OpenSDSDirectory(asset.GetUnderlyingFileInfo());
@@ -402,7 +363,6 @@ namespace Mafia2Tool
             {
                 OpenDirectory(currentDirectory);
             }
-
             return true;
         }
 
@@ -425,7 +385,6 @@ namespace Mafia2Tool
                 }
                 return;
             }
-
             if(item.Tag is FileBase)
             {
                 var asset = (item.Tag as FileBase);
@@ -450,28 +409,22 @@ namespace Mafia2Tool
                 MessageBox.Show(Language.GetString("$ERROR_SELECT_ITEM"), "Toolkit", MessageBoxButtons.OK);
                 return;
             }
-
             var file = fileListView.SelectedItems[0].Tag as FileBase;
             var info = file.GetUnderlyingFileInfo();
-
             if(info.Attributes.HasFlag(FileAttributes.ReadOnly))
             {
                 DialogResult result = MessageBox.Show("Detected a read only file. Would you like to forcefully pack?", "Toolkit", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-
                 if (result != DialogResult.Yes)
                 {
                     return;
                 }
-
                 info.Attributes -= FileAttributes.ReadOnly;
             }
-
             if(file is FileSDS)
             {
                 (file as FileSDS).Save();
                 infoText.Text = string.Format("Packed SDS: {0}", file.GetName());
             }
-
             if (file is FilePCKG)
             {
                 (file as FilePCKG).Save();
@@ -490,7 +443,6 @@ namespace Mafia2Tool
                     SDSFile.Open();
                     OpenSDSDirectory(SDSFile.GetUnderlyingFileInfo());
                 }
-
                 if (Tag is FilePCKG)
                 {
                     FilePCKG PCKGFile = (Tag as FilePCKG);
@@ -518,7 +470,6 @@ namespace Mafia2Tool
                 {
                     newDir = Path.Combine(rootDirectory.Parent.FullName, FolderPath.Text);
                 }
-
                 if (Directory.Exists(newDir) && FolderPath.Text.Contains(currentDirectory.Name))
                 {
                     OpenDirectory(new DirectoryInfo(newDir));
@@ -526,7 +477,6 @@ namespace Mafia2Tool
                 else
                 {
                     MessageBox.Show("Game Explorer cannot find path '" + newDir + "'. Make sure the path exists and try again.", "Game Explorer", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
                 }
             }
         }
@@ -536,7 +486,6 @@ namespace Mafia2Tool
             ProcessStartInfo StartInfo = new ProcessStartInfo();
             StartInfo.UseShellExecute = true;
             StartInfo.FileName = currentDirectory.FullName;
-
             Process.Start(StartInfo);
         }
 
@@ -551,16 +500,13 @@ namespace Mafia2Tool
             ContextRemoveToCartFiles.Visible = false;
             ContextUnpackSelectedSDS.Visible = false;
             ContextPackSelectedSDS.Visible = false;
-
             if (fileListView.SelectedItems.Count == 0)
             {
                 return;
             }
-
             if (fileListView.SelectedItems[0].Tag is FileBase)
             {
                 object Tag = fileListView.SelectedItems[0].Tag;
-
                 if (Tag is FileSDS || Tag is FilePCKG)
                 {
                     ContextSDSUnpack.Visible = true;
@@ -578,7 +524,6 @@ namespace Mafia2Tool
                         ContextFileExport.Text = CurrentFile.GetContextMenuOpenTitle();
                         ContextFileExport.Visible = true;
                     }
-
                     if (CurrentFile.CanContextMenuSave())
                     {
                         ContextFileImport.Text = CurrentFile.GetContextMenuSaveTitle();
@@ -586,7 +531,6 @@ namespace Mafia2Tool
                     }
                 }
             }
-
             foreach (ListViewItem item in fileListView.Items)
             {
                 if(item.Tag is FileSDS)
@@ -595,10 +539,10 @@ namespace Mafia2Tool
                     ContextUnpackSelectedSDS.Visible = true;
                 }
             }
-
             ContextDeleteSelectedFiles.Visible = true;
             ContextRemoveToCartFiles.Visible = true;
         }
+
         private void OnOptionsItem_Clicked(object sender, EventArgs e)
         {
             OptionsForm options = new OptionsForm();
@@ -615,13 +559,10 @@ namespace Mafia2Tool
         private void ContextSDSUnpackAll_Click(object sender, EventArgs e)
         {
             DialogResult Result = MessageBox.Show("Are you sure you want to unpack all SDS?", "Toolkit", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-            // Return if user said no
             if(Result == DialogResult.No)
             {
                 return;
             }
-
             foreach (ListViewItem item in fileListView.Items)
             {
                 if(item.Tag is FileSDS)
@@ -640,17 +581,13 @@ namespace Mafia2Tool
         //FileListViewStrip events.
         private void OnUpButtonClicked(object sender, EventArgs e)
         {
-            if (currentDirectory.Name == rootDirectory.Name)
-                return;
-
+            if (currentDirectory.Name == rootDirectory.Name) return;
             string directoryPath = currentDirectory.FullName.Remove(0, currentDirectory.FullName.IndexOf(rootDirectory.Name)).TrimEnd('\\');
-
             TreeNode nodeToCollapse = folderView.Nodes.FindTreeNodeByFullPath(directoryPath);
-            if (nodeToCollapse != null)
-                nodeToCollapse.Collapse();
-
+            if (nodeToCollapse != null) nodeToCollapse.Collapse();
             OpenDirectory(currentDirectory.Parent);
         }
+
         private void OnRefreshButtonClicked(object sender, EventArgs e)
         {
             if (currentDirectory != null)
@@ -673,7 +610,6 @@ namespace Mafia2Tool
             ViewStripMenuSmallIcon.Checked = false;
             ViewStripMenuList.Checked = false;
             ViewStripMenuTile.Checked = false;
-
             switch (type)
             {
                 case 0:
@@ -715,7 +651,6 @@ namespace Mafia2Tool
             {
                 return;
             }
-
             UnpackSDSRecurse(rootDirectory);
         }
 
@@ -769,7 +704,6 @@ namespace Mafia2Tool
         private void CheckValidSDS(FileInfo info)
         {
             var file = FileFactory.ConstructFromFileInfo(info);
-
             if(file is FileSDS)
             {
                 var SDSFile = (file as FileSDS);
@@ -793,7 +727,6 @@ namespace Mafia2Tool
             {
                 CheckValidSDS(file);
             }
-
             foreach (var directory in info.GetDirectories())
             {
                 if (!directory.Name.Contains("BackupSDS"))
@@ -801,7 +734,6 @@ namespace Mafia2Tool
                     UnpackSDSRecurse(directory);
                 }
             }
-
             Debug.WriteLine("Finished Unpack All SDS Function");
         }
 
@@ -836,7 +768,6 @@ namespace Mafia2Tool
             if(e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 string[] s = (string[])e.Data.GetData(DataFormats.FileDrop, false);
-
                 if (s.Length > 0)
                 {
                     FileInfo info = new FileInfo(s[0]);
@@ -856,11 +787,9 @@ namespace Mafia2Tool
             {
                 return;
             }
-
             foreach(ListViewItem SelectedObject in fileListView.SelectedItems)
             {
                 object ActualObject = SelectedObject.Tag;
-
                 if(ActualObject is FileBase)
                 {
                     (ActualObject as FileBase).Delete();
@@ -870,39 +799,27 @@ namespace Mafia2Tool
                     (ActualObject as DirectoryBase).Delete();
                 }
             }
-
             OpenDirectory(currentDirectory);
         }
 
         private void ContextRemoveToCartFiles_OnClick(object sender, EventArgs e)
         {
-            DialogResult result = MessageBox.Show(
-                "Are you sure? This will move all selected files and folders to the Recycle Bin.",
-                "Toolkit",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question
-            );
-
-            if (result != DialogResult.Yes)
-                return;
-
+            DialogResult result = MessageBox.Show("Are you sure? This will move all selected files and folders to the Recycle Bin.", "Toolkit", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (result != DialogResult.Yes) return;
             foreach (ListViewItem selectedItem in fileListView.SelectedItems)
             {
                 object actualObject = selectedItem.Tag;
-
                 try
                 {
                     if (actualObject is FileBase file)
                     {
                         FileInfo fileInfo = file.GetUnderlyingFileInfo();
-                        if (fileInfo.Exists)
-                            FileSystem.DeleteFile(fileInfo.FullName, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+                        if (fileInfo.Exists) FileSystem.DeleteFile(fileInfo.FullName, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
                     }
                     else if (actualObject is DirectoryBase dir)
                     {
                         DirectoryInfo dirInfo = dir.GetDirectoryInfo();
-                        if (dirInfo.Exists)
-                            FileSystem.DeleteDirectory(dirInfo.FullName, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+                        if (dirInfo.Exists) FileSystem.DeleteDirectory(dirInfo.FullName, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
                     }
                 }
                 catch (Exception ex)
@@ -910,7 +827,6 @@ namespace Mafia2Tool
                     MessageBox.Show($"Failed to delete {actualObject}: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-
             OpenDirectory(currentDirectory);
         }
 
@@ -919,7 +835,6 @@ namespace Mafia2Tool
             foreach (ListViewItem SelectedObject in fileListView.SelectedItems)
             {
                 object ActualObject = SelectedObject.Tag;
-
                 if (ActualObject is FileSDS)
                 {
                     (ActualObject as FileSDS).Open();
@@ -932,7 +847,6 @@ namespace Mafia2Tool
             foreach (ListViewItem SelectedObject in fileListView.SelectedItems)
             {
                 object ActualObject = SelectedObject.Tag;
-
                 if (ActualObject is FileSDS)
                 {
                     (ActualObject as FileSDS).Save();
@@ -945,7 +859,6 @@ namespace Mafia2Tool
             foreach (ListViewItem SelectedObject in fileListView.SelectedItems)
             {
                 object ActualObject = SelectedObject.Tag;
-
                 if (ActualObject is FileBase)
                 {
                     (ActualObject as FileBase).Open();
@@ -958,7 +871,6 @@ namespace Mafia2Tool
             foreach (ListViewItem SelectedObject in fileListView.SelectedItems)
             {
                 object ActualObject = SelectedObject.Tag;
-
                 if (ActualObject is FileBase)
                 {
                     (ActualObject as FileBase).Save();
