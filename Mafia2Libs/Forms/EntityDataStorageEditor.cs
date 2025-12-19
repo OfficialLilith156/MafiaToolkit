@@ -16,9 +16,7 @@ namespace Toolkit.Forms
     {
         private FileInfo edsFile;
         private EntityDataStorageLoader tables;
-
         private object OurClipboard;
-
         private bool bIsFileEdited = false;
 
         public EntityDataStorageEditor(FileInfo file)
@@ -53,7 +51,6 @@ namespace Toolkit.Forms
         {
             tables = new EntityDataStorageLoader();
             tables.ReadFromFile(edsFile.FullName, false);
-
             CreateTable();
         }
 
@@ -63,7 +60,6 @@ namespace Toolkit.Forms
             TreeNode entityNode = new TreeNode(EntityName);
             entityNode.Tag = tables;
             TreeView_Tables.Nodes.Add(entityNode);
-
             if (tables.Tables != null)
             {
                 for (int i = 0; i < tables.Tables.Length; i++)
@@ -91,18 +87,15 @@ namespace Toolkit.Forms
         private void Save()
         {
             TreeNode TableRoot = TreeView_Tables.Nodes[0];
-
             // Update tables from treeview
             tables.Tables = new IActorExtraDataInterface[TableRoot.Nodes.Count];
             for (int i = 0; i < tables.Tables.Length; i++)
             {
                 tables.Tables[i] = (IActorExtraDataInterface)TableRoot.Nodes[i].Tag;
             }
-
             // Write to file
             File.Copy(edsFile.FullName, edsFile.FullName + "_old", true);
             tables.WriteToFile(edsFile.FullName, false);
-
             FileIsNotEdited();
         }
 
@@ -110,10 +103,8 @@ namespace Toolkit.Forms
         {
             TreeView_Tables.Nodes.Clear();
             LoadAndBuildData();
-
             PropertyGrid_Item.SelectedObject = null;
             TreeView_Tables.SelectedNode = null;
-
             FileIsNotEdited();
         }
 
@@ -136,7 +127,6 @@ namespace Toolkit.Forms
                 // Nothing to copy
                 return;
             }
-
             // Attempt to copy
             TreeNode SelectedNode = TreeView_Tables.SelectedNode;
             if (SelectedNode != null && SelectedNode.Tag != null)
@@ -147,11 +137,9 @@ namespace Toolkit.Forms
                     object NewObject = Activator.CreateInstance(ObjectToCopy.GetType());
                     ReflectionHelpers.Copy(ObjectToCopy, ref NewObject);
                     SelectedNode.Tag = NewObject;
-
                     // Force reload
                     PropertyGrid_Item.SelectedObject = SelectedNode.Tag;
                 }
-
                 FileIsEdited();
             }
         }
@@ -177,6 +165,7 @@ namespace Toolkit.Forms
         private void Button_Paste_Click(object sender, EventArgs e) => PasteTagData();
         private void ToolStrip_Copy_Click(object sender, EventArgs e) => CopyTagData();
         private void ToolStrip_Paste_Click(object sender, EventArgs e) => PasteTagData();
+
         private void ContextMenu_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
             TreeNode SelectedNode = TreeView_Tables.SelectedNode;
@@ -189,7 +178,6 @@ namespace Toolkit.Forms
                     return;
                 }
             }
-
             e.Cancel = true;
         }
 
@@ -216,13 +204,10 @@ namespace Toolkit.Forms
                 if(File.Exists(FileToOpen))
                 {
                     tables.ConvertFromXML(FileToOpen);
-
                     // Reload TreeVieew and PropertyGrid, the import may mean our 'visual' part of the data is extremely outdated
                     TreeView_Tables.Nodes.Clear();
                     PropertyGrid_Item.SelectedObject = null;
-
                     CreateTable();
-
                     FileIsEdited();
                 }
             }
@@ -231,7 +216,6 @@ namespace Toolkit.Forms
         private void PropertyGrid_OnValueChanged(object s, PropertyValueChangedEventArgs e)
         {
             FileIsEdited();
-
             // Check if property 'Hash' needs to be updated
             if (PropertyGrid_Item.SelectedObject is EntityDataStorageLoader)
             {
@@ -245,17 +229,14 @@ namespace Toolkit.Forms
                 {
                     EntityDataStorageLoader EDSLoader = (PropertyGrid_Item.SelectedObject as EntityDataStorageLoader);
                     string NewEntityName = string.Format("Entity [{0}]", EDSLoader.Hash);
-
                     ToolkitAssert.Ensure(EDSLoader.TableHashes.Length == TreeView_Tables.SelectedNode.Nodes.Count, "WARNING: This editor does not support deleting/adding new tables. " +
                         "The length of 'TableHashes' NEEDS to equal the same amount of child nodes attached to " + NewEntityName);
-
                     int Index = 0;
                     foreach (TreeNode ChildNode in TreeView_Tables.SelectedNode.Nodes)
                     {
                         string NewTableName = string.Format("Table [{0}]", EDSLoader.TableHashes[Index]);
                         ChildNode.Text = NewTableName;
                         ChildNode.Name = NewTableName;
-
                         Index++;
                     }
                 }
@@ -267,7 +248,6 @@ namespace Toolkit.Forms
             if (bIsFileEdited)
             {
                 System.Windows.MessageBoxResult SaveChanges = System.Windows.MessageBox.Show(Language.GetString("$SAVE_PROMPT"), "Toolkit", System.Windows.MessageBoxButton.YesNoCancel);
-
                 if (SaveChanges == System.Windows.MessageBoxResult.Yes)
                 {
                     Save();
