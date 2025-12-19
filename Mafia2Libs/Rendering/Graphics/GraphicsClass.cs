@@ -116,7 +116,6 @@ namespace Rendering.Graphics
                 structure.ReadFromM2T("Resources/weather_clouds.m2t");
                 clouds.ConvertMTKToRenderModel(structure);
                 clouds.InitBuffers(D3D.Device, D3D.DeviceContext);
-                clouds.DoRender = false;
 
                 RenderModel instancePlaceholder = new RenderModel();
                 structure = new M2TStructure();
