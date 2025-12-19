@@ -11,7 +11,6 @@ namespace Mafia2Tool
     {
         private FileInfo cityAreasFile;
         private CityAreas areas;
-
         private bool bIsFileEdited = false;
 
         public CityAreaEditor(FileInfo file)
@@ -39,7 +38,6 @@ namespace Mafia2Tool
         private void BuildData()
         {
             areas = new CityAreas(cityAreasFile.FullName);
-
             for (int i = 0; i != areas.AreaCollection.Count; i++)
             {
                 ListBox_Areas.Items.Add(areas.AreaCollection[i]);
@@ -53,10 +51,9 @@ namespace Mafia2Tool
             areas.AreaCollection.Add(area);
             ListBox_Areas.Items.Add(area);
             ListBox_Areas.SelectedItem = area;
-
             Text = Language.GetString("$CITY_AREA_EDITOR_TITLE") + "*";
             bIsFileEdited = true;
-    }
+        }
 
         private void Save()
         {
@@ -64,7 +61,6 @@ namespace Mafia2Tool
             {
                 areas.WriteToFile(writer);
             }
-
             Text = Language.GetString("$CITY_AREA_EDITOR_TITLE");
             bIsFileEdited = false;
         }
@@ -73,10 +69,8 @@ namespace Mafia2Tool
         {
             Clear();
             BuildData();
-
             PropertyGrid_Area.SelectedObject = null;
             ListBox_Areas.SelectedItem = null;
-
             Text = Language.GetString("$CITY_AREA_EDITOR_TITLE");
             bIsFileEdited = false;
         }
@@ -87,7 +81,6 @@ namespace Mafia2Tool
             {
                 areas.AreaCollection.Remove((CityAreas.AreaData)ListBox_Areas.SelectedItem);
                 ListBox_Areas.Items.Remove(ListBox_Areas.SelectedItem);
-
                 Text = Language.GetString("$CITY_AREA_EDITOR_TITLE") + "*";
                 bIsFileEdited = true;
             }
@@ -113,7 +106,6 @@ namespace Mafia2Tool
             ListBox_Areas.Items.RemoveAt(index);
             ListBox_Areas.Items.Insert(index, area);
             ListBox_Areas.SelectedItem = area;
-
             Text = Language.GetString("$CITY_AREA_EDITOR_TITLE") + "*";
             bIsFileEdited = true;
         }
@@ -125,7 +117,6 @@ namespace Mafia2Tool
             var textLower = text.ToLower();
             var bIsSearching = !string.IsNullOrEmpty(text);
             ListBox_Areas.Items.Clear();
-
             foreach(var area in areas.AreaCollection)
             {
                 if (bIsSearching)
@@ -147,7 +138,6 @@ namespace Mafia2Tool
             if (bIsFileEdited)
             {
                 System.Windows.MessageBoxResult SaveChanges = System.Windows.MessageBox.Show(Language.GetString("$SAVE_PROMPT"), "Toolkit", System.Windows.MessageBoxButton.YesNoCancel);
-
                 if (SaveChanges == System.Windows.MessageBoxResult.Yes)
                 {
                     Save();
