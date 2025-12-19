@@ -49,9 +49,7 @@ namespace Mafia2Tool
             Wem.AssignedHirc.AuxiliaryBus = new List<int>();
             Wem.AssignedHirc.LFO = new List<int>();
             Wem.AssignedHirc.Envelope = new List<int>();
-
             Hirc.AssignHirc(Wem.AssignedHirc);
-
             AddNode(Wem.AssignedHirc.ActorMixer, "Actor Mixer");
             AddNode(Wem.AssignedHirc.Attenuation, "Attenuation");
             AddNode(Wem.AssignedHirc.BlendContainer, "Blend Container");
@@ -78,13 +76,11 @@ namespace Mafia2Tool
             {
                 TreeNode node = new TreeNode();
                 node.Text = name;
-
                 foreach (int id in ids)
                 {
                     TreeNode tempItem = Hirc.CreateNode(name, id);
                     node.Nodes.Add(tempItem);
                 }
-
                 if (node.Nodes.Count != 0)
                 {
                     TreeView_HIRC.Nodes.Add(node);
@@ -103,13 +99,11 @@ namespace Mafia2Tool
             {
                 TreeView_HIRC.SelectedNode.Text = e.ChangedItem.Value.ToString();
             }
-
             HircGrid.Refresh();
         }
 
         private void HIRCEditor_Load(object sender, System.EventArgs e)
         {
-
         }
     }
 }
