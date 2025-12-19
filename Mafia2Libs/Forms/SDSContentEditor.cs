@@ -11,7 +11,6 @@ namespace Mafia2Tool
     {
         FileInfo OriginalInfo;
         SDSContentFile file;
-
         private bool bIsFileEdited = false;
 
         public SDSContentEditor()
@@ -59,7 +58,6 @@ namespace Mafia2Tool
         private void Save()
         {
             file.WriteToFile();
-
             Text = Language.GetString("$SDSCONTENT_EDITOR_TITLE");
             bIsFileEdited = false;
         }
@@ -69,7 +67,6 @@ namespace Mafia2Tool
             file = new SDSContentFile();
             file.ReadFromFile(OriginalInfo);
             PopulateTree();
-
             Text = Language.GetString("$SDSCONTENT_EDITOR_TITLE");
             bIsFileEdited = false;
         }
@@ -77,14 +74,11 @@ namespace Mafia2Tool
         private void Delete()
         {
             TreeNode SelNode = ResourceTreeView.SelectedNode;
-
             if (SelNode.Parent != null)
             {
                 string ParentNodeName = SelNode.Parent.Text;
-
                 file.Resources[ParentNodeName].Remove(SelNode);
                 ResourceTreeView.Nodes.Remove(ResourceTreeView.SelectedNode);
-
                 Text = Language.GetString("$SDSCONTENT_EDITOR_TITLE") + "*";
                 bIsFileEdited = true;
             }
@@ -92,7 +86,6 @@ namespace Mafia2Tool
             {
                 file.Resources.Remove(SelNode.Text);
                 ResourceTreeView.Nodes.Remove(ResourceTreeView.SelectedNode);
-
                 Text = Language.GetString("$SDSCONTENT_EDITOR_TITLE") + "*";
                 bIsFileEdited = true;
             }
@@ -105,7 +98,6 @@ namespace Mafia2Tool
             {
                 file.CreateFileFromFolder();
                 PopulateTree();
-
                 Text = Language.GetString("$SDSCONTENT_EDITOR_TITLE") + "*";
                 bIsFileEdited = true;
             }
@@ -121,33 +113,28 @@ namespace Mafia2Tool
                 file.WipeResourceType("Texture");
                 file.WipeResourceType("Mipmap");
             }
-
             DialogResult Result = FileDialog_Generic.ShowDialog();
             if(Result != DialogResult.OK || string.IsNullOrEmpty(FileDialog_Generic.FileName))
             {
                 // Fail
                 return;
             }
-
             if(!File.Exists(FileDialog_Generic.FileName))
             {
                 // Fail, file doesn't exist
                 return;
             }
-
             Result = FolderBrowser_Generic.ShowDialog();
             if(Result != DialogResult.OK || string.IsNullOrEmpty(FolderBrowser_Generic.SelectedPath))
             {
                 // Fail;
                 return;
             }
-
             // Cache folder and file name
             string TextureFolder = FolderBrowser_Generic.SelectedPath;
             string FileName = FileDialog_Generic.FileName;
             string SDSPath = file.GetParentFolder();
             string[] AllTextures = File.ReadAllLines(FileName);
-
             foreach(string TextureEntry in AllTextures)
             {
                 // Check if the texture exists in the provided path
@@ -157,15 +144,12 @@ namespace Mafia2Tool
                     // Copy over the texture
                     string NewSDSPath = SDSPath + "//" + TextureEntry;
                     File.Copy(ConnectedPath, NewSDSPath, true);
-
                     // CreateTextureResource() checks if MIP exists.
                     file.CreateTextureResource(TextureEntry);
                 }
             }
-
             // Update tree
             PopulateTree();
-
             Text = Language.GetString("$SDSCONTENT_EDITOR_TITLE") + "*";
             bIsFileEdited = true;
         }
@@ -175,7 +159,6 @@ namespace Mafia2Tool
             if (bIsFileEdited)
             {
                 System.Windows.MessageBoxResult SaveChanges = System.Windows.MessageBox.Show(Language.GetString("$SAVE_PROMPT"), "Toolkit", System.Windows.MessageBoxButton.YesNoCancel);
-
                 if (SaveChanges == System.Windows.MessageBoxResult.Yes)
                 {
                     Save();
