@@ -2029,6 +2029,29 @@ namespace Mafia2Tool
                             }
                         }
                     }
+                    if (entry.ActorTypeName == "C_Sound" || entry.ActorTypeID == (int)ActorTypes.C_Sound)
+                    {
+                        Vector3 position = entry.Position;
+
+                        Vector3 size = new Vector3(0.05f);
+                        BoundingBox smallBox = new BoundingBox(position - size, position + size);
+                        RenderBoundingBox renderSmallBox = new RenderBoundingBox();
+                        renderSmallBox.Init(smallBox);
+
+                        int refIDSmallBox = RefManager.GetNewRefID();
+                        assets.Add(refIDSmallBox, renderSmallBox);
+
+                        RefIDToActorEntry[refIDSmallBox] = entry;
+
+                        TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
+                        if (foundNodes.Length > 0)
+                        {
+                            TreeNode boxNode = new TreeNode("C_Sound Box");
+                            boxNode.Name = refIDSmallBox.ToString();
+                            boxNode.Tag = renderSmallBox;
+                            foundNodes[0].Nodes.Add(boxNode);
+                        }                      
+                    }
                     if (entry.ActorTypeName == "C_TrafficCar" || entry.ActorTypeID == (int)ActorTypes.C_TrafficCar)
                     {
 
