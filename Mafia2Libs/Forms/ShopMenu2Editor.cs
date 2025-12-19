@@ -13,10 +13,8 @@ namespace Mafia2Tool
     {
         private FileInfo menuFile;
         private ShopMenu2 menuData;
-
         private TreeNode ShopFolder;
         private TreeNode ShopMetaInfoFolder;
-
         private bool bIsFileEdited;
 
         public ShopMenu2Editor(FileInfo file)
@@ -52,13 +50,11 @@ namespace Mafia2Tool
         private void BuildData(bool fromFile)
         {
             TreeView_ShopMenu2.Nodes.Clear();
-
             if (fromFile)
             {
                 menuData = new ShopMenu2();
                 menuData.ReadFromFile(menuFile.FullName);
             }
-
             ShopFolder = new TreeNode("Shop Types");
             foreach (ShopMenu2.Shop Shop in menuData.Shops)
             {
@@ -67,7 +63,6 @@ namespace Mafia2Tool
                 child.Tag = Shop;
                 ShopFolder.Nodes.Add(child);
             }
-
             ShopMetaInfoFolder = new TreeNode("Shop MetaInfo");
             foreach (ShopMenu2.ShopMenu MetaInfo in menuData.ShopItems)
             {
@@ -75,7 +70,6 @@ namespace Mafia2Tool
                 meta.Text = MetaInfo.Path;
                 meta.Tag = MetaInfo;
                 ShopMetaInfoFolder.Nodes.Add(meta);
-
                 // Add items as sub-nodes
                 foreach (ShopMenu2.ItemConfig Item in MetaInfo.Items)
                 {
@@ -84,7 +78,6 @@ namespace Mafia2Tool
                     meta.Nodes.Add(ItemConfigNode);
                 }
             }
-
             // Add all nodes
             TreeView_ShopMenu2.Nodes.Add(ShopFolder);
             TreeView_ShopMenu2.Nodes.Add(ShopMetaInfoFolder);
@@ -93,10 +86,8 @@ namespace Mafia2Tool
         private void Save()
         {
             PreSave();
-
             File.Copy(menuFile.FullName, menuFile.FullName + "_old", true);
             menuData.WriteToFile(menuFile.FullName);
-
             // Mark as not edited
             Text = Language.GetString("$SHOPMENU2_EDITOR_TITLE");
             bIsFileEdited = false;
@@ -107,19 +98,16 @@ namespace Mafia2Tool
             // Clear existing lists
             menuData.Shops = new ShopMenu2.Shop[ShopFolder.Nodes.Count];
             menuData.ShopItems = new ShopMenu2.ShopMenu[ShopMetaInfoFolder.Nodes.Count];
-
             // Repopulate lists
             for (int i = 0; i < ShopFolder.Nodes.Count; i++)
             {
                 menuData.Shops[i] = (ShopMenu2.Shop)ShopFolder.Nodes[i].Tag;
             }
-
             for (int i = 0; i < ShopMetaInfoFolder.Nodes.Count; i++)
             {
                 var MetaInfo = ShopMetaInfoFolder.Nodes[i];
                 ShopMenu2.ShopMenu CurrentMetaInfo = (ShopMenu2.ShopMenu)MetaInfo.Tag;
                 menuData.ShopItems[i] = CurrentMetaInfo;
-
                 // Clear for new entries
                 CurrentMetaInfo.Items = new ShopMenu2.ItemConfig[MetaInfo.Nodes.Count];
                 for (int j = 0; j < MetaInfo.Nodes.Count; j++)
@@ -134,7 +122,6 @@ namespace Mafia2Tool
             PropertyGrid_ShopMenu2.SelectedObject = null;
             TreeView_ShopMenu2.SelectedNode = null;
             BuildData(true);
-
             Text = Language.GetString("$SHOPMENU2_EDITOR_TITLE");
             bIsFileEdited = false;
         }
@@ -145,7 +132,6 @@ namespace Mafia2Tool
             if (SelNode != null)
             {
                 SelNode.Remove();
-
                 Text = Language.GetString("$SHOPMENU2_EDITOR_TITLE") + "*";
                 bIsFileEdited = true;
             }
@@ -156,12 +142,10 @@ namespace Mafia2Tool
             // Create the new shop
             ShopMenu2.Shop NewShop = new ShopMenu2.Shop();
             NewShop.Name = "New Shop";
-
             // Create a new node
             TreeNode NewNode = new TreeNode("Shop" + (ShopFolder.Nodes.Count + 1));
             NewNode.Tag = NewShop;
             ShopFolder.Nodes.Add(NewNode);
-
             // Mark as edited
             MarkAsEdited();
         }
@@ -171,12 +155,10 @@ namespace Mafia2Tool
             // Create the new MetaInfo
             ShopMenu2.ShopMenu NewMenu = new ShopMenu2.ShopMenu();
             NewMenu.Path = "New Shop Menu";
-
             // Create a new node
             TreeNode NewNode = new TreeNode("ShopMenu" + (ShopMetaInfoFolder.Nodes.Count + 1));
             NewNode.Tag = NewMenu;
             ShopMetaInfoFolder.Nodes.Add(NewNode);
-
             // Mark as edited
             MarkAsEdited();
         }
@@ -188,22 +170,18 @@ namespace Mafia2Tool
                 // Skip, nothing selected
                 return;
             }
-
             ShopMenu2.ShopMenu MetaInfo = (TreeView_ShopMenu2.SelectedNode.Tag as ShopMenu2.ShopMenu);
             if (MetaInfo == null)
             {
                 // Skip, not a meta info
                 return;
             }
-
             // Copy
             ShopMenu2.ShopMenu CopiedMetaInfo = new ShopMenu2.ShopMenu(MetaInfo);
-
             // Create a new TreeNode
             var NewMetaInfoNode = new TreeNode("Meta" + CopiedMetaInfo.ID.ToString());
             NewMetaInfoNode.Text = CopiedMetaInfo.Path;
             NewMetaInfoNode.Tag = CopiedMetaInfo;
-
             MarkAsEdited();
         }
 
@@ -214,25 +192,20 @@ namespace Mafia2Tool
                 // Skip, nothing selected
                 return;
             }
-
             ShopMenu2.ItemConfig SelectedConfig = (TreeView_ShopMenu2.SelectedNode.Tag as ShopMenu2.ItemConfig);
             if (SelectedConfig == null)
             {
                 // Skip, not correct type
                 return;
             }
-
             // Copy
             ShopMenu2.ItemConfig CopiedConfig = new ShopMenu2.ItemConfig(SelectedConfig);
-
             // Create a new TreeNode
             TreeNode NewMetaInfoNode = new TreeNode(CopiedConfig.Name.ToString());
             NewMetaInfoNode.Tag = CopiedConfig;
-
             // Add to same parent
             TreeNode ParentNode = TreeView_ShopMenu2.SelectedNode.Parent;
             ParentNode.Nodes.Add(NewMetaInfoNode);
-
             // Mark as modified
             MarkAsEdited();
         }
@@ -248,7 +221,6 @@ namespace Mafia2Tool
             {
                 TreeView_ShopMenu2.SelectedNode.Text = e.ChangedItem.Value.ToString();
             }
-
             MarkAsEdited(); 
         }
 
@@ -257,7 +229,6 @@ namespace Mafia2Tool
             if (bIsFileEdited)
             {
                 System.Windows.MessageBoxResult SaveChanges = System.Windows.MessageBox.Show(Language.GetString("$SAVE_PROMPT"), "Toolkit", System.Windows.MessageBoxButton.YesNoCancel);
-
                 if (SaveChanges == System.Windows.MessageBoxResult.Yes)
                 {
                     Save();
@@ -273,20 +244,17 @@ namespace Mafia2Tool
         {
             Context_DuplicateMetaInfo.Enabled = false;
             Context_DuplicateMetaInfoItem.Enabled = false;
-
             if (TreeView_ShopMenu2.SelectedNode == null || TreeView_ShopMenu2.SelectedNode.Tag == null)
             {
                 // Skip, nothing selected
                 return;
             }
-
             // If a MetaInfo, enable DuplicateMetaInfo button
             ShopMenu2.ShopMenu MetaInfo = (TreeView_ShopMenu2.SelectedNode.Tag as ShopMenu2.ShopMenu);
             if (MetaInfo != null)
             {
                 Context_DuplicateMetaInfo.Enabled = true;
             }
-
             // If a ItemConfig, enable DuplicateMetaInfoItem button
             ShopMenu2.ItemConfig ItemConfig = (TreeView_ShopMenu2.SelectedNode.Tag as ShopMenu2.ItemConfig);
             if (ItemConfig != null)
@@ -307,11 +275,11 @@ namespace Mafia2Tool
         private void Button_Delete_OnClick(object sender, System.EventArgs e) => Delete();
         private void Button_AddType_OnClick(object sender, System.EventArgs e) => AddType();
         private void Button_AddMetaInfo_OnClick(object sender, System.EventArgs e) => AddMetaInfo();
+
         private void Button_ExportXml_OnClick(object sender, System.EventArgs e)
         {
             SaveFileDialog saveFile = new SaveFileDialog();
             saveFile.Filter = "XML|*.XML";
-
             if (saveFile.ShowDialog() == DialogResult.OK)
             {
                 menuData.ConvertToXML(saveFile.FileName);
@@ -324,18 +292,17 @@ namespace Mafia2Tool
             openFileDialog.Filter = "XML|*.XML";
             openFileDialog.Multiselect = false;
             openFileDialog.CheckFileExists = true;
-
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 string FileToOpen = openFileDialog.FileName;
                 if (File.Exists(FileToOpen))
                 {
                     menuData.ConvertFromXML(FileToOpen);
-
                     BuildData(false);
                 }
             }
         }
+
         private void SearchBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -345,14 +312,12 @@ namespace Mafia2Tool
             }
         }
 
-
         private void Button_LoadTextDB_OnClick(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "Text Database|*.dat";
             openFileDialog.Multiselect = false;
             openFileDialog.CheckFileExists = true;
-
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 string dbPath = openFileDialog.FileName;
@@ -365,21 +330,17 @@ namespace Mafia2Tool
                         {
                             var newTextDB = new Dictionary<uint, string>();
                             string[] lines = File.ReadAllLines(dbPath);
-
                             foreach (var line in lines)
                             {
                                 if (!string.IsNullOrEmpty(line))
                                 {
                                     string[] split = line.Split(':');
                                     split[0] = Regex.Replace(split[0], @"_", "");
-                                    if (uint.TryParse(split[0], out uint id))
-                                        newTextDB.Add(id, split[1]);
+                                    if (uint.TryParse(split[0], out uint id)) newTextDB.Add(id, split[1]);
                                 }
                             }
-
                             textDBField.SetValue(menuData, newTextDB);
                             UpdateAllLocalisedStrings();
-
                             //MessageBox.Show("TextDatabase loaded successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         }
                     }
@@ -397,8 +358,7 @@ namespace Mafia2Tool
             {
                 foreach (var shop in menuData.Shops)
                 {
-                    menuData.GetType().GetMethod("GetFromDB", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                        .Invoke(menuData, new object[] { shop.Unk0 });
+                    menuData.GetType().GetMethod("GetFromDB", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).Invoke(menuData, new object[] { shop.Unk0 });
                 }
             }
 
@@ -406,68 +366,52 @@ namespace Mafia2Tool
             {
                 foreach (var menu in menuData.ShopItems)
                 {
-                    menuData.GetType().GetMethod("GetFromDB", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                        .Invoke(menuData, new object[] { menu.UnkDB0 });
+                    menuData.GetType().GetMethod("GetFromDB", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).Invoke(menuData, new object[] { menu.UnkDB0 });
 
                     foreach (var item in menu.Items)
                     {
-                        menuData.GetType().GetMethod("GetFromDB", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                            .Invoke(menuData, new object[] { item.Name });
+                        menuData.GetType().GetMethod("GetFromDB", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).Invoke(menuData, new object[] { item.Name });
 
-                        menuData.GetType().GetMethod("GetFromDB", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                            .Invoke(menuData, new object[] { item.ShortDescription });
+                        menuData.GetType().GetMethod("GetFromDB", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).Invoke(menuData, new object[] { item.ShortDescription });
 
-                        menuData.GetType().GetMethod("GetFromDB", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                            .Invoke(menuData, new object[] { item.UnkDB2 });
+                        menuData.GetType().GetMethod("GetFromDB", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).Invoke(menuData, new object[] { item.UnkDB2 });
 
-                        menuData.GetType().GetMethod("GetFromDB", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                            .Invoke(menuData, new object[] { item.UnkDB3 });
+                        menuData.GetType().GetMethod("GetFromDB", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).Invoke(menuData, new object[] { item.UnkDB3 });
 
-                        menuData.GetType().GetMethod("GetFromDB", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                            .Invoke(menuData, new object[] { item.PromptText });
+                        menuData.GetType().GetMethod("GetFromDB", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).Invoke(menuData, new object[] { item.PromptText });
 
-                        menuData.GetType().GetMethod("GetFromDB", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                            .Invoke(menuData, new object[] { item.UnkDB5 });
+                        menuData.GetType().GetMethod("GetFromDB", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).Invoke(menuData, new object[] { item.UnkDB5 });
                     }
                 }
             }
-
             BuildData(false);
         }
 
         private void RunSearch(string query)
         { 
             query = query.Trim().ToLower();
-            if (string.IsNullOrWhiteSpace(query))
-                return;
-
+            if (string.IsNullOrWhiteSpace(query)) return;
             TreeNode foundNode = FindNode(TreeView_ShopMenu2.Nodes, query);
-
             if (foundNode != null)
             {
                 TreeView_ShopMenu2.SelectedNode = foundNode;
                 TreeView_ShopMenu2.Focus();
                 foundNode.EnsureVisible();
             }
-            else
-            {
-                //MessageBox.Show("Ничего не найдено.");
-            }
+            else { }
         }
 
         private TreeNode FindNode(TreeNodeCollection nodes, string query)
         {
             foreach (TreeNode node in nodes)
             {
-                if (node.Text.ToLower().Contains(query))
-                    return node;
-
+                if (node.Text.ToLower().Contains(query)) return node;
                 TreeNode child = FindNode(node.Nodes, query);
-                if (child != null)
-                    return child;
+                if (child != null) return child;
             }
             return null;
         }
+
         private void Context_Delete_OnClick(object sender, System.EventArgs e) => Delete();
         private void Context_AddType_OnClick(object sender, System.EventArgs e) => AddType();
         private void Context_AddMetaInfo_OnClick(object sender, System.EventArgs e) => AddMetaInfo();
