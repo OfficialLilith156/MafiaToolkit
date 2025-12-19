@@ -1289,8 +1289,7 @@ namespace Mafia2Tool
 
         private void SaveScene()
         {
-            DialogResult result = MessageBox.Show("Do you want to save your changes (without collisions)?",
-                                                  "Toolkit", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            DialogResult result = MessageBox.Show("Do you want to save your changes?", "Toolkit", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
             if (result == DialogResult.Yes)
             {
@@ -2030,6 +2029,87 @@ namespace Mafia2Tool
                             }
                         }
                     }
+                    if (entry.ActorTypeName == "C_TrafficCar" || entry.ActorTypeID == (int)ActorTypes.C_TrafficCar)
+                    {
+
+                        TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);                       
+                        if (entry.Data != null && entry.Data.Data is ActorTrafficCar traffic)
+                        {
+                            Vector3 min = traffic.BoundingBoxMinimum;
+                            Vector3 max = traffic.BoundingBoxMaximum;
+
+                            BoundingBox TrafficBBox = new BoundingBox(min, max);
+
+                            RenderBoundingBox Traffic2BBox = new RenderBoundingBox();
+                            Traffic2BBox.Init(TrafficBBox);
+
+                            int refID = RefManager.GetNewRefID();
+                            assets.Add(refID, Traffic2BBox);
+                            RefIDToActorEntry[refID] = entry;
+
+                            if (foundNodes.Length > 0)
+                            {
+                                TreeNode bboxNode = new TreeNode("C_TrafficCar BoundingBox");
+                                bboxNode.Name = refID.ToString();
+                                bboxNode.Tag = Traffic2BBox;
+                                foundNodes[0].Nodes.Add(bboxNode);
+                            }
+                        }
+                    }
+                    if (entry.ActorTypeName == "C_TrafficTrain" || entry.ActorTypeID == (int)ActorTypes.C_TrafficTrain)
+                    {
+
+                        TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
+                        if (entry.Data != null && entry.Data.Data is ActorTrafficTrain traffictrain)
+                        {
+                            Vector3 min = traffictrain.BoundingBoxMinimum;
+                            Vector3 max = traffictrain.BoundingBoxMaximum;
+
+                            BoundingBox TrainTrafficBBox = new BoundingBox(min, max);
+
+                            RenderBoundingBox TrainTraffic2BBox = new RenderBoundingBox();
+                            TrainTraffic2BBox.Init(TrainTrafficBBox);
+
+                            int refID = RefManager.GetNewRefID();
+                            assets.Add(refID, TrainTraffic2BBox);
+                            RefIDToActorEntry[refID] = entry;
+
+                            if (foundNodes.Length > 0)
+                            {
+                                TreeNode bboxNode = new TreeNode("C_TrafficTrain BoundingBox");
+                                bboxNode.Name = refID.ToString();
+                                bboxNode.Tag = TrainTraffic2BBox;
+                                foundNodes[0].Nodes.Add(bboxNode);
+                            }
+                        }
+                    }
+                    if (entry.ActorTypeName == "C_TrafficHuman" || entry.ActorTypeID == (int)ActorTypes.C_TrafficHuman)
+                    {
+
+                        TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
+                        if (entry.Data != null && entry.Data.Data is ActorTrafficHuman traffichuman)
+                        {
+                            Vector3 min = traffichuman.BoundingBoxMinimum;
+                            Vector3 max = traffichuman.BoundingBoxMaximum;
+
+                            BoundingBox HumanTrafficBBox = new BoundingBox(min, max);
+
+                            RenderBoundingBox HumanTraffic2BBox = new RenderBoundingBox();
+                            HumanTraffic2BBox.Init(HumanTrafficBBox);
+
+                            int refID = RefManager.GetNewRefID();
+                            assets.Add(refID, HumanTraffic2BBox);
+                            RefIDToActorEntry[refID] = entry;
+
+                            if (foundNodes.Length > 0)
+                            {
+                                TreeNode bboxNode = new TreeNode("C_TrafficHuman BoundingBox");
+                                bboxNode.Name = refID.ToString();
+                                bboxNode.Tag = HumanTraffic2BBox;
+                                foundNodes[0].Nodes.Add(bboxNode);
+                            }
+                        }
+                    }
                     if (entry.ActorTypeName == "C_Blocker" || entry.ActorTypeID == (int)ActorTypes.Blocker)
                     {
                         if (entry.Data != null && entry.Data.Data is ActorBlocker blocker)
@@ -2056,6 +2136,126 @@ namespace Mafia2Tool
                                 TreeNode boxNode = new TreeNode("Blocker BBox");
                                 boxNode.Name = refID.ToString();
                                 boxNode.Tag = renderBlockerBox;
+                                foundNodes[0].Nodes.Add(boxNode);
+                            }
+                        }
+                    }
+                    if (entry.ActorTypeName == "FireTarget" || entry.ActorTypeID == (int)ActorTypes.FireTarget)
+                    {
+                        if (entry.Data != null && entry.Data.Data is ActorFireTarget fitetarget)
+                        {
+                            Vector3 position = entry.Position;
+                            Vector3 bboxSize = fitetarget.BoxExtents;
+
+                            Vector3 halfSize = bboxSize * 0.5f;
+                            BoundingBox fireBox = new BoundingBox(
+                                position - halfSize,
+                                position + halfSize
+                            );
+
+                            RenderBoundingBox renderFireBox = new RenderBoundingBox();
+                            renderFireBox.Init(fireBox);
+
+                            int refID = RefManager.GetNewRefID();
+                            assets.Add(refID, renderFireBox);
+                            RefIDToActorEntry[refID] = entry;
+
+                            TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
+                            if (foundNodes.Length > 0)
+                            {
+                                TreeNode boxNode = new TreeNode("Fire Target Box Extents");
+                                boxNode.Name = refID.ToString();
+                                boxNode.Tag = renderFireBox;
+                                foundNodes[0].Nodes.Add(boxNode);
+                            }
+                        }
+                    }
+                    if (entry.ActorTypeName == "CleanEntity" || entry.ActorTypeID == (int)ActorTypes.CleanEntity)
+                    {
+                        if (entry.Data != null && entry.Data.Data is ActorCleanEntity Cleantarget)
+                        {
+                            Vector3 position = entry.Position;
+                            Vector3 bboxSize = Cleantarget.BBoxSize;
+
+                            Vector3 halfSize = bboxSize * 0.5f;
+                            BoundingBox cleaningBox = new BoundingBox(
+                                position - halfSize,
+                                position + halfSize
+                            );
+
+                            RenderBoundingBox renderCleanBox = new RenderBoundingBox();
+                            renderCleanBox.Init(cleaningBox);
+
+                            int refID = RefManager.GetNewRefID();
+                            assets.Add(refID, renderCleanBox);
+                            RefIDToActorEntry[refID] = entry;
+
+                            TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
+                            if (foundNodes.Length > 0)
+                            {
+                                TreeNode boxNode = new TreeNode("Clean Entity Box");
+                                boxNode.Name = refID.ToString();
+                                boxNode.Tag = renderCleanBox;
+                                foundNodes[0].Nodes.Add(boxNode);
+                            }
+                        }
+                    }
+                    if (entry.ActorTypeName == "DangerZone" || entry.ActorTypeID == (int)ActorTypes.DangerZone)
+                    {
+                        if (entry.Data != null && entry.Data.Data is ActorDamageZone Damagetarget)
+                        {
+                            Vector3 position = entry.Position;
+                            Vector3 bboxSize = Damagetarget.BBoxExtents;
+
+                            Vector3 halfSize = bboxSize * 0.5f;
+                            BoundingBox cleaningBox = new BoundingBox(
+                                position - halfSize,
+                                position + halfSize
+                            );
+
+                            RenderBoundingBox renderDamageBox = new RenderBoundingBox();
+                            renderDamageBox.Init(cleaningBox);
+
+                            int refID = RefManager.GetNewRefID();
+                            assets.Add(refID, renderDamageBox);
+                            RefIDToActorEntry[refID] = entry;
+
+                            TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
+                            if (foundNodes.Length > 0)
+                            {
+                                TreeNode boxNode = new TreeNode("Danger Zone Box");
+                                boxNode.Name = refID.ToString();
+                                boxNode.Tag = renderDamageBox;
+                                foundNodes[0].Nodes.Add(boxNode);
+                            }
+                        }
+                    }
+                    if (entry.ActorTypeName == "ActorPoint" || entry.ActorTypeID == (int)ActorTypes.ActionPoint)
+                    {
+                        if (entry.Data != null && entry.Data.Data is ActorActionPoint ActionPoint)
+                        {
+                            Vector3 position = entry.Position;
+                            Vector3 bboxSize = ActionPoint.BBox;
+
+                            Vector3 halfSize = bboxSize * 0.5f;
+                            BoundingBox ActionPBox = new BoundingBox(
+                                position - halfSize,
+                                position + halfSize
+                            );
+
+                            RenderBoundingBox renderActionBox = new RenderBoundingBox();
+                            renderActionBox.Init(ActionPBox);
+
+                            int refID = RefManager.GetNewRefID();
+                            assets.Add(refID, renderActionBox);
+                            RefIDToActorEntry[refID] = entry;
+
+                            TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
+                            if (foundNodes.Length > 0)
+                            {
+                                TreeNode boxNode = new TreeNode("Action Point BBox");
+                                boxNode.Name = refID.ToString();
+                                boxNode.Tag = renderActionBox;
                                 foundNodes[0].Nodes.Add(boxNode);
                             }
                         }
@@ -2090,6 +2290,38 @@ namespace Mafia2Tool
                                 TreeNode boxNode = new TreeNode("Detector Box");
                                 boxNode.Name = refID.ToString();
                                 boxNode.Tag = renderDetectorBox;
+                                foundNodes[0].Nodes.Add(boxNode);
+                            }
+                        }
+                    }
+                    if (entry.ActorTypeName == "PhysicsScene" || entry.ActorTypeID == (int)ActorTypes.PhysicsScene)
+                    {
+                        if (entry.Data != null && entry.Data.Data is ActorPhysicsScene PhysScene)
+                        {
+                            Vector3 position = entry.Position;
+                            Vector3 bboxSize = PhysScene.BBox;
+
+                            Vector3 halfSize = bboxSize * 0.5f;
+                            BoundingBox PhysSceneBox = new BoundingBox(
+                                position - halfSize,
+                                position + halfSize
+                            );
+
+                            
+
+                            RenderBoundingBox renderPhysSceneBox = new RenderBoundingBox();
+                            renderPhysSceneBox.Init(PhysSceneBox);
+
+                            int refID = RefManager.GetNewRefID();
+                            assets.Add(refID, renderPhysSceneBox);
+                            RefIDToActorEntry[refID] = entry;
+
+                            TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
+                            if (foundNodes.Length > 0)
+                            {
+                                TreeNode boxNode = new TreeNode("Physics Scene Box");
+                                boxNode.Name = refID.ToString();
+                                boxNode.Tag = renderPhysSceneBox;
                                 foundNodes[0].Nodes.Add(boxNode);
                             }
                         }
@@ -2738,7 +2970,7 @@ namespace Mafia2Tool
                             }
 
                         }
-                    }
+                    }                  
                     else if (actorEntry.Data != null && actorEntry.Data.Data is ActorActorDetector detector)
                     {
                         foreach (TreeNode child in selected.Nodes)
