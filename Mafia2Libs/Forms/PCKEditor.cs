@@ -15,7 +15,6 @@ namespace Mafia2Tool
         private string BnkPath = "";
         private bool bIsFileEdited = false;
 
-
         public PCKEditor(FileInfo file)
         {
             InitializeComponent();
@@ -67,7 +66,6 @@ namespace Mafia2Tool
             {
                 pck.WriteToFile(writer, BnkPath);
             }
-
             Text = Language.GetString("$PCK_EDITOR_TITLE");
             bIsFileEdited = false;
         }
@@ -76,10 +74,8 @@ namespace Mafia2Tool
         {
             TreeView_Wems.Nodes.Clear();
             BuildData();
-
             WemGrid.SelectedObject = null;
             TreeView_Wems.SelectedNode = null;
-
             Text = Language.GetString("$PCK_EDITOR_TITLE");
             bIsFileEdited = false;
         }
@@ -89,7 +85,6 @@ namespace Mafia2Tool
             Wem SelWem = (Wem)TreeView_Wems.SelectedNode.Tag;
             pck.WemList.Remove(SelWem);
             TreeView_Wems.Nodes.Remove(TreeView_Wems.SelectedNode);
-
             Text = Language.GetString("$PCK_EDITOR_TITLE") + "*";
             bIsFileEdited = true;
         }
@@ -99,7 +94,6 @@ namespace Mafia2Tool
             string fullPath = exportFile.FileName;
             string savePath = Path.GetDirectoryName(fullPath);
             string name;
-
             if (exportIds == DialogResult.Yes)
             {
                 name = savePath + "\\" + wem.Name + ".wem";
@@ -108,7 +102,6 @@ namespace Mafia2Tool
             {
                 name = savePath + "\\" + wem.ID + ".wem";
             }
-
             using (BinaryWriter bw = new BinaryWriter(new FileStream(name, FileMode.OpenOrCreate)))
             {
                 bw.Write(wem.File);
@@ -123,27 +116,22 @@ namespace Mafia2Tool
         private void Button_ImportWem_Click(object sender, System.EventArgs e)
         {
             OpenFileDialog openFile = new OpenFileDialog();
-
             if (PckFile.DirectoryName != null)
             {
                 openFile.InitialDirectory = PckFile.DirectoryName;
             }
-
             openFile.Multiselect = true;
             openFile.Filter = "WWise Wem files (*.wem)|*.wem";
-
             if (openFile.ShowDialog() == DialogResult.OK)
             {
                 foreach (string fileName in openFile.FileNames)
                 {
                     bool hasConflict = false;
                     Wem newWem = null;
-
                     using (BinaryReader br = new BinaryReader(File.Open(openFile.FileName, FileMode.Open)))
                     {
                         newWem = new Wem(openFile.FileName, openFile.FileName, br, 0);
                     }
-
                     foreach (Wem wem in pck.WemList)
                     {
                         if (wem.ID == newWem.ID) //Check if Wem exists
@@ -153,18 +141,15 @@ namespace Mafia2Tool
                             break;
                         }
                     }
-
                     if (hasConflict)
                     {
                         continue;
                     }
-
                     TreeNode node = new TreeNode(newWem.Name);
                     node.Name = newWem.ID.ToString();
                     node.Tag = newWem;
                     TreeView_Wems.Nodes.Add(node);
                     pck.WemList.Add(newWem);
-
                     Text = Language.GetString("$PCK_EDITOR_TITLE") + "*";
                     bIsFileEdited = true;
                 }
@@ -174,15 +159,12 @@ namespace Mafia2Tool
         private void Button_ReplaceWem_Click(object sender, System.EventArgs e)
         {
             OpenFileDialog openFile = new OpenFileDialog();
-
             if (PckFile.DirectoryName != null)
             {
                 openFile.InitialDirectory = PckFile.DirectoryName;
             }
-
             openFile.Multiselect = true;
             openFile.Filter = "WWise Wem files (*.wem)|*.wem";
-
             if (openFile.ShowDialog() == DialogResult.OK)
             {
                 foreach (string fileName in openFile.FileNames)
@@ -192,22 +174,17 @@ namespace Mafia2Tool
                         int itemIndex = pck.WemList.IndexOf((Wem)WemGrid.SelectedObject);
                         Wem selWem = pck.WemList[itemIndex];
                         Wem newWem;
-
                         using (BinaryReader br = new BinaryReader(File.Open(fileName, FileMode.Open)))
                         {
                             newWem = new Wem(fileName, "", br, selWem.Offset);
                         }
-
                         newWem.ID = selWem.ID;
                         newWem.LanguageEnum = selWem.LanguageEnum;
-
                         if (!(selWem.Name == ("Imported_Wem_" + itemIndex)))
                         {
                             newWem.Name = selWem.Name;
                         }
-
                         pck.WemList[itemIndex] = newWem;
-
                         Text = Language.GetString("$PCK_EDITOR_TITLE") + "*";
                         bIsFileEdited = true;
                     }
@@ -221,12 +198,10 @@ namespace Mafia2Tool
             exportFile.InitialDirectory = PckFile.DirectoryName;
             exportFile.CheckFileExists = false;
             exportFile.FileName = "Save Here";
-
             if (exportFile.ShowDialog() == DialogResult.OK)
             {
                 DialogResult exportIds = MessageBox.Show(Language.GetString("$EXPORT_WEM_WITH_NAME"), "Toolkit", MessageBoxButtons.YesNo);
                 int itemIndex = pck.WemList.IndexOf((Wem)WemGrid.SelectedObject);
-
                 if (itemIndex != -1)
                 {
                     Wem wem = pck.WemList[itemIndex];
@@ -241,7 +216,6 @@ namespace Mafia2Tool
             exportFile.InitialDirectory = PckFile.DirectoryName;
             exportFile.CheckFileExists = false;
             exportFile.FileName = "Save Here";
-
             if (exportFile.ShowDialog() == DialogResult.OK)
             {
                 DialogResult exportIds = MessageBox.Show(Language.GetString("$EXPORT_WEM_WITH_NAME"), "Toolkit", MessageBoxButtons.YesNo);
@@ -268,7 +242,6 @@ namespace Mafia2Tool
                     {
                         wem.AssignedHirc.SoundSFX = pck.LoadedBNK.Objects.SoundSFX[(uint)wem.ID];
                     }
-
                     if (pck.LoadedBNK.Objects.MusicTrack.ContainsKey((int)wem.ID))
                     {
                         wem.AssignedHirc.MusicTrack = pck.LoadedBNK.Objects.MusicTrack[(int)wem.ID];
@@ -280,13 +253,11 @@ namespace Mafia2Tool
         private void Button_EditHIRC_Click(object sender, System.EventArgs e)
         {
             int itemIndex = pck.WemList.IndexOf((Wem)WemGrid.SelectedObject);
-
             if (itemIndex != -1)
             {
                 HIRCEditor HircEditor = new HIRCEditor(pck.LoadedBNK.Objects, pck.WemList[itemIndex]);
                 HircEditor.Show();
             }
-
             Text = Language.GetString("$PCK_EDITOR_TITLE") + "*";
             bIsFileEdited = true;
         }
@@ -306,10 +277,8 @@ namespace Mafia2Tool
             {
                 TreeView_Wems.SelectedNode.Text = e.ChangedItem.Value.ToString();
             }
-
             Text = Language.GetString("$PCK_EDITOR_TITLE") + "*";
             bIsFileEdited = true;
-
             WemGrid.Refresh();
         }
 
@@ -318,7 +287,6 @@ namespace Mafia2Tool
             if (bIsFileEdited)
             {
                 System.Windows.MessageBoxResult SaveChanges = System.Windows.MessageBox.Show(Language.GetString("$SAVE_PROMPT"), "Toolkit", System.Windows.MessageBoxButton.YesNoCancel);
-
                 if (SaveChanges == System.Windows.MessageBoxResult.Yes)
                 {
                     Save();
@@ -328,7 +296,6 @@ namespace Mafia2Tool
                     e.Cancel = true;
                 }
             }
-
             pck = null;
         }
 
