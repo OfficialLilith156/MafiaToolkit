@@ -13,7 +13,6 @@ namespace Mafia2Tool
     {
         private FileInfo speechFile;
         private SpeechFile speechData;
-
         private bool bIsFileEdited = false;
 
         public SpeechEditor(FileInfo file)
@@ -44,16 +43,12 @@ namespace Mafia2Tool
         {
             TreeView_Speech.SelectedNode = null;
             Grid_Speech.SelectedObject = null;
-
             TreeView_Speech.Nodes.Clear();
-
             for (int i = 0; i != speechData.SpeechTypes.Length; i++)
             {
                 SpeechFile.SpeechTypeInfo typeData = speechData.SpeechTypes[i];
-
                 TreeNode node = new TreeNode(typeData.SpeechType.ToString());
                 node.Tag = typeData;
-
                 int num = 0;
                 for (int x = 0; x != speechData.SpeechItems.Length; x++)
                 {
@@ -61,7 +56,6 @@ namespace Mafia2Tool
                     SpeechFile.SpeechItemInfo itemData = speechData.SpeechItems[x];
                     TreeNode node1 = new TreeNode(itemData.ItemName.ToString());
                     node1.Tag = itemData;
-
                     if (typeData.Unk0 + num == itemData.Unk0)
                     {
                         node.Nodes.Add(node1);
@@ -81,7 +75,6 @@ namespace Mafia2Tool
             {
                 speechData.WriteToFile(writer);
             }
-
             Text = Language.GetString("$SPEECH_EDITOR_TITLE");
             bIsFileEdited = false;
         }
@@ -89,9 +82,7 @@ namespace Mafia2Tool
         private void Reload()
         {
             speechData = new SpeechFile(speechFile);
-
             BuildData();
-
             Text = Language.GetString("$SPEECH_EDITOR_TITLE");
             bIsFileEdited = false;
         }
@@ -103,9 +94,7 @@ namespace Mafia2Tool
 
         private void Grid_Speech_PropertyChanged(object sender, PropertyValueChangedEventArgs e)
         {
-            if (e.ChangedItem.Label == "Name")
-                TreeView_Speech.SelectedNode.Text = e.ChangedItem.Value.ToString();
-
+            if (e.ChangedItem.Label == "Name") TreeView_Speech.SelectedNode.Text = e.ChangedItem.Value.ToString();
             Text = Language.GetString("$SPEECH_EDITOR_TITLE") + "*";
             bIsFileEdited = true;
         }
@@ -115,7 +104,6 @@ namespace Mafia2Tool
             if (bIsFileEdited)
             {
                 System.Windows.MessageBoxResult SaveChanges = System.Windows.MessageBox.Show(Language.GetString("$SAVE_PROMPT"), "Toolkit", System.Windows.MessageBoxButton.YesNoCancel);
-
                 if (SaveChanges == System.Windows.MessageBoxResult.Yes)
                 {
                     Save();
@@ -157,33 +145,24 @@ namespace Mafia2Tool
         private void RunSearch(string query)
         {
             query = query.Trim().ToLower();
-            if (string.IsNullOrWhiteSpace(query))
-                return;
-
+            if (string.IsNullOrWhiteSpace(query)) return;
             TreeNode foundNode = FindNode(TreeView_Speech.Nodes, query);
-
             if (foundNode != null)
             {
                 TreeView_Speech.SelectedNode = foundNode;
                 TreeView_Speech.Focus();
                 foundNode.EnsureVisible();
             }
-            else
-            {
-                //MessageBox.Show("Ничего не найдено.");
-            }
+            else { }
         }
 
         private TreeNode FindNode(TreeNodeCollection nodes, string query)
         {
             foreach (TreeNode node in nodes)
             {
-                if (node.Text.ToLower().Contains(query))
-                    return node;
-
+                if (node.Text.ToLower().Contains(query)) return node;
                 TreeNode child = FindNode(node.Nodes, query);
-                if (child != null)
-                    return child;
+                if (child != null) return child;
             }
             return null;
         }
