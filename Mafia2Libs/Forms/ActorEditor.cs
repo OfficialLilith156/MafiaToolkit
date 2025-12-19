@@ -20,11 +20,8 @@ namespace Mafia2Tool
         private static ActorEntry branchClipboard;
         private TreeNode definitions;
         private TreeNode items;
-
         private static ActorExtraData globalClipboard;
-
         private bool bIsFileEdited = false;
-
 
         public ActorEditor(FileInfo file)
         {
@@ -103,7 +100,6 @@ namespace Mafia2Tool
         private void BuildData()
         {
             actors = new Actor(actorFile);
-
             actors.Items.Sort((a, b) =>
             {
                 int pa = TypePriority.ContainsKey((ActorTypes)a.ActorTypeID) ? TypePriority[(ActorTypes)a.ActorTypeID] : 999;
@@ -112,10 +108,8 @@ namespace Mafia2Tool
                 if (typeCompare != 0) return typeCompare;
                 return string.Compare(a.EntityName, b.EntityName, StringComparison.InvariantCultureIgnoreCase);
             });
-
             definitions = new TreeNode("Definitions");
             items = new TreeNode("Entities");
-
             for (int i = 0; i != actors.Definitions.Count; i++)
             {
                 TreeNode node = new TreeNode(actors.Definitions[i].Name);
@@ -125,12 +119,10 @@ namespace Mafia2Tool
             }
 
             Dictionary<ActorTypes, TreeNode> groups = new Dictionary<ActorTypes, TreeNode>();
-
             for (int i = 0; i < actors.Items.Count; i++)
             {
                 ActorEntry entry = actors.Items[i];
                 ActorTypes type = (ActorTypes)entry.ActorTypeID;
-
                 if (!groups.ContainsKey(type))
                 {
                     TreeNode groupNode = new TreeNode(type.ToString()); 
@@ -140,17 +132,14 @@ namespace Mafia2Tool
 
                 TreeNode node = new TreeNode(entry.EntityName);
                 node.Tag = entry;
-
                 if (entry.DataID != -1)
                 {
                     TreeNode child = new TreeNode("Extra Data");
                     child.Tag = actors.ExtraData[entry.DataID];
                     node.Nodes.Add(child);
                 }
-
                 groups[type].Nodes.Add(node);
             }
-
             ActorTreeView.Nodes.Add(definitions);
             ActorTreeView.Nodes.Add(items);
         }
@@ -162,7 +151,6 @@ namespace Mafia2Tool
             {
                 actors.WriteToFile(writer);
             }
-
             Text = Language.GetString("$ACTOR_EDITOR_TITLE");
             bIsFileEdited = false;
         }
@@ -171,10 +159,8 @@ namespace Mafia2Tool
         {
             ActorTreeView.Nodes.Clear();
             BuildData();
-
             ActorGrid.SelectedObject = null;
             ActorTreeView.SelectedNode = null;
-
             Text = Language.GetString("$ACTOR_EDITOR_TITLE");
             bIsFileEdited = false;
         }
@@ -203,7 +189,6 @@ namespace Mafia2Tool
             {
                 return;
             }
-
             ActorExtraData ExtraDataToPaste = globalClipboard;
             ActorExtraData ExtraDataTarget = (SelectedNode.Tag as ActorExtraData);
 
@@ -212,24 +197,20 @@ namespace Mafia2Tool
                 MessageBox.Show("Cannot paste: Source or target data is null.");
                 return;
             }
-
             if (ExtraDataToPaste.BufferType != ExtraDataTarget.BufferType)
             {
                 MessageBox.Show("Cannot paste: Buffer types do not match.");
                 return;
             }
-
             if (ExtraDataToPaste.Data == null)
             {
                 MessageBox.Show("Cannot paste: Source data is empty.");
                 return;
             }
-
             try
             {
                 Type dataType = ExtraDataToPaste.Data.GetType();
                 object clonedData = null;
-
                 var copyConstructor = dataType.GetConstructor(new Type[] { dataType });
                 if (copyConstructor != null)
                 {
@@ -240,7 +221,6 @@ namespace Mafia2Tool
                     clonedData = Activator.CreateInstance(dataType);
                     ReflectionHelpers.Copy(ExtraDataToPaste.Data, ref clonedData);
                 }
-
                 if (clonedData != null)
                 {
                     ExtraDataTarget.Data = clonedData as IActorExtraDataInterface;
@@ -258,13 +238,7 @@ namespace Mafia2Tool
                 MessageBox.Show($"Error during paste operation: {ex.Message}");
             }
         }
-
-        private bool IsTypeofInterface(object ObjectToCheck, Type InterfaceType)
-        {
-            Type TypeOfObject = ObjectToCheck.GetType();
-            return InterfaceType.IsAssignableFrom(TypeOfObject);
-        }
-
+  
         private void Delete()
         {
             object data = ActorTreeView.SelectedNode.Tag;
@@ -279,11 +253,9 @@ namespace Mafia2Tool
                 actors.Definitions.Remove((ActorDefinition)data);
                 isDeleted = true;
             }
-
             if (isDeleted)
             {
                 ActorTreeView.Nodes.Remove(ActorTreeView.SelectedNode);
-
                 Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
                 bIsFileEdited = true;
             }
@@ -300,7 +272,6 @@ namespace Mafia2Tool
             objectForm.SetLabel("Entity Name");
             ActorItemAddOption optionControl = new ActorItemAddOption();
             objectForm.LoadOption(optionControl);
-
             if (objectForm.ShowDialog() == DialogResult.OK)
             {
                 ActorTypes type = optionControl.GetSelectedType();
@@ -313,37 +284,27 @@ namespace Mafia2Tool
                 TreeNode node = new TreeNode(entry.EntityName);
                 node.Text = entry.EntityName;
                 node.Tag = entry;
-
                 if (entry.DataID != -1)
                 {
                     TreeNode child = new TreeNode("Extra Data");
                     child.Tag = actors.ExtraData[entry.DataID];
                     node.Nodes.Add(child);
                 }
-
                 items.Nodes.Add(node);
             }
-
             Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
             bIsFileEdited = true;
-
             objectForm.Dispose();
         }
-
 
         private void CopyEntityBranch(object sender, System.EventArgs e)
         {
             TreeNode selectedNode = ActorTreeView.SelectedNode;
-            if (selectedNode == null || !(selectedNode.Tag is ActorEntry original))
-                return;
+            if (selectedNode == null || !(selectedNode.Tag is ActorEntry original)) return;
 
-            ActorEntry cloned = actors.CreateActorEntry(
-                (ActorTypes)original.ActorTypeID,
-                original.EntityName + ""
-            );
+            ActorEntry cloned = actors.CreateActorEntry((ActorTypes)original.ActorTypeID, original.EntityName + "");
             cloned.DefinitionName = original.DefinitionName;
             cloned.FrameName = original.FrameName;
-
             if (original.DataID != -1 && original.Data != null)
             {
                 cloned.Data = new ActorExtraData()
@@ -355,7 +316,6 @@ namespace Mafia2Tool
                 object clonedInternal = Activator.CreateInstance(dataType);
                 ReflectionHelpers.Copy(original.Data.Data, ref clonedInternal);
                 cloned.Data.Data = clonedInternal as IActorExtraDataInterface;
-
                 branchClipboard = cloned;
             }
             else
@@ -366,33 +326,24 @@ namespace Mafia2Tool
 
         private void PasteEntityBranch(object sender, System.EventArgs e)
         {
-            if (branchClipboard == null)
-                return;
+            if (branchClipboard == null) return;
 
-            ActorEntry newEntry = actors.CreateActorEntry(
-                (ActorTypes)branchClipboard.ActorTypeID,
-                branchClipboard.EntityName
-            );
+            ActorEntry newEntry = actors.CreateActorEntry((ActorTypes)branchClipboard.ActorTypeID, branchClipboard.EntityName);
             newEntry.DefinitionName = branchClipboard.DefinitionName;
             newEntry.FrameName = branchClipboard.FrameName;
-
             if (branchClipboard.Data != null)
             {
                 ActorExtraData newData = new ActorExtraData()
                 {
                     BufferType = branchClipboard.Data.BufferType
                 };
-
                 object clonedInternal = Activator.CreateInstance(branchClipboard.Data.Data.GetType());
                 ReflectionHelpers.Copy(branchClipboard.Data.Data, ref clonedInternal);
-
                 newData.Data = clonedInternal as IActorExtraDataInterface;
-
                 actors.ExtraData.Add(newData);
                 newEntry.DataID = (short)(actors.ExtraData.Count - 1);
                 newEntry.Data = newData;
             }
-
             TreeNode node = new TreeNode(newEntry.EntityName) { Tag = newEntry };
 
             if (newEntry.Data != null)
@@ -400,10 +351,8 @@ namespace Mafia2Tool
                 TreeNode child = new TreeNode("Extra Data") { Tag = newEntry.Data };
                 node.Nodes.Add(child);
             }
-
             items.Nodes.Add(node);
             ActorTreeView.SelectedNode = node;
-
             Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
             bIsFileEdited = true;
         }
@@ -412,7 +361,6 @@ namespace Mafia2Tool
         {
             ListWindowActor window = new ListWindowActor();
             window.PopulateForm(actors.Items);
-
             if (window.ShowDialog() == DialogResult.OK && window.chosenObjects.Count > 0)
             {
                 foreach (var obj in window.chosenObjects)
@@ -426,7 +374,6 @@ namespace Mafia2Tool
                         definitions.Nodes.Add(node);
                     }
                 }
-
                 Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
                 bIsFileEdited = true;
             }
@@ -451,12 +398,9 @@ namespace Mafia2Tool
 
         private void ActorGrid_OnPropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
-            if (e.ChangedItem.Label == "Name" || e.ChangedItem.Label == "EntityName")
-                ActorTreeView.SelectedNode.Text = e.ChangedItem.Value.ToString();
-
+            if (e.ChangedItem.Label == "Name" || e.ChangedItem.Label == "EntityName") ActorTreeView.SelectedNode.Text = e.ChangedItem.Value.ToString();
             Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
             bIsFileEdited = true;
-
             ActorGrid.Refresh();
         }
 
@@ -465,7 +409,6 @@ namespace Mafia2Tool
             if (bIsFileEdited)
             {
                 System.Windows.MessageBoxResult SaveChanges = System.Windows.MessageBox.Show(Language.GetString("$SAVE_PROMPT"), "Toolkit", System.Windows.MessageBoxButton.YesNoCancel);
-
                 if (SaveChanges == System.Windows.MessageBoxResult.Yes)
                 {
                     Save();
@@ -491,7 +434,6 @@ namespace Mafia2Tool
             ContextPaste.Visible = false;
             Button_MoveDown.Visible = false;
             Button_MoveUp.Visible = false;
-
             TreeNode SelectedNode = ActorTreeView.SelectedNode;
             if (SelectedNode != null && SelectedNode.Tag != null)
             {
@@ -500,7 +442,6 @@ namespace Mafia2Tool
                     ContextCopy.Visible = true;
                     ContextPaste.Visible = true;
                 }
-
                 // For now, Move Up/Down only active for ActorEntry.
                 ActorEntry Item = (SelectedNode.Tag as ActorEntry);
                 if (Item != null)
@@ -525,26 +466,22 @@ namespace Mafia2Tool
                 // Only works for ActorEntry for now
                 return;
             }
-
             int Index = actors.Items.IndexOf(Item);
             int NextIndex = (actors.Items.Count != Index ? Index + 1 : -1);
             if (NextIndex == -1)
             {
                 return;
             }
-
             // Can move down, start by swapping entires
             ActorEntry ItemBelow = actors.Items[NextIndex];
             actors.Items[Index] = ItemBelow;
             actors.Items[NextIndex] = Item;
-
             // Now move down in TreeView
             TreeNode ParentNode = SelectedNode.Parent;
             int NodeIndex = ParentNode.Nodes.IndexOf(SelectedNode);
             ParentNode.Nodes.RemoveAt(NodeIndex);
             ParentNode.Nodes.Insert(NodeIndex + 1, SelectedNode);
             ActorTreeView.SelectedNode = SelectedNode;
-
             // Update UI
             Text = Language.GetString("$STREAM_EDITOR_TITLE") + "*";
             bIsFileEdited = true;
@@ -564,26 +501,22 @@ namespace Mafia2Tool
                 // Only works for ActorEntry for now
                 return;
             }
-
             int Index = actors.Items.IndexOf(Item);
             int NextIndex = (Index != 0 ? Index - 1 : -1);
             if (NextIndex == -1)
             {
                 return;
             }
-
             // Can move up, start by swapping entires
             ActorEntry ItemAbove = actors.Items[NextIndex];
             actors.Items[Index] = ItemAbove;
             actors.Items[NextIndex] = Item;
-
             // Now move up in TreeView
             TreeNode ParentNode = SelectedNode.Parent;
             int NodeIndex = ParentNode.Nodes.IndexOf(SelectedNode);
             ParentNode.Nodes.RemoveAt(NodeIndex);
             ParentNode.Nodes.Insert(NodeIndex - 1, SelectedNode);
             ActorTreeView.SelectedNode = SelectedNode;
-
             // Update UI
             Text = Language.GetString("$STREAM_EDITOR_TITLE") + "*";
             bIsFileEdited = true;
@@ -601,9 +534,7 @@ namespace Mafia2Tool
         private void RunSearch(string query)
         {
             query = query.Trim().ToLower();
-            if (string.IsNullOrWhiteSpace(query))
-                return;
-
+            if (string.IsNullOrWhiteSpace(query)) return;
 
             TreeNode foundNode = FindNode(items.Nodes, query);
 
@@ -619,38 +550,29 @@ namespace Mafia2Tool
         {
             foreach (TreeNode node in nodes)
             {
-                if (node.Text.ToLower().Contains(query))
-                    return node;
-
+                if (node.Text.ToLower().Contains(query)) return node;
                 TreeNode child = FindNode(node.Nodes, query);
-                if (child != null)
-                    return child;
+                if (child != null) return child;
             }
             return null;
         }
+
         private object CloneObjectSafely(object src)
         {
             if (src == null) return null;
-
             Type t = src.GetType();
-
-            if (t.IsPrimitive || t == typeof(string) || t.IsEnum
-                || t == typeof(decimal) || t == typeof(DateTime) || t == typeof(Guid))
+            if (t.IsPrimitive || t == typeof(string) || t.IsEnum || t == typeof(decimal) || t == typeof(DateTime) || t == typeof(Guid))
             {
                 return src;
             }
-
             if (src is ICloneable clonable)
             {
                 try
                 {
                     return clonable.Clone();
                 }
-                catch
-                {
-                }
+                catch { }
             }
-
             if (t.IsArray)
             {
                 Array arr = (Array)src;
@@ -662,7 +584,6 @@ namespace Mafia2Tool
                 }
                 return cloneArr;
             }
-
             if (t.IsValueType)
             {
                 try
@@ -694,7 +615,6 @@ namespace Mafia2Tool
                 Debug.WriteLine($"CloneObjectSafely: Activator.CreateInstance failed for {t.FullName}: {ex.Message}");
                 instance = null;
             }
-
             if (instance == null)
             {
                 try
@@ -710,7 +630,6 @@ namespace Mafia2Tool
                     instance = null;
                 }
             }
-
             if (instance != null)
             {
                 try
@@ -724,7 +643,6 @@ namespace Mafia2Tool
                     return src;
                 }
             }
-
             Debug.WriteLine($"CloneObjectSafely: Unable to create clone for type {t.FullName}. Returning original reference as fallback.");
             return src;
         }
@@ -732,24 +650,18 @@ namespace Mafia2Tool
         private void dUPToolStripMenuItem_Click(object sender, EventArgs e)
         {
             TreeNode selectedNode = ActorTreeView.SelectedNode;
-            if (selectedNode == null || !(selectedNode.Tag is ActorEntry original))
-                return;
+            if (selectedNode == null || !(selectedNode.Tag is ActorEntry original)) return;
 
-            ActorEntry clone = actors.CreateActorEntry(
-                (ActorTypes)original.ActorTypeID,
-                original.EntityName + ""
-            );
+            ActorEntry clone = actors.CreateActorEntry((ActorTypes)original.ActorTypeID, original.EntityName + "");
 
             clone.DefinitionName = original.DefinitionName;
             clone.FrameName = original.FrameName;
-
             if (original.Data != null && original.DataID != -1)
             {
                 ActorExtraData newData = new ActorExtraData
                 {
                     BufferType = original.Data.BufferType
                 };
-
                 try
                 {
                     object internalCopy = CloneObjectSafely(original.Data.Data);
@@ -772,7 +684,6 @@ namespace Mafia2Tool
                             }
                         }
                     }
-
                     clone.Data = newData;
                     clone.DataID = (short)actors.ExtraData.Count;
                     actors.ExtraData.Add(newData);
@@ -784,7 +695,6 @@ namespace Mafia2Tool
                     return;
                 }
             }
-
             TreeNode node = new TreeNode(clone.EntityName) { Tag = clone };
 
             if (clone.Data != null)
@@ -792,11 +702,9 @@ namespace Mafia2Tool
                 TreeNode child = new TreeNode("Extra Data") { Tag = clone.Data };
                 node.Nodes.Add(child);
             }
-
             items.Nodes.Add(node);
             ActorTreeView.SelectedNode = node;
             ActorTreeView.Focus();
-
             Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
             bIsFileEdited = true;
         }
@@ -808,9 +716,7 @@ namespace Mafia2Tool
 
         private void RenumberDataIDsByTreeOrder()
         {
-            if (actors == null || items == null)
-                return;
-
+            if (actors == null || items == null) return;
             List<ActorExtraData> newList = new List<ActorExtraData>();
             Dictionary<ActorExtraData, short> remap = new Dictionary<ActorExtraData, short>();
 
@@ -823,13 +729,10 @@ namespace Mafia2Tool
                         remap[entry.Data] = (short)newList.Count;
                         newList.Add(entry.Data);
                     }
-
                     entry.DataID = remap[entry.Data];
                 }
             }
-
             actors.ExtraData = newList;
         }
-
     }
 }
