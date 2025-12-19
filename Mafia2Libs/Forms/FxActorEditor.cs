@@ -10,28 +10,19 @@ namespace Toolkit.Forms
     public partial class FxActorEditor : Form
     {
         private FileInfo FxActorFile;
-
         private FxContainer<FxActor> ActorContainer;
-
         private object clipboard;
-
         private bool bIsFileEdited = false;
 
         public FxActorEditor(FileInfo InOriginFile)
         {
             InitializeComponent();
-
             FxActorFile = InOriginFile;
             ActorContainer = null;
-
             Localise();
-
             BuildData();
-
             Show();
-
             ToolkitSettings.UpdateRichPresence("Using the FxActor editor.");
-
             SearchBox.KeyDown += SearchBox_KeyDown;
         }
 
@@ -61,15 +52,11 @@ namespace Toolkit.Forms
                 ActorContainer = new FxContainer<FxActor>();
                 ActorContainer.ReadFromFile(Reader);
             }
-
             foreach (FxArchive Archive in ActorContainer.Archives)
             {
                 FxActor Actor = Archive.GetObjectAs<FxActor>();
-
                 TreeNode ActorNode = new TreeNode(Actor.Name.ToString());
-
                 ActorNode.Tag = Actor;
-
                 TreeView_FxActors.Nodes.Add(ActorNode);
             }
         }
@@ -81,7 +68,6 @@ namespace Toolkit.Forms
             {
                 ActorContainer.WriteToFile(writer);
             }
-
             Text = Language.GetString("$FXACTOR_EDITOR");
             bIsFileEdited = false;
         }
@@ -90,7 +76,6 @@ namespace Toolkit.Forms
         {
             Text = Language.GetString("$FXACTOR_EDITOR");
             bIsFileEdited = false;
-
             Grid_Actors.SelectedObject = null;
             TreeView_FxActors.SelectedNode = null;
             TreeView_FxActors.Nodes.Clear();
@@ -109,15 +94,10 @@ namespace Toolkit.Forms
             {
                 FxArchive Archive = (clipboard as FxArchive);
                 ActorContainer.Archives.Add(Archive);
-
                 FxActor Actor = Archive.GetObjectAs<FxActor>();
-
                 TreeNode ActorNode = new TreeNode(Actor.Name.ToString());
-
                 ActorNode.Tag = Actor;
-
                 TreeView_FxActors.Nodes.Add(ActorNode);
-
                 Text = Language.GetString("$FXACTOR_EDITOR") + "*";
                 bIsFileEdited = true;
             }
@@ -126,10 +106,8 @@ namespace Toolkit.Forms
         private void Delete()
         {
             int Index = TreeView_FxActors.SelectedNode.Index;
-
             ActorContainer.Archives.RemoveAt(Index);
             TreeView_FxActors.Nodes.Remove(TreeView_FxActors.SelectedNode);
-
             Text = Language.GetString("$FXACTOR_EDITOR") + "*";
             bIsFileEdited = true;
         }
@@ -140,31 +118,23 @@ namespace Toolkit.Forms
             ImportActor.InitialDirectory = FxActorFile.DirectoryName;
             ImportActor.Multiselect = false;
             ImportActor.Filter = "FxActor file (*.fxa)|*.fxa";
-
             if (ImportActor.ShowDialog() == true)
             {
                 FxContainer<FxActor> ImportActorContainer;
-
                 using (BinaryReader Reader = new BinaryReader(File.Open(ImportActor.FileName, FileMode.Open)))
                 {
                     ImportActorContainer = new FxContainer<FxActor>();
                     ImportActorContainer.ReadFromFile(Reader);
                 }
-
                 ActorContainer.Archives.AddRange(ImportActorContainer.Archives);
                 TreeView_FxActors.Nodes.Clear();
-
                 foreach (FxArchive Archive in ActorContainer.Archives)
                 {
                     FxActor Actor = Archive.GetObjectAs<FxActor>();
-
                     TreeNode ActorNode = new TreeNode(Actor.Name.ToString());
-
                     ActorNode.Tag = Actor;
-
                     TreeView_FxActors.Nodes.Add(ActorNode);
                 }
-
                 Text = Language.GetString("$FXACTOR_EDITOR") + "*";
                 bIsFileEdited = true;
             }
@@ -174,20 +144,16 @@ namespace Toolkit.Forms
         {
             int index = TreeView_FxActors.SelectedNode.Index;
             FxArchive SelectedArchive = ActorContainer.Archives[index];
-
             FxActor Actor = SelectedArchive.GetObjectAs<FxActor>();
-
             Microsoft.Win32.SaveFileDialog ExportActor = new Microsoft.Win32.SaveFileDialog();
             ExportActor.InitialDirectory = FxActorFile.DirectoryName;
             ExportActor.FileName = Actor.Name.ToString();
             ExportActor.Filter = "FxActor file (*.fxa)|*.fxa";
-
             if (ExportActor.ShowDialog() == true)
             {
                 FxContainer<FxActor> ExportActorContainer = new FxContainer<FxActor>();
                 ExportActorContainer.Archives = new List<FxArchive>();
                 ExportActorContainer.Archives.Add(SelectedArchive);
-
                 using (BinaryWriter Writer = new BinaryWriter(File.Open(ExportActor.FileName, FileMode.Create)))
                 {
                     ExportActorContainer.WriteToFile(Writer);
@@ -211,9 +177,7 @@ namespace Toolkit.Forms
 
         private void Grid_Actors_PropertyChanged(object sender, PropertyValueChangedEventArgs e)
         {
-            if (e.ChangedItem.Label == "Name")
-                TreeView_FxActors.SelectedNode.Text = e.ChangedItem.Value.ToString();
-
+            if (e.ChangedItem.Label == "Name") TreeView_FxActors.SelectedNode.Text = e.ChangedItem.Value.ToString();
             Text = Language.GetString("$FXACTOR_EDITOR") + "*";
             bIsFileEdited = true;
         }
@@ -223,7 +187,6 @@ namespace Toolkit.Forms
             if (bIsFileEdited)
             {
                 System.Windows.MessageBoxResult SaveChanges = System.Windows.MessageBox.Show(Language.GetString("$SAVE_PROMPT"), "Toolkit", System.Windows.MessageBoxButton.YesNoCancel);
-
                 if (SaveChanges == System.Windows.MessageBoxResult.Yes)
                 {
                     Save();
@@ -234,6 +197,7 @@ namespace Toolkit.Forms
                 }
             }
         }
+
         //Search FX AE
         private void SearchBox_KeyDown(object sender, KeyEventArgs e)
         {
@@ -247,9 +211,7 @@ namespace Toolkit.Forms
         private void RunSearch(string query)
         {
             query = query.Trim().ToLower();
-            if (string.IsNullOrWhiteSpace(query))
-                return;
-
+            if (string.IsNullOrWhiteSpace(query)) return;
             TreeNode foundNode = FindNode(TreeView_FxActors.Nodes, query);
 
             if (foundNode != null)
@@ -258,22 +220,17 @@ namespace Toolkit.Forms
                 TreeView_FxActors.Focus();
                 foundNode.EnsureVisible();
             }
-            else
-            {
-                //MessageBox.Show("Ничего не найдено.");
-            }
+            else { }
         }
 
         private TreeNode FindNode(TreeNodeCollection nodes, string query)
         {
             foreach (TreeNode node in nodes)
             {
-                if (node.Text.ToLower().Contains(query))
-                    return node;
+                if (node.Text.ToLower().Contains(query)) return node;
 
                 TreeNode child = FindNode(node.Nodes, query);
-                if (child != null)
-                    return child;
+                if (child != null) return child;
             }
             return null;
         }
