@@ -19,9 +19,7 @@ namespace Mafia2Tool
 
         private FileInfo prefabFile;
         private PrefabLoader prefabs;
-
         private List<string> ActorDefinitionNames;
-
         private bool bIsFileEdited = false;
 
         public PrefabEditor(FileInfo file)
@@ -51,16 +49,13 @@ namespace Mafia2Tool
         public void InitEditor(List<string> definitionNames)
         {
             ActorDefinitionNames = definitionNames;
-
             Reload();
-
             Show();
         }
 
         private void Save()
         {
             PrefabLoader.PrefabStruct[] NewPrefabs = new PrefabLoader.PrefabStruct[TreeView_Prefabs.Nodes.Count];
-
             for(int i = 0; i < TreeView_Prefabs.Nodes.Count; i++)
             {
                 TreeNode Node = TreeView_Prefabs.Nodes[i];
@@ -70,12 +65,10 @@ namespace Mafia2Tool
                     NewPrefabs[i] = Prefab;
                 }
             }
-
             // Create backup, set our new prefabs, and then save.
             File.Copy(prefabFile.FullName, prefabFile.FullName + "_old", true);
             prefabs.Prefabs = NewPrefabs;
             prefabs.WriteToFile(prefabFile);
-
             Text = Language.GetString("PREFAB_EDITOR_TITLE");
             bIsFileEdited = false;
         }
@@ -85,16 +78,13 @@ namespace Mafia2Tool
             // Clear controls
             TreeView_Prefabs.Nodes.Clear();
             Grid_Prefabs.SelectedObject = null;
-
             // Load the prefab
             prefabs = new PrefabLoader(prefabFile);
-
             // Add names if we know them
             for (int i = 0; i < ActorDefinitionNames.Count; i++)
             {
                 var name = ActorDefinitionNames[i];
                 var hash = FNV64.Hash(name);
-
                 foreach (var prefab in prefabs.Prefabs)
                 {
                     if (hash == prefab.Hash)
@@ -120,12 +110,10 @@ namespace Mafia2Tool
         private void Delete()
         {
             TreeNode SelectedNode = TreeView_Prefabs.SelectedNode;
-
             if (SelectedNode != null)
             {
                 SelectedNode.Remove();
             }
-
             Text = Language.GetString("PREFAB_EDITOR_TITLE") + "*";
             bIsFileEdited = true;
         }
@@ -136,20 +124,17 @@ namespace Mafia2Tool
             {
                 string FileName = Browser_ImportPRB.FileName;
                 PrefabLoader.PrefabStruct NewPrefab = new PrefabLoader.PrefabStruct();
-
                 using (BinaryReader reader = new BinaryReader(File.Open(FileName, FileMode.Open)))
                 {
                     string AssignedName = StringHelpers.ReadString16(reader);
                     NewPrefab.ReadFromFile(reader);
                     NewPrefab.AssignedName = AssignedName;
                 }
-
                 TreeNode node = new TreeNode();
                 node.Tag = NewPrefab;
                 node.Text = NewPrefab.AssignedName;
                 node.Name = NewPrefab.AssignedName;
                 TreeView_Prefabs.Nodes.Add(node);
-
                 Text = Language.GetString("PREFAB_EDITOR_TITLE") + "*";
                 bIsFileEdited = true;
             }
@@ -158,17 +143,14 @@ namespace Mafia2Tool
         private void Export()
         {
             TreeNode SelectedNode = TreeView_Prefabs.SelectedNode;
-
             if (SelectedNode != null)
             {
                 if (SelectedNode.Tag is PrefabLoader.PrefabStruct)
                 {
                     PrefabLoader.PrefabStruct Prefab = (SelectedNode.Tag as PrefabLoader.PrefabStruct);
-
                     if (Browser_ExportPRB.ShowDialog() == DialogResult.OK)
                     {
                         string FileName = Browser_ExportPRB.FileName;
-
                         using (BinaryWriter writer = new BinaryWriter(File.Open(FileName, FileMode.Create)))
                         {
                             writer.WriteString16(Prefab.AssignedName);
@@ -199,23 +181,19 @@ namespace Mafia2Tool
         private void Button_Delete_Click(object sender, EventArgs e) => Delete();
         private void Button_Save_Click(object sender, EventArgs e) => Save();
         private void Context_Delete_Click(object sender, EventArgs e) => Delete();
+
         private void Grid_Prefabs_OnPropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
             if (e.ChangedItem.Value is string str)
             {
-                e.ChangedItem.PropertyDescriptor.SetValue(
-                    Grid_Prefabs.SelectedObject,
-                    NormalizeSpaces(str)
-                );
+                e.ChangedItem.PropertyDescriptor.SetValue(Grid_Prefabs.SelectedObject, NormalizeSpaces(str));
             }
-
             Grid_Prefabs.Refresh();
         }
+
         private static string NormalizeSpaces(string input)
         {
-            if (string.IsNullOrEmpty(input))
-                return string.Empty;
-
+            if (string.IsNullOrEmpty(input)) return string.Empty;
             return Regex.Replace(input.Trim(), @"\s+", " ");
         }
 
@@ -224,7 +202,6 @@ namespace Mafia2Tool
             if (bIsFileEdited)
             {
                 System.Windows.MessageBoxResult SaveChanges = System.Windows.MessageBox.Show(Language.GetString("$SAVE_PROMPT"), "Toolkit", System.Windows.MessageBoxButton.YesNoCancel);
-
                 if (SaveChanges == System.Windows.MessageBoxResult.Yes)
                 {
                     Save();
@@ -254,29 +231,24 @@ namespace Mafia2Tool
                 // fail
                 return;
             }
-
             PrefabLoader.PrefabStruct PrefabObject = (SelectedNode.Tag as PrefabLoader.PrefabStruct);
             if (PrefabObject == null)
             {
                 // fail
                 return;
             }
-
             SaveFileDialog XMLExportDialog = new SaveFileDialog();
             XMLExportDialog.Title = "Export Prefab XML";
             XMLExportDialog.InitialDirectory = prefabFile.DirectoryName;
             XMLExportDialog.Filter = "XML File | *.xml";
-
             if (XMLExportDialog.ShowDialog() == DialogResult.OK)
             {
                 XElement ConvertedXML = ReflectionHelpers.ConvertPropertyToXML(PrefabObject.InitData);
-
                 string FileName = PrefabObject.Hash.ToString();
                 if (!string.IsNullOrEmpty(PrefabObject.AssignedName))
                 {
                     FileName = PrefabObject.AssignedName;
                 }
-
                 ConvertedXML.Save(XMLExportDialog.FileName);
             }
         }
@@ -289,20 +261,17 @@ namespace Mafia2Tool
                 // fail
                 return;
             }
-
             PrefabLoader.PrefabStruct PrefabObject = (SelectedNode.Tag as PrefabLoader.PrefabStruct);
             if (PrefabObject == null)
             {
                 // fail
                 return;
             }
-
             // Create and open dialog
             OpenFileDialog XMLImportDialog = new OpenFileDialog();
             XMLImportDialog.Title = "Import Prefab XML";
             XMLImportDialog.InitialDirectory = prefabFile.DirectoryName;
             XMLImportDialog.Filter = "XML File | *.xml";
-
             if(XMLImportDialog.ShowDialog() == DialogResult.OK)
             {
                 Cursor.Current = Cursors.WaitCursor;
@@ -310,12 +279,11 @@ namespace Mafia2Tool
                 XElement XMLContent = XElement.Load(Name);
                 S_GlobalInitData InitData = ReflectionHelpers.ConvertToPropertyFromXML<S_GlobalInitData>(XMLContent);
                 PrefabObject.InitData = InitData;
-
                 Grid_Prefabs.Refresh();
-
                 Cursor.Current = Cursors.Default;
             }
         }
+
         //Search FX ANIM
         private void SearchBox_KeyDown(object sender, KeyEventArgs e)
         {
@@ -329,35 +297,24 @@ namespace Mafia2Tool
         private void RunSearch(string query)
         {
             query = query.Trim().ToLower();
-            if (string.IsNullOrWhiteSpace(query))
-                return;
-
+            if (string.IsNullOrWhiteSpace(query)) return;
             TreeNode foundNode = FindNode(TreeView_Prefabs.Nodes, query);
-
             if (foundNode != null)
             {
                 TreeView_Prefabs.SelectedNode = foundNode;
                 TreeView_Prefabs.Focus();
                 foundNode.EnsureVisible();
             }
-            else
-            {
-                //MessageBox.Show("Ничего не найдено.");
-            }
+            else { }
         }
-
-        
 
         private TreeNode FindNode(TreeNodeCollection nodes, string query)
         {
             foreach (TreeNode node in nodes)
             {
-                if (node.Text.ToLower().Contains(query))
-                    return node;
-
+                if (node.Text.ToLower().Contains(query)) return node;
                 TreeNode child = FindNode(node.Nodes, query);
-                if (child != null)
-                    return child;
+                if (child != null) return child;
             }
             return null;
         }
