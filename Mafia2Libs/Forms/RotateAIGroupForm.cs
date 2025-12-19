@@ -24,15 +24,12 @@ namespace Mafia2Tool.Forms
 
         public RotateAIGroupForm(string groupName, int pointCount, Vector3 defaultCenter)
         {
-            InitializeComponent();
-                
+            InitializeComponent(); 
             titleLabel.Text = $"Rotate: {groupName}";
             countLabel.Text = $"Points: {pointCount}";
-
             centerXControl.Value = (decimal)defaultCenter.X;
             centerYControl.Value = (decimal)defaultCenter.Y;
             centerZControl.Value = (decimal)defaultCenter.Z;
-
             angleControl.Value = 90; 
             rotateChildrenCheckBox.Checked = true;
             updateRotationsCheckBox.Checked = true;
@@ -40,11 +37,7 @@ namespace Mafia2Tool.Forms
 
         public float AngleDegrees => (float)angleControl.Value;
 
-        public Vector3 RotationCenter => new Vector3(
-            (float)centerXControl.Value,
-            (float)centerYControl.Value,
-            (float)centerZControl.Value
-        );
+        public Vector3 RotationCenter => new Vector3((float)centerXControl.Value, (float)centerYControl.Value, (float)centerZControl.Value);
 
         public bool RotateChildren => rotateChildrenCheckBox.Checked;
 
