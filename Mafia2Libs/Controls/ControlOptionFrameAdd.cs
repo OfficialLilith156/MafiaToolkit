@@ -26,7 +26,6 @@ namespace Forms.EditorControls
         {
             int SelectedIndex = ComboBox_Type.SelectedIndex;
             FrameResourceObjectType SelectedType = FrameResourceObjectType.NULL;
-
             switch (SelectedIndex)
             {
                 case 0:
@@ -73,7 +72,6 @@ namespace Forms.EditorControls
                     Console.WriteLine("Unknown type selected");
                     break;
             }
-
             return SelectedType;
         }
 

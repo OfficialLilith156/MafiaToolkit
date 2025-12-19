@@ -19,7 +19,6 @@ namespace Forms.OptionControls
 
         private void LoadSettings()
         {
-
             TexDirectoryBox5.Text = ToolkitSettings.TexturePath5;
         }
 
@@ -40,7 +39,6 @@ namespace Forms.OptionControls
                     selectedFolder = "";
                 }
             }
-
             if (string.IsNullOrEmpty(selectedFolder))
             {
                 using (FolderBrowserDialog folderDialog = new FolderBrowserDialog())
@@ -59,27 +57,21 @@ namespace Forms.OptionControls
                     }
                 }
             }
-
             using (OpenFileDialog fileDialog = new OpenFileDialog())
             {
                 fileDialog.Filter = "DDS Files (*.dds)|*.dds";
                 fileDialog.Title = "Выберите текстуру (.dds)";
                 fileDialog.Multiselect = false;
-
                 if (fileDialog.ShowDialog() == DialogResult.OK)
                 {
                     string sourceFile = fileDialog.FileName;
                     string destFile = Path.Combine(selectedFolder, "02_home_part1.dds");
-
                     try
                     {
                         File.Copy(sourceFile, destFile, true);
                     }
                     catch (Exception ex)
-                    {
-
-                    }
-
+                    { }
                     TexDirectoryBox5.Text = selectedFolder;
                     TexDirectoryBox5_TextChanged(null, null);
                 }

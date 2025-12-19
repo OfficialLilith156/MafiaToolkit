@@ -12,8 +12,7 @@ namespace Mafia2Tool
         {
             InitializeComponent();
             Localise();
-
-           textBox1.Enabled = nameEnabled;
+            textBox1.Enabled = nameEnabled;
         }
 
         private void Localise()

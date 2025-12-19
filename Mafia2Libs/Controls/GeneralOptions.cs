@@ -35,7 +35,6 @@ namespace Forms.OptionControls
             languageComboBox.Items[6] = Language.GetString("$LANGUAGE_ARABIC");
             label1.Text = Language.GetString("$LANGUAGE_OPTION");
             label2.Text = Language.GetString("$DISCORD_STATE_CUSTOM");  
-
         }
 
         /// <summary>
@@ -51,7 +50,6 @@ namespace Forms.OptionControls
             DiscordElapsedCheckBox.Checked = ToolkitSettings.DiscordElapsedTimeEnabled;
             debugLoggingCheckbox.Checked = ToolkitSettings.LoggingEnabled;
             languageComboBox.SelectedIndex = ToolkitSettings.Language;
-
             //handle discord area
             DiscordDetailsCheckBox.Enabled = DiscordEnabledCheckBox.Checked ? true : false;
             DiscordStateCheckBox.Enabled = DiscordEnabledCheckBox.Checked ? true : false;

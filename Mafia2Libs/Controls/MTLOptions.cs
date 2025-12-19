@@ -42,35 +42,28 @@ namespace Forms.OptionControls
                     MTLListBox.Items.Add(file);
                 }
             }
-
             UpdateINIKey();
         }
 
         private void RemoveSelected_Click(object sender, EventArgs e)
         {
-            if (MTLListBox.SelectedItems.Count == 0)
-                return;
-
+            if (MTLListBox.SelectedItems.Count == 0) return;
             var itemsToRemove = new List<object>(MTLListBox.SelectedItems.Cast<object>());
-
             foreach (var item in itemsToRemove)
             {
                 MTLListBox.Items.Remove(item);
             }
-
             UpdateINIKey();
         }
 
         private void UpdateINIKey()
         {
             string value = "";
-
             foreach(string file in MTLListBox.Items)
             {
                 value += file;
                 value += ",";
             }
-
             GameStorage.Instance.GetSelectedGame().Materials = value;
         }
     }

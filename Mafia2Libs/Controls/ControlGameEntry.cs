@@ -12,7 +12,6 @@ namespace Mafia2Tool.Controls
     public partial class ControlGameEntry : UserControl
     {
         private Game game;
-
         public ControlGameEntry()
         {
             InitializeComponent();
@@ -32,13 +31,11 @@ namespace Mafia2Tool.Controls
             Label_GameName.Text = game.Name;
             Label_GameDescription.Text = game.Description;
             Label_GameType.Text = game.GameType.ToString();
-
             if(File.Exists(game.Logo))
             {
                 Picture_GameIcon.Image = Image.FromFile(game.Logo);
                 Label_MissingImage.Visible = false;
             }
-
             TextBox_FolderPath.Text = game.Directory;
             ValidatePath();
         }
@@ -58,14 +55,12 @@ namespace Mafia2Tool.Controls
             var executable = GameStorage.GetExecutableName(game.GameType);
             var path = game.Directory;
             var isValid = false;
-
             if (!string.IsNullOrEmpty(path))
             {
                 DirectoryInfo directory = new DirectoryInfo(game.Directory);
                 FileInfo file = new FileInfo(game.Directory + "\\" + executable);
                 isValid = file.Exists;
             }
-
             if(isValid)
             {
                 //TODO add tick here..
@@ -76,7 +71,6 @@ namespace Mafia2Tool.Controls
             {
                 Button_Start.Enabled = false;
                 Picture_Status.Image = Image.FromFile("Resources/cross.png");
-
                 if (debug)
                 {
                     MessageBox.Show(string.Format("Failed to find correct executable: {0}!", executable), "Toolkit", MessageBoxButtons.OK, MessageBoxIcon.Error);

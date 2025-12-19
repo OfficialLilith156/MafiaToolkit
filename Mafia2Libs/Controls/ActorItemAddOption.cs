@@ -10,9 +10,6 @@ namespace Forms.EditorControls
         {
             InitializeComponent();
             Localise();
-
-
-
             TypeCombo.Items.Add(ActorTypes.Human);
             TypeCombo.Items.Add(ActorTypes.C_CrashObject);
             TypeCombo.Items.Add(ActorTypes.C_TrafficCar);

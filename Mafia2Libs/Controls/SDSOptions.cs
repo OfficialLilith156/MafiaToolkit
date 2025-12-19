@@ -28,7 +28,6 @@ namespace Forms.OptionControls
             CheckBox_BackupSDS.Text = Language.GetString("$BACKUP_SDS_LABEL");
             Label_IndexBufferSize.Text = Language.GetString("$INDEX_BUFFER_SIZE_LABEL");
             Label_VertexBufferSize.Text = Language.GetString("$VERTEX_BUFFER_SIZE_LABEL");
-
             ToolTips.SetToolTip(NumericUpDown_Ratio, Language.GetString("$SDS_TOOLTIP_COMPRESSION_RATIO"));
             ToolTips.SetToolTip(CheckBox_UseOodle, Language.GetString("$SDS_TOOLTIP_USE_OODLE"));
         }
@@ -42,9 +41,7 @@ namespace Forms.OptionControls
             CheckBox_UseOodle.Checked = ToolkitSettings.bUseOodleCompression;
             CheckBox_BackupSDS.Checked = ToolkitSettings.bBackupEnabled;
             Checkbox_EnableLuaHelper.Checked = ToolkitSettings.EnableLuaHelper;
-
             AddTimeDateBackupsBox.Enabled = ToolkitSettings.bBackupEnabled;
-
             Label_IBSize.Text = FileInfoUtils.ConvertToMemorySize(ToolkitSettings.IndexMemorySizePerBuffer);
             Label_VBSize.Text = FileInfoUtils.ConvertToMemorySize(ToolkitSettings.VertexMemorySizePerBuffer);
             NumericBox_IBSize.SetClamped((decimal)ToolkitSettings.IndexMemorySizePerBuffer);
@@ -86,7 +83,6 @@ namespace Forms.OptionControls
         {
             ToolkitSettings.bBackupEnabled = CheckBox_BackupSDS.Checked;
             ToolkitSettings.WriteKey("BackupEnabled", "SDS", ToolkitSettings.bBackupEnabled.ToString());
-
             AddTimeDateBackupsBox.Enabled = ToolkitSettings.bBackupEnabled;
         }
 

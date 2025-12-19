@@ -29,7 +29,6 @@ namespace Mafia2Tool
             type = ParentType;
             frameMode = true;
             checkedListBox1.Items.Add(ROOT_STRING);
-
             if (ParentType == ParentInfo.ParentType.ParentIndex2)
             {
                 foreach (KeyValuePair<int, FrameHeaderScene> entry in frameResource.FrameScenes)
@@ -37,7 +36,6 @@ namespace Mafia2Tool
                     checkedListBox1.Items.Add(entry.Value);
                 }
             }
-
             foreach (KeyValuePair<int, object> entry in frameResource.FrameObjects)
             {
                 checkedListBox1.Items.Add(entry.Value);
@@ -100,15 +98,12 @@ namespace Mafia2Tool
         private void btnProcessSelected_Click(object sender, System.EventArgs e)
         {
             chosenObjects.Clear();
-
             foreach (var item in checkedListBox1.CheckedItems)
             {
                 object obj = (item.ToString() == ROOT_STRING) ? null : item;
                 chosenObjects.Add(obj);
-
                 ProcessObject(obj);
             }
-
             DialogResult = DialogResult.OK;
             Close();
         }

@@ -97,6 +97,7 @@ namespace Forms.OptionControls
             }
             else return;
         }
+
         private void BrowseButton2_Click(object sender, EventArgs e)
         {
             TexBrowser.SelectedPath = "";
@@ -107,6 +108,7 @@ namespace Forms.OptionControls
             }
             else return;
         }
+
         private void BrowseButton3_Click(object sender, EventArgs e)
         {
             TexBrowser.SelectedPath = "";
