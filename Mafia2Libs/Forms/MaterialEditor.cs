@@ -10,7 +10,6 @@ using System.Windows.Forms;
 using Utils.Extensions;
 using Utils.Language;
 using Utils.Settings;
-
 using Utils.Types;
 
 namespace Mafia2Tool
@@ -20,7 +19,6 @@ namespace Mafia2Tool
         private FileInfo MaterialFile;
         private MaterialLibrary mtl;
         private int currentSearchType;
-
         private bool bIsFileEdited = false;
         public System.Windows.Forms.TextBox TextUNKZERO;
 
@@ -59,7 +57,6 @@ namespace Mafia2Tool
             Button_Debug.Text = Language.GetString("$DEBUG_TOOLS");
             Button_DumpTextures.Text = Language.GetString("$DUMP_TEXTURE_NAMES");
             Button_Reload.Text = Language.GetString("$RELOAD_MATERIAL");
-
             for (int i = 0; i < ComboBox_SearchType.Items.Count; i++)
             {
                 var text = (ComboBox_SearchType.Items[i] as string);
@@ -72,7 +69,6 @@ namespace Mafia2Tool
         {
             // We try and grab the library from our storage.
             mtl = MaterialsManager.MaterialLibraries.TryGet(MaterialFile.FullName);
-
             // If it doesn't exist, then we should try and read it as a fallback.
             if (mtl == null)
             {
@@ -80,14 +76,12 @@ namespace Mafia2Tool
                 mtl = new MaterialLibrary(VersionsEnumerator.V_57);
                 mtl.ReadMatFile(MaterialFile.FullName);
             }
-
             FetchMaterials();
         }
 
         public void FetchMaterials()
         {
             GirdView_Materials.Rows.Clear();
-
             foreach(var Pair in mtl.Materials)
             {
                 GirdView_Materials.Rows.Add(BuildRowData(Pair.Value));
@@ -97,9 +91,7 @@ namespace Mafia2Tool
         private void SearchForMaterials(string text = null)
         {
             GirdView_Materials.Rows.Clear();
-
             IMaterial[] Filtered = mtl.SelectSearchTypeAndProceedSearch(text, currentSearchType);
-
             foreach (IMaterial Mat in Filtered)
             {
                 GirdView_Materials.Rows.Add(BuildRowData(Mat));
@@ -125,9 +117,7 @@ namespace Mafia2Tool
                 MessageBox.Show("Complete the merge to save!");
                 return;
             }
-
             mtl.WriteMatFile(mtl.Name);
-
             FileIsNotEdited();
         }
 
@@ -137,12 +127,9 @@ namespace Mafia2Tool
             {
                 return;
             }
-
             GirdView_Materials.ClearSelection();
             MaterialGrid.SelectedObject = null;
-
             BuildData();
-
             FileIsNotEdited();
         }
 
@@ -150,7 +137,6 @@ namespace Mafia2Tool
         {         
             mtl.Materials.Remove((GirdView_Materials.Rows[RowIndex].Tag as IMaterial).GetMaterialHash());
             GirdView_Materials.Rows.RemoveAt(RowIndex);
-
             FileIsEdited();
         }
 
@@ -160,12 +146,10 @@ namespace Mafia2Tool
             {
                 return;
             }
-
             // Ask user for material name.
             NewObjectForm form = new NewObjectForm(true);
             form.SetLabel(Language.GetString("$QUESTION_NAME_OF_MAT"));
             form.LoadOption(new MaterialAddOption());
-
             if (form.ShowDialog() == DialogResult.OK)
             {
                 if (mtl.Materials.ContainsKey(FNV64.Hash(form.GetInputText())))
@@ -173,18 +157,14 @@ namespace Mafia2Tool
                     MessageBox.Show("Found duplicate material. Will not be adding new material!", "Toolkit");
                     return;
                 }
-
                 // Create material with new name.
                 IMaterial mat = MaterialFactory.ConstructMaterial(mtl.Version);
                 mat.SetName(form.GetInputText());
-
                 mtl.Materials.Add(mat.GetMaterialHash(), mat);
                 GirdView_Materials.Rows.Add(BuildRowData(mat));
             }
-
             // Cleanup and reload.
             form.Dispose();
-
             FileIsEdited();
         }
 
@@ -208,7 +188,6 @@ namespace Mafia2Tool
         private void MaterialGrid_OnPropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
             MaterialGrid.Refresh();
-
             FileIsEdited();
         }
 
@@ -218,7 +197,6 @@ namespace Mafia2Tool
             {
                 return;
             }
-
             // Version will be replaced when loaded
             MaterialLibrary matLib = new MaterialLibrary(VersionsEnumerator.V_57);
             if(MTLBrowser.ShowDialog() == DialogResult.OK)
@@ -236,18 +214,15 @@ namespace Mafia2Tool
             {
                 return;
             }
-
             if (matLib.Materials.Count == 0)
             {
                 MessageBox.Show("Failed to load the selected .MTL!");
                 return;
             }
-
             MergePanel.Visible = true;
             Panel_Main.Visible = false;
             OverwriteListBox.Items.Clear();
             NewMatListBox.Items.Clear();
-
             for(int i = 0; i < matLib.Materials.Count; i++)
             {
                 var mat = matLib.Materials.ElementAt(i).Value;
@@ -260,7 +235,6 @@ namespace Mafia2Tool
                     NewMatListBox.Items.Add(mat);
                 }
             }
-
             FileIsEdited();
         }
 
@@ -281,7 +255,6 @@ namespace Mafia2Tool
             {
                 Panel_Main.Visible = true;
                 MergePanel.Visible = false;
-
                 // Attempt to convert (if required) and add to this materials file.
                 for(int i = 0; i < NewMatListBox.CheckedItems.Count; i++)
                 {
@@ -290,10 +263,8 @@ namespace Mafia2Tool
                     {
                         mat = MaterialFactory.ConvertMaterial(mtl.Version, mat);
                     }
-
                     mtl.Materials.Add(mat.GetMaterialHash(), mat);
                 }
-
                 // Attempt to overwrite (if required) and apply to this materials file.
                 for(int i = 0; i < OverwriteListBox.CheckedItems.Count; i++)
                 {
@@ -302,14 +273,11 @@ namespace Mafia2Tool
                     {
                         mat = MaterialFactory.ConvertMaterial(mtl.Version, mat);
                     }
-
                     mtl.Materials[mat.GetMaterialHash()] = mat;
                 }
-
                 // Make sure to clean up any merge panel elements
                 OverwriteListBox.Items.Clear();
                 NewMatListBox.Items.Clear();
-
                 // Force GridView update
                 FetchMaterials();
             }
@@ -348,14 +316,12 @@ namespace Mafia2Tool
                 if(cell.ColumnIndex == 0)
                 {
                     var material = (cell.OwningRow.Tag as IMaterial);
-
                     if (material != null)
                     {
                         library.Materials.Add(material.GetMaterialHash(), material);
                     }
                 }
             }
-            
             if(MTLSaveDialog.ShowDialog() == DialogResult.OK)
             {
                 library.WriteMatFile(MTLSaveDialog.FileName);
@@ -365,7 +331,6 @@ namespace Mafia2Tool
         private void Button_Search_Click(object sender, EventArgs e)
         {
             string Filtered = MaterialSearch.Text;
-
             if (!string.IsNullOrEmpty(Filtered))
             {
                 SearchForMaterials(MaterialSearch.Text);
@@ -382,9 +347,7 @@ namespace Mafia2Tool
             {
                 return;
             }
-
             Dictionary<ulong, bool> CurrentTextures = new Dictionary<ulong, bool>();
-
             using (StreamWriter Writer = new StreamWriter(File.Open("TextureDump.txt", FileMode.Create)))
             {
                 foreach (var Material in mtl.Materials)
@@ -392,7 +355,6 @@ namespace Mafia2Tool
                     if (Material.Value is Material_v63)
                     {
                         Material_v63 Mat = (Material.Value as Material_v63);
-
                         foreach(var Texture in Mat.Textures)
                         {
                             if (!CurrentTextures.ContainsKey(Texture.TextureName.Hash))
@@ -405,26 +367,18 @@ namespace Mafia2Tool
                 }
             }
         }
+
         private void DuplicateMaterial(object sender, EventArgs e)
         {
-            if (GirdView_Materials.SelectedCells.Count == 0 || !Panel_Main.Visible)
-                return;
-
+            if (GirdView_Materials.SelectedCells.Count == 0 || !Panel_Main.Visible) return;
             HashSet<int> processedRows = new HashSet<int>();
-
             foreach (DataGridViewCell cell in GirdView_Materials.SelectedCells)
             {
                 int rowIndex = cell.RowIndex;
-
-                if (processedRows.Contains(rowIndex))
-                    continue;
-
+                if (processedRows.Contains(rowIndex)) continue;
                 processedRows.Add(rowIndex);
-
                 IMaterial originalMat = GirdView_Materials.Rows[rowIndex].Tag as IMaterial;
-                if (originalMat == null)
-                    continue;
-
+                if (originalMat == null) continue;
                 IMaterial duplicatedMat;
                 switch (originalMat.GetMTLVersion())
                 {
@@ -441,7 +395,6 @@ namespace Mafia2Tool
                         MessageBox.Show("Unsupported material version for duplication!");
                         continue;
                 }
-
                 string baseName = originalMat.GetMaterialName();
                 string newName = baseName + "_Copy";
                 int counter = 1;
@@ -451,13 +404,12 @@ namespace Mafia2Tool
                     counter++;
                 }
                 duplicatedMat.SetName(newName);
-
                 mtl.Materials.Add(duplicatedMat.GetMaterialHash(), duplicatedMat);
                 GirdView_Materials.Rows.Add(BuildRowData(duplicatedMat));
             }
-
             FileIsEdited();
         }
+
         private void MaterialSearch_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -499,7 +451,6 @@ namespace Mafia2Tool
             if (bIsFileEdited)
             {
                 System.Windows.MessageBoxResult SaveChanges = System.Windows.MessageBox.Show("Save before closing?", "", System.Windows.MessageBoxButton.YesNoCancel);
-
                 if (SaveChanges == System.Windows.MessageBoxResult.Yes)
                 {
                     Save();
@@ -524,37 +475,25 @@ namespace Mafia2Tool
             using (FolderBrowserDialog folderDialog = new FolderBrowserDialog())
             {
                 folderDialog.Description = "Select folder containing .dds textures";
-
-                if (folderDialog.ShowDialog() != DialogResult.OK)
-                    return;
-
+                if (folderDialog.ShowDialog() != DialogResult.OK) return; 
                 MaterialBatchOptionsForm options = new MaterialBatchOptionsForm();
-                if (options.ShowDialog() != DialogResult.OK)
-                    return;
-
+                if (options.ShowDialog() != DialogResult.OK) return;
                 MaterialFlags selectedFlags = options.GetSelectedFlags();
-
                 string folderPath = folderDialog.SelectedPath;
                 string[] ddsFiles = Directory.GetFiles(folderPath, "*.dds", SearchOption.TopDirectoryOnly);
-
                 if (ddsFiles.Length == 0)
                 {
                     MessageBox.Show("No .dds textures found in the selected folder.", "Info");
                     return;
                 }
-
                 foreach (string texturePath in ddsFiles)
                 {
                     string fileNameWithExt = Path.GetFileName(texturePath);
                     string fileNameWithoutExt = Path.GetFileNameWithoutExtension(texturePath);
-
                     ulong hash = FNV64.Hash(fileNameWithoutExt);
-                    if (mtl.Materials.ContainsKey(hash))
-                        continue;
-
+                    if (mtl.Materials.ContainsKey(hash)) continue;
                     Material_v57 mat = new Material_v57();
-                    mat.SetName(fileNameWithoutExt);
-
+                    mat.SetName(fileNameWithoutExt); 
                     mat.Unk0 = (byte)options.Unk0;
                     mat.Unk1 = (byte)options.Unk1;
                     mat.Unk3 = (byte)options.Unk3;
@@ -562,9 +501,7 @@ namespace Mafia2Tool
                     mat.Unk5 = options.Unk5;
                     mat.ShaderID = options.ShaderID;
                     mat.ShaderHash = options.ShaderHash;
-
                     mat.Flags = selectedFlags;
-
                     MaterialSampler_v57 sampler = new MaterialSampler_v57
                     {
                         ID = options.SamplerID,
@@ -575,14 +512,11 @@ namespace Mafia2Tool
                         TextureName = new HashName(fileNameWithExt),
                         UnkZero = (byte)options.UnkZero
                     };
-
                     mat.Samplers.Add(sampler);
                     mtl.Materials.Add(mat.GetMaterialHash(), mat);
                 }
-
                 FetchMaterials();
                 FileIsEdited();
-
                 MessageBox.Show($"{ddsFiles.Length} materials created from textures.", "Done");
             }
         }
@@ -590,13 +524,13 @@ namespace Mafia2Tool
         private void Button_Save_Click(object sender, EventArgs e) => Save();
         private void Button_AddMaterial_Click(object sender, EventArgs e) => AddMaterial();
         private void Button_Reload_Click(object sender, EventArgs e) => Reload();
+
         private void Button_Delete_Click(object sender, EventArgs e)
         {
             if (GirdView_Materials.SelectedCells[0] == null || !Panel_Main.Visible)
             {
                 return;
             }
-
             int Index = GirdView_Materials.SelectedCells[0].RowIndex;
             Delete(Index);
         }
@@ -606,7 +540,6 @@ namespace Mafia2Tool
             if (bIsFileEdited)
             {
                 System.Windows.MessageBoxResult SaveChanges = System.Windows.MessageBox.Show(Language.GetString("$SAVE_PROMPT"), "Toolkit", System.Windows.MessageBoxButton.YesNoCancel);
-
                 if (SaveChanges == System.Windows.MessageBoxResult.Yes)
                 {
                     Save();
