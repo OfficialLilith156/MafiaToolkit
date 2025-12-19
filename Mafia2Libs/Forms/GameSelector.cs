@@ -19,7 +19,6 @@ namespace Mafia2Tool.Forms
         public void LocaliseForm()
         {
             CheckBox_SelectAsDefault.Text = Language.GetString("$SELECT_AS_DEFAULT");
-
             StringBuilder builder = new StringBuilder("Toolkit v");
             builder.Append(ToolkitSettings.Version);
             Label_ToolkitVersion.Text = builder.ToString();
@@ -29,7 +28,6 @@ namespace Mafia2Tool.Forms
         {
             CheckBox_SelectAsDefault.Checked = ToolkitSettings.SkipGameSelector;
             var games = GameStorage.Instance.Games;
-
             for(int i = 0; i < games.Count; i++)
             {
                 ControlGameEntry entry = new ControlGameEntry();
@@ -38,7 +36,6 @@ namespace Mafia2Tool.Forms
                 FlowPanel_GamesList.Controls.Add(entry);
                 entry.GetStartButton().Click += StartToolkit_OnClicked;
             }
-
             var size = this.Size;
             size.Width = (FlowPanel_GamesList.Size.Width + 48);
             size.Height = (FlowPanel_GamesList.Size.Height + 24);
@@ -51,13 +48,11 @@ namespace Mafia2Tool.Forms
             ControlGameEntry entry = (button.Parent as ControlGameEntry);
             var game = entry.GetGame();
             GameStorage.Instance.SetSelectedGame(game);
-
             if(CheckBox_SelectAsDefault.Checked)
             {
                 var selectedIndex = Convert.ToInt32(entry.Tag);
                 SaveDefaultGame(selectedIndex);
             }
-
             DialogResult = DialogResult.OK;
             Close();
         }
