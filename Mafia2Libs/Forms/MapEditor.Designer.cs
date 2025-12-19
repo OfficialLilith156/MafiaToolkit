@@ -370,7 +370,7 @@ namespace Mafia2Tool
             ViewSide2Button.Size = new System.Drawing.Size(126, 22);
             ViewSide2Button.Text = "$SIDE 2";
             ViewSide2Button.Visible = false;
-            ViewSide2Button.Click += OnViewSide2ButtonClicked;
+            //ViewSide2Button.Click += OnViewSide2ButtonClicked;
             // 
             // OptionsButton
             // 
