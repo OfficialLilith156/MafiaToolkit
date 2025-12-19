@@ -14,12 +14,9 @@ namespace Toolkit.Forms
     {
         private FileInfo ATPFile;
         private AnimalTrafficLoader ATPLoader;
-
         private TreeNode AnimalTypesRootNode;
         private TreeNode AnimalPathsRootNode;
-
         private object OurClipboard;
-
         private bool bIsFileEdited = false;
 
         public ATPEditor(FileInfo file)
@@ -55,7 +52,6 @@ namespace Toolkit.Forms
         private void LoadAndBuildData()
         {
             ATPLoader = new AnimalTrafficLoader(ATPFile);
-
             CreateTable();
         }
 
@@ -69,10 +65,8 @@ namespace Toolkit.Forms
                 AnimalType.Text = ATPType.Name.String;
                 AnimalType.Name = ATPType.Name.Hash.ToString();
                 AnimalType.Tag = ATPType;
-
                 AnimalTypesRootNode.Nodes.Add(AnimalType);
             }
-
             // Add Animal Paths
             AnimalPathsRootNode = new TreeNode("Animal Path");
             foreach(AnimalTrafficLoader.AnimalTrafficPath ATPPath in ATPLoader.Paths)
@@ -81,10 +75,8 @@ namespace Toolkit.Forms
                 AnimalPath.Name = String.Format("ATPATH_{0}", AnimalPathsRootNode.Nodes.Count);
                 AnimalPath.Text = String.Format("Path: [{1}] || Animal: [{0}]", ATPLoader.AnimalTypes[ATPPath.AnimalTypeIdx].Name.ToString(), AnimalPathsRootNode.Nodes.Count);
                 AnimalPath.Tag = ATPPath;
-
                 AnimalPathsRootNode.Nodes.Add(AnimalPath);
             }
-
             // Add the root nodes
             TreeView_Tables.Nodes.Add(AnimalTypesRootNode);
             TreeView_Tables.Nodes.Add(AnimalPathsRootNode);
@@ -109,7 +101,6 @@ namespace Toolkit.Forms
                 // No ATPLoader?
                 return;
             }
-
             // Setup new arrays
             AnimalTrafficLoader.AnimalTrafficType[] NewTypeArray = new AnimalTrafficLoader.AnimalTrafficType[AnimalTypesRootNode.Nodes.Count];
             AnimalTrafficLoader.AnimalTrafficPath[] NewPathsArray = new AnimalTrafficLoader.AnimalTrafficPath[AnimalPathsRootNode.Nodes.Count];
@@ -118,19 +109,15 @@ namespace Toolkit.Forms
             {
                 NewTypeArray[i] = (AnimalTypesRootNode.Nodes[i].Tag as AnimalTrafficLoader.AnimalTrafficType);
             }
-
             for (int i = 0; i < NewPathsArray.Length; i++)
             {
                 NewPathsArray[i] = (AnimalPathsRootNode.Nodes[i].Tag as AnimalTrafficLoader.AnimalTrafficPath);
             }
-
             // Store new arrays
             ATPLoader.AnimalTypes = NewTypeArray;
             ATPLoader.Paths = NewPathsArray;
-
             // Write the file
             ATPLoader.WriteToFile();
-
             // Reset editor state
             FileIsNotEdited();
         }
@@ -139,10 +126,8 @@ namespace Toolkit.Forms
         {
             TreeView_Tables.Nodes.Clear();
             LoadAndBuildData();
-
             PropertyGrid_Item.SelectedObject = null;
             TreeView_Tables.SelectedNode = null;
-
             FileIsNotEdited();
         }
 
@@ -165,7 +150,6 @@ namespace Toolkit.Forms
                 // Nothing to copy
                 return;
             }
-
             // Attempt to copy
             TreeNode SelectedNode = TreeView_Tables.SelectedNode;
             if (SelectedNode != null && SelectedNode.Tag != null)
@@ -176,11 +160,9 @@ namespace Toolkit.Forms
                     object NewObject = Activator.CreateInstance(ObjectToCopy.GetType());
                     ReflectionHelpers.Copy(ObjectToCopy, ref NewObject);
                     SelectedNode.Tag = NewObject;
-
                     // Force reload
                     PropertyGrid_Item.SelectedObject = SelectedNode.Tag;
                 }
-
                 FileIsEdited();
             }
         }
@@ -229,11 +211,10 @@ namespace Toolkit.Forms
                 ToolStrip_Add.Enabled = true;
                 return;
             }
-
             e.Cancel = true;
         }
 
-        // TODO: Should we move this into a util?
+        // TODO // : Should we move this into a util?
         private bool IsTypeofInterface(object ObjectToCheck, Type InterfaceType)
         {
             Type TypeOfObject = ObjectToCheck.GetType();
@@ -257,13 +238,10 @@ namespace Toolkit.Forms
                 if(File.Exists(FileToOpen))
                 {
                    // tables.ConvertFromXML(FileToOpen);
-
                     // Reload TreeVieew and PropertyGrid, the import may mean our 'visual' part of the data is extremely outdated
                     TreeView_Tables.Nodes.Clear();
                     PropertyGrid_Item.SelectedObject = null;
-
                     CreateTable();
-
                     FileIsEdited();
                 }
             }
@@ -311,24 +289,20 @@ namespace Toolkit.Forms
             {
                 AnimalTrafficLoader.AnimalTrafficType AnimalType = new AnimalTrafficLoader.AnimalTrafficType();
                 AnimalType.Name.Set("NewAnimalType");
-
                 TreeNode AnimalTypeNode = new TreeNode();
                 AnimalTypeNode.Text = AnimalType.Name.ToString();
                 AnimalTypeNode.Name = AnimalType.Name.Hash.ToString();
                 AnimalTypeNode.Tag = AnimalType;
-
                 AnimalTypesRootNode.Nodes.Add(AnimalTypeNode);
                 TreeView_Tables.SelectedNode = AnimalTypeNode;
             }
             else if(SelectedNode == AnimalPathsRootNode)
             {
                 AnimalTrafficLoader.AnimalTrafficPath ATPPath = new AnimalTrafficLoader.AnimalTrafficPath();
-
                 TreeNode AnimalPath = new TreeNode();
                 AnimalPath.Name = String.Format("ATPATH_{0}", AnimalPathsRootNode.Nodes.Count);
                 AnimalPath.Text = AnimalPath.Name = String.Format("Path: [{1}] || Animal: [{0}]", ATPLoader.AnimalTypes[ATPPath.AnimalTypeIdx].Name.ToString(), AnimalPathsRootNode.Nodes.Count);
                 AnimalPath.Tag = ATPPath;
-
                 AnimalPathsRootNode.Nodes.Add(AnimalPath);
                 TreeView_Tables.SelectedNode = AnimalPath;
             }
@@ -337,7 +311,6 @@ namespace Toolkit.Forms
         private void ATPTreeView_OnDelete(object sender, EventArgs e)
         {
             bool bRemovedNode = false;
-
             TreeNode SelectedNode = TreeView_Tables.SelectedNode;
             if (SelectedNode.Tag is AnimalTrafficLoader.AnimalTrafficType)
             {
@@ -355,7 +328,6 @@ namespace Toolkit.Forms
                     bRemovedNode = true;
                 }
             }
-
             if(bRemovedNode)
             {
                 PropertyGrid_Item.SelectedObject = null;
