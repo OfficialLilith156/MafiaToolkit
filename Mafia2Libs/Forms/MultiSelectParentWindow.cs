@@ -43,7 +43,6 @@ namespace Mafia2Tool.Forms
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-
             objectTree = new TreeView
             {
                 Dock = DockStyle.Fill,
@@ -52,27 +51,23 @@ namespace Mafia2Tool.Forms
                 ShowRootLines = false,
                 ShowPlusMinus = true
             };
-
             Panel bottomPanel = new Panel
             {
                 Dock = DockStyle.Bottom,
                 Height = 120,
                 Padding = new Padding(10)
             };
-
             radioParent1 = new RadioButton
             {
                 Text = "Parent Index 1",
                 Location = new System.Drawing.Point(10, 10),
                 Checked = true
             };
-
             radioParent2 = new RadioButton
             {
                 Text = "Parent Index 2",
                 Location = new System.Drawing.Point(10, 40)
             };
-
             btnOK = new Button
             {
                 Text = "OK",
@@ -81,7 +76,6 @@ namespace Mafia2Tool.Forms
                 Anchor = AnchorStyles.Bottom | AnchorStyles.Right
             };
             btnOK.Location = new System.Drawing.Point(bottomPanel.Width - 170, bottomPanel.Height - 35);
-
             btnCancel = new Button
             {
                 Text = "Cancel",
@@ -90,21 +84,17 @@ namespace Mafia2Tool.Forms
                 Anchor = AnchorStyles.Bottom | AnchorStyles.Right
             };
             btnCancel.Location = new System.Drawing.Point(bottomPanel.Width - 85, bottomPanel.Height - 35);
-
             bottomPanel.Resize += (s, e) =>
             {
                 btnOK.Location = new System.Drawing.Point(bottomPanel.Width - 170, bottomPanel.Height - 35);
                 btnCancel.Location = new System.Drawing.Point(bottomPanel.Width - 85, bottomPanel.Height - 35);
             };
-
             bottomPanel.Controls.Add(radioParent1);
             bottomPanel.Controls.Add(radioParent2);
             bottomPanel.Controls.Add(btnOK);
             bottomPanel.Controls.Add(btnCancel);
-
             this.Controls.Add(bottomPanel);
             this.Controls.Add(objectTree);
-
             this.AcceptButton = btnOK;
             this.CancelButton = btnCancel;
         }
@@ -117,7 +107,6 @@ namespace Mafia2Tool.Forms
                 TreeNode clone = CloneNode(node);
                 objectTree.Nodes.Add(clone);
             }
-            //objectTree.ExpandAll();
         }
 
         private TreeNode CloneNode(TreeNode original)
@@ -140,9 +129,7 @@ namespace Mafia2Tool.Forms
             if (this.DialogResult == DialogResult.OK)
             {
                 CollectCheckedObjects(objectTree.Nodes, SelectedObjects);
-                SelectedParentType = radioParent1.Checked
-                    ? ParentInfo.ParentType.ParentIndex1
-                    : ParentInfo.ParentType.ParentIndex2;
+                SelectedParentType = radioParent1.Checked ? ParentInfo.ParentType.ParentIndex1 : ParentInfo.ParentType.ParentIndex2;
             }
             base.OnFormClosing(e);
         }
