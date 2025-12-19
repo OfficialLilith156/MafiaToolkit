@@ -12,7 +12,6 @@ namespace Mafia2Tool.Forms
         private FileInfo file;
         private TranslokatorLoader translokator;
         private object clipboard;
-
         private bool bIsFileEdited = false;
 
         public TranslokatorEditor(FileInfo info)
@@ -48,17 +47,14 @@ namespace Mafia2Tool.Forms
         private void LoadFile()
         {
             translokator = new TranslokatorLoader(file);
-
             LoadData();
         }
 
         private void LoadData()
         {
             TranslokatorTree.Nodes.Clear();
-
             TreeNode headerData = new TreeNode("Header Data");
             headerData.Tag = translokator;
-
             TreeNode gridNode = new TreeNode("Grids");
             for (int i = 0; i < translokator.Grids.Length; i++)
             {
@@ -74,14 +70,12 @@ namespace Mafia2Tool.Forms
                 ObjectGroup objectGroup = translokator.ObjectGroups[i];
                 TreeNode objectGroupNode = new TreeNode(String.Format("Object Group: [{0}]", objectGroup.ActorType));
                 objectGroupNode.Tag = objectGroup;
-
                 for (int y = 0; y < objectGroup.Objects.Length; y++)
                 {
                     ResourceTypes.Translokator.Object obj = objectGroup.Objects[y];
                     TreeNode objNode = new TreeNode(obj.Name.ToString());
                     objNode.Tag = obj;
                     objectGroupNode.Nodes.Add(objNode);
-
                     for (int x = 0; x < obj.Instances.Length; x++)
                     {
                         Instance instance = obj.Instances[x];
@@ -90,13 +84,11 @@ namespace Mafia2Tool.Forms
                         objNode.Nodes.Add(instanceNode);
                     }
                 }
-
                 ogNode.Nodes.Add(objectGroupNode);
             }
             TranslokatorTree.Nodes.Add(headerData);
             TranslokatorTree.Nodes.Add(gridNode);
             TranslokatorTree.Nodes.Add(ogNode);
-
             Text = Language.GetString("$TRANSLOKATOR_EDITOR");
             bIsFileEdited = false;
         }
@@ -109,7 +101,6 @@ namespace Mafia2Tool.Forms
                 Grid grid = (TranslokatorTree.Nodes[1].Nodes[i].Tag as Grid);
                 translokator.Grids[i] = grid;
             }
-
             translokator.ObjectGroups = new ObjectGroup[TranslokatorTree.Nodes[2].GetNodeCount(false)];
             for (int i = 0; i < translokator.ObjectGroups.Length; i++)
             {
@@ -126,11 +117,9 @@ namespace Mafia2Tool.Forms
                     }
                     objectGroup.Objects[y] = obj;
                 }
-
                 translokator.ObjectGroups[i] = objectGroup;
             }
             translokator.WriteToFile(file);
-
             Text = Language.GetString("$TRANSLOKATOR_EDITOR");
             bIsFileEdited = false;
         }
@@ -144,7 +133,6 @@ namespace Mafia2Tool.Forms
                 TreeNode instanceNode = new TreeNode(obj.Name + " " + TranslokatorTree.SelectedNode.GetNodeCount(false));
                 instanceNode.Tag = instance;
                 TranslokatorTree.SelectedNode.Nodes.Add(instanceNode);
-
                 Text = Language.GetString("$TRANSLOKATOR_EDITOR") + "*";
                 bIsFileEdited = true;
             }
@@ -155,7 +143,6 @@ namespace Mafia2Tool.Forms
                 TreeNode instanceNode = new TreeNode(obj.Name + " " + TranslokatorTree.SelectedNode.Parent.GetNodeCount(false));
                 instanceNode.Tag = instance;
                 TranslokatorTree.SelectedNode.Parent.Nodes.Add(instanceNode);
-
                 Text = Language.GetString("$TRANSLOKATOR_EDITOR") + "*";
                 bIsFileEdited = true;
             }
@@ -171,11 +158,11 @@ namespace Mafia2Tool.Forms
                 TreeNode instanceNode = new TreeNode(obj.Name + " " + TranslokatorTree.SelectedNode.GetNodeCount(false));
                 instanceNode.Tag = obj;
                 TranslokatorTree.SelectedNode.Nodes.Add(instanceNode);
-
                 Text = Language.GetString("$TRANSLOKATOR_EDITOR") + "*";
                 bIsFileEdited = true;
             }
         }
+
         private void AddObjectGroupNode()
         {
             // If not correct node, leave early.
@@ -184,11 +171,9 @@ namespace Mafia2Tool.Forms
             {
                 return;
             }
-
             ObjectGroup NewObjectGroup = new ObjectGroup();
             TreeNode NewNode = new TreeNode(String.Format("Object Group: [{0}]", NewObjectGroup.ActorType));
             NewNode.Tag = NewObjectGroup;
-
             TranslokatorTree.Nodes[2].Nodes.Add(NewNode);
         }
 
@@ -197,7 +182,6 @@ namespace Mafia2Tool.Forms
             if (TranslokatorTree.SelectedNode != null && TranslokatorTree.SelectedNode.Tag != null)
             {
                 TranslokatorTree.Nodes.Remove(TranslokatorTree.SelectedNode);
-
                 Text = Language.GetString("$TRANSLOKATOR_EDITOR") + "*";
                 bIsFileEdited = true;
             }
@@ -227,7 +211,6 @@ namespace Mafia2Tool.Forms
                     {
                         TranslokatorTree.SelectedNode.Tag = new Instance((Instance)clipboard);
                     }
-
                     Text = Language.GetString("$TRANSLOKATOR_EDITOR") + "*";
                     bIsFileEdited = true;
                 }
@@ -252,7 +235,6 @@ namespace Mafia2Tool.Forms
             Delete.Enabled = false;
             CopyButton.Enabled = false;
             PasteButton.Enabled = false;
-
             // Update state
             if (TranslokatorTree.SelectedNode != null && TranslokatorTree.SelectedNode.Tag != null)
             {
@@ -283,7 +265,6 @@ namespace Mafia2Tool.Forms
                     PasteButton.Enabled = true;
                 }
             }
-
             // Need to hide context if none are visible
             bool bAnyEnabled = false;
             for (int i = 0; i != TranslokatorContext.Items.Count; i++)
@@ -294,7 +275,6 @@ namespace Mafia2Tool.Forms
                     break;
                 }
             }
-
             if(!bAnyEnabled)
             {
                 e.Cancel = true;
@@ -332,7 +312,6 @@ namespace Mafia2Tool.Forms
             {
                 TreeNode selected = TranslokatorTree.SelectedNode;
                 TranslokatorTree.SelectedNode.Text = e.ChangedItem.Value.ToString();
-
                 if(selected.Tag is ResourceTypes.Translokator.Object)
                 {
                     for(int i = 0; i < selected.Nodes.Count; i++)
@@ -352,17 +331,15 @@ namespace Mafia2Tool.Forms
                     selected.Text = NewName;
                 }
             }
-
             PropertyGrid.Refresh();
             Cursor.Current = Cursors.Default;
-
             Text = Language.GetString("$TRANSLOKATOR_EDITOR") + "*";
             bIsFileEdited = true;
         }
+
         private void ViewNumInstButton_Click(object sender, EventArgs e)
         {
             var num = 0;
-
             for (int i = 0; i < TranslokatorTree.Nodes[2].GetNodeCount(false); i++)
             {
                 for (int y = 0; y < TranslokatorTree.Nodes[2].Nodes[i].GetNodeCount(false); y++)
@@ -384,7 +361,6 @@ namespace Mafia2Tool.Forms
             if (bIsFileEdited)
             {
                 System.Windows.MessageBoxResult SaveChanges = System.Windows.MessageBox.Show(Language.GetString("$SAVE_PROMPT"), "Toolkit", System.Windows.MessageBoxButton.YesNoCancel);
-
                 if (SaveChanges == System.Windows.MessageBoxResult.Yes)
                 {
                     SaveFile();
@@ -399,10 +375,8 @@ namespace Mafia2Tool.Forms
         private void ReloadButton_Click(object sender, EventArgs e)
         {
             LoadFile();
-
             TranslokatorTree.SelectedNode = null;
             PropertyGrid.SelectedObject = null;
-
         }
 
         private void AddObjectOnClick(object sender, EventArgs e) => AddObjectNode();
@@ -413,11 +387,11 @@ namespace Mafia2Tool.Forms
         private void PasteButton_Click(object sender, EventArgs e) => Paste();
         private void SaveToolButton_Click(object sender, EventArgs e) => SaveFile();
         private void ExitButton_Click(object sender, EventArgs e) => Close();
+
         private void Button_ExportXml_OnClick(object sender, System.EventArgs e)
         {
             SaveFileDialog saveFile = new SaveFileDialog();
             saveFile.Filter = "XML|*.XML";
-
             if (saveFile.ShowDialog() == DialogResult.OK)
             {
                 translokator.ConvertToXML(saveFile.FileName);
@@ -430,18 +404,17 @@ namespace Mafia2Tool.Forms
             openFileDialog.Filter = "XML|*.XML";
             openFileDialog.Multiselect = false;
             openFileDialog.CheckFileExists = true;
-
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 string FileToOpen = openFileDialog.FileName;
                 if (File.Exists(FileToOpen))
                 {
                     translokator.ConvertFromXML(FileToOpen);
-
                     LoadData();
                 }
             }
         }
+
         private void SearchBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -454,33 +427,24 @@ namespace Mafia2Tool.Forms
         private void RunSearch(string query)
         {
             query = query.Trim().ToLower();
-            if (string.IsNullOrWhiteSpace(query))
-                return;
-
+            if (string.IsNullOrWhiteSpace(query)) return;
             TreeNode foundNode = FindNode(TranslokatorTree.Nodes, query);
-
             if (foundNode != null)
             {
                 TranslokatorTree.SelectedNode = foundNode;
                 TranslokatorTree.Focus();
                 foundNode.EnsureVisible();
             }
-            else
-            {
-                //MessageBox.Show("Ничего не найдено.");
-            }
+            else { }
         }
 
         private TreeNode FindNode(TreeNodeCollection nodes, string query)
         {
             foreach (TreeNode node in nodes)
             {
-                if (node.Text.ToLower().Contains(query))
-                    return node;
-
+                if (node.Text.ToLower().Contains(query)) return node;
                 TreeNode child = FindNode(node.Nodes, query);
-                if (child != null)
-                    return child;
+                if (child != null) return child;
             }
             return null;
         }
