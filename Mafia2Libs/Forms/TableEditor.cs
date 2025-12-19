@@ -15,7 +15,6 @@ namespace Mafia2Tool
         private TableData data;
         private Dictionary<uint, string> columnNames = new Dictionary<uint, string>();
         private ushort Version;
-
         private bool bIsFileEdited = false;
 
         public TableEditor(FileInfo file)
@@ -51,7 +50,6 @@ namespace Mafia2Tool
             try
             {
                 string[] hashes = File.ReadAllLines(Path.Combine("Resources", "hashes.txt"));
-
                 foreach (var hash in hashes)
                 {
                     uint key = FNV32.Hash(hash);
@@ -63,13 +61,11 @@ namespace Mafia2Tool
                 MessageBox.Show("Missing hashes.txt, No column names will be present.", "Toolkit", MessageBoxButtons.OK);
                 columnNames = new Dictionary<uint, string>();
             }
-
             // Load custom hashes. This is optional. Expects format like [uint32] [string]
             FileInfo CustomHashesFile = new FileInfo(Path.Combine("Resources", "custom_hashes.txt"));
             if (CustomHashesFile.Exists)
             {
                 string[] CustomHashes = File.ReadAllLines(CustomHashesFile.FullName);
-
                 foreach (string Line in CustomHashes)
                 {
                     string[] values = Line.Split(" ");
@@ -85,7 +81,6 @@ namespace Mafia2Tool
             {
                 return columnNames[hash];
             }
-
             return hash.ToString("X8");
         }
 
@@ -93,14 +88,12 @@ namespace Mafia2Tool
         {
             DataGrid.Rows.Clear();
             DataGrid.Columns.Clear();
-
             data = new TableData();
             using (BinaryReader reader = new BinaryReader(File.Open(file.FullName, FileMode.Open)))
             {
                 Version = (ushort)reader.ReadInt32();
                 data.Deserialize(Version, reader.BaseStream, Gibbed.IO.Endian.Little);
             }
-
             foreach (TableData.Column column in data.Columns)
             {
                 MTableColumn newCol = new MTableColumn();
@@ -109,7 +102,6 @@ namespace Mafia2Tool
                 newCol.Unk2 = column.Unknown2;
                 newCol.Unk3 = column.Unknown3;
                 newCol.TypeM2 = column.Type;
-
                 switch (newCol.TypeM2)
                 {
                     case TableData.ColumnType.Boolean:
@@ -126,14 +118,11 @@ namespace Mafia2Tool
                 }
                 DataGrid.Columns.Add(newCol);
             }
-
             foreach (TableData.Row row in data.Rows)
             {
                 DataGrid.Rows.Add(row.Values.ToArray());
             }
-
             Label_Version.Text = string.Format("Version: {0}", Version);
-
             Text = Language.GetString("$TABLE_EDITOR_TITLE");
             bIsFileEdited = false;
         }
@@ -151,7 +140,6 @@ namespace Mafia2Tool
             newData.PatchedUnk2 = data.PatchedUnk2;
             newData.Unk1 = data.Unk1;
             newData.Unk2 = data.Unk2;
-
             for (int i = 0; i < DataGrid.ColumnCount; i++)
             {
                 TableData.Column column = new TableData.Column();
@@ -162,7 +150,6 @@ namespace Mafia2Tool
                 column.NameHash = col.NameHash;
                 newData.Columns.Add(column);
             }
-
             for (int i = 0; i < DataGrid.RowCount; i++)
             {
                 TableData.Row row = new TableData.Row();
@@ -170,25 +157,20 @@ namespace Mafia2Tool
                 {
                     row.Values.Add(DataGrid.Rows[i].Cells[x].Value);
                 }
-
                 newData.Rows.Add(row);
             }
-
             // Don't save the file if we fail to validate
             if (!newData.Validate())
             {
                 MessageBox.Show("Failed to validate. Not saving data.", "Toolkit", MessageBoxButtons.OK);
                 return;
             }
-
             using (BinaryWriter writer = new BinaryWriter(File.Open(file.FullName, FileMode.Create)))
             {
                 writer.Write((int)Version);
                 newData.Serialize(Version, writer.BaseStream, Gibbed.IO.Endian.Little);
             }
-
             data = newData;
-
             Text = Language.GetString("$TABLE_EDITOR_TITLE");
             bIsFileEdited = false;
         }
@@ -208,7 +190,6 @@ namespace Mafia2Tool
         private void AddRowOnClick(object sender, EventArgs e)
         {
             List<object> data = new List<object>();
-
             foreach (MTableColumn column in DataGrid.Columns)
             {
                 Type DataType = TableData.GetValueTypeForColumnType(column.TypeM2);
@@ -231,7 +212,6 @@ namespace Mafia2Tool
                 }
             }
             DataGrid.Rows.Add(data.ToArray());
-
             Text = Language.GetString("$TABLE_EDITOR_TITLE") + "*";
             bIsFileEdited = true;
         }
@@ -247,12 +227,8 @@ namespace Mafia2Tool
         private void SearchBox_TextChanged(object sender, EventArgs e)
         {
             string query = SearchBox.Text?.Trim();
-
             DataGrid.ClearSelection();
-
-            if (string.IsNullOrEmpty(query))
-                return;
-
+            if (string.IsNullOrEmpty(query)) return;
             foreach (DataGridViewRow row in DataGrid.Rows)
             {
                 foreach (DataGridViewCell cell in row.Cells)
@@ -267,7 +243,6 @@ namespace Mafia2Tool
                 }
             }
         }
-
         private void CellContent_Changed(object sender, DataGridViewCellEventArgs e)
         {
             MTableColumn Column = (DataGrid.Columns[e.ColumnIndex] as MTableColumn);
@@ -286,7 +261,6 @@ namespace Mafia2Tool
             if (DataGrid.SelectedRows.Count > 0)
             {
                 DataGrid.Rows.Remove(DataGrid.SelectedRows[0]);
-
                 Text = Language.GetString("$TABLE_EDITOR_TITLE") + "*";
                 bIsFileEdited = true;
             }
@@ -297,7 +271,6 @@ namespace Mafia2Tool
             if (bIsFileEdited)
             {
                 System.Windows.MessageBoxResult SaveChanges = System.Windows.MessageBox.Show(Language.GetString("$SAVE_PROMPT"), "Toolkit", System.Windows.MessageBoxButton.YesNoCancel);
-
                 if (SaveChanges == System.Windows.MessageBoxResult.Yes)
                 {
                     SaveTableData();
