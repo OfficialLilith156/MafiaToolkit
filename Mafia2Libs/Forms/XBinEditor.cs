@@ -11,16 +11,13 @@ namespace Mafia2Tool
     {
         private FileInfo xbinfile;
         private XBin xbin;
-
         private bool bIsFileEdited = false;
 
         public XBinEditor(FileInfo file)
         {
             InitializeComponent();
-
             xbin = new XBin();
             xbinfile = file;
-
             Localise();
             ReadFromFile();
             Initialise();
@@ -64,11 +61,9 @@ namespace Mafia2Tool
         private void Save()
         {
             xbin.TableInformation.SetFromTreeNodes(TreeView_XBin.Nodes[0]);
-
             // Create backup, set our new xbins, and then save.
             File.Copy(xbinfile.FullName, xbinfile.FullName + "_old", true);
             xbin.WriteToFile(xbinfile);
-
             Text = Language.GetString("$XBIN_EDITOR_TITLE");
             bIsFileEdited = false;
         }
@@ -88,32 +83,16 @@ namespace Mafia2Tool
             // Lets make sure the actual XML document exists first.
             var XMLFileName = Path.Combine(xbinfile.DirectoryName, Path.GetFileNameWithoutExtension(xbinfile.FullName));
             XMLFileName += ".xml";
-
             if (!File.Exists(XMLFileName))
             {
                 MessageBox.Show("To import an XML file for this XBin, please export first.", "Toolkit", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-
             xbin.TableInformation.ReadFromXML(XMLFileName);
             Initialise();
             Cursor.Current = Cursors.Default;
-
             Text = Language.GetString("$XBIN_EDITOR_TITLE") + "*";
             bIsFileEdited = true;
-        }
-
-        private void Button_Delete_Click(object sender, EventArgs e)
-        {
-            TreeNode SelectedNode = TreeView_XBin.SelectedNode;
-
-            if(SelectedNode != null)
-            {
-                SelectedNode.Remove();
-
-                Text = Language.GetString("$XBIN_EDITOR_TITLE") + "*";
-                bIsFileEdited = true;
-            }
         }
 
         private void Button_Save_Click(object sender, EventArgs e) => Save();
@@ -122,10 +101,8 @@ namespace Mafia2Tool
         {
             TreeView_XBin.SelectedNode = null;
             Grid_XBin.SelectedObject = null;
-
             Text = Language.GetString("$XBIN_EDITOR_TITLE");
             bIsFileEdited = false;
-
             ReadFromFile();
             Initialise();
         }
@@ -135,7 +112,6 @@ namespace Mafia2Tool
         private void OnPropertyValidChanged(object s, PropertyValueChangedEventArgs e)
         {
             Grid_XBin.Refresh();
-
             Text = Language.GetString("$XBIN_EDITOR_TITLE") + "*";
             bIsFileEdited = true;
         }
