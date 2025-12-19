@@ -10,29 +10,19 @@ namespace Toolkit.Forms
     public partial class FxAnimSetEditor : Form
     {
         private FileInfo FxAnimSetFile;
-
         private FxContainer<FxAnimSet> AnimSetContainer;
-
         private object clipboard;
-
         private bool bIsFileEdited = false;
 
         public FxAnimSetEditor(FileInfo InOriginFile)
         {
             InitializeComponent();
-
             FxAnimSetFile = InOriginFile;
             AnimSetContainer = null;
-
             Localise();
-
             BuildData();
-
             Show();
-
             ToolkitSettings.UpdateRichPresence("Using the FxAnimSet editor.");
-
-
             SearchBox.KeyDown += SearchBox_KeyDown;
         }
 
@@ -62,15 +52,11 @@ namespace Toolkit.Forms
                 AnimSetContainer = new FxContainer<FxAnimSet>();
                 AnimSetContainer.ReadFromFile(Reader);
             }
-
             foreach (FxArchive Archive in AnimSetContainer.Archives)
             {
                 FxAnimSet AnimSet = Archive.GetObjectAs<FxAnimSet>();
-
                 TreeNode AnimSetNode = new TreeNode(AnimSet.Name.ToString());
-
                 AnimSetNode.Tag = AnimSet;
-
                 TreeView_FxAnimSets.Nodes.Add(AnimSetNode);
             }
         }
@@ -82,7 +68,6 @@ namespace Toolkit.Forms
             {
                 AnimSetContainer.WriteToFile(writer);
             }
-
             Text = Language.GetString("$FXANIMSET_EDITOR");
             bIsFileEdited = false;
         }
@@ -109,15 +94,10 @@ namespace Toolkit.Forms
             {
                 FxArchive Archive = (clipboard as FxArchive);
                 AnimSetContainer.Archives.Add(Archive);
-
                 FxAnimSet AnimSet = Archive.GetObjectAs<FxAnimSet>();
-
                 TreeNode AnimSetNode = new TreeNode(AnimSet.Name.ToString());
-
                 AnimSetNode.Tag = AnimSet;
-
                 TreeView_FxAnimSets.Nodes.Add(AnimSetNode);
-
                 Text = Language.GetString("$FXANIMSET_EDITOR") + "*";
                 bIsFileEdited = true;
             }
@@ -126,10 +106,8 @@ namespace Toolkit.Forms
         private void Delete()
         {
             int Index = TreeView_FxAnimSets.SelectedNode.Index;
-
             AnimSetContainer.Archives.RemoveAt(Index);
             TreeView_FxAnimSets.Nodes.Remove(TreeView_FxAnimSets.SelectedNode);
-
             Text = Language.GetString("$FXANIMSET_EDITOR") + "*";
             bIsFileEdited = true;
         }
@@ -140,31 +118,23 @@ namespace Toolkit.Forms
             ImportSet.InitialDirectory = FxAnimSetFile.DirectoryName;
             ImportSet.Multiselect = false;
             ImportSet.Filter = "FxAnimSet file (*.fas)|*.fas";
-
             if (ImportSet.ShowDialog() == true)
             {
                 FxContainer<FxAnimSet> ImportAnimSetContainer;
-
                 using (BinaryReader Reader = new BinaryReader(File.Open(ImportSet.FileName, FileMode.Open)))
                 {
                     ImportAnimSetContainer = new FxContainer<FxAnimSet>();
                     ImportAnimSetContainer.ReadFromFile(Reader);
                 }
-
                 AnimSetContainer.Archives.AddRange(ImportAnimSetContainer.Archives);
                 TreeView_FxAnimSets.Nodes.Clear();
-
                 foreach (FxArchive Archive in AnimSetContainer.Archives)
                 {
                     FxAnimSet AnimSet = Archive.GetObjectAs<FxAnimSet>();
-
                     TreeNode AnimSetNode = new TreeNode(AnimSet.Name.ToString());
-
                     AnimSetNode.Tag = AnimSet;
-
                     TreeView_FxAnimSets.Nodes.Add(AnimSetNode);
                 }
-
                 Text = Language.GetString("$FXANIMSET_EDITOR") + "*";
                 bIsFileEdited = true;
             }
@@ -174,20 +144,16 @@ namespace Toolkit.Forms
         {
             int index = TreeView_FxAnimSets.SelectedNode.Index;
             FxArchive SelectedArchive = AnimSetContainer.Archives[index];
-
             FxAnimSet AnimSet = SelectedArchive.GetObjectAs<FxAnimSet>();
-
             Microsoft.Win32.SaveFileDialog ExportSet = new Microsoft.Win32.SaveFileDialog();
             ExportSet.InitialDirectory = FxAnimSetFile.DirectoryName;
             ExportSet.FileName = AnimSet.Name.ToString();
             ExportSet.Filter = "FxAnimSet file (*.fas)|*.fas";
-
             if (ExportSet.ShowDialog() == true)
             {
                 FxContainer<FxAnimSet> ExportAnimSetContainer = new FxContainer<FxAnimSet>();
                 ExportAnimSetContainer.Archives = new List<FxArchive>();
                 ExportAnimSetContainer.Archives.Add(SelectedArchive);
-
                 using (BinaryWriter Writer = new BinaryWriter(File.Open(ExportSet.FileName, FileMode.Create)))
                 {
                     ExportAnimSetContainer.WriteToFile(Writer);
@@ -211,9 +177,7 @@ namespace Toolkit.Forms
 
         private void Grid_AnimSet_PropertyChanged(object sender, PropertyValueChangedEventArgs e)
         {
-            if (e.ChangedItem.Label == "Name")
-                TreeView_FxAnimSets.SelectedNode.Text = e.ChangedItem.Value.ToString();
-
+            if (e.ChangedItem.Label == "Name") TreeView_FxAnimSets.SelectedNode.Text = e.ChangedItem.Value.ToString();
             Text = Language.GetString("$FXANIMSET_EDITOR") + "*";
             bIsFileEdited = true;
         }
@@ -223,7 +187,6 @@ namespace Toolkit.Forms
             if (bIsFileEdited)
             {
                 System.Windows.MessageBoxResult SaveChanges = System.Windows.MessageBox.Show(Language.GetString("$SAVE_PROMPT"), "Toolkit", System.Windows.MessageBoxButton.YesNoCancel);
-
                 if (SaveChanges == System.Windows.MessageBoxResult.Yes)
                 {
                     Save();
@@ -248,33 +211,24 @@ namespace Toolkit.Forms
         private void RunSearch(string query) 
         {
             query = query.Trim().ToLower();
-            if (string.IsNullOrWhiteSpace(query))
-                return;
-
+            if (string.IsNullOrWhiteSpace(query)) return;
             TreeNode foundNode = FindNode(TreeView_FxAnimSets.Nodes, query);
-
             if (foundNode != null)
             {
                 TreeView_FxAnimSets.SelectedNode = foundNode;
                 TreeView_FxAnimSets.Focus();
                 foundNode.EnsureVisible();
             }
-            else
-            {
-                //MessageBox.Show("Ничего не найдено.");
-            }
+            else { }
         }
 
         private TreeNode FindNode(TreeNodeCollection nodes, string query)
         {
             foreach (TreeNode node in nodes)
             {
-                if (node.Text.ToLower().Contains(query))
-                    return node;
-
+                if (node.Text.ToLower().Contains(query)) return node;
                 TreeNode child = FindNode(node.Nodes, query);
-                if (child != null)
-                    return child;
+                if (child != null) return child;
             }
             return null;
         }
