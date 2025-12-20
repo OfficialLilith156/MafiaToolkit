@@ -72,16 +72,16 @@ namespace Mafia2Tool
             ObjectPropertiesButton = new System.Windows.Forms.ToolStripMenuItem();
             ViewOptionProperties = new System.Windows.Forms.ToolStripMenuItem();
             toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
+            importXMLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            exportXmlToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            moveAIGroupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            rotateAIToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             addGroupType1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             addType4ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             addType7ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             addType8ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             addType9ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             addType11ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            importXMLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            exportXmlToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            moveAIGroupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            rotateAIToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripDropDownButton3 = new System.Windows.Forms.ToolStripDropDownButton();
             moveGroupNodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripDropDownButton4 = new System.Windows.Forms.ToolStripDropDownButton();
@@ -96,6 +96,8 @@ namespace Mafia2Tool
             toolStripDropDownButton2 = new System.Windows.Forms.ToolStripDropDownButton();
             addModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             batchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            generateColToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             imageList1 = new System.Windows.Forms.ImageList(components);
             RenderPanel = new System.Windows.Forms.Panel();
             MeshBrowser = new System.Windows.Forms.OpenFileDialog();
@@ -370,7 +372,6 @@ namespace Mafia2Tool
             ViewSide2Button.Size = new System.Drawing.Size(126, 22);
             ViewSide2Button.Text = "$SIDE 2";
             ViewSide2Button.Visible = false;
-            //ViewSide2Button.Click += OnViewSide2ButtonClicked;
             // 
             // OptionsButton
             // 
@@ -474,6 +475,34 @@ namespace Mafia2Tool
             toolStripDropDownButton1.Text = "Navigation AIWorld";
             toolStripDropDownButton1.ToolTipText = "Navigation";
             // 
+            // importXMLToolStripMenuItem
+            // 
+            importXMLToolStripMenuItem.Name = "importXMLToolStripMenuItem";
+            importXMLToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
+            importXMLToolStripMenuItem.Text = "Import XML";
+            importXMLToolStripMenuItem.Click += ImportAIWorldXMLButton_Click;
+            // 
+            // exportXmlToolStripMenuItem
+            // 
+            exportXmlToolStripMenuItem.Name = "exportXmlToolStripMenuItem";
+            exportXmlToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
+            exportXmlToolStripMenuItem.Text = "Export Xml";
+            exportXmlToolStripMenuItem.Click += ExportAIWorldXMLButton_Click;
+            // 
+            // moveAIGroupToolStripMenuItem
+            // 
+            moveAIGroupToolStripMenuItem.Name = "moveAIGroupToolStripMenuItem";
+            moveAIGroupToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
+            moveAIGroupToolStripMenuItem.Text = "Move AIWorld Group";
+            moveAIGroupToolStripMenuItem.Click += MoveAIGroupButton_Click;
+            // 
+            // rotateAIToolStripMenuItem
+            // 
+            rotateAIToolStripMenuItem.Name = "rotateAIToolStripMenuItem";
+            rotateAIToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
+            rotateAIToolStripMenuItem.Text = "Rotate AIWorld Group";
+            rotateAIToolStripMenuItem.Click += RotateAIGroupZButton_Click;
+            // 
             // addGroupType1ToolStripMenuItem
             // 
             addGroupType1ToolStripMenuItem.Name = "addGroupType1ToolStripMenuItem";
@@ -516,34 +545,6 @@ namespace Mafia2Tool
             addType11ToolStripMenuItem.Text = "Add NPCShelters";
             addType11ToolStripMenuItem.Click += btnAddType11_Click;
             // 
-            // importXMLToolStripMenuItem
-            // 
-            importXMLToolStripMenuItem.Name = "importXMLToolStripMenuItem";
-            importXMLToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
-            importXMLToolStripMenuItem.Text = "Import XML";
-            importXMLToolStripMenuItem.Click += ImportAIWorldXMLButton_Click;
-            // 
-            // exportXmlToolStripMenuItem
-            // 
-            exportXmlToolStripMenuItem.Name = "exportXmlToolStripMenuItem";
-            exportXmlToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
-            exportXmlToolStripMenuItem.Text = "Export Xml";
-            exportXmlToolStripMenuItem.Click += ExportAIWorldXMLButton_Click;
-            // 
-            // moveAIGroupToolStripMenuItem
-            // 
-            moveAIGroupToolStripMenuItem.Name = "moveAIGroupToolStripMenuItem";
-            moveAIGroupToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
-            moveAIGroupToolStripMenuItem.Text = "Move AIWorld Group";
-            moveAIGroupToolStripMenuItem.Click += MoveAIGroupButton_Click;
-            // 
-            // rotateAIToolStripMenuItem
-            // 
-            rotateAIToolStripMenuItem.Name = "rotateAIToolStripMenuItem";
-            rotateAIToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
-            rotateAIToolStripMenuItem.Text = "Rotate AIWorld Group";
-            rotateAIToolStripMenuItem.Click += RotateAIGroupZButton_Click;
-            // 
             // toolStripDropDownButton3
             // 
             toolStripDropDownButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
@@ -558,7 +559,7 @@ namespace Mafia2Tool
             // moveGroupNodeToolStripMenuItem
             // 
             moveGroupNodeToolStripMenuItem.Name = "moveGroupNodeToolStripMenuItem";
-            moveGroupNodeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            moveGroupNodeToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             moveGroupNodeToolStripMenuItem.Text = "Move Group Node";
             moveGroupNodeToolStripMenuItem.Click += btnMoveNAV_Click;
             // 
@@ -631,7 +632,7 @@ namespace Mafia2Tool
             // toolStripDropDownButton2
             // 
             toolStripDropDownButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            toolStripDropDownButton2.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { addModelToolStripMenuItem, batchToolStripMenuItem });
+            toolStripDropDownButton2.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { addModelToolStripMenuItem, batchToolStripMenuItem, generateColToolStripMenuItem, testToolStripMenuItem });
             toolStripDropDownButton2.Image = (System.Drawing.Image)resources.GetObject("toolStripDropDownButton2.Image");
             toolStripDropDownButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
             toolStripDropDownButton2.Name = "toolStripDropDownButton2";
@@ -641,7 +642,7 @@ namespace Mafia2Tool
             // addModelToolStripMenuItem
             // 
             addModelToolStripMenuItem.Name = "addModelToolStripMenuItem";
-            addModelToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
+            addModelToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
             addModelToolStripMenuItem.Text = "Add Models to the Scene";
             addModelToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             addModelToolStripMenuItem.Click += AssignAllToSceneFolderButton_Click;
@@ -649,9 +650,23 @@ namespace Mafia2Tool
             // batchToolStripMenuItem
             // 
             batchToolStripMenuItem.Name = "batchToolStripMenuItem";
-            batchToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
+            batchToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
             batchToolStripMenuItem.Text = "Changing parents of models";
             batchToolStripMenuItem.Click += BatchSetParentButton_Click;
+            // 
+            // generateColToolStripMenuItem
+            // 
+            generateColToolStripMenuItem.Name = "generateColToolStripMenuItem";
+            generateColToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
+            generateColToolStripMenuItem.Text = "Create Collision";
+            generateColToolStripMenuItem.Click += CreateCollisionFromMeshButton_Click;
+            // 
+            // testToolStripMenuItem
+            // 
+            testToolStripMenuItem.Name = "testToolStripMenuItem";
+            testToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
+            testToolStripMenuItem.Text = "Extract from FOD + save positions";
+            testToolStripMenuItem.Click += ExtractFromDummyButton_Click;
             // 
             // imageList1
             // 
@@ -784,5 +799,7 @@ namespace Mafia2Tool
         private System.Windows.Forms.ToolStripMenuItem exportXmlToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem moveAIGroupToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem rotateAIToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem generateColToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem testToolStripMenuItem;
     }
 }

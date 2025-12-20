@@ -29,6 +29,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using Toolkit.Core;
+using Toolkit.Mathematics;
 using Utils.Extensions;
 using Utils.Language;
 using Utils.Logging;
@@ -190,7 +191,7 @@ namespace Mafia2Tool
             if (e.DraggedNode.Tag is not FrameObjectBase)
             {
                 return;
-            }
+            }          
             if (e.DragButton == MouseButtons.Left)
             {
                 FrameEntry NewParent = (e.TargetNode.Tag != null ? e.TargetNode.Tag as FrameEntry : null);
@@ -280,6 +281,65 @@ namespace Mafia2Tool
                     }
                 }
                 objectForm.Dispose();
+            }
+        }
+
+        private void ExtractFromDummyButton_Click(object sender, EventArgs e)
+        {
+            ExtractModelsFromDummy();
+        }
+
+        private void ExtractModelsFromDummy()
+        {
+            TreeNode selectedNode = dSceneTree.SelectedNode;
+            if (selectedNode?.Tag is not FrameObjectDummy dummy)
+            {
+                MessageBox.Show("Please select a FrameObjectDummy node.", "Toolkit", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            if (dummy.Children.Count == 0)
+            {
+                MessageBox.Show("The selected FrameObjectDummy has no child models.",
+                               "Toolkit", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+            if (MessageBox.Show($"Extract {dummy.Children.Count} models from '{dummy.Name}'?\n\n" + "Models will keep their world positions and be moved to scene root.", "Extract Models", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+            {
+                return;
+            }
+            try
+            {
+                Cursor.Current = Cursors.WaitCursor;
+                Matrix4x4 dummyWorldTransform = dummy.WorldTransform;
+                foreach (FrameObjectBase child in dummy.Children.ToList()) 
+                {
+                    Matrix4x4 childWorldTransform = child.WorldTransform;
+                    SceneData.FrameResource.SetParentOfObject(ParentInfo.ParentType.ParentIndex1, child, null);
+                    SceneData.FrameResource.SetParentOfObject(ParentInfo.ParentType.ParentIndex2, child, null);
+                    child.LocalTransform = childWorldTransform;
+                    ApplyChangesToRenderable(child);
+                    TreeNode[] childNodes = dSceneTree.Find(child.RefID.ToString(), true);
+                    foreach (TreeNode childNode in childNodes)
+                    {
+                        if (childNode.Parent != null)
+                        {
+                            childNode.Parent.Nodes.Remove(childNode);
+                        }
+                        TreeNode newNode = new TreeNode(child.ToString())
+                        {
+                            Tag = child,
+                            Name = child.RefID.ToString()
+                        };
+                        dSceneTree.AddToTree(newNode, frameResourceRoot);
+                    }
+                }
+                Cursor.Current = Cursors.Default;
+                MessageBox.Show($"Successfully extracted {dummy.Children.Count} models.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                Cursor.Current = Cursors.Default;
+                MessageBox.Show($"Error extracting models: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -444,7 +504,7 @@ namespace Mafia2Tool
                 Graphics = new GraphicsClass();
                 Graphics.PreInit(handle);
                 BuildRenderObjects();
-                result = Graphics.InitScene(RenderPanel.Width, RenderPanel.Height);              
+                result = Graphics.InitScene(RenderPanel.Width, RenderPanel.Height);
             }
             if (Input == null)
             {
@@ -660,7 +720,7 @@ namespace Mafia2Tool
             Label_StatusBar.Text = Graphics.GetStatusBarText();
             return true;
         }
-        
+
         private void SanitizeBuffers()
         {
             #region vertex sanitize;
@@ -718,7 +778,7 @@ namespace Mafia2Tool
             }
             #endregion index sanitize;
         }
-       
+
         private void Save()
         {
             DialogResult result = MessageBox.Show("Do you want to save your changes?", "Toolkit", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
@@ -754,7 +814,7 @@ namespace Mafia2Tool
                     for (int i = 0; i < SceneData.OBJData.Length; i++)
                     {
                         var obj = SceneData.OBJData[i];
-                        obj.WriteToFile(); 
+                        obj.WriteToFile();
                     }
                 }
                 if (SceneData.AIWorlds != null && ToolkitSettings.Experimental)
@@ -785,7 +845,7 @@ namespace Mafia2Tool
                                     }
                                 }
                             }
-                            navData.WriteToFile(); 
+                            navData.WriteToFile();
                         }
                     }
                 }
@@ -888,7 +948,7 @@ namespace Mafia2Tool
             if (result == DialogResult.Yes)
             {
                 Cursor.Current = Cursors.WaitCursor;
-                
+
                 if (SceneData.Collisions != null)
                 {
                     Collision collision = new Collision();
@@ -1019,7 +1079,7 @@ namespace Mafia2Tool
 
             if (result == DialogResult.Yes)
             {
-                Cursor.Current = Cursors.WaitCursor;             
+                Cursor.Current = Cursors.WaitCursor;
 
                 if (SceneData.Actors != null && ToolkitSettings.Experimental)
                 {
@@ -1032,7 +1092,7 @@ namespace Mafia2Tool
                 Cursor.Current = Cursors.Default;
             }
         }
-        
+
         private void SaveCollisionItemDesc()
         {
             if (SceneData.ItemDescs == null || SceneData.ItemDescs.Length == 0)
@@ -1085,7 +1145,7 @@ namespace Mafia2Tool
             }
             Cursor.Current = Cursors.Default;
         }
- 
+
         private void SaveSELCollisionItemDesc()
         {
             if (dSceneTree.SelectedNode == null)
@@ -1134,7 +1194,7 @@ namespace Mafia2Tool
                 }
                 SanitizeBuffers();
                 SceneData.IndexBufferPool.WriteToFile();
-                SceneData.VertexBufferPool.WriteToFile();       
+                SceneData.VertexBufferPool.WriteToFile();
                 SceneData.UpdateResourceType();
                 Cursor.Current = Cursors.Default;
             }
@@ -1144,14 +1204,14 @@ namespace Mafia2Tool
         {
             if (p == null) return true;
             bool indexEmpty = p.Index == -1;
-            bool refIdEmpty = p.RefID == -1;     
-            bool refIdZero = p.RefID == 0;       
+            bool refIdEmpty = p.RefID == -1;
+            bool refIdZero = p.RefID == 0;
             return indexEmpty || refIdEmpty || refIdZero;
         }
 
         private bool HasNoParents(FrameObjectBase obj)
         {
-          return ParentIsEmpty(obj.ParentIndex1) && ParentIsEmpty(obj.ParentIndex2);
+            return ParentIsEmpty(obj.ParentIndex1) && ParentIsEmpty(obj.ParentIndex2);
         }
 
         private void AssignAllToSceneFolderButton_Click(object sender, EventArgs e)
@@ -1237,7 +1297,7 @@ namespace Mafia2Tool
         private IRenderer BuildRenderObjectFromFrame(FrameObjectBase fObject, Dictionary<int, IRenderer> assets)
         {
             fObject.ConstructRenderable();
-            
+
             IRenderer Renderable = fObject.GetRenderItem();
             if (Renderable != null)
             {
@@ -1250,7 +1310,7 @@ namespace Mafia2Tool
         {
             return $"({v.X:0.#####}, {v.Y:0.#####}, {v.Z:0.#####})";
         }
-        
+
         private void BuildRenderObjects()
         {
             Dictionary<int, IRenderer> assets = new Dictionary<int, IRenderer>();
@@ -1445,7 +1505,7 @@ namespace Mafia2Tool
                 AIWorldRoot.Tag = "Folder";
                 AIWorldRoot.Name = AIWorldRoot.Text = "Navigation: AIWORLD";
                 var data = new AIWorld[SceneData.AIWorlds.Length];
-                
+
                 for (int i = 0; i < SceneData.AIWorlds.Length; i++)
                 {
                     data[i] = (AIWorld)SceneData.AIWorlds[i].Data;
@@ -1454,7 +1514,7 @@ namespace Mafia2Tool
                     AIWorldRoot.Nodes.Add(AIWorldNode);
                 }
                 dSceneTree.AddToTree(AIWorldRoot);
-            }        
+            }
             if (SceneData.Collisions != null)
             {
                 TreeNode node = new TreeNode("Collision Data");
@@ -1494,7 +1554,7 @@ namespace Mafia2Tool
                 }
                 dSceneTree.AddToTree(node);
                 collisionRoot.Collapse(false);
-            }         
+            }
             if (SceneData.ItemDescs != null && SceneData.ItemDescs.Length > 0)
             {
                 TreeNode itemDescRoot = new TreeNode("Item Descriptions");
@@ -1642,7 +1702,7 @@ namespace Mafia2Tool
                                 foundNodes[0].Nodes.Add(bboxNode);
                             }
                         }
-                    }                                                                              
+                    }
                     if (entry.ActorTypeName == "Tree" || entry.ActorTypeID == (int)ActorTypes.Tree)
                     {
                         Vector3 position = entry.Position;
@@ -1663,7 +1723,7 @@ namespace Mafia2Tool
                             boxNode.Tag = renderSmallBox;
                             foundNodes[0].Nodes.Add(boxNode);
                         }
-                    }                           
+                    }
                     if (entry.ActorTypeName == "StaticEntity" || entry.ActorTypeID == (int)ActorTypes.StaticEntity)
                     {
                         Vector3 position = entry.Position;
@@ -1725,7 +1785,7 @@ namespace Mafia2Tool
                             boxNode.Name = refIDSmallBox.ToString();
                             boxNode.Tag = renderSmallBox;
                             foundNodes[0].Nodes.Add(boxNode);
-                        }                      
+                        }
                     }
                     if (entry.ActorTypeName == "C_StaticParticle" || entry.ActorTypeID == (int)ActorTypes.C_StaticWeapon)
                     {
@@ -1749,7 +1809,7 @@ namespace Mafia2Tool
                         }
                     }
                     if (entry.ActorTypeName == "C_TrafficCar" || entry.ActorTypeID == (int)ActorTypes.C_TrafficCar)
-                    {                                          
+                    {
                         if (entry.Data != null && entry.Data.Data is ActorTrafficCar traffic)
                         {
                             Vector3 min = traffic.BoundingBoxMinimum;
@@ -1772,7 +1832,7 @@ namespace Mafia2Tool
                         }
                     }
                     if (entry.ActorTypeName == "C_TrafficTrain" || entry.ActorTypeID == (int)ActorTypes.C_TrafficTrain)
-                    {                                         
+                    {
                         if (entry.Data != null && entry.Data.Data is ActorTrafficTrain traffictrain)
                         {
                             Vector3 min = traffictrain.BoundingBoxMinimum;
@@ -1793,9 +1853,9 @@ namespace Mafia2Tool
                                 foundNodes[0].Nodes.Add(bboxNode);
                             }
                         }
-                    }               
+                    }
                     if (entry.ActorTypeName == "C_TrafficHuman" || entry.ActorTypeID == (int)ActorTypes.C_TrafficHuman)
-                    {                   
+                    {
                         if (entry.Data != null && entry.Data.Data is ActorTrafficHuman traffichuman)
                         {
                             Vector3 min = traffichuman.BoundingBoxMinimum;
@@ -1818,7 +1878,7 @@ namespace Mafia2Tool
                         }
                     }
                     if (entry.ActorTypeName == "C_Blocker" || entry.ActorTypeID == (int)ActorTypes.Blocker)
-                    {              
+                    {
                         if (entry.Data != null && entry.Data.Data is ActorBlocker blocker)
                         {
                             Vector3 position = entry.Position;
@@ -1838,11 +1898,11 @@ namespace Mafia2Tool
                                 boxNode.Name = refID.ToString();
                                 boxNode.Tag = renderBlockerBox;
                                 foundNodes[0].Nodes.Add(boxNode);
-                            } 
+                            }
                         }
                     }
                     if (entry.ActorTypeName == "FireTarget" || entry.ActorTypeID == (int)ActorTypes.FireTarget)
-                    {                      
+                    {
                         if (entry.Data != null && entry.Data.Data is ActorFireTarget fitetarget)
                         {
                             Vector3 position = entry.Position;
@@ -1866,7 +1926,7 @@ namespace Mafia2Tool
                         }
                     }
                     if (entry.ActorTypeName == "CleanEntity" || entry.ActorTypeID == (int)ActorTypes.CleanEntity)
-                    {                  
+                    {
                         if (entry.Data != null && entry.Data.Data is ActorCleanEntity Cleantarget)
                         {
                             Vector3 position = entry.Position;
@@ -1890,7 +1950,7 @@ namespace Mafia2Tool
                         }
                     }
                     if (entry.ActorTypeName == "DangerZone" || entry.ActorTypeID == (int)ActorTypes.DangerZone)
-                    {                   
+                    {
                         if (entry.Data != null && entry.Data.Data is ActorDamageZone Damagetarget)
                         {
                             Vector3 position = entry.Position;
@@ -1914,7 +1974,7 @@ namespace Mafia2Tool
                         }
                     }
                     if (entry.ActorTypeName == "ActorPoint" || entry.ActorTypeID == (int)ActorTypes.ActionPoint)
-                    {               
+                    {
                         if (entry.Data != null && entry.Data.Data is ActorActionPoint ActionPoint)
                         {
                             Vector3 position = entry.Position;
@@ -1948,7 +2008,7 @@ namespace Mafia2Tool
                         int refIDSmallBox = RefManager.GetNewRefID();
                         assets.Add(refIDSmallBox, renderSmallBox);
                         RefIDToActorEntry[refIDSmallBox] = entry;
-                        
+
                         if (entry.Data != null && entry.Data.Data is ActorActorDetector detector)
                         {
                             Vector3 halfSize = new Vector3(detector.SizeX * 0.5f, detector.SizeY * 0.5f, detector.SizeZ * 0.5f);
@@ -1977,7 +2037,7 @@ namespace Mafia2Tool
                         }
                     }
                     if (entry.ActorTypeName == "PhysicsScene" || entry.ActorTypeID == (int)ActorTypes.PhysicsScene)
-                    {                
+                    {
                         if (entry.Data != null && entry.Data.Data is ActorPhysicsScene PhysScene)
                         {
                             Vector3 position = entry.Position;
@@ -2091,7 +2151,7 @@ namespace Mafia2Tool
                 Graphics.BuildTranslokatorGrid(SceneData.Translokator);
             }
         }
-       
+
         private string GetCollisionTypeName(ResourceTypes.ItemDesc.CollisionTypes type)
         {
             switch (type)
@@ -2159,7 +2219,7 @@ namespace Mafia2Tool
                     }
                 }
             }
-            SkipToChildren:;
+        SkipToChildren:;
             if (refframe.Children.Count > 0)
             {
                 for (int i = 0; i < refframe.Children.Count; i++)
@@ -2200,7 +2260,7 @@ namespace Mafia2Tool
                     modelsToUpdate.Add(model);
                 }
             }
-            SkipToChildren:;
+        SkipToChildren:;
             if (refframe.Children.Count > 0)
             {
                 for (int i = 0; i < refframe.Children.Count; i++)
@@ -2295,7 +2355,7 @@ namespace Mafia2Tool
                     if (int.TryParse(child.Name, out int refID))
                     {
                         Graphics.SelectEntry(refID);
-                        break; 
+                        break;
                     }
                 }
             }
@@ -2467,7 +2527,7 @@ namespace Mafia2Tool
                 dSceneTree.AddType1GroupToAIWorld();
             }
         }
-      
+
         private void FixActorDefintions(Actor actor)
         {
             List<int> frameIndexes = new List<int>();
@@ -2506,14 +2566,14 @@ namespace Mafia2Tool
                                 frame.LocalTransform = MatrixUtils.SetMatrix(actor.Items[c].Rotation, actor.Items[c].Scale, actor.Items[c].Position);
                                 sorted = true;
                             }
-                        }                     
+                        }
                     }
                 }
             }
             frames.Clear();
             frameIndexes.Clear();
         }
-        
+
         private void ApplyEntryChanges(object sender, EventArgs e)
         {
             if (dPropertyGrid.IsEntryReady)
@@ -2570,7 +2630,7 @@ namespace Mafia2Tool
                                 }
                             }
                         }
-                    }                  
+                    }
                     else if (actorEntry.Data != null && actorEntry.Data.Data is ActorActorDetector detector)
                     {
                         foreach (TreeNode child in selected.Nodes)
@@ -2757,7 +2817,7 @@ namespace Mafia2Tool
             Graphics.Camera.Position = dSceneTree.JumpToHelper();
             UpdatePositionElement(Graphics.Camera.Position);
         }
-        
+
         private void ImportButton_Click(object sender, EventArgs e)
         {
             var frnode = dImportSceneTree.SelectedNode;
@@ -2783,7 +2843,7 @@ namespace Mafia2Tool
             dSceneTree.AddToTree(parent, frameResourceRoot);
             ConvertNodeToFrame(parent);
         }
-       
+
         private void CancelButton_Click(object sender, EventArgs e)
         {
             Button_ImportFrame.Enabled = true;
@@ -4181,7 +4241,7 @@ namespace Mafia2Tool
                                         if (pointNode.SelectSingleNode("Unk4") != null) type11.Unk4 = uint.Parse(pointNode.SelectSingleNode("Unk4").InnerText);
                                     }
                                     break;
-                            
+
                             }
                             targetWorld.AIPoints.Add(newPoint);
                         }
@@ -4308,7 +4368,7 @@ namespace Mafia2Tool
                 throw new Exception($"Failed to export AIWorld to XML: {ex.Message}", ex);
             }
         }
-        
+
         private void AddXmlElement(XmlDocument xmlDoc, XmlElement parent, string name, string value)
         {
             if (!string.IsNullOrEmpty(value))
@@ -4376,7 +4436,7 @@ namespace Mafia2Tool
                     if (type7 != null)
                     {
                         AddVector3Element(xmlDoc, parentElement, "Maximum", type7.Maximum);
-                        AddVector3Element(xmlDoc, parentElement, "Minimum", type7.Minimum);                     
+                        AddVector3Element(xmlDoc, parentElement, "Minimum", type7.Minimum);
                         AddVector3Element(xmlDoc, parentElement, "Direction", type7.Direction);
                         AddVector3Element(xmlDoc, parentElement, "Position", type7.Position);
                         AddXmlElement(xmlDoc, parentElement, "Unk0", type7.Unk0.ToString());
@@ -4753,6 +4813,138 @@ namespace Mafia2Tool
             }
         }
 
+        private ushort PromptCollisionMaterial()
+        {
+            using var form = new CollisionMaterialSelectForm();
+
+            if (form.ShowDialog() == DialogResult.OK)
+                return (ushort)form.SelectedMaterial;
+
+            return (ushort)CollisionMaterials.Concrete;
+        }
+
+        private void CreateCollisionFromMeshButton_Click(object sender, EventArgs e)
+        {
+            var node = dSceneTree.SelectedNode;
+            if (node?.Tag is not FrameObjectBase frameObj)
+            {
+                MessageBox.Show("Please select a valid mesh object.");
+                return;
+            }
+            if (frameObj is not (FrameObjectSingleMesh or FrameObjectModel))
+            {
+                MessageBox.Show("Only StaticMesh or RiggedMesh can be converted to collision.");
+                return;
+            }
+            FrameGeometry geom = (frameObj as FrameObjectSingleMesh)?.Geometry;
+            if (geom == null || geom.LOD.Length == 0)
+            {
+                MessageBox.Show("No geometry found.");
+                return;
+            }
+            FrameLOD lod = geom.LOD[0];
+            VertexBuffer vbuf = SceneData.VertexBufferPool.GetBuffer(lod.VertexBufferRef.Hash);
+            IndexBuffer ibuf = SceneData.IndexBufferPool.GetBuffer(lod.IndexBufferRef.Hash);
+            if (vbuf == null || ibuf == null)
+            {
+                MessageBox.Show("Failed to load vertex/index buffers.");
+                return;
+            }
+            int vertexSize = 0;
+            Dictionary<VertexFlags, FrameLOD.VertexOffset> offsets = lod.GetVertexOffsets(out vertexSize);
+            List<Vector3> vertices = new List<Vector3>();
+            Matrix4x4 worldTransform = frameObj.LocalTransform;
+            Quaternion rotation = worldTransform.GetRotation();
+            Vector3 position = worldTransform.Translation;
+            for (int i = 0; i < lod.NumVerts; i++)
+            {
+                byte[] data = new byte[vertexSize];
+                Array.Copy(vbuf.Data, i * vertexSize, data, 0, vertexSize);
+                Vertex vtx = VertexTranslator.DecompressVertex(data, lod.VertexDeclaration, geom.DecompressionOffset, geom.DecompressionFactor, offsets);
+                vertices.Add(vtx.Position);
+            }
+            uint[] indices = ibuf.GetData();
+            MT_Collision mtCol = new MT_Collision();
+            mtCol.Vertices = vertices.ToArray();
+            mtCol.Indices = indices;
+            ushort materialIndex = PromptCollisionMaterial();
+            MT_FaceGroup faceGroup = new MT_FaceGroup
+            {
+                StartIndex = 0,
+                NumFaces = (uint)(indices.Length / 3),
+                Material = new MT_MaterialInstance
+                {
+                    Name = ((CollisionMaterials)materialIndex).ToString(),
+                    MaterialFlags = MT_MaterialInstanceFlags.IsCollision
+                }
+            };
+            mtCol.FaceGroups = new[] { faceGroup };
+            CollisionModelBuilder builder = new CollisionModelBuilder();
+            Collision.CollisionModel colModel = builder.BuildFromMTCollision(frameObj.Name.String, mtCol);
+            if (SceneData.Collisions == null)
+            {
+                SceneData.Collisions = new Collision();
+                SceneData.Collisions.Name = Path.Combine(SceneData.ScenePath, "Collisions_0.col");
+                collisionRoot = new TreeNode("Collision Data") { Tag = "Folder" };
+                dSceneTree.AddToTree(collisionRoot);
+            }
+            if (!SceneData.Collisions.Models.ContainsKey(colModel.Hash))
+            {
+                SceneData.Collisions.Models.Add(colModel.Hash, colModel);
+                TreeNode colNode = new TreeNode(colModel.Hash.ToString())
+                {
+                    Name = colModel.Hash.ToString(),
+                    Tag = colModel
+                };
+                dSceneTree.AddToTree(colNode, collisionRoot);
+                Quaternion rot = frameObj.LocalTransform.GetRotation();
+                Vector3 rotDegrees = QuaternionToEulerDegrees(rot);
+                var placement = new Collision.Placement
+                {
+                    Hash = colModel.Hash,
+                    Position = frameObj.LocalTransform.Translation,
+                    RotationDegrees = rotDegrees
+                };
+                SceneData.Collisions.Placements.Add(placement);
+                TreeNode instNode = new TreeNode("0")
+                {
+                    Name = RefManager.GetNewRefID().ToString(),
+                    Tag = placement
+                };
+                colNode.Nodes.Add(instNode);
+                RenderStaticCollision renderCol = new RenderStaticCollision();
+                renderCol.ConvertCollisionToRender(colModel.Hash, colModel.Mesh);
+                RenderStorageSingleton.Instance.StaticCollisions[colModel.Hash] = renderCol;
+                RenderInstance renderInst = new RenderInstance();
+                renderInst.Init(renderCol);
+                renderInst.SetTransform(placement.Transform);
+                Graphics.InitObjectStack.Add(int.Parse(instNode.Name), renderInst);
+            }
+        }
+
+        private static Vector3 QuaternionToEulerDegrees(Quaternion q)
+        {
+            float ysqr = q.Y * q.Y;
+            float t0 = +2.0f * (q.W * q.X + q.Y * q.Z);
+            float t1 = +1.0f - 2.0f * (q.X * q.X + ysqr);
+            float pitch = MathF.Atan2(t0, t1);
+            float t2 = +2.0f * (q.W * q.Y - q.Z * q.X);
+            t2 = Clamp(t2, -1.0f, 1.0f);
+            float yaw = MathF.Asin(t2);
+            float t3 = +2.0f * (q.W * q.Z + q.X * q.Y);
+            float t4 = +1.0f - 2.0f * (ysqr + q.Z * q.Z);
+            float roll = MathF.Atan2(t3, t4);
+            const float rad2deg = 180f / MathF.PI;
+            return new Vector3(pitch * rad2deg, yaw * rad2deg, -roll * rad2deg);
+        }
+
+        private static float Clamp(float value, float min, float max)
+        {
+            if (value < min) return min;
+            if (value > max) return max;
+            return value;
+        }
+
         private void PasteXYZ_ButtonClick(object sender, EventArgs e)
         {
             if (!Clipboard.ContainsText()) return;
@@ -4771,7 +4963,7 @@ namespace Mafia2Tool
                 }
                 catch { }
             }
-            else { }       
+            else { }
         }
     }
 }
