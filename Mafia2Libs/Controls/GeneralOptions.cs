@@ -19,7 +19,6 @@ namespace Forms.OptionControls
         {
             groupGeneral.Text = Language.GetString("$GENERAL");
             debugLoggingCheckbox.Text = Language.GetString("$ENABLE_DEBUG_LOGGING");
-            CheckForUpdatesBox.Text = Language.GetString("$CHECK_FOR_UPDATES");
             M2Label.Text = Language.GetString("$MII_DIRECTORY");
             MafiaIIBrowser.Description = Language.GetString("$SELECT_MII_FOLDER");
             groupDiscordRPC.Text = Language.GetString("$DISCORD_RICH_PRESENCE");
@@ -123,12 +122,6 @@ namespace Forms.OptionControls
         {
             ToolkitSettings.CustomStateText = DiscordStateTextBox.Text;
             ToolkitSettings.WriteKey("CustomStateText", "Discord", DiscordStateTextBox.Text);
-        }
-
-        private void CheckForUpdatesBoxChanged(object sender, EventArgs e)
-        {
-            ToolkitSettings.CheckForUpdates = CheckForUpdatesBox.Checked;
-            ToolkitSettings.WriteKey("CheckForUpdates", "Misc", CheckForUpdatesBox.Checked.ToString());
         }
     }
 }

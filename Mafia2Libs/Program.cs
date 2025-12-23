@@ -36,11 +36,9 @@ namespace Mafia2Tool
             // Load INI
             CheckINIExists();
             ToolkitSettings.ReadINI();
-            //CheckIfNewUpdate();
 
             GameStorage.Instance.InitStorage();
             Language.ReadLanguageXML();
-            CheckLatestRelease();
 
             if (ToolkitSettings.SkipGameSelector)
             {
@@ -82,42 +80,6 @@ namespace Mafia2Tool
             GameExplorer explorer = new GameExplorer();
             explorer.ShowDialog();
             explorer.Dispose();
-        }
-
-        private static void CheckLatestRelease()
-        {
-            try
-            {
-                Octokit.GitHubClient client = new Octokit.GitHubClient(new Octokit.ProductHeaderValue("ToolkitUpdater", "1"));
-                GetLatest(client).Wait();
-            }
-            catch (Exception)
-            {
-                MessageBox.Show(Language.GetString("$FAILED_UPDATE_CHECK"), "Toolkit", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-        }
-
-        private static async Task GetLatest(Octokit.GitHubClient client)
-        {
-            //NOTE: Getting the very latest release causes an exception, so we need to use GetAll().
-            var releases = await client.Repository.Release.GetAll("Greavesy1899", "MafiaToolkit");
-            var release = releases[0];
-            var version = release.TagName.Replace("v", "");
-            version = version.Replace(".", System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator);
-            float.TryParse(version, out float value);
-            if (ToolkitSettings.Version < value)
-            {
-                string message = string.Format("{0}\n\n{1}\n{2}", Language.GetString("$UPDATE_MESSAGE1"), Language.GetString("$UPDATE_MESSAGE2"), Language.GetString("$UPDATE_MESSAGE3"));
-                var result = MessageBox.Show(message, "Toolkit update", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
-                if (result == DialogResult.OK)
-                {
-                    ProcessStartInfo StartInfo = new ProcessStartInfo();
-                    StartInfo.UseShellExecute = true;
-                    StartInfo.FileName = "https://github.com/Greavesy1899/MafiaToolkit/releases";
-
-                    Process.Start(StartInfo);
-                }
-            }
         }
 
         private static void CheckINIExists()
