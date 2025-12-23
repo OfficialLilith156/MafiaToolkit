@@ -163,14 +163,14 @@ namespace Mafia2Tool
             }
             //~ENABLE THIS SECTION AT YOUR OWN RISK
 
-#if DEBUG
+
             if (!isBigEndian && sdsContent.HasResource("PREFAB"))
             {
                 var name = sdsContent.GetResourceFiles("PREFAB", true)[0];
                 PrefabLoader loader = new PrefabLoader(new FileInfo(name));
                 Prefabs = loader;
             }
-#endif // DEBUG
+
 
             //RoadMap
 

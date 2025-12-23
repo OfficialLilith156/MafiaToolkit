@@ -1388,7 +1388,7 @@ namespace Mafia2Tool
                     navNode.Nodes.Add(hpdNode);
                 }
                 dSceneTree.AddToTree(navNode);
-            }
+            }       
             if (SceneData.OBJData != null && SceneData.OBJData.Length > 0)
             {
                 OBJDataRoot = new TreeNode();
@@ -1654,6 +1654,32 @@ namespace Mafia2Tool
                     animalTrafficRoot.Nodes.Add(child);
                 }
                 dSceneTree.AddToTree(animalTrafficRoot);
+            }
+            if (SceneData.Prefabs != null && SceneData.Prefabs.Prefabs != null)
+            {
+                TreeNode prefabRoot = new TreeNode("Prefabs");
+                prefabRoot.Tag = "Folder";
+                for (int i = 0; i < SceneData.Prefabs.Prefabs.Length; i++)
+                {
+                    var prefab = SceneData.Prefabs.Prefabs[i];
+                    string displayName = !string.IsNullOrEmpty(prefab.AssignedName)
+                        ? $"{prefab.AssignedName} [{prefab.PrefabType}]"
+                        : $"Prefab_{i} [{prefab.PrefabType}]";
+
+                    TreeNode prefabNode = new TreeNode(displayName);
+                    prefabNode.Tag = prefab;
+                    prefabNode.Name = $"prefab_{i}";
+                    prefabNode.ToolTipText = $"Hash: 0x{prefab.Hash:X16}";
+
+                    if (prefab.InitData != null)
+                    {
+                        TreeNode initDataNode = new TreeNode("InitData");
+                        initDataNode.Tag = prefab.InitData;
+                        prefabNode.Nodes.Add(initDataNode);
+                    }
+                    prefabRoot.Nodes.Add(prefabNode);
+                }
+                dSceneTree.AddToTree(prefabRoot);
             }
             if (SceneData.Actors.Length > 0 && ToolkitSettings.Experimental)
             {
