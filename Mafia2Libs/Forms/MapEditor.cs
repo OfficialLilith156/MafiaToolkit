@@ -191,7 +191,7 @@ namespace Mafia2Tool
             if (e.DraggedNode.Tag is not FrameObjectBase)
             {
                 return;
-            }          
+            }
             if (e.DragButton == MouseButtons.Left)
             {
                 FrameEntry NewParent = (e.TargetNode.Tag != null ? e.TargetNode.Tag as FrameEntry : null);
@@ -311,7 +311,7 @@ namespace Mafia2Tool
             {
                 Cursor.Current = Cursors.WaitCursor;
                 Matrix4x4 dummyWorldTransform = dummy.WorldTransform;
-                foreach (FrameObjectBase child in dummy.Children.ToList()) 
+                foreach (FrameObjectBase child in dummy.Children.ToList())
                 {
                     Matrix4x4 childWorldTransform = child.WorldTransform;
                     SceneData.FrameResource.SetParentOfObject(ParentInfo.ParentType.ParentIndex1, child, null);
@@ -1388,7 +1388,7 @@ namespace Mafia2Tool
                     navNode.Nodes.Add(hpdNode);
                 }
                 dSceneTree.AddToTree(navNode);
-            }       
+            }
             if (SceneData.OBJData != null && SceneData.OBJData.Length > 0)
             {
                 OBJDataRoot = new TreeNode();
@@ -5082,6 +5082,87 @@ namespace Mafia2Tool
                 catch { }
             }
             else { }
+        }
+
+        private void InvertFrameObjectFrameZRotation(object sender, EventArgs e)
+        {
+            var frameObjects = SceneData.FrameResource.FrameObjects.Values
+                .Where(obj => obj is FrameObjectFrame)
+                .Cast<FrameObjectFrame>()
+                .ToList();
+            if (frameObjects.Count == 0)
+            {
+                MessageBox.Show("No FrameObjectFrame objects found in the scene.", "Info",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+            Cursor.Current = Cursors.WaitCursor;
+            foreach (var frameObject in frameObjects)
+            {
+                Matrix4x4 transform = frameObject.LocalTransform;
+                Vector3 scale, translation;
+                Quaternion rotation;
+                Matrix4x4.Decompose(transform, out scale, out rotation, out translation);
+                Vector3 eulerAngles = QuaternionToEulerDegrees2(rotation);
+                eulerAngles.Z = -eulerAngles.Z;
+                rotation = EulerDegreesToQuaternion(eulerAngles);
+                Matrix4x4 newTransform = Matrix4x4.CreateScale(scale) *
+                                        Matrix4x4.CreateFromQuaternion(rotation) *
+                                        Matrix4x4.CreateTranslation(translation);
+                frameObject.LocalTransform = newTransform;
+                if (frameObject.Item != null)
+                {
+                    frameObject.Item.Rotation = rotation;
+                    frameObject.Item.Position = translation;
+                    frameObject.Item.Scale = scale;
+                }
+                ApplyChangesToRenderable(frameObject);
+            }
+
+            Cursor.Current = Cursors.Default;
+
+            MessageBox.Show($"Inverted Z rotation (sign) for {frameObjects.Count} FrameObjectFrame objects.",
+                "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private Vector3 QuaternionToEulerDegrees2(Quaternion q)
+        {
+            float ysqr = q.Y * q.Y;
+
+            float t0 = 2.0f * (q.W * q.X + q.Y * q.Z);
+            float t1 = 1.0f - 2.0f * (q.X * q.X + ysqr);
+            float pitch = MathF.Atan2(t0, t1);
+
+            float t2 = 2.0f * (q.W * q.Y - q.Z * q.X);
+            t2 = Math.Clamp(t2, -1.0f, 1.0f);
+            float yaw = MathF.Asin(t2);
+
+            float t3 = 2.0f * (q.W * q.Z + q.X * q.Y);
+            float t4 = 1.0f - 2.0f * (ysqr + q.Z * q.Z);
+            float roll = MathF.Atan2(t3, t4);
+
+            const float rad2deg = 180f / MathF.PI;
+            return new Vector3(pitch * rad2deg, yaw * rad2deg, roll * rad2deg);
+        }
+
+        private Quaternion EulerDegreesToQuaternion(Vector3 eulerDegrees)
+        {
+            const float deg2rad = MathF.PI / 180f;
+            Vector3 eulerRadians = eulerDegrees * deg2rad;
+
+            float cy = MathF.Cos(eulerRadians.Z * 0.5f);
+            float sy = MathF.Sin(eulerRadians.Z * 0.5f);
+            float cp = MathF.Cos(eulerRadians.X * 0.5f);
+            float sp = MathF.Sin(eulerRadians.X * 0.5f);
+            float cr = MathF.Cos(eulerRadians.Y * 0.5f);
+            float sr = MathF.Sin(eulerRadians.Y * 0.5f);
+
+            return new Quaternion(
+                sr * cp * cy - cr * sp * sy,
+                cr * sp * cy + sr * cp * sy,
+                cr * cp * sy - sr * sp * cy,
+                cr * cp * cy + sr * sp * sy
+            );
         }
     }
 }

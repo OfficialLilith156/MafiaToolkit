@@ -105,6 +105,7 @@ namespace Mafia2Tool
             dockPanel1 = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             FrameBrowser = new System.Windows.Forms.OpenFileDialog();
             SaveFileDialog = new System.Windows.Forms.SaveFileDialog();
+            fixFrameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             StatusStrip = new System.Windows.Forms.StatusStrip();
             StatusStrip.SuspendLayout();
             ToolbarStrip.SuspendLayout();
@@ -256,6 +257,7 @@ namespace Mafia2Tool
             ToolbarStrip.Size = new System.Drawing.Size(1420, 25);
             ToolbarStrip.TabIndex = 1;
             ToolbarStrip.Text = "toolStrip1";
+            ToolbarStrip.ItemClicked += ToolbarStrip_ItemClicked;
             // 
             // FileButton
             // 
@@ -632,7 +634,7 @@ namespace Mafia2Tool
             // toolStripDropDownButton2
             // 
             toolStripDropDownButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            toolStripDropDownButton2.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { addModelToolStripMenuItem, batchToolStripMenuItem, generateColToolStripMenuItem, testToolStripMenuItem });
+            toolStripDropDownButton2.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { addModelToolStripMenuItem, batchToolStripMenuItem, generateColToolStripMenuItem, testToolStripMenuItem, fixFrameToolStripMenuItem });
             toolStripDropDownButton2.Image = (System.Drawing.Image)resources.GetObject("toolStripDropDownButton2.Image");
             toolStripDropDownButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
             toolStripDropDownButton2.Name = "toolStripDropDownButton2";
@@ -705,6 +707,13 @@ namespace Mafia2Tool
             // FrameBrowser
             // 
             FrameBrowser.Filter = "FrameResource|*.fr|Toolkit Frame Data|*.framedata";
+            // 
+            // fixFrameToolStripMenuItem
+            // 
+            fixFrameToolStripMenuItem.Name = "fixFrameToolStripMenuItem";
+            fixFrameToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
+            fixFrameToolStripMenuItem.Text = "Fix Frame";
+            fixFrameToolStripMenuItem.Click += InvertFrameObjectFrameZRotation;
             // 
             // MapEditor
             // 
@@ -801,5 +810,6 @@ namespace Mafia2Tool
         private System.Windows.Forms.ToolStripMenuItem rotateAIToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem generateColToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem testToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem fixFrameToolStripMenuItem;
     }
 }
