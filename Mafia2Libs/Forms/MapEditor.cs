@@ -647,10 +647,71 @@ namespace Mafia2Tool
         public bool Frame()
         {
             bool bCameraUpdated = false;
+
             if (Input.IsKeyDown(Keys.Delete))
             {
                 dSceneTree.DeleteButton.PerformClick();
             }
+
+            // Переключение режимов: R - поворот объектов, T - перемещение объектов
+            bool rWasPressed = false;
+             bool tWasPressed = false;
+
+            bool rIsDown = Input.IsKeyDown(Keys.R);
+            bool tIsDown = Input.IsKeyDown(Keys.T);
+
+            if (rIsDown && !rWasPressed)
+            {
+                bSelectMode = true; // Режим поворота объектов
+                Console.WriteLine("Режим: Поворот объектов (R)");
+            }
+            if (tIsDown && !tWasPressed)
+            {
+                bSelectMode = false; // Режим перемещения объектов
+                Console.WriteLine("Режим: Перемещение объектов (T)");
+            }
+
+            rWasPressed = rIsDown;
+            tWasPressed = tIsDown;
+
+            // Режим поворота: выбор оси вращения
+             RotationAxis currentRotationAxis = RotationAxis.All;
+             bool xWasPressed = false;
+             bool yWasPressed = false;
+             bool zWasPressed = false;
+
+            bool xIsDown = Input.IsKeyDown(Keys.X);
+            bool yIsDown = Input.IsKeyDown(Keys.Y);
+            bool zIsDown = Input.IsKeyDown(Keys.Z);
+
+            if (bSelectMode)
+            {
+                if (xIsDown && !xWasPressed)
+                {
+                    currentRotationAxis = RotationAxis.X;
+                    Console.WriteLine("Ось вращения: X");
+                }
+                if (yIsDown && !yWasPressed)
+                {
+                    currentRotationAxis = RotationAxis.Y;
+                    Console.WriteLine("Ось вращения: Y");
+                }
+                if (zIsDown && !zWasPressed)
+                {
+                    currentRotationAxis = RotationAxis.Z;
+                    Console.WriteLine("Ось вращения: Z");
+                }
+                if (Input.IsKeyDown(Keys.A) && !Input.IsKeyDown(Keys.LShiftKey))
+                {
+                    currentRotationAxis = RotationAxis.All;
+                    Console.WriteLine("Ось вращения: Все (свободное вращение)");
+                }
+            }
+
+            xWasPressed = xIsDown;
+            yWasPressed = yIsDown;
+            zWasPressed = zIsDown;
+
             if (RenderPanel.Focused)
             {
                 if (Input.IsButtonDown(MouseButtons.Right))
@@ -665,7 +726,7 @@ namespace Mafia2Tool
                     if (bSelectMode)
                     {
                         Pick(mousePos.X, mousePos.Y);
-                        selectTimer = 1.0f;
+                        selectTimer = 0.1f;
                     }
                     else
                     {
@@ -673,13 +734,14 @@ namespace Mafia2Tool
                         {
                             var node = dSceneTree.SelectedNode;
                             var tag = dSceneTree.SelectedNode.Tag;
+
                             if (FrameResource.IsFrameType(tag))
                             {
                                 FrameObjectBase fObject = (tag as FrameObjectBase);
                                 var translation = MoveObjectWithMouse(fObject.LocalTransform.Translation.Z, mousePos.X, mousePos.Y);
                                 var local = fObject.LocalTransform;
                                 translation.Z = local.Translation.Z;
-                                fObject.LocalTransform = MatrixUtils.SetTranslationVector(local, translation);
+                                fObject.LocalTransform = Matrix4x4Extensions.SetTranslation(local, translation);
                                 TreeViewUpdateSelected();
                                 ApplyChangesToRenderable(fObject);
                             }
@@ -691,34 +753,324 @@ namespace Mafia2Tool
                                 translation.Z = local.Z;
                                 placement.Position = translation;
                                 TreeViewUpdateSelected();
-                                // Update transform of instance
-                                IRenderer Asset = Graphics.GetAsset(int.Parse(node.Name));
-                                if (Asset != null)
+                                IRenderer asset;
+                                Graphics.Assets.TryGetValue(int.Parse(node.Name), out asset);
+                                RenderInstance instance = (asset as RenderInstance);
+                                instance.SetTransform(placement.Transform);
+                            }
+                        }
+                    }
+                }
+
+                // Перемещение выбранного объекта стрелками
+                if (dSceneTree.SelectedNode != null && dSceneTree.SelectedNode.Tag != null)
+                {
+                    float moveSpeed = 0.1f; // Скорость перемещения объекта
+                    Vector3 moveDelta = Vector3.Zero;
+
+                    if (Input.IsKeyDown(Keys.Up))
+                    {
+                        moveDelta.Y += moveSpeed;
+                    }
+                    if (Input.IsKeyDown(Keys.Down))
+                    {
+                        moveDelta.Y -= moveSpeed;
+                    }
+                    if (Input.IsKeyDown(Keys.Left))
+                    {
+                        moveDelta.X -= moveSpeed;
+                    }
+                    if (Input.IsKeyDown(Keys.Right))
+                    {
+                        moveDelta.X += moveSpeed;
+                    }
+
+                    // Дополнительно: перемещение по Z с PageUp/PageDown
+                    if (Input.IsKeyDown(Keys.PageUp))
+                    {
+                        moveDelta.Z += moveSpeed;
+                    }
+                    if (Input.IsKeyDown(Keys.PageDown))
+                    {
+                        moveDelta.Z -= moveSpeed;
+                    }
+
+                    // Применяем перемещение к выбранному объекту
+                    if (moveDelta != Vector3.Zero)
+                    {
+                        var tag = dSceneTree.SelectedNode.Tag;
+
+                        if (FrameResource.IsFrameType(tag))
+                        {
+                            FrameObjectBase fObject = (tag as FrameObjectBase);
+                            var local = fObject.LocalTransform;
+                            var currentPos = local.GetTranslation();
+                            var newPos = currentPos + moveDelta;
+
+                            fObject.LocalTransform = local.SetTranslation(newPos);
+                            TreeViewUpdateSelected();
+                            ApplyChangesToRenderable(fObject);
+                        }
+                        else if (tag is Collision.Placement)
+                        {
+                            Collision.Placement placement = (tag as Collision.Placement);
+                            placement.Position += moveDelta;
+                            TreeViewUpdateSelected();
+
+                            IRenderer asset;
+                            Graphics.Assets.TryGetValue(int.Parse(dSceneTree.SelectedNode.Name), out asset);
+                            RenderInstance instance = (asset as RenderInstance);
+                            instance.SetTransform(placement.Transform);
+                        }
+                    }
+
+                    // Поворот объекта в режиме поворота (R)
+                    if (bSelectMode)
+                    {
+                        float rotateSpeed = 0.05f; // Скорость вращения
+
+                        // Применяем вращение к выбранному объекту
+                        if (Input.IsKeyDown(Keys.Up) || Input.IsKeyDown(Keys.Down) ||
+                            Input.IsKeyDown(Keys.Left) || Input.IsKeyDown(Keys.Right) ||
+                            Input.IsKeyDown(Keys.PageUp) || Input.IsKeyDown(Keys.PageDown))
+                        {
+                            var tag = dSceneTree.SelectedNode.Tag;
+
+                            if (FrameResource.IsFrameType(tag))
+                            {
+                                FrameObjectBase fObject = (tag as FrameObjectBase);
+                                var transform = fObject.LocalTransform;
+
+                                // Вращение в зависимости от выбранной оси
+                                switch (currentRotationAxis)
                                 {
-                                    RenderInstance Instance = (Asset as RenderInstance);
-                                    Instance.SetTransform(placement.Transform);
+                                    case RotationAxis.X:
+                                        // Вращение только по оси X (стрелки Вверх/Вниш)
+                                        if (Input.IsKeyDown(Keys.Up))
+                                        {
+                                            transform = Matrix4x4.CreateRotationX(rotateSpeed) * transform;
+                                        }
+                                        if (Input.IsKeyDown(Keys.Down))
+                                        {
+                                            transform = Matrix4x4.CreateRotationX(-rotateSpeed) * transform;
+                                        }
+                                        // Left/Right тоже вращают по X (альтернативное управление)
+                                        if (Input.IsKeyDown(Keys.Left))
+                                        {
+                                            transform = Matrix4x4.CreateRotationX(-rotateSpeed) * transform;
+                                        }
+                                        if (Input.IsKeyDown(Keys.Right))
+                                        {
+                                            transform = Matrix4x4.CreateRotationX(rotateSpeed) * transform;
+                                        }
+                                        break;
+
+                                    case RotationAxis.Y:
+                                        // Вращение только по оси Y (стрелки Влево/Вправо)
+                                        if (Input.IsKeyDown(Keys.Left))
+                                        {
+                                            transform = Matrix4x4.CreateRotationY(rotateSpeed) * transform;
+                                        }
+                                        if (Input.IsKeyDown(Keys.Right))
+                                        {
+                                            transform = Matrix4x4.CreateRotationY(-rotateSpeed) * transform;
+                                        }
+                                        // Up/Down тоже вращают по Y (альтернативное управление)
+                                        if (Input.IsKeyDown(Keys.Up))
+                                        {
+                                            transform = Matrix4x4.CreateRotationY(rotateSpeed) * transform;
+                                        }
+                                        if (Input.IsKeyDown(Keys.Down))
+                                        {
+                                            transform = Matrix4x4.CreateRotationY(-rotateSpeed) * transform;
+                                        }
+                                        break;
+
+                                    case RotationAxis.Z:
+                                        // Вращение только по оси Z (PageUp/PageDown)
+                                        if (Input.IsKeyDown(Keys.PageUp))
+                                        {
+                                            transform = Matrix4x4.CreateRotationZ(rotateSpeed) * transform;
+                                        }
+                                        if (Input.IsKeyDown(Keys.PageDown))
+                                        {
+                                            transform = Matrix4x4.CreateRotationZ(-rotateSpeed) * transform;
+                                        }
+                                        // Стрелки тоже вращают по Z (альтернативное управление)
+                                        if (Input.IsKeyDown(Keys.Up))
+                                        {
+                                            transform = Matrix4x4.CreateRotationZ(rotateSpeed) * transform;
+                                        }
+                                        if (Input.IsKeyDown(Keys.Down))
+                                        {
+                                            transform = Matrix4x4.CreateRotationZ(-rotateSpeed) * transform;
+                                        }
+                                        if (Input.IsKeyDown(Keys.Left))
+                                        {
+                                            transform = Matrix4x4.CreateRotationZ(-rotateSpeed) * transform;
+                                        }
+                                        if (Input.IsKeyDown(Keys.Right))
+                                        {
+                                            transform = Matrix4x4.CreateRotationZ(rotateSpeed) * transform;
+                                        }
+                                        break;
+
+                                    case RotationAxis.All:
+                                    default:
+                                        // Свободное вращение по всем осям (оригинальное поведение)
+                                        if (Input.IsKeyDown(Keys.Up))
+                                        {
+                                            transform = Matrix4x4.CreateRotationX(rotateSpeed) * transform;
+                                        }
+                                        if (Input.IsKeyDown(Keys.Down))
+                                        {
+                                            transform = Matrix4x4.CreateRotationX(-rotateSpeed) * transform;
+                                        }
+                                        if (Input.IsKeyDown(Keys.Left))
+                                        {
+                                            transform = Matrix4x4.CreateRotationY(rotateSpeed) * transform;
+                                        }
+                                        if (Input.IsKeyDown(Keys.Right))
+                                        {
+                                            transform = Matrix4x4.CreateRotationY(-rotateSpeed) * transform;
+                                        }
+                                        if (Input.IsKeyDown(Keys.PageUp))
+                                        {
+                                            transform = Matrix4x4.CreateRotationZ(rotateSpeed) * transform;
+                                        }
+                                        if (Input.IsKeyDown(Keys.PageDown))
+                                        {
+                                            transform = Matrix4x4.CreateRotationZ(-rotateSpeed) * transform;
+                                        }
+                                        break;
+                                }
+
+                                fObject.LocalTransform = transform;
+                                TreeViewUpdateSelected();
+                                ApplyChangesToRenderable(fObject);
+                            }
+                            else if (tag is Collision.Placement placement)
+                            {
+                                // Для Placement преобразуем положение и ориентацию
+                                var transform = placement.Transform;
+
+                                // Аналогичная логика для Placement
+                                switch (currentRotationAxis)
+                                {
+                                    case RotationAxis.X:
+                                        if (Input.IsKeyDown(Keys.Up))
+                                        {
+                                            transform = Matrix4x4.CreateRotationX(rotateSpeed) * transform;
+                                        }
+                                        if (Input.IsKeyDown(Keys.Down))
+                                        {
+                                            transform = Matrix4x4.CreateRotationX(-rotateSpeed) * transform;
+                                        }
+                                        break;
+
+                                    case RotationAxis.Y:
+                                        if (Input.IsKeyDown(Keys.Left))
+                                        {
+                                            transform = Matrix4x4.CreateRotationY(rotateSpeed) * transform;
+                                        }
+                                        if (Input.IsKeyDown(Keys.Right))
+                                        {
+                                            transform = Matrix4x4.CreateRotationY(-rotateSpeed) * transform;
+                                        }
+                                        break;
+
+                                    case RotationAxis.Z:
+                                        if (Input.IsKeyDown(Keys.PageUp))
+                                        {
+                                            transform = Matrix4x4.CreateRotationZ(rotateSpeed) * transform;
+                                        }
+                                        if (Input.IsKeyDown(Keys.PageDown))
+                                        {
+                                            transform = Matrix4x4.CreateRotationZ(-rotateSpeed) * transform;
+                                        }
+                                        break;
+
+                                    case RotationAxis.All:
+                                    default:
+                                        if (Input.IsKeyDown(Keys.Up))
+                                        {
+                                            transform = Matrix4x4.CreateRotationX(rotateSpeed) * transform;
+                                        }
+                                        if (Input.IsKeyDown(Keys.Down))
+                                        {
+                                            transform = Matrix4x4.CreateRotationX(-rotateSpeed) * transform;
+                                        }
+                                        if (Input.IsKeyDown(Keys.Left))
+                                        {
+                                            transform = Matrix4x4.CreateRotationY(rotateSpeed) * transform;
+                                        }
+                                        if (Input.IsKeyDown(Keys.Right))
+                                        {
+                                            transform = Matrix4x4.CreateRotationY(-rotateSpeed) * transform;
+                                        }
+                                        if (Input.IsKeyDown(Keys.PageUp))
+                                        {
+                                            transform = Matrix4x4.CreateRotationZ(rotateSpeed) * transform;
+                                        }
+                                        if (Input.IsKeyDown(Keys.PageDown))
+                                        {
+                                            transform = Matrix4x4.CreateRotationZ(-rotateSpeed) * transform;
+                                        }
+                                        break;
+                                }
+
+                                //placement.Transform = transform;
+                                TreeViewUpdateSelected();
+
+                                IRenderer asset;
+                                Graphics.Assets.TryGetValue(int.Parse(dSceneTree.SelectedNode.Name), out asset);
+                                if (asset is RenderInstance instance)
+                                {
+                                    instance.SetTransform(placement.Transform);
                                 }
                             }
                         }
                     }
                 }
+
                 bCameraUpdated = Graphics.UpdateInput();
+
                 if (selectTimer > 0.0f)
                 {
                     selectTimer -= 0.1f;
                 }
             }
+
             lastMousePos = mousePos;
             Graphics.Frame();
+
             if (bCameraUpdated)
             {
-                UpdatePositionElement(Graphics.Camera.Position);
+                // Hack: We have to remove the delegate before we can change the values, 
+                // or we'll fire some unnecessary code.
+                PositionXTool.ValueChanged -= new EventHandler(CameraToolsOnValueChanged);
+                PositionYTool.ValueChanged -= new EventHandler(CameraToolsOnValueChanged);
+                PositionZTool.ValueChanged -= new EventHandler(CameraToolsOnValueChanged);
+                PositionXTool.Value = (decimal)Graphics.Camera.Position.X;
+                PositionYTool.Value = (decimal)Graphics.Camera.Position.Y;
+                PositionZTool.Value = (decimal)Graphics.Camera.Position.Z;
+                PositionXTool.ValueChanged += new EventHandler(CameraToolsOnValueChanged);
+                PositionYTool.ValueChanged += new EventHandler(CameraToolsOnValueChanged);
+                PositionZTool.ValueChanged += new EventHandler(CameraToolsOnValueChanged);
             }
             Process process = Process.GetCurrentProcess();
             Label_MemoryUsage.Text = string.Format("Usage: {0}", process.WorkingSet64.ConvertToMemorySize());
             Label_FPS.Text = Graphics.Profile.ToString();
-            Label_StatusBar.Text = Graphics.GetStatusBarText();
             return true;
+        }
+
+        // Добавьте этот enum в начало класса (вне метода Frame)
+        public enum RotationAxis
+        {
+            All,  // Свободное вращение
+            X,    // Только по оси X
+            Y,    // Только по оси Y
+            Z     // Только по оси Z
         }
 
         private void SanitizeBuffers()

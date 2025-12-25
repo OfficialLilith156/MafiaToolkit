@@ -10,6 +10,21 @@ namespace Toolkit.Mathematics
             return new Vector3(m.M41, m.M42, m.M43);
         }
 
+        public static Matrix4x4 SetTranslation(this Matrix4x4 m, Vector3 translation)
+        {
+            // Создаем новую матрицу с обновленным переводом
+            Matrix4x4 result = m;
+            result.M41 = translation.X;
+            result.M42 = translation.Y;
+            result.M43 = translation.Z;
+            return result;
+        }
+
+        public static Matrix4x4 SetTranslation(this Matrix4x4 m, float x, float y, float z)
+        {
+            return m.SetTranslation(new Vector3(x, y, z));
+        }
+
         public static Quaternion GetRotation(this Matrix4x4 m)
         {
             float m11 = m.M11, m12 = m.M12, m13 = m.M13;
@@ -50,6 +65,72 @@ namespace Toolkit.Mathematics
                 q.Z = 0.25f * s;
             }
             return q;
+        }
+
+        // Дополнительные полезные методы для работы с матрицами:
+
+        public static Vector3 GetScale(this Matrix4x4 m)
+        {
+            // Масштаб - это длина базисных векторов
+            return new Vector3(
+                new Vector3(m.M11, m.M12, m.M13).Length(),
+                new Vector3(m.M21, m.M22, m.M23).Length(),
+                new Vector3(m.M31, m.M32, m.M33).Length()
+            );
+        }
+
+        public static Matrix4x4 SetScale(this Matrix4x4 m, Vector3 scale)
+        {
+            // Сохраняем поворот и перемещение, меняем только масштаб
+            Matrix4x4 result = m;
+
+            // Нормализуем векторы и умножаем на новый масштаб
+            Vector3 xAxis = new Vector3(m.M11, m.M12, m.M13);
+            Vector3 yAxis = new Vector3(m.M21, m.M22, m.M23);
+            Vector3 zAxis = new Vector3(m.M31, m.M32, m.M33);
+
+            if (xAxis.LengthSquared() > 0) xAxis = Vector3.Normalize(xAxis) * scale.X;
+            if (yAxis.LengthSquared() > 0) yAxis = Vector3.Normalize(yAxis) * scale.Y;
+            if (zAxis.LengthSquared() > 0) zAxis = Vector3.Normalize(zAxis) * scale.Z;
+
+            result.M11 = xAxis.X; result.M12 = xAxis.Y; result.M13 = xAxis.Z;
+            result.M21 = yAxis.X; result.M22 = yAxis.Y; result.M23 = yAxis.Z;
+            result.M31 = zAxis.X; result.M32 = zAxis.Y; result.M33 = zAxis.Z;
+
+            return result;
+        }
+
+        public static Matrix4x4 CreateFromTRS(Vector3 translation, Quaternion rotation, Vector3 scale)
+        {
+            // Создаем матрицу поворота
+            Matrix4x4 result = Matrix4x4.CreateFromQuaternion(rotation);
+
+            // Применяем масштаб
+            result.M11 *= scale.X;
+            result.M12 *= scale.X;
+            result.M13 *= scale.X;
+
+            result.M21 *= scale.Y;
+            result.M22 *= scale.Y;
+            result.M23 *= scale.Y;
+
+            result.M31 *= scale.Z;
+            result.M32 *= scale.Z;
+            result.M33 *= scale.Z;
+
+            // Добавляем перемещение
+            result.M41 = translation.X;
+            result.M42 = translation.Y;
+            result.M43 = translation.Z;
+
+            return result;
+        }
+
+        public static void Decompose(this Matrix4x4 m, out Vector3 translation, out Quaternion rotation, out Vector3 scale)
+        {
+            translation = m.GetTranslation();
+            rotation = m.GetRotation();
+            scale = m.GetScale();
         }
     }
 }
