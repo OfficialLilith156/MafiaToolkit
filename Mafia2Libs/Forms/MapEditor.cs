@@ -1659,24 +1659,63 @@ namespace Mafia2Tool
             {
                 TreeNode prefabRoot = new TreeNode("Prefabs");
                 prefabRoot.Tag = "Folder";
+                Dictionary<ulong, ActorEntry> frameHashToActor = new Dictionary<ulong, ActorEntry>();
+                if (SceneData.Actors != null)
+                {
+                    foreach (var actorFile in SceneData.Actors)
+                    {
+                        if (actorFile?.Items != null)
+                        {
+                            foreach (var actorEntry in actorFile.Items)
+                            {
+                                if (actorEntry.FrameNameHash != 0)
+                                {
+                                    frameHashToActor[actorEntry.FrameNameHash] = actorEntry;
+                                }
+                            }
+                        }
+                    }
+                }
                 for (int i = 0; i < SceneData.Prefabs.Prefabs.Length; i++)
                 {
                     var prefab = SceneData.Prefabs.Prefabs[i];
-                    string displayName = !string.IsNullOrEmpty(prefab.AssignedName)
-                        ? $"{prefab.AssignedName} [{prefab.PrefabType}]"
-                        : $"Prefab_{i} [{prefab.PrefabType}]";
+                    string displayName = null;
+                    ActorEntry linkedActor = null;
 
+                    if (frameHashToActor.TryGetValue(prefab.Hash, out linkedActor))
+                    {
+                        displayName = linkedActor.EntityName;
+                        if (!string.IsNullOrEmpty(linkedActor.DefinitionName))
+                        {
+                            displayName = $"{displayName} [{linkedActor.DefinitionName}]";
+                        }
+                    }
+                    if (string.IsNullOrEmpty(displayName))
+                    {
+                        displayName = prefab.AssignedName;
+                    }
+                    if (string.IsNullOrEmpty(displayName))
+                    {
+                        string typeName = GetPrefabTypeName(prefab.PrefabType);
+                        displayName = $"{typeName}_{i}";
+                    }
                     TreeNode prefabNode = new TreeNode(displayName);
                     prefabNode.Tag = prefab;
                     prefabNode.Name = $"prefab_{i}";
-                    prefabNode.ToolTipText = $"Hash: 0x{prefab.Hash:X16}";
-
-                    if (prefab.InitData != null)
+                    string tooltip = $"Type: {GetPrefabTypeName(prefab.PrefabType)}\nHash: 0x{prefab.Hash:X16}";
+                    if (linkedActor != null)
                     {
-                        TreeNode initDataNode = new TreeNode("InitData");
-                        initDataNode.Tag = prefab.InitData;
-                        prefabNode.Nodes.Add(initDataNode);
+                        tooltip += $"\nLinked Actor: {linkedActor.EntityName}";
+                        tooltip += $"\nActor Type: {linkedActor.ActorTypeName}";
                     }
+                    prefabNode.ToolTipText = tooltip;
+                    if (linkedActor != null)
+                    {
+                        TreeNode actorLinkNode = new TreeNode($"Linked Actor: {linkedActor.EntityName}");
+                        actorLinkNode.Tag = linkedActor;
+                        prefabNode.Nodes.Add(actorLinkNode);
+                    }
+
                     prefabRoot.Nodes.Add(prefabNode);
                 }
                 dSceneTree.AddToTree(prefabRoot);
@@ -2177,6 +2216,25 @@ namespace Mafia2Tool
                 Graphics.BuildTranslokatorGrid(SceneData.Translokator);
             }
         }
+        private string GetPrefabTypeName(int type)
+        {
+            switch (type)
+            {
+                case 0: return "DeformationInitData";
+                case 1: return "VehicleInitData";
+                case 2: return "CarInitData";
+                case 3: return "COInitData";
+                case 4: return "ActorDeformInitData";
+                case 5: return "WheelInitData";
+                case 6: return "PhThingActorBaseInitData";
+                case 7: return "DoorInitData";
+                case 8: return "LifeInitData";
+                case 9: return "BoatInitData";
+                case 10: return "WagonInitData";
+                case 11: return "BrainInitData";
+                default: return $"Type_{type}";
+            }
+        }
 
         private string GetCollisionTypeName(ResourceTypes.ItemDesc.CollisionTypes type)
         {
@@ -2639,41 +2697,8 @@ namespace Mafia2Tool
                 {
                     selected.Text = actorEntry.ToString();
                     dPropertyGrid.UpdateObject();
-                    if (actorEntry.Data != null && actorEntry.Data.Data is ActorBlocker blocker)
-                    {
-                        foreach (TreeNode child in selected.Nodes)
-                        {
-                            if (child.Name.StartsWith("Blocker BBox") && int.TryParse(child.Name, out int refID))
-                            {
-                                if (Graphics.Assets.TryGetValue(refID, out IRenderer asset) && asset is RenderBoundingBox renderBox)
-                                {
-                                    Vector3 position = actorEntry.Position;
-                                    Vector3 bboxSize = blocker.BBox;
-                                    Vector3 halfSize = bboxSize * 0.5f;
-                                    BoundingBox newBox = new BoundingBox(position - halfSize, position + halfSize);
-                                    renderBox.Update(newBox);
-                                    renderBox.SetTransform(Matrix4x4.CreateTranslation(position));
-                                }
-                            }
-                        }
-                    }
-                    else if (actorEntry.Data != null && actorEntry.Data.Data is ActorActorDetector detector)
-                    {
-                        foreach (TreeNode child in selected.Nodes)
-                        {
-                            if (child.Text == "Detector Box" && int.TryParse(child.Name, out int refID))
-                            {
-                                if (Graphics.Assets.TryGetValue(refID, out IRenderer asset) && asset is RenderBoundingBox renderBox)
-                                {
-                                    Vector3 position = actorEntry.Position;
-                                    Vector3 halfSize = new Vector3(detector.SizeX * 0.5f, detector.SizeY * 0.5f, detector.SizeZ * 0.5f);
-                                    BoundingBox newBox = new BoundingBox(position - halfSize, position + halfSize);
-                                    renderBox.Update(newBox);
-                                    renderBox.SetTransform(Matrix4x4.CreateTranslation(position));
-                                }
-                            }
-                        }
-                    }
+                    SyncActorEntryWithFrame(actorEntry);
+                    UpdateActorVisualization(actorEntry, selected);
                 }
                 else if (selected.Tag is Instance)
                 {
@@ -2708,8 +2733,68 @@ namespace Mafia2Tool
             }
         }
 
+        private void SyncActorEntryWithFrame(ActorEntry actorEntry)
+        {
+            FrameObjectFrame linkedFrame = FindFrameByActorEntry(actorEntry);
+
+            if (linkedFrame != null)
+            {
+                linkedFrame.LocalTransform = MatrixUtils.SetMatrix(
+                    actorEntry.Rotation,
+                    actorEntry.Scale,
+                    actorEntry.Position
+                );
+                ApplyChangesToRenderable(linkedFrame);
+            }
+        }
+
+        private FrameObjectFrame FindFrameByActorEntry(ActorEntry actorEntry)
+        {
+            if (actorEntry == null || actorEntry.FrameNameHash == 0)
+                return null;
+            foreach (var kvp in SceneData.FrameResource.FrameObjects)
+            {
+                if (kvp.Value is FrameObjectFrame frame &&
+                    frame.Name.Hash == actorEntry.FrameNameHash)
+                {
+                    return frame;
+                }
+            }
+            return null;
+        }
+
+        private void UpdateActorVisualization(ActorEntry actorEntry, TreeNode actorNode)
+        {
+            foreach (TreeNode child in actorNode.Nodes)
+            {
+                if (int.TryParse(child.Name, out int refID) &&
+                    Graphics.Assets.TryGetValue(refID, out IRenderer asset))
+                {
+                    if (asset is RenderBoundingBox renderBox)
+                    {
+                        Matrix4x4 transform = Matrix4x4.CreateTranslation(actorEntry.Position);
+                        renderBox.SetTransform(transform);
+                    }
+                }
+            }
+        }
+
         private void ApplyChangesToRenderable(FrameObjectBase obj)
         {
+            if (obj is FrameObjectFrame frame && frame.Item is ActorEntry linkedActor)
+            {
+                Vector3 position, scale;
+                Quaternion rotation;
+                Matrix4x4.Decompose(frame.LocalTransform, out scale, out rotation, out position);
+                linkedActor.Position = position;
+                linkedActor.Rotation = rotation;
+                linkedActor.Scale = scale;
+
+                if (dSceneTree.SelectedNode?.Tag == linkedActor)
+                {
+                    dPropertyGrid.Refresh();
+                }
+            }
             if (obj is FrameObjectArea)
             {
                 FrameObjectArea area = (obj as FrameObjectArea);
