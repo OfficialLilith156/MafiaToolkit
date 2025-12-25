@@ -144,6 +144,7 @@ namespace Rendering.Graphics
             sky.InitBuffers(D3D.Device, D3D.DeviceContext);
             sky.DoRender = WorldSettings.RenderSky;
             clouds.InitBuffers(D3D.Device, D3D.DeviceContext);
+            clouds.DoRender = WorldSettings.RenderClouds;
             InstanceGizmo.InitBuffers(D3D.Device, D3D.DeviceContext);
             InstanceGizmo.InstanceModel.GetBVHBuildingTask(); // Maybe this function should be added to the IRenderer class instead? probably
             
@@ -460,6 +461,7 @@ namespace Rendering.Graphics
             selectionBox.Render(D3D.Device, D3D.DeviceContext, Camera);
             TranslationGizmo.UpdateBuffers(D3D.Device, D3D.DeviceContext);
             TranslationGizmo.Render(D3D.Device, D3D.DeviceContext, Camera);
+            clouds.DoRender = WorldSettings.RenderClouds;
             clouds.UpdateBuffers(D3D.Device, D3D.DeviceContext);
             clouds.Render(D3D.Device, D3D.DeviceContext, Camera);
             sky.DoRender = WorldSettings.RenderSky;

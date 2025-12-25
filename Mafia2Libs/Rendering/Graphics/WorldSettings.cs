@@ -9,12 +9,14 @@ namespace Rendering.Core
         
         public int RenderMode { get; set; }
         public bool RenderSky { get; set; }
+        public bool RenderClouds { get; set; }
 
         public WorldSettings()
         {
             Lighting = new LightClass();
             RenderMode = 2;
             RenderSky = false;
+            RenderClouds = false;
         }
 
         public void SetupLighting()
