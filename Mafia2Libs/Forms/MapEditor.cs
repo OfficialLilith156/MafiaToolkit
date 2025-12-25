@@ -2373,8 +2373,15 @@ namespace Mafia2Tool
 
         private void LoadActorFiles()
         {
-            actorRoot = new TreeNode("Actor Items");
-            actorRoot.Tag = "Folder";
+            if (actorRoot == null)
+            {
+                actorRoot = new TreeNode("Actor Items");
+                actorRoot.Tag = "Folder";
+            }
+            else
+            {
+                actorRoot.Nodes.Clear();
+            }
             for (int z = 0; z < SceneData.Actors.Length; z++)
             {
                 Actor actor = SceneData.Actors[z];
@@ -2388,10 +2395,10 @@ namespace Mafia2Tool
                     itemNode.Name = "actor_" + item.EntityName;
                     itemNode.Tag = item;
                     var typeString = "actorType_" + item.ActorTypeName;
-                    var foundnodes = actorFile.Nodes.Find(typeString, false);
-                    if (foundnodes.Length > 0)
+                    var foundNodes = actorFile.Nodes.Find(typeString, false);
+                    if (foundNodes.Length > 0)
                     {
-                        foundnodes[0].Nodes.Add(itemNode);
+                        foundNodes[0].Nodes.Add(itemNode);
                     }
                     else
                     {
@@ -2403,8 +2410,8 @@ namespace Mafia2Tool
                     }
                     FixActorDefintions(actor);
                 }
-                dSceneTree.AddToTree(actorRoot);
             }
+            dSceneTree.AddToTree(actorRoot);
         }
 
         private void TreeViewUpdateSelected()
