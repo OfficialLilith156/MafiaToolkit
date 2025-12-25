@@ -257,7 +257,6 @@ namespace Mafia2Tool
             ToolbarStrip.Size = new System.Drawing.Size(1420, 25);
             ToolbarStrip.TabIndex = 1;
             ToolbarStrip.Text = "toolStrip1";
-            ToolbarStrip.ItemClicked += ToolbarStrip_ItemClicked;
             // 
             // FileButton
             // 
