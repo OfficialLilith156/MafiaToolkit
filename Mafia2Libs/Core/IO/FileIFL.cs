@@ -1,6 +1,11 @@
-﻿using Microsoft.Win32;
+﻿using Mafia2Tool.Forms;
+using Microsoft.Win32;
 using ResourceTypes.ImageFileList;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Threading;
+using System.Windows.Forms;
 
 namespace Core.IO
 {
@@ -17,38 +22,34 @@ namespace Core.IO
 
         public override bool Open()
         {
-            SaveFileDialog saveFile = new SaveFileDialog()
-            {
-                InitialDirectory = Path.GetDirectoryName(file.FullName),
-                FileName = Path.GetFileNameWithoutExtension(file.FullName),
-                Filter = "XML (*.xml)|*.xml"
-            };
+            ImageFileList img = new ImageFileList();
+            using (var ms = new MemoryStream(File.ReadAllBytes(file.FullName)))
+                img.ReadFromFile(ms, false);
 
-            if (saveFile.ShowDialog() == true)
+            using (var editor = new IFLEditorForm(img.Images.Select(i => i.Name).ToList()))
             {
-                ImageFileList IMGFileList = new ImageFileList();
-
-                using (MemoryStream ReaderStream = new MemoryStream(File.ReadAllBytes(file.FullName)))
+                if (editor.ShowDialog() == DialogResult.OK)
                 {
-                    IMGFileList.ReadFromFile(ReaderStream, false);
+                    File.Copy(file.FullName, file.FullName + "_old", true);
+                    img.Images = editor.Textures.Select(t => new ImageFileList.Image { Name = t.Name }).ToArray();
+                    img.WriteToFile(file.FullName, false);
                 }
-
-                IMGFileList.ConvertToXML(saveFile.FileName);
             }
 
             return true;
         }
 
+
         public override void Save()
         {
-            OpenFileDialog openFile = new OpenFileDialog()
+            System.Windows.Forms.OpenFileDialog openFile = new System.Windows.Forms.OpenFileDialog()
             {
                 InitialDirectory = Path.GetDirectoryName(file.FullName),
                 FileName = Path.GetFileNameWithoutExtension(file.FullName),
                 Filter = "XML (*.xml)|*.xml"
             };
 
-            if (openFile.ShowDialog() == true)
+            if (openFile.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 ImageFileList IMGFileList = new ImageFileList();
                 IMGFileList.ConvertFromXML(openFile.FileName);
@@ -57,6 +58,7 @@ namespace Core.IO
                 IMGFileList.WriteToFile(file.FullName, false);
             }
         }
+
 
         public override bool CanContextMenuOpen()
         {
