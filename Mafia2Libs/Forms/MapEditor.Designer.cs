@@ -43,7 +43,6 @@ namespace Mafia2Tool
             PasteXYZ = new System.Windows.Forms.ToolStripSplitButton();
             Label_FPS = new System.Windows.Forms.ToolStripStatusLabel();
             Label_MemoryUsage = new System.Windows.Forms.ToolStripStatusLabel();
-            Label_StatusBar = new System.Windows.Forms.ToolStripStatusLabel();
             ToolbarStrip = new System.Windows.Forms.ToolStrip();
             FileButton = new System.Windows.Forms.ToolStripDropDownButton();
             SaveButton = new System.Windows.Forms.ToolStripMenuItem();
@@ -114,7 +113,7 @@ namespace Mafia2Tool
             // StatusStrip
             // 
             StatusStrip.AutoSize = false;
-            StatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { CurrentModeButton, PositionXTool, PositionYTool, PositionZTool, CameraSpeedTool, toolStripSplitButton1, PasteXYZ, Label_FPS, Label_MemoryUsage, Label_StatusBar });
+            StatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { CurrentModeButton, PositionXTool, PositionYTool, PositionZTool, CameraSpeedTool, toolStripSplitButton1, PasteXYZ, Label_FPS, Label_MemoryUsage});
             StatusStrip.Location = new System.Drawing.Point(0, 692);
             StatusStrip.Name = "StatusStrip";
             StatusStrip.Padding = new System.Windows.Forms.Padding(1, 0, 16, 0);
@@ -239,15 +238,6 @@ namespace Mafia2Tool
             Label_MemoryUsage.Name = "Label_MemoryUsage";
             Label_MemoryUsage.Size = new System.Drawing.Size(117, 23);
             Label_MemoryUsage.Text = "Label_MemoryUsage";
-            // 
-            // Label_StatusBar
-            // 
-            Label_StatusBar.Name = "Label_StatusBar";
-            Label_StatusBar.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            Label_StatusBar.Size = new System.Drawing.Size(554, 23);
-            Label_StatusBar.Spring = true;
-            Label_StatusBar.Text = "Label_StatusBar";
-            Label_StatusBar.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // ToolbarStrip
             // 
@@ -779,7 +769,6 @@ namespace Mafia2Tool
         private System.Windows.Forms.ToolStripMenuItem Button_ImportBundle;
         private System.Windows.Forms.SaveFileDialog SaveFileDialog;
         private System.Windows.Forms.OpenFileDialog AnimFileDialog;
-        private System.Windows.Forms.ToolStripStatusLabel Label_StatusBar;
         private System.Windows.Forms.ToolStripSplitButton PasteXYZ;
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
         private System.Windows.Forms.ToolStripMenuItem addType4ToolStripMenuItem;
