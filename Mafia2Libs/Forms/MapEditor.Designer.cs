@@ -97,6 +97,7 @@ namespace Mafia2Tool
             batchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             generateColToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            fixFrameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             imageList1 = new System.Windows.Forms.ImageList(components);
             RenderPanel = new System.Windows.Forms.Panel();
             MeshBrowser = new System.Windows.Forms.OpenFileDialog();
@@ -104,7 +105,7 @@ namespace Mafia2Tool
             dockPanel1 = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             FrameBrowser = new System.Windows.Forms.OpenFileDialog();
             SaveFileDialog = new System.Windows.Forms.SaveFileDialog();
-            fixFrameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            saveAnimalTraffciPathToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             StatusStrip = new System.Windows.Forms.StatusStrip();
             StatusStrip.SuspendLayout();
             ToolbarStrip.SuspendLayout();
@@ -113,7 +114,7 @@ namespace Mafia2Tool
             // StatusStrip
             // 
             StatusStrip.AutoSize = false;
-            StatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { CurrentModeButton, PositionXTool, PositionYTool, PositionZTool, CameraSpeedTool, toolStripSplitButton1, PasteXYZ, Label_FPS, Label_MemoryUsage});
+            StatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { CurrentModeButton, PositionXTool, PositionYTool, PositionZTool, CameraSpeedTool, toolStripSplitButton1, PasteXYZ, Label_FPS, Label_MemoryUsage });
             StatusStrip.Location = new System.Drawing.Point(0, 692);
             StatusStrip.Name = "StatusStrip";
             StatusStrip.Padding = new System.Windows.Forms.Padding(1, 0, 16, 0);
@@ -557,7 +558,7 @@ namespace Mafia2Tool
             // toolStripDropDownButton4
             // 
             toolStripDropDownButton4.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            toolStripDropDownButton4.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { saveSceneToolStripMenuItem, saveCollisionToolStripMenuItem, saveTranslocatorToolStripMenuItem, saveActorToolStripMenuItem, saveOBJDataToolStripMenuItem, saveAIWorldToolStripMenuItem, saveAllItemDescToolStripMenuItem, saveItemDescSelectedToolStripMenuItem });
+            toolStripDropDownButton4.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { saveSceneToolStripMenuItem, saveCollisionToolStripMenuItem, saveTranslocatorToolStripMenuItem, saveActorToolStripMenuItem, saveOBJDataToolStripMenuItem, saveAIWorldToolStripMenuItem, saveAllItemDescToolStripMenuItem, saveItemDescSelectedToolStripMenuItem, saveAnimalTraffciPathToolStripMenuItem });
             toolStripDropDownButton4.Image = (System.Drawing.Image)resources.GetObject("toolStripDropDownButton4.Image");
             toolStripDropDownButton4.ImageTransparentColor = System.Drawing.Color.Magenta;
             toolStripDropDownButton4.Name = "toolStripDropDownButton4";
@@ -567,56 +568,56 @@ namespace Mafia2Tool
             // saveSceneToolStripMenuItem
             // 
             saveSceneToolStripMenuItem.Name = "saveSceneToolStripMenuItem";
-            saveSceneToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            saveSceneToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             saveSceneToolStripMenuItem.Text = "Save Scene";
             saveSceneToolStripMenuItem.Click += SaveButtonScene_Click;
             // 
             // saveCollisionToolStripMenuItem
             // 
             saveCollisionToolStripMenuItem.Name = "saveCollisionToolStripMenuItem";
-            saveCollisionToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            saveCollisionToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             saveCollisionToolStripMenuItem.Text = "Save Collision";
             saveCollisionToolStripMenuItem.Click += SaveButtonCollision_Click;
             // 
             // saveTranslocatorToolStripMenuItem
             // 
             saveTranslocatorToolStripMenuItem.Name = "saveTranslocatorToolStripMenuItem";
-            saveTranslocatorToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            saveTranslocatorToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             saveTranslocatorToolStripMenuItem.Text = "Save Translocator";
             saveTranslocatorToolStripMenuItem.Click += SaveButtonTranslocator_Click;
             // 
             // saveActorToolStripMenuItem
             // 
             saveActorToolStripMenuItem.Name = "saveActorToolStripMenuItem";
-            saveActorToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            saveActorToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             saveActorToolStripMenuItem.Text = "Save Actor";
             saveActorToolStripMenuItem.Click += SaveButtonActor_Click;
             // 
             // saveOBJDataToolStripMenuItem
             // 
             saveOBJDataToolStripMenuItem.Name = "saveOBJDataToolStripMenuItem";
-            saveOBJDataToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            saveOBJDataToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             saveOBJDataToolStripMenuItem.Text = "Save OBJData";
             saveOBJDataToolStripMenuItem.Click += SaveButtonOBJDataClick;
             // 
             // saveAIWorldToolStripMenuItem
             // 
             saveAIWorldToolStripMenuItem.Name = "saveAIWorldToolStripMenuItem";
-            saveAIWorldToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            saveAIWorldToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             saveAIWorldToolStripMenuItem.Text = "Save AIWorld";
             saveAIWorldToolStripMenuItem.Click += SaveButtonAIWorldClick;
             // 
             // saveAllItemDescToolStripMenuItem
             // 
             saveAllItemDescToolStripMenuItem.Name = "saveAllItemDescToolStripMenuItem";
-            saveAllItemDescToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            saveAllItemDescToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             saveAllItemDescToolStripMenuItem.Text = "Save All ItemDesc";
             saveAllItemDescToolStripMenuItem.Click += SaveButtonItemDesc_Click;
             // 
             // saveItemDescSelectedToolStripMenuItem
             // 
             saveItemDescSelectedToolStripMenuItem.Name = "saveItemDescSelectedToolStripMenuItem";
-            saveItemDescSelectedToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            saveItemDescSelectedToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             saveItemDescSelectedToolStripMenuItem.Text = "Save ItemDesc selected ";
             saveItemDescSelectedToolStripMenuItem.Click += SaveButtonSelItemDesc_Click;
             // 
@@ -659,6 +660,13 @@ namespace Mafia2Tool
             testToolStripMenuItem.Text = "Extract from FOD + save positions";
             testToolStripMenuItem.Click += ExtractFromDummyButton_Click;
             // 
+            // fixFrameToolStripMenuItem
+            // 
+            fixFrameToolStripMenuItem.Name = "fixFrameToolStripMenuItem";
+            fixFrameToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
+            fixFrameToolStripMenuItem.Text = "Fix Frame";
+            fixFrameToolStripMenuItem.Click += InvertFrameObjectFrameZRotation;
+            // 
             // imageList1
             // 
             imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
@@ -697,12 +705,12 @@ namespace Mafia2Tool
             // 
             FrameBrowser.Filter = "FrameResource|*.fr|Toolkit Frame Data|*.framedata";
             // 
-            // fixFrameToolStripMenuItem
+            // saveAnimalTraffciPathToolStripMenuItem
             // 
-            fixFrameToolStripMenuItem.Name = "fixFrameToolStripMenuItem";
-            fixFrameToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
-            fixFrameToolStripMenuItem.Text = "Fix Frame";
-            fixFrameToolStripMenuItem.Click += InvertFrameObjectFrameZRotation;
+            saveAnimalTraffciPathToolStripMenuItem.Name = "saveAnimalTraffciPathToolStripMenuItem";
+            saveAnimalTraffciPathToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
+            saveAnimalTraffciPathToolStripMenuItem.Text = "Save Animal Traffic Path";
+            saveAnimalTraffciPathToolStripMenuItem.Click += SaveButtonATP_Click;
             // 
             // MapEditor
             // 
@@ -799,5 +807,6 @@ namespace Mafia2Tool
         private System.Windows.Forms.ToolStripMenuItem generateColToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem testToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem fixFrameToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveAnimalTraffciPathToolStripMenuItem;
     }
 }

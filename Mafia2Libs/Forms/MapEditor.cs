@@ -533,6 +533,7 @@ namespace Mafia2Tool
         private void SaveButton_Click(object sender, EventArgs e) => Save();
         private void SaveButtonScene_Click(object sender, EventArgs e) => SaveScene();
         private void SaveButtonCollision_Click(object sender, EventArgs e) => SaveCollision();
+        private void SaveButtonATP_Click(object sender, EventArgs e) => SaveATP();
         private void SaveButtonItemDesc_Click(object sender, EventArgs e) => SaveCollisionItemDesc();
         private void SaveButtonSelItemDesc_Click(object sender, EventArgs e) => SaveSELCollisionItemDesc();
         private void SaveButtonTranslocator_Click(object sender, EventArgs e) => SaveTranslocator();
@@ -1325,6 +1326,22 @@ namespace Mafia2Tool
             }
         }
 
+        private void SaveATP()
+        {
+            DialogResult result = MessageBox.Show("Do you want to save your changes?", "Toolkit", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
+            {
+                Cursor.Current = Cursors.WaitCursor;
+
+                if (SceneData.ATLoader != null)
+                {
+                    SceneData.ATLoader.WriteToFile();
+                }
+                Cursor.Current = Cursors.Default;
+            }
+        }
+
         private void SaveAIWorld()
         {
             if (MessageBox.Show("Save AIWorld?", "Toolkit", MessageBoxButtons.YesNo) != DialogResult.Yes) return;
@@ -1995,11 +2012,19 @@ namespace Mafia2Tool
                 animalTrafficRoot.Tag = "Folder";
                 for (int i = 0; i < SceneData.ATLoader.Paths.Length; i++)
                 {
+                    var atpPath = SceneData.ATLoader.Paths[i];
+                    string animalName = "Unknown";
+                    if (atpPath.AnimalTypeIdx >= 0 && atpPath.AnimalTypeIdx < SceneData.ATLoader.AnimalTypes.Length)
+                    {
+                        animalName = SceneData.ATLoader.AnimalTypes[atpPath.AnimalTypeIdx].Name.ToString();
+                    }
+
                     int refID = RefManager.GetNewRefID();
                     RenderATP atp = new RenderATP();
-                    atp.Init(SceneData.ATLoader.Paths[i]);
+                    atp.Init(atpPath);
+
                     TreeNode child = new TreeNode();
-                    child.Text = animalTrafficRoot.Nodes.Count.ToString();
+                    child.Text = $"Path [{i}] || Animal: [{animalName}]";
                     child.Name = refID.ToString();
                     child.Tag = atp;
                     assets.Add(refID, atp);
