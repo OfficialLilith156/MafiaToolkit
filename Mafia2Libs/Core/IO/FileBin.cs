@@ -1,4 +1,5 @@
 ﻿using Mafia2Tool;
+using Mafia2Tool.Forms;
 using ResourceTypes.CGame;
 using ResourceTypes.EntityActivator;
 using ResourceTypes.Navigation;
@@ -96,20 +97,10 @@ namespace Core.IO
                 }
             }
             else if (CheckFileMagic(file, SDSConfigMagic))
-            {
-                SaveFileDialog saveFile = new SaveFileDialog()
-                {
-                    InitialDirectory = Path.GetDirectoryName(file.FullName),
-                    FileName = Path.GetFileNameWithoutExtension(file.FullName),
-                    Filter = "XML (*.xml)|*.xml"
-                };
-
-                if (saveFile.ShowDialog() == DialogResult.OK)
-                {
-                    // Unsure on how we should handle this. For now we will just try and hope the loader works.
-                    SdsConfigFile loader = new SdsConfigFile(file);
-                    loader.ConvertToXML(saveFile.FileName);
-                }
+            {      
+                var editorForm = new SDSConfigEditor();
+                editorForm.LoadFile(file.FullName);
+                editorForm.Show();
             }
             else
             {
