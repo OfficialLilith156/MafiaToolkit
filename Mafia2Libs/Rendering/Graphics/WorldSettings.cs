@@ -15,7 +15,7 @@ namespace Rendering.Core
         {
             Lighting = new LightClass();
             RenderMode = 2;
-            RenderSky = false;
+            RenderSky = true;
             RenderClouds = false;
         }
 
