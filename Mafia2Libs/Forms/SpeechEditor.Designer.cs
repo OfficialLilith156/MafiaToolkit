@@ -42,6 +42,8 @@
             Button_LoadFromXML = new System.Windows.Forms.ToolStripMenuItem();
             FileSaveDialog_SelectXML = new System.Windows.Forms.SaveFileDialog();
             SearchBox = new System.Windows.Forms.TextBox();
+            addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             Tool_Strip.SuspendLayout();
             SuspendLayout();
             // 
@@ -94,7 +96,7 @@
             // 
             Button_Save.Name = "Button_Save";
             Button_Save.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S;
-            Button_Save.Size = new System.Drawing.Size(180, 22);
+            Button_Save.Size = new System.Drawing.Size(165, 22);
             Button_Save.Text = "$SAVE";
             Button_Save.Click += Button_Save_Click;
             // 
@@ -102,21 +104,21 @@
             // 
             Button_Reload.Name = "Button_Reload";
             Button_Reload.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R;
-            Button_Reload.Size = new System.Drawing.Size(180, 22);
+            Button_Reload.Size = new System.Drawing.Size(165, 22);
             Button_Reload.Text = "$RELOAD";
             Button_Reload.Click += Button_Reload_Click;
             // 
             // Button_Exit
             // 
             Button_Exit.Name = "Button_Exit";
-            Button_Exit.Size = new System.Drawing.Size(180, 22);
+            Button_Exit.Size = new System.Drawing.Size(165, 22);
             Button_Exit.Text = "$EXIT";
             Button_Exit.Click += Button_Exit_Click;
             // 
             // Button_Edit
             // 
             Button_Edit.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            Button_Edit.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { Button_SaveToXML, Button_LoadFromXML });
+            Button_Edit.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { Button_SaveToXML, Button_LoadFromXML, addToolStripMenuItem, deleteToolStripMenuItem });
             Button_Edit.Image = (System.Drawing.Image)resources.GetObject("Button_Edit.Image");
             Button_Edit.ImageTransparentColor = System.Drawing.Color.Magenta;
             Button_Edit.Name = "Button_Edit";
@@ -149,6 +151,20 @@
             SearchBox.Name = "SearchBox";
             SearchBox.Size = new System.Drawing.Size(152, 23);
             SearchBox.TabIndex = 17;
+            // 
+            // addToolStripMenuItem
+            // 
+            addToolStripMenuItem.Name = "addToolStripMenuItem";
+            addToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
+            addToolStripMenuItem.Text = "Add";
+            addToolStripMenuItem.Click += Button_Add_Click;
+            // 
+            // deleteToolStripMenuItem
+            // 
+            deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
+            deleteToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
+            deleteToolStripMenuItem.Text = "Delete";
+            deleteToolStripMenuItem.Click += Button_Delete_Click;
             // 
             // SpeechEditor
             // 
@@ -189,5 +205,7 @@
         private System.Windows.Forms.ToolStripMenuItem Button_LoadFromXML;
         private System.Windows.Forms.SaveFileDialog FileSaveDialog_SelectXML;
         private System.Windows.Forms.TextBox SearchBox;
+        private System.Windows.Forms.ToolStripMenuItem addToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
     }
 }

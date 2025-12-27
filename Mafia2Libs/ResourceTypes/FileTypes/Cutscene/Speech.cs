@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Mafia2Tool;
+using System;
+using System.ComponentModel;
 using System.IO;
 using Utils.Helpers.Reflection;
 using Utils.StringHelpers;
@@ -11,7 +13,7 @@ namespace ResourceTypes.Speech
         private int fileversion2 = 2; //another one though?
 
         public SpeechTypeInfo[] SpeechTypes { get; private set; }
-        public SpeechItemInfo[] SpeechItems { get; private set; }
+        public SpeechItemInfo[] SpeechItems { get; set; }
 
         public SpeechFile()
         {
@@ -175,6 +177,14 @@ namespace ResourceTypes.Speech
         [PropertyClassAllowReflection]
         public class SpeechItemInfo
         {
+            string subtitle = string.Empty;
+            [Browsable(true)]
+            [DisplayName("Subtitle")]
+            public string Subtitle
+            {
+                get { return subtitle; }
+                set { subtitle = value ?? string.Empty; }
+            }
             int unk0; //another hash maybe; int32;
             long unk1; //8 bytes; possible padding or flags.
             int unk2; //1? in spvito;
@@ -221,6 +231,7 @@ namespace ResourceTypes.Speech
             {
                 ItemName = string.Empty;
                 unk4 = new byte[0];
+                subtitle = string.Empty;
             }
 
             public void ReadFromFile(BinaryReader reader)

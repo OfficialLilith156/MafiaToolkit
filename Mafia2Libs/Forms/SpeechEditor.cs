@@ -1,7 +1,10 @@
-﻿using System.IO;
+﻿using ResourceTypes.Speech;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using ResourceTypes.Speech;
 using Utils.Helpers;
 using Utils.Helpers.Reflection;
 using Utils.Language;
@@ -14,7 +17,7 @@ namespace Mafia2Tool
         private FileInfo speechFile;
         private SpeechFile speechData;
         private bool bIsFileEdited = false;
-
+        public static Dictionary<int, string> SubtitleDictionary { get; private set; } = new Dictionary<int, string>();
         public SpeechEditor(FileInfo file)
         {
             InitializeComponent();
@@ -22,6 +25,7 @@ namespace Mafia2Tool
             speechFile = file;
             speechData = new SpeechFile(file);
             BuildData();
+            LoadSubtitles();
             Show();
             ToolkitSettings.UpdateRichPresence("Using the Speech editor.");
             SearchBox.KeyDown += SearchBox_KeyDown;
@@ -38,33 +42,115 @@ namespace Mafia2Tool
             Button_LoadFromXML.Text = Language.GetString("$IMPORT_XML");
             Button_Edit.Text = Language.GetString("$EDIT");
         }
+        private void LoadSubtitles()
+        {
+            foreach (var item in speechData.SpeechItems)
+            {
+                item.Subtitle = string.Empty;
+            }
+
+            string speechTablesDir = Path.Combine(Path.GetDirectoryName(speechFile.FullName), "tables", "Speech");
+            if (!Directory.Exists(speechTablesDir)) return;
+
+            var allFiles = Directory.GetFiles(speechTablesDir, "Script_*");
+            foreach (string file in allFiles)
+            {
+                if (!Path.GetFileName(file).Contains("_subtitles")) continue;
+
+                try
+                {
+                    foreach (string line in File.ReadAllLines(file))
+                    {
+                        if (string.IsNullOrWhiteSpace(line) || !line.Contains(':')) continue;
+                        var parts = line.Split(new[] { ':' }, 2);
+                        if (int.TryParse(parts[0].Trim(), out int id))
+                        {
+                            var item = speechData.SpeechItems.FirstOrDefault(x => x.Unk0 == id);
+                            if (item != null)
+                            {
+                                item.Subtitle = parts[1].Trim();
+                            }
+                        }
+                    }
+                }
+                catch {}
+            }
+        }
+        private void SaveSubtitles()
+        {
+            string speechTablesDir = Path.Combine(Path.GetDirectoryName(speechFile.FullName), "tables", "Speech");
+            if (!Directory.Exists(speechTablesDir)) return;
+
+            var groups = new Dictionary<string, List<SpeechFile.SpeechItemInfo>>();
+
+            foreach (var item in speechData.SpeechItems)
+            {
+                if (string.IsNullOrEmpty(item.ItemName)) continue;
+                string speechType = item.ItemName.Split('_')[0];           
+                string matchedFile = FindMatchingSubtitleFile(speechTablesDir, speechType);
+
+                if (matchedFile == null) continue;
+
+                string key = matchedFile;
+                if (!groups.ContainsKey(key))
+                    groups[key] = new List<SpeechFile.SpeechItemInfo>();
+                groups[key].Add(item);
+            }
+            foreach (var kvp in groups)
+            {
+                string filePath = kvp.Key;
+                var items = kvp.Value;
+
+                var lines = new List<string>();
+                foreach (var item in items.OrderBy(x => x.Unk0))
+                {
+                    if (!string.IsNullOrEmpty(item.Subtitle))
+                    {
+                        lines.Add($"{item.Unk0}:{item.Subtitle}");
+                    }
+                }
+
+                File.WriteAllLines(filePath, lines);
+            }
+        }
+        private string FindMatchingSubtitleFile(string dir, string speechType)
+        {
+            var candidates = Directory.GetFiles(dir, "Script_*")
+                .Where(f => Path.GetFileName(f).Contains($"_{speechType}_"))
+                .ToArray();
+            return candidates.FirstOrDefault();
+        }
 
         private void BuildData()
         {
-            TreeView_Speech.SelectedNode = null;
-            Grid_Speech.SelectedObject = null;
             TreeView_Speech.Nodes.Clear();
-            for (int i = 0; i != speechData.SpeechTypes.Length; i++)
+            Grid_Speech.SelectedObject = null;
+
+            var itemsByType = new Dictionary<string, List<SpeechFile.SpeechItemInfo>>();
+            foreach (var item in speechData.SpeechItems)
             {
-                SpeechFile.SpeechTypeInfo typeData = speechData.SpeechTypes[i];
-                TreeNode node = new TreeNode(typeData.SpeechType.ToString());
-                node.Tag = typeData;
-                int num = 0;
-                for (int x = 0; x != speechData.SpeechItems.Length; x++)
+                if (string.IsNullOrEmpty(item.ItemName)) continue;
+                string type = item.ItemName.Split('_')[0];
+                if (!itemsByType.ContainsKey(type))
+                    itemsByType[type] = new List<SpeechFile.SpeechItemInfo>();
+                itemsByType[type].Add(item);
+            }
+
+            foreach (var type in speechData.SpeechTypes)
+            {
+                TreeNode node = new TreeNode($"{type.SpeechType} ({type.Folder})");
+                node.Tag = type;
+
+                if (itemsByType.TryGetValue(type.SpeechType, out var items))
                 {
-                    num++;
-                    SpeechFile.SpeechItemInfo itemData = speechData.SpeechItems[x];
-                    TreeNode node1 = new TreeNode(itemData.ItemName.ToString());
-                    node1.Tag = itemData;
-                    if (typeData.Unk0 + num == itemData.Unk0)
+                    foreach (var item in items)
                     {
-                        node.Nodes.Add(node1);
-                    }
-                    else
-                    {
-                        num = 0;
+                        TreeNode itemNode = new TreeNode(item.ItemName);
+                        itemNode.Tag = item;
+                        node.Nodes.Add(itemNode);
                     }
                 }
+
                 TreeView_Speech.Nodes.Add(node);
             }
         }
@@ -75,6 +161,7 @@ namespace Mafia2Tool
             {
                 speechData.WriteToFile(writer);
             }
+            SaveSubtitles();
             Text = Language.GetString("$SPEECH_EDITOR_TITLE");
             bIsFileEdited = false;
         }
@@ -83,6 +170,7 @@ namespace Mafia2Tool
         {
             speechData = new SpeechFile(speechFile);
             BuildData();
+            LoadSubtitles();
             Text = Language.GetString("$SPEECH_EDITOR_TITLE");
             bIsFileEdited = false;
         }
@@ -114,7 +202,65 @@ namespace Mafia2Tool
                 }
             }
         }
+        private void Button_Add_Click(object sender, EventArgs e)
+        {
+            TreeNode selectedNode = TreeView_Speech.SelectedNode;
+            if (selectedNode?.Tag is SpeechFile.SpeechTypeInfo typeInfo)
+            {
+                var newItem = new SpeechFile.SpeechItemInfo
+                {
+                    ItemName = $"{typeInfo.SpeechType}_newItem",
+                    Unk0 = GetNextAvailableUnk0(), 
+                    Unk2 = 1,
+                    Unk3 = 0,
+                    Unk5 = 31,
+                    Unk6 = 0,
+                    Unk4 = new byte[0]
+                };
 
+                var list = speechData.SpeechItems.ToList();
+                list.Add(newItem);
+                speechData.SpeechItems = list.ToArray();
+                TreeNode itemNode = new TreeNode(newItem.ItemName) { Tag = newItem };
+                selectedNode.Nodes.Add(itemNode);
+                itemNode.EnsureVisible();
+                TreeView_Speech.SelectedNode = itemNode;
+
+                bIsFileEdited = true;
+                Text = Language.GetString("$SPEECH_EDITOR_TITLE") + "*";
+            }
+            else
+            {
+                MessageBox.Show("Please select a speech type node to add an item under.");
+            }
+        }
+        private int GetNextAvailableUnk0()
+        {
+            if (speechData.SpeechItems.Length == 0) return 1000;
+            return speechData.SpeechItems.Max(x => x.Unk0) + 1;
+        }
+        private void Button_Delete_Click(object sender, EventArgs e)
+        {
+            TreeNode selectedNode = TreeView_Speech.SelectedNode;
+            if (selectedNode?.Tag is SpeechFile.SpeechItemInfo item)
+            {
+                var list = speechData.SpeechItems.ToList();
+                list.Remove(item);
+                speechData.SpeechItems = list.ToArray();
+                selectedNode.Remove();
+
+                bIsFileEdited = true;
+                Text = Language.GetString("$SPEECH_EDITOR_TITLE") + "*";
+            }
+            else if (selectedNode?.Tag is SpeechFile.SpeechTypeInfo)
+            {
+                MessageBox.Show("Cannot delete speech type nodes.");
+            }
+            else
+            {
+                MessageBox.Show("Select a speech item to delete.");
+            }
+        }
         private void OnSaveToXMLClicked(object sender, System.EventArgs e)
         {
             if (FileSaveDialog_SelectXML.ShowDialog() == DialogResult.OK)
