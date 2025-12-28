@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.Loader;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Toolkit.Forms;
@@ -18,6 +19,13 @@ namespace Mafia2Tool
         [STAThread]
         static void Main(string[] args)
         {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            StartForm splash = new StartForm();
+            splash.Show();
+            Application.DoEvents();
+            Thread.Sleep(3000);
+
             ToolkitAssemblyLoadContext.SetupLoadContext();
             ToolkitExceptionHandler.Initialise();
 
@@ -26,19 +34,22 @@ namespace Mafia2Tool
                 CheckINIExists();
                 ToolkitSettings.ReadINI();
                 ProcessCommandArguments(args);
+                splash.Close();
                 return;
             }
 
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+            //Application.SetCompatibleTextRenderingDefault(false);
 
-            // Load INI
             CheckINIExists();
             ToolkitSettings.ReadINI();
 
             GameStorage.Instance.InitStorage();
             Language.ReadLanguageXML();
+        
+            splash.Close();
+            splash.Dispose();
 
             if (ToolkitSettings.SkipGameSelector)
             {
@@ -54,6 +65,7 @@ namespace Mafia2Tool
                 OpenGameExplorer();
             }
         }
+
 
         private static void ProcessCommandArguments(string[] Args)
         {
