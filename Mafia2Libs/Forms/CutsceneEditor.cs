@@ -2,7 +2,6 @@
 using ResourceTypes.Cutscene;
 using ResourceTypes.Cutscene.AnimEntities;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -16,119 +15,18 @@ namespace Mafia2Tool.Forms
 {
     public partial class CutsceneEditor : Form
     {
-        private Dictionary<string, CutsceneEntityNames> entityNamesByCutscene = new Dictionary<string, CutsceneEntityNames>();
         // File access. We should not directly edit cutscene from here.
         private FileCutscene OriginalFile;
         private CutsceneLoader.Cutscene[] Cutscenes;
         private CutsceneLoader.GCRData[] VehicleData;
         private bool bIsFileEdited = false;
-        private bool isRightMouseButtonDown = false;
-        private Dictionary<TreeNode, (string cutsceneName, int entityIndex, bool isSound)> nodeInfoMap =
-        new Dictionary<TreeNode, (string, int, bool)>();
-       
+
         public CutsceneEditor(FileCutscene CutsceneFile)
         {
             InitializeComponent();
             OriginalFile = CutsceneFile;
             Localise();
             BuildData();
-            TreeView_Cutscene.LabelEdit = true;
-            TreeView_Cutscene.DoubleClick += TreeView_Cutscene_DoubleClick;
-            TreeView_Cutscene.AfterLabelEdit += TreeView_Cutscene_AfterLabelEdit;
-            TreeView_Cutscene.MouseDown += TreeView_Cutscene_MouseDown;
-            TreeView_Cutscene.BeforeLabelEdit += TreeView_Cutscene_BeforeLabelEdit;
-            TreeView_Cutscene.ShowNodeToolTips = true;
-        }
-
-        private void TreeView_Cutscene_DoubleClick(object sender, EventArgs e)
-        {
-            isRightMouseButtonDown = false;
-            if (TreeView_Cutscene.SelectedNode != null && TreeView_Cutscene.SelectedNode.Tag is AnimEntityWrapper)
-            {
-                TreeView_Cutscene.SelectedNode.BeginEdit();
-            }
-        }
-
-        private bool EnsureNotEditing()
-        {
-            if (TreeView_Cutscene.SelectedNode != null && TreeView_Cutscene.SelectedNode.IsEditing)
-            {
-                TreeView_Cutscene.SelectedNode.EndEdit(false);
-                return false;
-            }
-            return true;
-        }
-
-        private void TreeView_Cutscene_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Right)
-            {
-                isRightMouseButtonDown = true;
-
-                TreeNode node = TreeView_Cutscene.GetNodeAt(e.X, e.Y);
-                if (node != null)
-                {
-                    TreeView_Cutscene.SelectedNode = node;
-                }
-
-                return;
-            }
-        }
-        
-        private void TreeView_Cutscene_BeforeLabelEdit(object sender, NodeLabelEditEventArgs e)
-        {
-            if (isRightMouseButtonDown)
-            {
-                e.CancelEdit = true;
-                return;
-            }
-            if (!(e.Node.Tag is AnimEntityWrapper))
-            {
-                e.CancelEdit = true;
-                return;
-            }
-            if (e.Node.Tag is GCSData || e.Node.Tag is SPDData ||
-                e.Node.Tag is Cutscene || e.Node.Tag is GCRData)
-            {
-                e.CancelEdit = true;
-            }
-        }
-
-        private CutsceneEntityNames GetEntityNamesForCutscene(string cutsceneName)
-        {
-            if (!entityNamesByCutscene.ContainsKey(cutsceneName))
-            {
-                entityNamesByCutscene[cutsceneName] = CutsceneEntityNames.Load(cutsceneName);
-            }
-
-            return entityNamesByCutscene[cutsceneName];
-        }
-
-        private string GetDefaultEntityName(AnimEntityWrapper entity, int index, AnimEntityTypes entityType)
-        {
-            string typeName = entityType.ToString().Replace("Ae", "");
-
-            string entityName = "";
-            try
-            {
-                var nameProperty = entity.GetType().GetProperty("Name");
-                if (nameProperty != null)
-                {
-                    var nameValue = nameProperty.GetValue(entity);
-                    if (nameValue != null && !string.IsNullOrEmpty(nameValue.ToString()))
-                    {
-                        entityName = nameValue.ToString();
-                    }
-                }
-            }
-            catch { }
-
-            if (!string.IsNullOrEmpty(entityName))
-            {
-                return $"{typeName}: {entityName}";
-            }
-
-            return $"{typeName}_{index}";
         }
 
         public void Localise()
@@ -149,102 +47,39 @@ namespace Mafia2Tool.Forms
         {
             TreeNode CutsceneParent = new TreeNode(Cutscene.CutsceneName);
             CutsceneParent.Tag = Cutscene;
-
             if (Cutscene.AssetContent != null)
             {
                 var Assets = Cutscene.AssetContent;
                 TreeNode AssetsParent = new TreeNode("Game Cutscene Content: (GCS Data)");
                 AssetsParent.Tag = Assets;
-
                 for (int i = 0; i < Assets.entities.Length; i++)
                 {
                     var Asset = Assets.entities[i];
-                    AnimEntityTypes entityType = Asset.GetEntityType();
-
-                    var entityNames = GetEntityNamesForCutscene(Cutscene.CutsceneName);
-
-                    string defaultName = GetDefaultEntityName(Asset, i, entityType);
-                    string displayName = entityNames.GetDisplayName(i, entityType, defaultName);
-
-                    TreeNode AssetNode = new TreeNode(displayName)
-                    {
-                        ToolTipText = $"Index: {i}, Type: {entityType}, Original: {defaultName}"
-                    };
+                    TreeNode AssetNode = new TreeNode(string.Format("{0}: {1}", Asset.GetType().Name, i));
                     AssetNode.Tag = Asset;
-
-                    nodeInfoMap[AssetNode] = (Cutscene.CutsceneName, i, false);
-
                     AssetsParent.Nodes.Add(AssetNode);
                 }
                 CutsceneParent.Nodes.Add(AssetsParent);
             }
-
             if (Cutscene.SoundContent != null)
             {
                 var Assets = Cutscene.SoundContent;
                 TreeNode AssetsParent = new TreeNode("Sound Content: (SPD Data)");
                 AssetsParent.Tag = Assets;
-
                 for (int i = 0; i < Assets.EntityDefinitions.Length; i++)
                 {
                     var Asset = Assets.EntityDefinitions[i];
-                    AnimEntityTypes entityType = Asset.GetEntityType();
-
-                    var entityNames = GetEntityNamesForCutscene(Cutscene.CutsceneName);
-
-                    string defaultName = GetDefaultEntityName(Asset, i, entityType);
-                    string displayName = entityNames.GetDisplayName(i, entityType, defaultName);
-
-                    TreeNode AssetNode = new TreeNode(displayName)
-                    {
-                        ToolTipText = $"Index: {i}, Type: {entityType}, Original: {defaultName}"
-                    };
+                    TreeNode AssetNode = new TreeNode(string.Format("{0}: {1}", Asset.GetType().Name, i));
                     AssetNode.Tag = Asset;
-
-                    nodeInfoMap[AssetNode] = (Cutscene.CutsceneName, i, true);
-
                     AssetsParent.Nodes.Add(AssetNode);
                 }
                 CutsceneParent.Nodes.Add(AssetsParent);
             }
-
             TreeView_Cutscene.Nodes.Add(CutsceneParent);
-        }
-
-        private void TreeView_Cutscene_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
-        {
-            if (e.Label != null && nodeInfoMap.ContainsKey(e.Node))
-            {
-                var info = nodeInfoMap[e.Node];
-
-                var entityNames = GetEntityNamesForCutscene(info.cutsceneName);
-                entityNames.SetDisplayName(info.entityIndex, e.Label, info.cutsceneName);
-
-                e.Node.ToolTipText = $"Index: {info.entityIndex}, Custom Name: {e.Label}";
-
-                Text = Language.GetString("$CUTSCENE_EDITOR") + "*";
-                bIsFileEdited = true;
-            }
-            else if (e.Label == null)
-            {
-                e.CancelEdit = true;
-            }
-        }
-        private void ResetEntityNameToDefault(TreeNode node)
-        {
-            if (nodeInfoMap.ContainsKey(node))
-            {
-                var info = nodeInfoMap[node];
-                var entityNames = GetEntityNamesForCutscene(info.cutsceneName);
-                entityNames.RemoveDisplayName(info.entityIndex, info.cutsceneName);
-                Reload();
-            }
         }
 
         public void BuildData()
         {
-            nodeInfoMap.Clear();
-
             Cutscenes = OriginalFile.GetCutsceneLoader().Cutscenes;
             for (int i = 0; i < Cutscenes.Length; i++)
             {
@@ -337,30 +172,12 @@ namespace Mafia2Tool.Forms
                 ContextMenu_Export.Enabled = false;
                 ContextMenu_Duplicate.Enabled = false;
             }
-            bool canRename = TreeView_Cutscene.SelectedNode != null &&
-                        nodeInfoMap.ContainsKey(TreeView_Cutscene.SelectedNode);
-            if (canRename)
-            {
-                TreeView_Cutscene.SelectedNode.BeginEdit();
-            }
-            bool canReset = TreeView_Cutscene.SelectedNode != null &&
-                      nodeInfoMap.ContainsKey(TreeView_Cutscene.SelectedNode);
         }
 
         private void ContextMenu_Duplicate_Click(object sender, EventArgs e)
         {
-            if (!(TreeView_Cutscene.SelectedNode.Tag is AnimEntityWrapper entity))
-                return;
-
-            if (!nodeInfoMap.ContainsKey(TreeView_Cutscene.SelectedNode))
-                return;
-
-            var originalInfo = nodeInfoMap[TreeView_Cutscene.SelectedNode];
-            int newIndex = originalInfo.entityIndex + 1;
-
-            var entityNames = GetEntityNamesForCutscene(originalInfo.cutsceneName);
-            entityNames.InsertDisplayName(originalInfo.entityIndex, newIndex, originalInfo.cutsceneName);
-
+            //Probably not the most optimal code, but cba to make better code
+            AnimEntityWrapper entity = (AnimEntityWrapper)TreeView_Cutscene.SelectedNode.Tag;
             AnimEntityWrapper newEntity;
             byte[] entityData = new byte[0];
             byte[] animEntityData = new byte[0];
@@ -417,19 +234,6 @@ namespace Mafia2Tool.Forms
                     bIsFileEdited = true;
                     return;
                 }
-                Reload();
-
-                if (TreeView_Cutscene.SelectedNode != null)
-                {
-                    TreeView_Cutscene.SelectedNode.BeginEdit();
-                }
-            }
-        }
-        private void ContextMenu_ResetName_Click(object sender, EventArgs e)
-        {
-            if (TreeView_Cutscene.SelectedNode != null)
-            {
-                ResetEntityNameToDefault(TreeView_Cutscene.SelectedNode);
             }
         }
 
@@ -569,17 +373,6 @@ namespace Mafia2Tool.Forms
 
         private void ContextMenu_Delete_Click(object sender, EventArgs e)
         {
-            if (!EnsureNotEditing())
-            {
-                MessageBox.Show("Please finish editing before deleting.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
-            if (!(TreeView_Cutscene.SelectedNode?.Tag is AnimEntityWrapper))
-            {
-                MessageBox.Show("Please select an entity to delete.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
-
             GCSData gcsData = null;
             SPDData spdData = null;
             TreeNode gcsNode = null;
@@ -607,36 +400,20 @@ namespace Mafia2Tool.Forms
             }
             var entityNode = TreeView_Cutscene.SelectedNode;
             AnimEntityWrapper entity = (AnimEntityWrapper)entityNode.Tag;
-
+            System.Collections.Generic.List<AnimEntityWrapper> entities = null;
             if (gcsData != null)
             {
-                var entities = gcsData.entities.ToList();
+                entities = gcsData.entities.ToList();
                 entities.Remove(entity);
                 gcsData.entities = entities.ToArray();
                 gcsNode.Nodes.Remove(entityNode);
-
-                if (nodeInfoMap.ContainsKey(entityNode))
-                {
-                    var info = nodeInfoMap[entityNode];
-                    var entityNames = GetEntityNamesForCutscene(info.cutsceneName);
-                    entityNames.ReindexAfterDeletion(info.entityIndex, info.cutsceneName);
-                    nodeInfoMap.Remove(entityNode);
-                }
             }
             else if (spdData != null)
             {
-                var entities = spdData.EntityDefinitions.ToList();
+                entities = spdData.EntityDefinitions.ToList();
                 entities.Remove(entity);
                 spdData.EntityDefinitions = entities.ToArray();
                 spdNode.Nodes.Remove(entityNode);
-
-                if (nodeInfoMap.ContainsKey(entityNode))
-                {
-                    var info = nodeInfoMap[entityNode];
-                    var entityNames = GetEntityNamesForCutscene(info.cutsceneName);
-                    entityNames.ReindexAfterDeletion(info.entityIndex, info.cutsceneName);
-                    nodeInfoMap.Remove(entityNode);
-                }
             }
         }
     }
