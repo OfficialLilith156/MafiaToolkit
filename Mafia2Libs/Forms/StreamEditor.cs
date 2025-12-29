@@ -942,6 +942,7 @@ namespace Mafia2Tool
                     group.endOffset = pair.Value.Count;
                 }
             }
+
             stream.Lines = lines.ToArray();
             stream.Groups = groups.ToArray();
             stream.Loaders = streamLoaders.ToArray();
@@ -958,12 +959,14 @@ namespace Mafia2Tool
 
         private void BuildData()
         {
+            
             if (_knownHashes.Count == 0) InitializeHashDictionary();
             linesTree.Nodes.Clear();
             blockView.Nodes.Clear();
             groupTree.Nodes.Clear();
             PropertyGrid_Stream.SelectedObject = null;
             stream = new StreamMapLoader(file);
+            
             for (int i = 0; i < stream.GroupHeaders.Length; i++)
             {
                 TreeNode node = new TreeNode("group" + i);
@@ -1014,11 +1017,13 @@ namespace Mafia2Tool
                     }
                 }
                 line.loadList = list.ToArray();
+
                 if (line.groupID >= 0 && line.groupID < linesTree.Nodes.Count)
                 {
                     linesTree.Nodes[line.groupID].Nodes.Add(node);
                 }
             }
+           
             for (int i = 0; i < stream.Blocks.Length; i++)
             {
                 TreeNode node = new TreeNode();
@@ -1055,6 +1060,7 @@ namespace Mafia2Tool
                         node.Nodes.Add(hashNode);
                     }
                 }
+
                 node.Text = blockInfo;
                 node.Tag = stream.Blocks[i];
                 blockView.Nodes.Add(node);
@@ -1251,7 +1257,17 @@ namespace Mafia2Tool
 
         private void DeleteLineButtonPressed(object sender, System.EventArgs e)
         {
-            linesTree?.Nodes.Remove(linesTree.SelectedNode);
+            if (linesTree.SelectedNode?.Tag is not StreamLine lineToDelete) return;
+            TreeNode nodeToRemove = linesTree.SelectedNode;
+            TreeNode parentNode = nodeToRemove.Parent;
+            nodeToRemove.Remove();
+
+            var linesList = stream.Lines.ToList();
+            linesList.Remove(lineToDelete);
+
+            stream.Lines = linesList.ToArray();
+            UpdateStream();
+
             Text = Language.GetString("$STREAM_EDITOR_TITLE") + "*";
             bIsFileEdited = true;
         }
@@ -1710,6 +1726,29 @@ namespace Mafia2Tool
                     stream.Groups = groupsList.ToArray();
                 }
             }
+            Text = Language.GetString("$STREAM_EDITOR_TITLE") + "*";
+            bIsFileEdited = true;
+        }
+        private void DeleteBranchButtonPressed(object sender, EventArgs e)
+        {
+            if (linesTree.SelectedNode?.Tag is not StreamHeaderGroup headerGroup) return;
+
+            TreeNode branchNode = linesTree.SelectedNode;
+
+            var linesToRemove = branchNode.Nodes.Cast<TreeNode>()
+                .Select(n => n.Tag as StreamLine)
+                .Where(l => l != null)
+                .ToList();
+
+            branchNode.Remove();
+
+            var allLines = stream.Lines.ToList();
+            foreach (var line in linesToRemove)
+                allLines.Remove(line);
+
+            stream.Lines = allLines.ToArray();
+            UpdateStream();
+
             Text = Language.GetString("$STREAM_EDITOR_TITLE") + "*";
             bIsFileEdited = true;
         }
