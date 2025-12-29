@@ -1828,15 +1828,12 @@ namespace Mafia2Tool
                     string json = File.ReadAllText(ofd.FileName);
                     List<ExportedLine> importedLines = null;
 
-                    // Проверяем, массив это или объект
                     if (json.TrimStart().StartsWith("["))
                     {
-                        // Это массив линий
                         importedLines = JsonConvert.DeserializeObject<List<ExportedLine>>(json);
                     }
                     else
                     {
-                        // Это одна линия — обернём в список
                         var single = JsonConvert.DeserializeObject<ExportedLine>(json);
                         importedLines = new List<ExportedLine> { single };
                     }
@@ -1847,7 +1844,6 @@ namespace Mafia2Tool
                         return;
                     }
 
-                    // Найти целевую ветку
                     TreeNode targetNode = null;
                     if (linesTree.SelectedNode?.Tag is StreamHeaderGroup)
                     {
@@ -1860,7 +1856,6 @@ namespace Mafia2Tool
 
                     if (targetNode == null)
                     {
-                        // Создать новую ветку
                         var newHeader = new StreamHeaderGroup { HeaderName = "Imported_Lines" };
                         targetNode = new TreeNode(newHeader.HeaderName) { Tag = newHeader };
                         linesTree.Nodes.Add(targetNode);
