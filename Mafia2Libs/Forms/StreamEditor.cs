@@ -1136,78 +1136,30 @@ namespace Mafia2Tool
 
         private void ExportBranch(object sender, System.EventArgs e)
         {
-            TreeNode selectedNode = linesTree.SelectedNode;
-            if (selectedNode?.Tag == null)
+            if (linesTree.SelectedNode?.Tag is not StreamHeaderGroup headerGroup)
             {
-                MessageBox.Show("Select a branch or a line to export.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Select a branch (StreamHeaderGroup) to export.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-
-            if (selectedNode.Tag is StreamLine line)
+            var branch = new ExportedBranch
             {
-                var exportedLine = new ExportedLine
-                {
-                    Name = line.Name,
-                    LoadType = line.LoadType,
-                    Flags = line.Flags,
-                    Unk10 = line.Unk10,
-                    Unk11 = line.Unk11,
-                    Unk5 = line.Unk5,
-                    Unk12 = line.Unk12,
-                    Unk13 = line.Unk13,
-                    Unk14 = line.Unk14,
-                    Unk15 = line.Unk15,
-                    LoadList = line.loadList?.Select(l => new ExportedLoader
+                Header = headerGroup,
+                Lines = linesTree.SelectedNode.Nodes.Cast<TreeNode>().Select(n =>
                     {
-                        LoadType = l.LoadType,
-                        Path = l.Path,
-                        Entity = l.Entity,
-                        start = l.start,
-                        end = l.end,
-                        Type = l.Type.ToString(),
-                        LoaderSubID = l.LoaderSubID,
-                        LoaderID = l.LoaderID,
-                        AssignedGroup = l.AssignedGroup,
-                        PreferredGroup = l.PreferredGroup
-                    }).ToList() ?? new List<ExportedLoader>()
-                };
-
-                using (SaveFileDialog sfd = new SaveFileDialog())
-                {
-                    sfd.Filter = "JSON Files (*.json)|*.json";
-                    string safeName = string.Join("_", line.Name.Split(Path.GetInvalidFileNameChars(), StringSplitOptions.RemoveEmptyEntries));
-                    sfd.FileName = $"Line_{safeName}.json";
-                    if (sfd.ShowDialog() == DialogResult.OK)
-                    {
-                        string json = JsonConvert.SerializeObject(exportedLine, Formatting.Indented);
-                        File.WriteAllText(sfd.FileName, json);
-                        MessageBox.Show("The selected line was successfully exported.", "Export", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    }
-                }
-                return;
-            }
-
-            if (selectedNode.Tag is StreamHeaderGroup headerGroup)
-            {
-                var branch = new ExportedBranch
-                {
-                    Header = headerGroup,
-                    Lines = selectedNode.Nodes.Cast<TreeNode>().Select(n =>
-                    {
-                        var ln = n.Tag as StreamLine;
+                        var line = n.Tag as StreamLine;
                         return new ExportedLine
                         {
-                            Name = ln.Name,
-                            LoadType = ln.LoadType,
-                            Flags = ln.Flags,
-                            Unk10 = ln.Unk10,
-                            Unk11 = ln.Unk11,
-                            Unk5 = ln.Unk5,
-                            Unk12 = ln.Unk12,
-                            Unk13 = ln.Unk13,
-                            Unk14 = ln.Unk14,
-                            Unk15 = ln.Unk15,
-                            LoadList = ln.loadList?.Select(l => new ExportedLoader
+                            Name = line.Name,
+                            LoadType = line.LoadType,
+                            Flags = line.Flags,
+                            Unk10 = line.Unk10,
+                            Unk11 = line.Unk11,
+                            Unk5 = line.Unk5,
+                            Unk12 = line.Unk12,
+                            Unk13 = line.Unk13,
+                            Unk14 = line.Unk14,
+                            Unk15 = line.Unk15,
+                            LoadList = line.LoadList?.Select(l => new ExportedLoader
                             {
                                 LoadType = l.LoadType,
                                 Path = l.Path,
@@ -1222,114 +1174,39 @@ namespace Mafia2Tool
                             }).ToList() ?? new List<ExportedLoader>()
                         };
                     }).ToList()
-                };
-
-                using (SaveFileDialog sfd = new SaveFileDialog())
+            };
+            using (SaveFileDialog sfd = new SaveFileDialog())
+            {
+                sfd.Filter = "JSON Files (*.json)|*.json";
+                sfd.FileName = headerGroup.HeaderName + ".json";
+                if (sfd.ShowDialog() == DialogResult.OK)
                 {
-                    sfd.Filter = "JSON Files (*.json)|*.json";
-                    sfd.FileName = headerGroup.HeaderName + ".json";
-                    if (sfd.ShowDialog() == DialogResult.OK)
-                    {
-                        string json = JsonConvert.SerializeObject(branch, Formatting.Indented);
-                        File.WriteAllText(sfd.FileName, json);
-                        MessageBox.Show("The branch was successfully exported.", "Export", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    }
+                    string json = JsonConvert.SerializeObject(branch, Formatting.Indented);
+                    File.WriteAllText(sfd.FileName, json);
+                    MessageBox.Show("The branch was successfully exported.", "Export", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
-                return;
             }
-            MessageBox.Show("Unsupported selection type.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
 
         private void ImportBranch(object sender, System.EventArgs e)
         {
-            TreeNode selectedNode = linesTree.SelectedNode;
-            if (selectedNode == null || selectedNode.Tag == null)
-            {
-                MessageBox.Show("Select a branch or a line inside a branch to import into.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
             using (OpenFileDialog ofd = new OpenFileDialog())
             {
                 ofd.Filter = "JSON Files (*.json)|*.json";
                 if (ofd.ShowDialog() != DialogResult.OK) return;
                 string json = File.ReadAllText(ofd.FileName);
-
                 try
                 {
-                    if (json.TrimStart().StartsWith("{") && json.Contains("\"Header\""))
+                    var imported = JsonConvert.DeserializeObject<ExportedBranch>(json);
+                    if (imported == null || imported.Header == null)
                     {
-                        var imported = JsonConvert.DeserializeObject<ExportedBranch>(json);
-                        if (imported?.Header == null)
-                        {
-                            MessageBox.Show("Invalid branch file.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            return;
-                        }
-
-                        TreeNode newHeaderNode = new TreeNode(imported.Header.HeaderName);
-                        newHeaderNode.Tag = imported.Header;
-                        foreach (var importedLine in imported.Lines)
-                        {
-                            var line = new StreamLine
-                            {
-                                Name = importedLine.Name,
-                                LoadType = importedLine.LoadType,
-                                Flags = importedLine.Flags,
-                                Unk10 = importedLine.Unk10,
-                                Unk11 = importedLine.Unk11,
-                                Unk5 = importedLine.Unk5,
-                                Unk12 = importedLine.Unk12,
-                                Unk13 = importedLine.Unk13,
-                                Unk14 = importedLine.Unk14,
-                                Unk15 = importedLine.Unk15,
-                                loadList = importedLine.LoadList.Select(l => new StreamMapLoader.StreamLoader
-                                {
-                                    LoadType = l.LoadType,
-                                    Path = l.Path,
-                                    Entity = l.Entity,
-                                    start = l.start,
-                                    end = l.end,
-                                    Type = Enum.TryParse(l.Type, out GroupTypes type) ? type : GroupTypes.Null,
-                                    LoaderSubID = l.LoaderSubID,
-                                    LoaderID = l.LoaderID,
-                                    AssignedGroup = l.AssignedGroup,
-                                    PreferredGroup = l.PreferredGroup
-                                }).ToArray()
-                            };
-                            TreeNode lineNode = new TreeNode(line.Name) { Tag = line };
-                            newHeaderNode.Nodes.Add(lineNode);
-                        }
-                        linesTree.Nodes.Add(newHeaderNode);
-                        linesTree.ExpandAll();
+                        MessageBox.Show("Incorrect branch file.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
                     }
-                    else if (json.TrimStart().StartsWith("{") && json.Contains("\"LoadList\"") && !json.Contains("\"Header\""))
+                    TreeNode newHeaderNode = new TreeNode(imported.Header.HeaderName);
+                    newHeaderNode.Tag = imported.Header;
+                    foreach (var importedLine in imported.Lines)
                     {
-                        var importedLine = JsonConvert.DeserializeObject<ExportedLine>(json);
-                        if (importedLine == null)
-                        {
-                            MessageBox.Show("Invalid line file.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            return;
-                        }
-                        StreamHeaderGroup targetHeader = null;
-                        TreeNode targetParentNode = null;
-
-                        if (selectedNode.Tag is StreamHeaderGroup header)
-                        {
-                            targetHeader = header;
-                            targetParentNode = selectedNode;
-                        }
-                        else if (selectedNode.Tag is StreamLine && selectedNode.Parent?.Tag is StreamHeaderGroup parentHeader)
-                        {
-                            targetHeader = parentHeader;
-                            targetParentNode = selectedNode.Parent;
-                        }
-
-                        if (targetHeader == null)
-                        {
-                            MessageBox.Show("Cannot determine target branch for import.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                            return;
-                        }
-
                         var line = new StreamLine
                         {
                             Name = importedLine.Name,
@@ -1342,14 +1219,13 @@ namespace Mafia2Tool
                             Unk13 = importedLine.Unk13,
                             Unk14 = importedLine.Unk14,
                             Unk15 = importedLine.Unk15,
-                            Group = targetHeader.HeaderName,
                             loadList = importedLine.LoadList.Select(l => new StreamMapLoader.StreamLoader
                             {
                                 LoadType = l.LoadType,
                                 Path = l.Path,
                                 Entity = l.Entity,
-                                start = l.start,
-                                end = l.end,
+                                start = (int)l.start,
+                                end = (int)l.end,
                                 Type = Enum.TryParse(l.Type, out GroupTypes type) ? type : GroupTypes.Null,
                                 LoaderSubID = l.LoaderSubID,
                                 LoaderID = l.LoaderID,
@@ -1357,24 +1233,18 @@ namespace Mafia2Tool
                                 PreferredGroup = l.PreferredGroup
                             }).ToArray()
                         };
-
                         TreeNode lineNode = new TreeNode(line.Name) { Tag = line };
-                        targetParentNode.Nodes.Add(lineNode);
-                        linesTree.SelectedNode = lineNode; 
+                        newHeaderNode.Nodes.Add(lineNode);
                     }
-                    else
-                    {
-                        MessageBox.Show("Unrecognized JSON format.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
-
+                    linesTree.Nodes.Add(newHeaderNode);
+                    linesTree.ExpandAll();
                     Text = Language.GetString("$STREAM_EDITOR_TITLE") + "*";
                     bIsFileEdited = true;
-                    MessageBox.Show("Import completed successfully.", "Import", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("\r\nThe branch was successfully imported.", "Import", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Import error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Error Import: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
