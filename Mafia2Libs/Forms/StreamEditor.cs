@@ -1196,10 +1196,17 @@ namespace Mafia2Tool
 
         private void ImportBranch(object sender, System.EventArgs e)
         {
+            if (linesTree.SelectedNode?.Tag is not StreamHeaderGroup headerGroup)
+            {
+                MessageBox.Show("Select a branch (StreamHeaderGroup) to export.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             using (OpenFileDialog ofd = new OpenFileDialog())
             {
                 ofd.Filter = "JSON Files (*.json)|*.json";
                 if (ofd.ShowDialog() != DialogResult.OK) return;
+
                 string json = File.ReadAllText(ofd.FileName);
                 try
                 {
@@ -1209,8 +1216,42 @@ namespace Mafia2Tool
                         MessageBox.Show("Incorrect branch file.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
+
+                    var preferredGroups = new HashSet<string>();
+                    foreach (var line in imported.Lines)
+                    {
+                        foreach (var loader in line.LoadList)
+                        {
+                            if (!string.IsNullOrEmpty(loader.PreferredGroup))
+                                preferredGroups.Add(loader.PreferredGroup);
+                        }
+                    }
+
+                    var existingGroupNames = groupTree.Nodes.Cast<TreeNode>()
+                        .Select(n => (n.Tag as StreamGroup)?.Name)
+                        .Where(n => !string.IsNullOrEmpty(n))
+                        .ToHashSet();
+
+                    foreach (var groupName in preferredGroups)
+                    {
+                        if (!existingGroupNames.Contains(groupName))
+                        {
+                            var newGroup = new StreamGroup
+                            {
+                                Name = groupName,
+                                Type = GroupTypes.Null
+                            };
+                            TreeNode node = new TreeNode($"[{groupTree.Nodes.Count}] {groupName} (0)")
+                            {
+                                Tag = newGroup
+                            };
+                            groupTree.Nodes.Add(node);
+                        }
+                    }
+
                     TreeNode newHeaderNode = new TreeNode(imported.Header.HeaderName);
                     newHeaderNode.Tag = imported.Header;
+
                     foreach (var importedLine in imported.Lines)
                     {
                         var line = new StreamLine
@@ -1230,23 +1271,29 @@ namespace Mafia2Tool
                                 LoadType = l.LoadType,
                                 Path = l.Path,
                                 Entity = l.Entity,
-                                start = (int)l.start,
-                                end = (int)l.end,
+                                start = l.start,
+                                end = l.end,
+                                // ⚠️ Сброс групп
+                                AssignedGroup = "",
+                                PreferredGroup = l.PreferredGroup,
                                 Type = Enum.TryParse(l.Type, out GroupTypes type) ? type : GroupTypes.Null,
                                 LoaderSubID = l.LoaderSubID,
-                                LoaderID = l.LoaderID,
-                                AssignedGroup = l.AssignedGroup,
-                                PreferredGroup = l.PreferredGroup
+                                LoaderID = l.LoaderID
                             }).ToArray()
                         };
                         TreeNode lineNode = new TreeNode(line.Name) { Tag = line };
                         newHeaderNode.Nodes.Add(lineNode);
                     }
+
                     linesTree.Nodes.Add(newHeaderNode);
                     linesTree.ExpandAll();
+
+                    // ⚠️ Обновляем структуру загрузчиков один раз
+                    UpdateStream();
+
                     Text = Language.GetString("$STREAM_EDITOR_TITLE") + "*";
                     bIsFileEdited = true;
-                    MessageBox.Show("\r\nThe branch was successfully imported.", "Import", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("The branch was successfully imported.", "Import", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
                 {
@@ -1652,14 +1699,43 @@ namespace Mafia2Tool
             {
                 ofd.Filter = "JSON Files (*.json)|*.json";
                 if (ofd.ShowDialog() != DialogResult.OK) return;
+
                 string json = File.ReadAllText(ofd.FileName);
                 try
                 {
                     var importedBranches = JsonConvert.DeserializeObject<List<ExportedBranch>>(json);
-                    if (importedBranches == null)
+                    if (importedBranches == null || importedBranches.Count == 0)
                     {
-                        MessageBox.Show("Incorrect file format.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("Incorrect file format or no data found.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
+                    }
+                    var preferredGroups = new HashSet<string>();
+                    foreach (var branch in importedBranches)
+                    {
+                        foreach (var line in branch.Lines)
+                        {
+                            foreach (var loader in line.LoadList)
+                            {
+                                if (!string.IsNullOrEmpty(loader.PreferredGroup))
+                                    preferredGroups.Add(loader.PreferredGroup);
+                            }
+                        }
+                    }
+
+                    var existingGroups = groupTree.Nodes.Cast<TreeNode>()
+                        .Select(n => (n.Tag as StreamGroup)?.Name)
+                        .Where(name => !string.IsNullOrEmpty(name))
+                        .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+                    foreach (var groupName in preferredGroups)
+                    {
+                        if (!existingGroups.Contains(groupName))
+                        {
+                            var newGroup = new StreamGroup { Name = groupName, Type = GroupTypes.Null };
+                            var node = new TreeNode($"[{groupTree.Nodes.Count}] {groupName} (0)") { Tag = newGroup };
+                            groupTree.Nodes.Add(node);
+                            existingGroups.Add(groupName);
+                        }
                     }
                     foreach (var branch in importedBranches)
                     {
@@ -1667,6 +1743,7 @@ namespace Mafia2Tool
                         {
                             Tag = branch.Header
                         };
+
                         foreach (var importedLine in branch.Lines)
                         {
                             var line = new StreamLine
@@ -1681,7 +1758,7 @@ namespace Mafia2Tool
                                 Unk13 = importedLine.Unk13,
                                 Unk14 = importedLine.Unk14,
                                 Unk15 = importedLine.Unk15,
-                                loadList = importedLine.LoadList.Select(l => new StreamMapLoader.StreamLoader
+                                loadList = importedLine.LoadList?.Select(l => new StreamMapLoader.StreamLoader
                                 {
                                     LoadType = l.LoadType,
                                     Path = l.Path,
@@ -1691,16 +1768,21 @@ namespace Mafia2Tool
                                     Type = Enum.TryParse(l.Type, out GroupTypes type) ? type : GroupTypes.Null,
                                     LoaderSubID = l.LoaderSubID,
                                     LoaderID = l.LoaderID,
-                                    AssignedGroup = l.AssignedGroup,
+                                    AssignedGroup = "",
                                     PreferredGroup = l.PreferredGroup
-                                }).ToArray()
+                                }).ToArray() ?? new StreamLoader[0]
                             };
+
                             TreeNode lineNode = new TreeNode(line.Name) { Tag = line };
                             newHeaderNode.Nodes.Add(lineNode);
                         }
+
                         linesTree.Nodes.Add(newHeaderNode);
                     }
+
                     linesTree.ExpandAll();
+                    UpdateStream(); 
+
                     Text = Language.GetString("$STREAM_EDITOR_TITLE") + "*";
                     bIsFileEdited = true;
                     MessageBox.Show("All Stream Lines successfully imported.", "Import", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -1729,6 +1811,7 @@ namespace Mafia2Tool
             Text = Language.GetString("$STREAM_EDITOR_TITLE") + "*";
             bIsFileEdited = true;
         }
+
         private void DeleteBranchButtonPressed(object sender, EventArgs e)
         {
             if (linesTree.SelectedNode?.Tag is not StreamHeaderGroup headerGroup) return;
@@ -1769,6 +1852,7 @@ namespace Mafia2Tool
             Text = Language.GetString("$STREAM_EDITOR_TITLE") + "*";
             bIsFileEdited = true;
         }
+
         private void ExportSelectedLine(object sender, EventArgs e)
         {
             if (linesTree.SelectedNode?.Tag is not StreamLine line)
@@ -1827,7 +1911,6 @@ namespace Mafia2Tool
                 {
                     string json = File.ReadAllText(ofd.FileName);
                     List<ExportedLine> importedLines = null;
-
                     if (json.TrimStart().StartsWith("["))
                     {
                         importedLines = JsonConvert.DeserializeObject<List<ExportedLine>>(json);
@@ -1842,6 +1925,39 @@ namespace Mafia2Tool
                     {
                         MessageBox.Show("No lines found in file.", "Import", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
+                    }
+
+                    var preferredGroups = new HashSet<string>();
+                    foreach (var impLine in importedLines)
+                    {
+                        foreach (var loader in impLine.LoadList)
+                        {
+                            if (!string.IsNullOrEmpty(loader.PreferredGroup))
+                                preferredGroups.Add(loader.PreferredGroup);
+                        }
+                    }
+
+                    var existingGroupNames = groupTree.Nodes.Cast<TreeNode>()
+                        .Select(n => (n.Tag as StreamGroup)?.Name)
+                        .Where(n => !string.IsNullOrEmpty(n))
+                        .ToHashSet();
+
+                    foreach (var groupName in preferredGroups)
+                    {
+                        if (!existingGroupNames.Contains(groupName))
+                        {
+                            var newGroup = new StreamGroup
+                            {
+                                Name = groupName,
+                                Type = GroupTypes.Null
+                            };
+                            TreeNode node = new TreeNode($"[{groupTree.Nodes.Count}] {groupName} (0)")
+                            {
+                                Tag = newGroup
+                            };
+                            groupTree.Nodes.Add(node);
+                            existingGroupNames.Add(groupName);
+                        }
                     }
 
                     TreeNode targetNode = null;
@@ -1882,11 +1998,11 @@ namespace Mafia2Tool
                                 Entity = l.Entity,
                                 start = l.start,
                                 end = l.end,
+                                AssignedGroup = "",
+                                PreferredGroup = l.PreferredGroup,
                                 Type = Enum.TryParse(l.Type, out GroupTypes type) ? type : GroupTypes.Null,
                                 LoaderSubID = l.LoaderSubID,
-                                LoaderID = l.LoaderID,
-                                AssignedGroup = l.AssignedGroup,
-                                PreferredGroup = l.PreferredGroup
+                                LoaderID = l.LoaderID
                             }).ToArray() ?? new StreamLoader[0]
                         };
 
@@ -1897,6 +2013,9 @@ namespace Mafia2Tool
                     targetNode.Expand();
                     Text = Language.GetString("$STREAM_EDITOR_TITLE") + "*";
                     bIsFileEdited = true;
+
+                    UpdateStream();
+
                     MessageBox.Show($"{importedLines.Count} line(s) imported successfully.", "Import", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
