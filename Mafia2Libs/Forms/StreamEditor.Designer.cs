@@ -46,6 +46,7 @@ namespace Mafia2Tool
             exitToolStripMenuItem = new ToolStripMenuItem();
             toolStripDropDownButton1 = new ToolStripDropDownButton();
             addBranchToolStripMenuItem = new ToolStripMenuItem();
+            deleteBranchToolStripMenuItem = new ToolStripMenuItem();
             toolStripMenuItem2 = new ToolStripMenuItem();
             exportBranchToolStripMenuItem = new ToolStripMenuItem();
             importAllLinesToolStripMenuItem = new ToolStripMenuItem();
@@ -65,7 +66,8 @@ namespace Mafia2Tool
             StreamBlocksPage = new TabPage();
             blockView = new Mafia2Tool.Controls.MTreeView();
             SearchBox = new TextBox();
-            deleteBranchToolStripMenuItem = new ToolStripMenuItem();
+            importLineToolStripMenuItem = new ToolStripMenuItem();
+            exportLineToolStripMenuItem = new ToolStripMenuItem();
             LineContextStrip.SuspendLayout();
             ToolStrip.SuspendLayout();
             tabControl.SuspendLayout();
@@ -181,7 +183,7 @@ namespace Mafia2Tool
             // toolStripDropDownButton1
             // 
             toolStripDropDownButton1.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            toolStripDropDownButton1.DropDownItems.AddRange(new ToolStripItem[] { addBranchToolStripMenuItem, deleteBranchToolStripMenuItem, toolStripMenuItem2, exportBranchToolStripMenuItem, importAllLinesToolStripMenuItem, exportAllLinesToolStripMenuItem, removeAllLinesToolStripMenuItem });
+            toolStripDropDownButton1.DropDownItems.AddRange(new ToolStripItem[] { addBranchToolStripMenuItem, deleteBranchToolStripMenuItem, toolStripMenuItem2, exportBranchToolStripMenuItem, importAllLinesToolStripMenuItem, exportAllLinesToolStripMenuItem, removeAllLinesToolStripMenuItem, importLineToolStripMenuItem, exportLineToolStripMenuItem });
             toolStripDropDownButton1.Image = (System.Drawing.Image)resources.GetObject("toolStripDropDownButton1.Image");
             toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             toolStripDropDownButton1.Name = "toolStripDropDownButton1";
@@ -194,6 +196,13 @@ namespace Mafia2Tool
             addBranchToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             addBranchToolStripMenuItem.Text = "Add Branch";
             addBranchToolStripMenuItem.Click += Button_CreateLineGroup_Click;
+            // 
+            // deleteBranchToolStripMenuItem
+            // 
+            deleteBranchToolStripMenuItem.Name = "deleteBranchToolStripMenuItem";
+            deleteBranchToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            deleteBranchToolStripMenuItem.Text = "Delete Branch";
+            deleteBranchToolStripMenuItem.Click += DeleteBranchButtonPressed;
             // 
             // toolStripMenuItem2
             // 
@@ -364,12 +373,19 @@ namespace Mafia2Tool
             SearchBox.TabIndex = 28;
             SearchBox.KeyPress += OnKeyPressed;
             // 
-            // deleteBranchToolStripMenuItem
+            // importLineToolStripMenuItem
             // 
-            deleteBranchToolStripMenuItem.Name = "deleteBranchToolStripMenuItem";
-            deleteBranchToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            deleteBranchToolStripMenuItem.Text = "Delete Branch";
-            deleteBranchToolStripMenuItem.Click += DeleteBranchButtonPressed;
+            importLineToolStripMenuItem.Name = "importLineToolStripMenuItem";
+            importLineToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            importLineToolStripMenuItem.Text = "Import Line";
+            importLineToolStripMenuItem.Click += ImportLine;
+            // 
+            // exportLineToolStripMenuItem
+            // 
+            exportLineToolStripMenuItem.Name = "exportLineToolStripMenuItem";
+            exportLineToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            exportLineToolStripMenuItem.Text = "Export Line";
+            exportLineToolStripMenuItem.Click += ExportSelectedLine;
             // 
             // StreamEditor
             // 
@@ -432,5 +448,7 @@ namespace Mafia2Tool
         private ToolStripMenuItem addBranchToolStripMenuItem;
         private ToolStripMenuItem addStreamGroupToolStripMenuItem;
         private ToolStripMenuItem deleteBranchToolStripMenuItem;
+        private ToolStripMenuItem importLineToolStripMenuItem;
+        private ToolStripMenuItem exportLineToolStripMenuItem;
     }
 }

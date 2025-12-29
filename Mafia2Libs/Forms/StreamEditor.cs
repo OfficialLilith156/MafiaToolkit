@@ -1769,6 +1769,147 @@ namespace Mafia2Tool
             Text = Language.GetString("$STREAM_EDITOR_TITLE") + "*";
             bIsFileEdited = true;
         }
+        private void ExportSelectedLine(object sender, EventArgs e)
+        {
+            if (linesTree.SelectedNode?.Tag is not StreamLine line)
+            {
+                MessageBox.Show("Select a line to export.", "Export Line", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var exportedLine = new ExportedLine
+            {
+                Name = line.Name,
+                LoadType = line.LoadType,
+                Flags = line.Flags,
+                Unk10 = line.Unk10,
+                Unk11 = line.Unk11,
+                Unk5 = line.Unk5,
+                Unk12 = line.Unk12,
+                Unk13 = line.Unk13,
+                Unk14 = line.Unk14,
+                Unk15 = line.Unk15,
+                LoadList = line.loadList?.Select(l => new ExportedLoader
+                {
+                    LoadType = l.LoadType,
+                    Path = l.Path,
+                    Entity = l.Entity,
+                    start = l.start,
+                    end = l.end,
+                    Type = l.Type.ToString(),
+                    LoaderSubID = l.LoaderSubID,
+                    LoaderID = l.LoaderID,
+                    AssignedGroup = l.AssignedGroup,
+                    PreferredGroup = l.PreferredGroup
+                }).ToList() ?? new List<ExportedLoader>()
+            };
+
+            using (SaveFileDialog sfd = new SaveFileDialog())
+            {
+                sfd.Filter = "JSON Files (*.json)|*.json";
+                sfd.FileName = line.Name + ".json";
+                if (sfd.ShowDialog() == DialogResult.OK)
+                {
+                    string json = JsonConvert.SerializeObject(exportedLine, Formatting.Indented);
+                    File.WriteAllText(sfd.FileName, json);
+                    MessageBox.Show("Line exported successfully.", "Export", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+        }
+        private void ImportLine(object sender, EventArgs e)
+        {
+            using (OpenFileDialog ofd = new OpenFileDialog())
+            {
+                ofd.Filter = "JSON Files (*.json)|*.json";
+                if (ofd.ShowDialog() != DialogResult.OK) return;
+
+                try
+                {
+                    string json = File.ReadAllText(ofd.FileName);
+                    List<ExportedLine> importedLines = null;
+
+                    // Проверяем, массив это или объект
+                    if (json.TrimStart().StartsWith("["))
+                    {
+                        // Это массив линий
+                        importedLines = JsonConvert.DeserializeObject<List<ExportedLine>>(json);
+                    }
+                    else
+                    {
+                        // Это одна линия — обернём в список
+                        var single = JsonConvert.DeserializeObject<ExportedLine>(json);
+                        importedLines = new List<ExportedLine> { single };
+                    }
+
+                    if (importedLines == null || importedLines.Count == 0)
+                    {
+                        MessageBox.Show("No lines found in file.", "Import", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
+                    // Найти целевую ветку
+                    TreeNode targetNode = null;
+                    if (linesTree.SelectedNode?.Tag is StreamHeaderGroup)
+                    {
+                        targetNode = linesTree.SelectedNode;
+                    }
+                    else if (linesTree.SelectedNode?.Parent?.Tag is StreamHeaderGroup)
+                    {
+                        targetNode = linesTree.SelectedNode.Parent;
+                    }
+
+                    if (targetNode == null)
+                    {
+                        // Создать новую ветку
+                        var newHeader = new StreamHeaderGroup { HeaderName = "Imported_Lines" };
+                        targetNode = new TreeNode(newHeader.HeaderName) { Tag = newHeader };
+                        linesTree.Nodes.Add(targetNode);
+                    }
+
+                    foreach (var impLine in importedLines)
+                    {
+                        var line = new StreamLine
+                        {
+                            Name = impLine.Name,
+                            LoadType = impLine.LoadType,
+                            Flags = impLine.Flags,
+                            Unk10 = impLine.Unk10,
+                            Unk11 = impLine.Unk11,
+                            Unk5 = impLine.Unk5,
+                            Unk12 = impLine.Unk12,
+                            Unk13 = impLine.Unk13,
+                            Unk14 = impLine.Unk14,
+                            Unk15 = impLine.Unk15,
+                            loadList = impLine.LoadList?.Select(l => new StreamLoader
+                            {
+                                LoadType = l.LoadType,
+                                Path = l.Path,
+                                Entity = l.Entity,
+                                start = l.start,
+                                end = l.end,
+                                Type = Enum.TryParse(l.Type, out GroupTypes type) ? type : GroupTypes.Null,
+                                LoaderSubID = l.LoaderSubID,
+                                LoaderID = l.LoaderID,
+                                AssignedGroup = l.AssignedGroup,
+                                PreferredGroup = l.PreferredGroup
+                            }).ToArray() ?? new StreamLoader[0]
+                        };
+
+                        TreeNode lineNode = new TreeNode(line.Name) { Tag = line };
+                        targetNode.Nodes.Add(lineNode);
+                    }
+
+                    targetNode.Expand();
+                    Text = Language.GetString("$STREAM_EDITOR_TITLE") + "*";
+                    bIsFileEdited = true;
+                    MessageBox.Show($"{importedLines.Count} line(s) imported successfully.", "Import", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Import error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
     }
 
     public class StreamHeaderGroup
