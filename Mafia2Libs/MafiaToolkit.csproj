@@ -357,7 +357,7 @@
   </ItemGroup>
   <ItemGroup>
     <SplashScreen Include="Resources\Splash.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </SplashScreen>
   </ItemGroup>
   <PropertyGroup>
