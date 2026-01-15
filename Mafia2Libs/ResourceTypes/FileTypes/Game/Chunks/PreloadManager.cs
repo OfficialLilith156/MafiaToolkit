@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using Utils.Extensions;
+using System.ComponentModel;
 
 namespace ResourceTypes.CGame
 {
@@ -54,7 +55,9 @@ namespace ResourceTypes.CGame
 
     public class PreloadSlot
     {
-        public string Value { get; set; } = "";
+        //public string Value { get; set; } = "";
+        [Description("SDS search path directory (e.g., /sds/City/)")]
+        public string Path { get; set; } = "";
         public PreloadSlot()
         {
 
@@ -67,12 +70,12 @@ namespace ResourceTypes.CGame
 
         public void Read(MemoryStream ms)
         {
-            Value = ms.ReadString();
+            Path = ms.ReadString();
         }
 
         public void Write(MemoryStream ms)
         {
-            ms.WriteString(Value);
+            ms.WriteString(Path);
         }
     }
 }

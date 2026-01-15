@@ -1,6 +1,6 @@
 ﻿namespace Mafia2Tool
 {
-    partial class SdsConfigEditor
+    partial class CGameEditor
     {
         /// <summary>
         /// Required designer variable.
@@ -42,6 +42,9 @@
             toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             Button_ExpandAll = new System.Windows.Forms.ToolStripMenuItem();
             Button_CollapseAll = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            Button_AddSlot = new System.Windows.Forms.ToolStripMenuItem();
+            Button_DeleteSlot = new System.Windows.Forms.ToolStripMenuItem();
             ToolStrip_Main.SuspendLayout();
             SuspendLayout();
             //
@@ -110,7 +113,7 @@
             // Button_Tools
             //
             Button_Tools.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            Button_Tools.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { Button_ExportXml, Button_ImportXml, toolStripSeparator1, Button_ExpandAll, Button_CollapseAll });
+            Button_Tools.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { Button_ExportXml, Button_ImportXml, toolStripSeparator1, Button_ExpandAll, Button_CollapseAll, toolStripSeparator2, Button_AddSlot, Button_DeleteSlot });
             Button_Tools.ImageTransparentColor = System.Drawing.Color.Magenta;
             Button_Tools.Name = "Button_Tools";
             Button_Tools.Size = new System.Drawing.Size(61, 22);
@@ -119,37 +122,59 @@
             // Button_ExportXml
             //
             Button_ExportXml.Name = "Button_ExportXml";
-            Button_ExportXml.Size = new System.Drawing.Size(180, 22);
+            Button_ExportXml.Size = new System.Drawing.Size(200, 22);
             Button_ExportXml.Text = "$EXPORT_XML";
             Button_ExportXml.Click += Button_ExportXml_OnClick;
             //
             // Button_ImportXml
             //
             Button_ImportXml.Name = "Button_ImportXml";
-            Button_ImportXml.Size = new System.Drawing.Size(180, 22);
+            Button_ImportXml.Size = new System.Drawing.Size(200, 22);
             Button_ImportXml.Text = "$IMPORT_XML";
             Button_ImportXml.Click += Button_ImportXml_OnClick;
             //
             // toolStripSeparator1
             //
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            toolStripSeparator1.Size = new System.Drawing.Size(197, 6);
             //
             // Button_ExpandAll
             //
             Button_ExpandAll.Name = "Button_ExpandAll";
-            Button_ExpandAll.Size = new System.Drawing.Size(180, 22);
+            Button_ExpandAll.Size = new System.Drawing.Size(200, 22);
             Button_ExpandAll.Text = "$EXPAND_ALL";
             Button_ExpandAll.Click += Button_ExpandAll_OnClick;
             //
             // Button_CollapseAll
             //
             Button_CollapseAll.Name = "Button_CollapseAll";
-            Button_CollapseAll.Size = new System.Drawing.Size(180, 22);
+            Button_CollapseAll.Size = new System.Drawing.Size(200, 22);
             Button_CollapseAll.Text = "$COLLAPSE_ALL";
             Button_CollapseAll.Click += Button_CollapseAll_OnClick;
             //
-            // SdsConfigEditor
+            // toolStripSeparator2
+            //
+            toolStripSeparator2.Name = "toolStripSeparator2";
+            toolStripSeparator2.Size = new System.Drawing.Size(197, 6);
+            //
+            // Button_AddSlot
+            //
+            Button_AddSlot.Name = "Button_AddSlot";
+            Button_AddSlot.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N;
+            Button_AddSlot.Size = new System.Drawing.Size(200, 22);
+            Button_AddSlot.Text = "$CGAME_ADD_SLOT";
+            Button_AddSlot.Click += Button_AddSlot_OnClick;
+            //
+            // Button_DeleteSlot
+            //
+            Button_DeleteSlot.Name = "Button_DeleteSlot";
+            Button_DeleteSlot.ShortcutKeys = System.Windows.Forms.Keys.Delete;
+            Button_DeleteSlot.Size = new System.Drawing.Size(200, 22);
+            Button_DeleteSlot.Text = "$CGAME_DELETE_SLOT";
+            Button_DeleteSlot.Enabled = false;
+            Button_DeleteSlot.Click += Button_DeleteSlot_OnClick;
+            //
+            // CGameEditor
             //
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -158,9 +183,9 @@
             Controls.Add(PropertyGrid_Main);
             Controls.Add(TreeView_Main);
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            Name = "SdsConfigEditor";
-            Text = "$SDSCONFIG_EDITOR_TITLE";
-            FormClosing += SdsConfigEditor_Closing;
+            Name = "CGameEditor";
+            Text = "$CGAME_EDITOR_TITLE";
+            FormClosing += CGameEditor_Closing;
             ToolStrip_Main.ResumeLayout(false);
             ToolStrip_Main.PerformLayout();
             ResumeLayout(false);
@@ -182,5 +207,8 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem Button_ExpandAll;
         private System.Windows.Forms.ToolStripMenuItem Button_CollapseAll;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripMenuItem Button_AddSlot;
+        private System.Windows.Forms.ToolStripMenuItem Button_DeleteSlot;
     }
 }

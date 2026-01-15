@@ -426,8 +426,15 @@ namespace Rendering.Graphics
 
         public override void Shutdown()
         {
-            LODs[0].Vertices = null;
-            LODs[0].Indices = null;
+            if (LODs != null)
+            {
+                for (int i = 0; i < LODs.Length; i++)
+                {
+                    LODs[i].Vertices = null;
+                    LODs[i].Indices = null;
+                    LODs[i].ModelParts = null;
+                }
+            }
             vertexBuffer?.Dispose();
             vertexBuffer = null;
             indexBuffer?.Dispose();

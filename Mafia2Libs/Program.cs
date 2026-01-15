@@ -45,6 +45,7 @@ namespace Mafia2Tool
             CheckINIExists();
             ToolkitSettings.ReadINI();
 
+            Mafia2Tool.Forms.BinEditorRegistration.Initialize();
             GameStorage.Instance.InitStorage();
             Language.ReadLanguageXML();
         

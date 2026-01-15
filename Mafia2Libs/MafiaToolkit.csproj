@@ -157,7 +157,7 @@
     <Compile Update="Forms\ATPEditor.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Forms\SDSConfigEditor.cs">
+    <Compile Update="Forms\SdsConfigEditor.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="Forms\RotateAIGroupForm.cs">

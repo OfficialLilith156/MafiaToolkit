@@ -41,7 +41,7 @@ namespace Rendering.Graphics
             //VideoCardMemory = adapterDescription.DedicatedVideoMemory >> 10 >> 10;
             //VideoCardDescription = adapterDescription.Description.Trim('\0');
             monitor.Dispose();
-            adapter.Dispose();
+            //adapter.Dispose();
 
             var swapChainDesc = new SwapChainDescription()
             {
@@ -55,10 +55,13 @@ namespace Rendering.Graphics
                 SwapEffect = SwapEffect.Discard
             };
 
+            adapter.Dispose();
             // Create Device and DeviceContext
             ID3D11Device TempDevice = null;
             ID3D11DeviceContext TempDeviceContext = null;
-            D3D11.D3D11CreateDevice(adapter, DriverType.Hardware, DeviceCreationFlags.None, null, out TempDevice, out TempDeviceContext);
+            //D3D11.D3D11CreateDevice(adapter, DriverType.Hardware, DeviceCreationFlags.None, null, out TempDevice, out TempDeviceContext);
+            //adapter.Dispose();
+            D3D11.D3D11CreateDevice(null, DriverType.Hardware, DeviceCreationFlags.None, null, out TempDevice, out TempDeviceContext);
 
             Device = TempDevice.QueryInterface<ID3D11Device1>();
             DeviceContext = TempDeviceContext.QueryInterface<ID3D11DeviceContext1>();
