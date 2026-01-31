@@ -93,14 +93,16 @@ namespace Mafia2Tool.Forms
             }
         }
 
-        private CutsceneEntityNames GetEntityNamesForCutscene(string cutsceneName)
+        private CutsceneEntityNames GetEntityNamesForCutscene(string cutsceneName, bool isSound = false)
         {
-            if (!entityNamesByCutscene.ContainsKey(cutsceneName))
+            string key = $"{cutsceneName}_{(isSound ? "sound" : "game")}";
+
+            if (!entityNamesByCutscene.ContainsKey(key))
             {
-                entityNamesByCutscene[cutsceneName] = CutsceneEntityNames.Load(cutsceneName);
+                entityNamesByCutscene[key] = CutsceneEntityNames.Load(cutsceneName, isSound);
             }
 
-            return entityNamesByCutscene[cutsceneName];
+            return entityNamesByCutscene[key];
         }
 
         private string GetDefaultEntityName(AnimEntityWrapper entity, int index, AnimEntityTypes entityType)
@@ -160,10 +162,11 @@ namespace Mafia2Tool.Forms
                     var Asset = Assets.entities[i];
                     AnimEntityTypes entityType = Asset.GetEntityType();
 
-                    var entityNames = GetEntityNamesForCutscene(Cutscene.CutsceneName);
+
+                    var entityNames = GetEntityNamesForCutscene(Cutscene.CutsceneName, false);
 
                     string defaultName = GetDefaultEntityName(Asset, i, entityType);
-                    string displayName = entityNames.GetDisplayName(i, entityType, defaultName);
+                    string displayName = entityNames.GetDisplayName(i, entityType, defaultName, false);
 
                     TreeNode AssetNode = new TreeNode(displayName)
                     {
@@ -189,17 +192,16 @@ namespace Mafia2Tool.Forms
                     var Asset = Assets.EntityDefinitions[i];
                     AnimEntityTypes entityType = Asset.GetEntityType();
 
-                    var entityNames = GetEntityNamesForCutscene(Cutscene.CutsceneName);
+                    var entityNames = GetEntityNamesForCutscene(Cutscene.CutsceneName, true);
 
                     string defaultName = GetDefaultEntityName(Asset, i, entityType);
-                    string displayName = entityNames.GetDisplayName(i, entityType, defaultName);
+                    string displayName = entityNames.GetDisplayName(i, entityType, defaultName, true);
 
                     TreeNode AssetNode = new TreeNode(displayName)
                     {
                         ToolTipText = $"Index: {i}, Type: {entityType}, Original: {defaultName}"
                     };
                     AssetNode.Tag = Asset;
-
                     nodeInfoMap[AssetNode] = (Cutscene.CutsceneName, i, true);
 
                     AssetsParent.Nodes.Add(AssetNode);
@@ -209,14 +211,14 @@ namespace Mafia2Tool.Forms
 
             TreeView_Cutscene.Nodes.Add(CutsceneParent);
         }
+
         private void TreeView_Cutscene_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
         {
             if (e.Label != null && nodeInfoMap.ContainsKey(e.Node))
             {
                 var info = nodeInfoMap[e.Node];
-
-                var entityNames = GetEntityNamesForCutscene(info.cutsceneName);
-                entityNames.SetDisplayName(info.entityIndex, e.Label, info.cutsceneName);
+                var entityNames = GetEntityNamesForCutscene(info.cutsceneName, info.isSound);
+                entityNames.SetDisplayName(info.entityIndex, e.Label, info.cutsceneName, info.isSound);
 
                 e.Node.ToolTipText = $"Index: {info.entityIndex}, Custom Name: {e.Label}";
 
@@ -228,13 +230,14 @@ namespace Mafia2Tool.Forms
                 e.CancelEdit = true;
             }
         }
+
         private void ResetEntityNameToDefault(TreeNode node)
         {
             if (nodeInfoMap.ContainsKey(node))
             {
                 var info = nodeInfoMap[node];
-                var entityNames = GetEntityNamesForCutscene(info.cutsceneName);
-                entityNames.RemoveDisplayName(info.entityIndex, info.cutsceneName);
+                var entityNames = GetEntityNamesForCutscene(info.cutsceneName, info.isSound);
+                entityNames.RemoveDisplayName(info.entityIndex, info.cutsceneName, info.isSound);
                 Reload();
             }
         }
@@ -356,7 +359,7 @@ namespace Mafia2Tool.Forms
             var originalInfo = nodeInfoMap[TreeView_Cutscene.SelectedNode];
             int newIndex = originalInfo.entityIndex + 1;
 
-            var entityNames = GetEntityNamesForCutscene(originalInfo.cutsceneName);
+            var entityNames = GetEntityNamesForCutscene(originalInfo.cutsceneName, originalInfo.isSound);
             entityNames.InsertDisplayName(originalInfo.entityIndex, newIndex, originalInfo.cutsceneName);
 
             AnimEntityWrapper newEntity;
@@ -617,7 +620,7 @@ namespace Mafia2Tool.Forms
                 if (nodeInfoMap.ContainsKey(entityNode))
                 {
                     var info = nodeInfoMap[entityNode];
-                    var entityNames = GetEntityNamesForCutscene(info.cutsceneName);
+                    var entityNames = GetEntityNamesForCutscene(info.cutsceneName, info.isSound);
                     entityNames.ReindexAfterDeletion(info.entityIndex, info.cutsceneName);
                     nodeInfoMap.Remove(entityNode);
                 }
@@ -633,7 +636,7 @@ namespace Mafia2Tool.Forms
                 if (nodeInfoMap.ContainsKey(entityNode))
                 {
                     var info = nodeInfoMap[entityNode];
-                    var entityNames = GetEntityNamesForCutscene(info.cutsceneName);
+                    var entityNames = GetEntityNamesForCutscene(info.cutsceneName, info.isSound);
                     entityNames.ReindexAfterDeletion(info.entityIndex, info.cutsceneName);
                     nodeInfoMap.Remove(entityNode);
                 }
