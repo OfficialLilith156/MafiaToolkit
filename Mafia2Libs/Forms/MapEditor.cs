@@ -5321,61 +5321,120 @@ namespace Mafia2Tool
         private void CreateCollisionFromMeshButton_Click(object sender, EventArgs e)
         {
             var node = dSceneTree.SelectedNode;
-            if (node?.Tag is not FrameObjectBase frameObj)
+            if (node?.Tag == null)
             {
-                MessageBox.Show("Please select a valid mesh object.");
+                MessageBox.Show("Please select a valid mesh or collision object.");
                 return;
             }
-            if (frameObj is not (FrameObjectSingleMesh or FrameObjectModel))
+
+            MT_Collision mtCol = null;
+            string baseName = "unnamed";
+            Matrix4x4? worldTransform = null;
+            bool isFromExistingCollision = false;
+            if (node.Tag is FrameObjectBase frameObj && frameObj is (FrameObjectSingleMesh or FrameObjectModel))
             {
-                MessageBox.Show("Only StaticMesh or RiggedMesh can be converted to collision.");
-                return;
-            }
-            FrameGeometry geom = (frameObj as FrameObjectSingleMesh)?.Geometry;
-            if (geom == null || geom.LOD.Length == 0)
-            {
-                MessageBox.Show("No geometry found.");
-                return;
-            }
-            FrameLOD lod = geom.LOD[0];
-            VertexBuffer vbuf = SceneData.VertexBufferPool.GetBuffer(lod.VertexBufferRef.Hash);
-            IndexBuffer ibuf = SceneData.IndexBufferPool.GetBuffer(lod.IndexBufferRef.Hash);
-            if (vbuf == null || ibuf == null)
-            {
-                MessageBox.Show("Failed to load vertex/index buffers.");
-                return;
-            }
-            int vertexSize = 0;
-            Dictionary<VertexFlags, FrameLOD.VertexOffset> offsets = lod.GetVertexOffsets(out vertexSize);
-            List<Vector3> vertices = new List<Vector3>();
-            Matrix4x4 worldTransform = frameObj.LocalTransform;
-            Quaternion rotation = worldTransform.GetRotation();
-            Vector3 position = worldTransform.Translation;
-            for (int i = 0; i < lod.NumVerts; i++)
-            {
-                byte[] data = new byte[vertexSize];
-                Array.Copy(vbuf.Data, i * vertexSize, data, 0, vertexSize);
-                Vertex vtx = VertexTranslator.DecompressVertex(data, lod.VertexDeclaration, geom.DecompressionOffset, geom.DecompressionFactor, offsets);
-                vertices.Add(vtx.Position);
-            }
-            uint[] indices = ibuf.GetData();
-            MT_Collision mtCol = new MT_Collision();
-            mtCol.Vertices = vertices.ToArray();
-            mtCol.Indices = indices;
-            ushort materialIndex = PromptCollisionMaterial();
-            MT_FaceGroup faceGroup = new MT_FaceGroup
-            {
-                StartIndex = 0,
-                NumFaces = (uint)(indices.Length / 3),
-                Material = new MT_MaterialInstance
+                baseName = frameObj.Name.String;
+                worldTransform = frameObj.LocalTransform;
+                FrameGeometry geom = (frameObj as FrameObjectSingleMesh)?.Geometry;
+                if (geom == null || geom.LOD.Length == 0)
                 {
-                    Name = ((CollisionMaterials)materialIndex).ToString(),
-                    MaterialFlags = MT_MaterialInstanceFlags.IsCollision
+                    MessageBox.Show("No geometry found.");
+                    return;
                 }
-            };
-            mtCol.FaceGroups = new[] { faceGroup };
+                FrameLOD lod = geom.LOD[0];
+                VertexBuffer vbuf = SceneData.VertexBufferPool.GetBuffer(lod.VertexBufferRef.Hash);
+                IndexBuffer ibuf = SceneData.IndexBufferPool.GetBuffer(lod.IndexBufferRef.Hash);
+                if (vbuf == null || ibuf == null)
+                {
+                    MessageBox.Show("Failed to load vertex/index buffers.");
+                    return;
+                }
+                int vertexSize = 0;
+                Dictionary<VertexFlags, FrameLOD.VertexOffset> offsets = lod.GetVertexOffsets(out vertexSize);
+                List<Vector3> vertices = new();
+                for (int i = 0; i < lod.NumVerts; i++)
+                {
+                    byte[] data = new byte[vertexSize];
+                    Array.Copy(vbuf.Data, i * vertexSize, data, 0, vertexSize);
+                    Vertex vtx = VertexTranslator.DecompressVertex(data, lod.VertexDeclaration,
+                        geom.DecompressionOffset, geom.DecompressionFactor, offsets);
+                    vertices.Add(vtx.Position);
+                }
+                uint[] indices = ibuf.GetData();
+                ushort materialIndex = PromptCollisionMaterial();
+                mtCol = new MT_Collision
+                {
+                    Vertices = vertices.ToArray(),
+                    Indices = indices,
+                    FaceGroups = new[]
+                    {
+                new MT_FaceGroup
+                {
+                    StartIndex = 0,
+                    NumFaces = (uint)(indices.Length / 3),
+                    Material = new MT_MaterialInstance
+                    {
+                        Name = ((CollisionMaterials)materialIndex).ToString(),
+                        MaterialFlags = MT_MaterialInstanceFlags.IsCollision
+                    }
+                }
+            }
+                };
+            }
+            else if (node.Tag is Collision.CollisionModel existingColModel)
+            {
+                isFromExistingCollision = true;
+                baseName = $"copy_of_{existingColModel.Hash}";
+                var placements = SceneData.Collisions?.Placements.Where(p => p.Hash == existingColModel.Hash).ToList();
+                if (placements?.Count > 0)
+                {
+                    var firstPlacement = placements[0];
+                    worldTransform = firstPlacement.Transform;
+                }
+                else
+                {
+                    worldTransform = Matrix4x4.Identity;
+                }
+                TriangleMesh mesh = existingColModel.Mesh;
+                Vector3[] vertices = mesh.Vertices.ToArray();
+                uint[] indices = new uint[mesh.Triangles.Count * 3];
+                for (int i = 0; i < mesh.Triangles.Count; i++)
+                {
+                    indices[i * 3 + 0] = mesh.Triangles[i].v0;
+                    indices[i * 3 + 1] = mesh.Triangles[i].v1;
+                    indices[i * 3 + 2] = mesh.Triangles[i].v2;
+                }
+                ushort materialIndex = PromptCollisionMaterial();
+                mtCol = new MT_Collision
+                {
+                    Vertices = vertices,
+                    Indices = indices,
+                    FaceGroups = new[]
+                    {
+                new MT_FaceGroup
+                {
+                    StartIndex = 0,
+                    NumFaces = (uint)(mesh.Triangles.Count),
+                    Material = new MT_MaterialInstance
+                    {
+                        Name = ((CollisionMaterials)materialIndex).ToString(),
+                        MaterialFlags = MT_MaterialInstanceFlags.IsCollision
+                    }
+                    }
+                    }
+                    };
+                }
+            else
+            {
+                MessageBox.Show("Selected object is not a mesh or collision model.");
+                return;
+            }
             CollisionModelBuilder builder = new CollisionModelBuilder();
-            Collision.CollisionModel colModel = builder.BuildFromMTCollision(frameObj.Name.String, mtCol);
+            string uniqueName = isFromExistingCollision
+                ? $"{baseName}_dup_{DateTime.Now.Ticks}"
+                : $"{baseName}_col_{DateTime.Now.Ticks}";
+
+            Collision.CollisionModel colModel = builder.BuildFromMTCollision(uniqueName, mtCol);
             if (SceneData.Collisions == null)
             {
                 SceneData.Collisions = new Collision();
@@ -5392,13 +5451,18 @@ namespace Mafia2Tool
                     Tag = colModel
                 };
                 dSceneTree.AddToTree(colNode, collisionRoot);
-                Quaternion rot = frameObj.LocalTransform.GetRotation();
-                Vector3 rotDegrees = QuaternionToEulerDegrees(rot);
+                Vector3 pos = worldTransform?.Translation ?? Vector3.Zero;
+                Vector3 rotDeg = Vector3.Zero;
+                if (worldTransform.HasValue)
+                {
+                    Quaternion rot = worldTransform.Value.GetRotation();
+                    rotDeg = QuaternionToEulerDegrees(rot);
+                }
                 var placement = new Collision.Placement
                 {
                     Hash = colModel.Hash,
-                    Position = frameObj.LocalTransform.Translation,
-                    RotationDegrees = rotDegrees
+                    Position = pos,
+                    RotationDegrees = rotDeg
                 };
                 SceneData.Collisions.Placements.Add(placement);
                 TreeNode instNode = new TreeNode("0")
