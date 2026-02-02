@@ -323,6 +323,18 @@ namespace Forms.Docking
             }
         }
 
+        public void RemoveFromTree(TreeNode node)
+        {
+            if (node != null && node.Parent != null)
+            {
+                node.Parent.Nodes.Remove(node);
+            }
+            else if (node != null)
+            {
+                TreeView_Explorer.Nodes.Remove(node);
+            }
+        }
+
         public TreeNode GetTreeNode(string TreeNodeKey, TreeNode ParentNode = null, bool bSearchChildren = false)
         {
             // Search for the node

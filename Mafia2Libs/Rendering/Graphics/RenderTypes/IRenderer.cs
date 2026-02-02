@@ -8,6 +8,7 @@ namespace Rendering.Graphics
     {
         protected BaseShader shader;
         protected bool bIsUpdatedNeeded;
+        protected bool bIsStatic = true;
         protected ID3D11Buffer indexBuffer;
         protected ID3D11Buffer vertexBuffer;
         protected ID3D11Buffer instanceBuffer;
@@ -18,6 +19,11 @@ namespace Rendering.Graphics
         public bool DoRenderInstancesOnly { get; set; }
         public Matrix4x4 Transform { get; protected set; }
         public BoundingBox BoundingBox { get; protected set; }
+
+        public bool RequiresBufferUpdate() => bIsUpdatedNeeded && !bIsStatic;
+
+        public void MarkDirty() => bIsUpdatedNeeded = true;
+        public void MarkClean() => bIsUpdatedNeeded = false;
 
         public abstract void Select();
         public abstract void Unselect();

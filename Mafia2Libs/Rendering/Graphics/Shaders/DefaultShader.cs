@@ -52,23 +52,25 @@ namespace Rendering.Graphics
             {     
                 HashName TextureFile = material.GetTextureByID("S000");
                 ID3D11ShaderResourceView[] ShaderTextures = new ID3D11ShaderResourceView[2];
-                if (TextureFile != null)
+                if (TextureFile != null && RenderStorageSingleton.Instance.TextureCache.ContainsKey(TextureFile.Hash))
                 {
                     ShaderTextures[0] = RenderStorageSingleton.Instance.TextureCache[TextureFile.Hash];
                 }
                 else
                 {
+                    // Use default texture if not found
                     ShaderTextures[0] = RenderStorageSingleton.Instance.TextureCache[0];
                 }
 
                 TextureFile = material.GetTextureByID("S001");
-                if (TextureFile != null)
+                if (TextureFile != null && RenderStorageSingleton.Instance.TextureCache.ContainsKey(TextureFile.Hash))
                 {
                     ShaderTextures[1] = RenderStorageSingleton.Instance.TextureCache[TextureFile.Hash];
                     extraParams.hasTangentSpace = 1;
                 }
                 else
                 {
+                    // Use default normal map if not found
                     ShaderTextures[1] = RenderStorageSingleton.Instance.TextureCache[1];
                     extraParams.hasTangentSpace = 0;
                 }

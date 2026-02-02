@@ -14,20 +14,45 @@ namespace Rendering.Graphics
 {
     public static class TextureLoader
     {
-        public static string ScenePath;
+        public static string ScenePath; // Keep for backward compatibility
+        private static System.Collections.Generic.Dictionary<string, string> sceneIDToPath =
+            new System.Collections.Generic.Dictionary<string, string>();
+        private static string currentSceneID = "";
+
+        public static void SetSceneContext(string sceneID, string scenePath)
+        {
+            sceneIDToPath[sceneID] = scenePath;
+            currentSceneID = sceneID;
+            ScenePath = scenePath; // Update legacy field
+        }
+
+        public static void RemoveSceneContext(string sceneID)
+        {
+            sceneIDToPath.Remove(sceneID);
+        }
+
         private static bool ThumbnailCallback()
         {
             return false;
         }
 
-        private static string GetTextureFromPath(string fileName, bool bAllowMIPs = true)
+        private static string GetTextureFromPath(string fileName, string sceneID = null, bool bAllowMIPs = true)
         {
             string path = "";
             bool bUseMIPs = bAllowMIPs && ToolkitSettings.UseMIPS;
 
+            // Determine which scene path to use
+            string activeSceneID = sceneID ?? currentSceneID;
+            string scenePath = ScenePath; // Default to legacy path
+
+            if (!string.IsNullOrEmpty(activeSceneID) && sceneIDToPath.ContainsKey(activeSceneID))
+            {
+                scenePath = sceneIDToPath[activeSceneID];
+            }
+
             if (!fileName.Contains(".ifl"))
             {
-                path = Path.Combine(ScenePath, fileName);
+                path = Path.Combine(scenePath, fileName);
                 if (File.Exists(path))
                 {
                     string mip = Path.Combine(ScenePath, "MIP_" + fileName);
@@ -148,7 +173,7 @@ namespace Rendering.Graphics
                     // If our storage doesn't contain a thumbnail, then we go ahead and produce another.
                     if (!RenderStorageSingleton.Instance.TextureThumbnails.TryGetValue(SamplerHash, out Thumbnail))
                     {
-                        TexturePath = GetTextureFromPath(TextureHash.String, false);
+                        TexturePath = GetTextureFromPath(TextureHash.String, null, false);
                     }
                 }
             }
