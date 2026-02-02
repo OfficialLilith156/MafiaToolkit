@@ -251,6 +251,15 @@ namespace Forms.Docking
             PropertyGrid.SelectedObject = currentObject;
         }
 
+        public void RefreshPropertyGrid()
+        {
+            if (currentObject != null)
+            {
+                SetTransformEdit();
+                PropertyGrid.Refresh();
+            }
+        }
+
         public void UpdateObject()
         {
             if (IsEntryReady && currentObject != null)

@@ -73,6 +73,11 @@ namespace Mafia2Tool
         private Dictionary<int, ActorEntry> RefIDToActorEntry = new Dictionary<int, ActorEntry>();
         private Dictionary<string, int> NamesAndDuplicationStore;
 
+        // Undo/Redo key state tracking
+        private bool undoKeyWasPressed = false;
+        private bool redoKeyWasPressed = false;
+        private bool bboxKeyWasPressed = false;
+
         public MapEditor(FileInfo info, SceneData sceneData)
         {
             SceneData = sceneData;
@@ -669,6 +674,55 @@ namespace Mafia2Tool
                 {
                     Graphics.SetGizmoMode(GizmoMode.Scale);
                 }
+            }
+
+            // Undo/Redo: Ctrl+Z, Ctrl+Y
+            if (Input.IsKeyDown(Keys.ControlKey))
+            {
+                if (Input.IsKeyDown(Keys.Z) && !undoKeyWasPressed)
+                {
+                    if (Graphics.Undo())
+                    {
+                        SyncGizmoToSelectedObject();
+                        dPropertyGrid.RefreshPropertyGrid();
+                    }
+                    undoKeyWasPressed = true;
+                }
+                else if (!Input.IsKeyDown(Keys.Z))
+                {
+                    undoKeyWasPressed = false;
+                }
+
+                if (Input.IsKeyDown(Keys.Y) && !redoKeyWasPressed)
+                {
+                    if (Graphics.Redo())
+                    {
+                        SyncGizmoToSelectedObject();
+                        dPropertyGrid.RefreshPropertyGrid();
+                    }
+                    redoKeyWasPressed = true;
+                }
+                else if (!Input.IsKeyDown(Keys.Y))
+                {
+                    redoKeyWasPressed = false;
+                }
+            }
+            else
+            {
+                undoKeyWasPressed = false;
+                redoKeyWasPressed = false;
+            }
+
+            // Toggle BBox selection mode with B key
+            if (Input.IsKeyDown(Keys.B) && !bboxKeyWasPressed)
+            {
+                Graphics.BBoxSelectionMode = !Graphics.BBoxSelectionMode;
+                Console.WriteLine($"BBox Selection Mode: {(Graphics.BBoxSelectionMode ? "ON" : "OFF")}");
+                bboxKeyWasPressed = true;
+            }
+            else if (!Input.IsKeyDown(Keys.B))
+            {
+                bboxKeyWasPressed = false;
             }
 
             // Переключение режимов: R - поворот объектов, T - перемещение объектов

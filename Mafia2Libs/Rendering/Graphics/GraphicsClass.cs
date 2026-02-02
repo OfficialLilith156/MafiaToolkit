@@ -1,4 +1,5 @@
 ﻿using Rendering.Core;
+using Rendering.Core.Commands;
 using Rendering.Input;
 using ResourceTypes.FrameResource;
 using ResourceTypes.Translokator;
@@ -61,6 +62,14 @@ namespace Rendering.Graphics
         private List<Task> BVHBuildingTasks = new();
         public PrimitiveManager OurPrimitiveManager { get; private set; }
 
+        // Undo/Redo system
+        public CommandHistory CommandHistory { get; private set; }
+        private Matrix4x4 gizmoStartTransform;
+        private int gizmoManipulatingRefID = -1;
+
+        // BBox selection mode
+        public bool BBoxSelectionMode { get; set; } = false;
+
 
         public GraphicsClass()
         {
@@ -71,6 +80,7 @@ namespace Rendering.Graphics
             translokatorGrid = new TranslokatorSpatialGrid();
             navigationGrids = new SpatialGrid[0];
             OurPrimitiveManager = new PrimitiveManager();
+            CommandHistory = new CommandHistory();
 
             OnSelectedObjectUpdated += OnSelectedObjectHasUpdated;
 
@@ -180,6 +190,11 @@ namespace Rendering.Graphics
 
         public PickOutParams Pick(int sx, int sy, int Width, int Height)
         {
+            return Pick(sx, sy, Width, Height, BBoxSelectionMode);
+        }
+
+        public PickOutParams Pick(int sx, int sy, int Width, int Height, bool bboxOnly)
+        {
             float lowest = float.MaxValue;
             int lowestRefID = -1;
             int lowestInstanceID = -1;
@@ -227,22 +242,53 @@ namespace Rendering.Graphics
                                 Vector3.TransformNormal(ray.Direction, tvWM)
                             );
 
-                            if (localInstanceRay.Intersects(bbox) == 0.0f) continue;
+                            float? bboxDistNullable = localInstanceRay.Intersects(bbox);
+                            if (!bboxDistNullable.HasValue || bboxDistNullable.Value == 0.0f) continue;
+                            float bboxDist = bboxDistNullable.Value;
 
-                            var bvhInstanceIntersect = mesh.BVH.Intersect(ray, localInstanceRay);
-
-                            if (bvhInstanceIntersect.distance < lowest)
+                            if (bboxOnly)
                             {
-                                lowest = bvhInstanceIntersect.distance;
-                                lowestRefID = model.Key;
-                                lowestInstanceID = transform.Key;
-                                WorldPosIntersect = bvhInstanceIntersect.pos;
+                                // BBox-only mode: accept hit immediately based on bbox intersection
+                                if (bboxDist < lowest)
+                                {
+                                    lowest = bboxDist;
+                                    lowestRefID = model.Key;
+                                    lowestInstanceID = transform.Key;
+                                    WorldPosIntersect = ray.Position + ray.Direction * bboxDist;
+                                }
+                            }
+                            else
+                            {
+                                var bvhInstanceIntersect = mesh.BVH.Intersect(ray, localInstanceRay);
+
+                                if (bvhInstanceIntersect.distance < lowest)
+                                {
+                                    lowest = bvhInstanceIntersect.distance;
+                                    lowestRefID = model.Key;
+                                    lowestInstanceID = transform.Key;
+                                    WorldPosIntersect = bvhInstanceIntersect.pos;
+                                }
                             }
                         }
-                        
+
                     }
 
-                    if (localRay.Intersects(bbox) == 0.0f) continue; // Pick doesn't seem to work when the camera is inside the bounding volume
+                    float? meshBboxDistNullable = localRay.Intersects(bbox);
+                    if (!meshBboxDistNullable.HasValue || meshBboxDistNullable.Value == 0.0f) continue; // Pick doesn't seem to work when the camera is inside the bounding volume
+                    float meshBboxDist = meshBboxDistNullable.Value;
+
+                    if (bboxOnly)
+                    {
+                        // BBox-only mode: accept hit immediately based on bbox intersection
+                        if (meshBboxDist < lowest)
+                        {
+                            lowest = meshBboxDist;
+                            lowestRefID = model.Key;
+                            lowestInstanceID = -1;
+                            WorldPosIntersect = ray.Position + ray.Direction * meshBboxDist;
+                        }
+                        continue;
+                    }
 
                     if (!mesh.BVH.FinishedBuilding)
                     {
@@ -274,7 +320,22 @@ namespace Rendering.Graphics
                     RenderStaticCollision collision = instance.GetCollision();
                     var bbox = collision.BoundingBox;
 
-                    if (localRay.Intersects(bbox) == 0.0f) continue;
+                    float? instanceBboxDistNullable = localRay.Intersects(bbox);
+                    if (!instanceBboxDistNullable.HasValue || instanceBboxDistNullable.Value == 0.0f) continue;
+                    float instanceBboxDist = instanceBboxDistNullable.Value;
+
+                    if (bboxOnly)
+                    {
+                        // BBox-only mode: accept hit immediately based on bbox intersection
+                        if (instanceBboxDist < lowest)
+                        {
+                            lowest = instanceBboxDist;
+                            lowestRefID = model.Key;
+                            lowestInstanceID = -1;
+                            WorldPosIntersect = ray.Position + ray.Direction * instanceBboxDist;
+                        }
+                        continue;
+                    }
 
                     for (var i = 0; i < collision.Indices.Length / 3; i++)
                     {
@@ -661,6 +722,14 @@ namespace Rendering.Graphics
         // Gizmo manipulation
         public void StartGizmoManipulation(GizmoAxis axis, int sx, int sy, int width, int height)
         {
+            // Save the starting transform for undo/redo
+            IRenderer selected = GetAsset(selectedID);
+            if (selected != null)
+            {
+                gizmoStartTransform = selected.Transform;
+                gizmoManipulatingRefID = selectedID;
+            }
+
             TranslationGizmo.StartManipulation(axis, Camera, sx, sy, width, height);
         }
 
@@ -676,6 +745,18 @@ namespace Rendering.Graphics
 
         public void EndGizmoManipulation()
         {
+            // Create undo command if we were manipulating an object
+            if (gizmoManipulatingRefID >= 0)
+            {
+                IRenderer selected = GetAsset(gizmoManipulatingRefID);
+                if (selected != null && selected.Transform != gizmoStartTransform)
+                {
+                    var cmd = new TransformCommand(this, gizmoManipulatingRefID, gizmoStartTransform, selected.Transform);
+                    CommandHistory.AddExecutedCommand(cmd);
+                }
+                gizmoManipulatingRefID = -1;
+            }
+
             TranslationGizmo.EndManipulation();
         }
 
@@ -747,6 +828,42 @@ namespace Rendering.Graphics
             Camera.Pitch(deltaY);
             Camera.Yaw(deltaX);
         }
+
+        // Undo/Redo support
+        public void SetObjectTransform(int refID, Matrix4x4 transform)
+        {
+            IRenderer asset = GetAsset(refID);
+            if (asset == null) return;
+
+            asset.SetTransform(transform);
+
+            // Update selection box if this is the selected object
+            if (refID == selectedID)
+            {
+                selectionBox.SetTransform(transform);
+                selectionBox.Update(asset.BoundingBox);
+
+                Matrix4x4 gizmoTransform = Matrix4x4.Identity;
+                gizmoTransform.Translation = transform.Translation;
+                TranslationGizmo.OnSelectEntry(gizmoTransform, true);
+            }
+
+            // Notify listeners
+            OnSelectedObjectUpdated?.Invoke(this, new UpdateSelectedEventArgs { RefID = refID });
+        }
+
+        public bool Undo()
+        {
+            return CommandHistory.Undo();
+        }
+
+        public bool Redo()
+        {
+            return CommandHistory.Redo();
+        }
+
+        public bool CanUndo => CommandHistory.CanUndo;
+        public bool CanRedo => CommandHistory.CanRedo;
 
         private void OnSelectedObjectHasUpdated(object Sender, UpdateSelectedEventArgs Args)
         {
