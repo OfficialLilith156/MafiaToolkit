@@ -654,6 +654,23 @@ namespace Mafia2Tool
                 dSceneTree.DeleteButton.PerformClick();
             }
 
+            // Gizmo mode switching: 1 = Translate, 2 = Rotate, 3 = Scale
+            if (!Input.IsButtonDown(MouseButtons.Right)) // Only when not moving camera
+            {
+                if (Input.IsKeyDown(Keys.D1))
+                {
+                    Graphics.SetGizmoMode(GizmoMode.Translate);
+                }
+                else if (Input.IsKeyDown(Keys.D2))
+                {
+                    Graphics.SetGizmoMode(GizmoMode.Rotate);
+                }
+                else if (Input.IsKeyDown(Keys.D3))
+                {
+                    Graphics.SetGizmoMode(GizmoMode.Scale);
+                }
+            }
+
             // Переключение режимов: R - поворот объектов, T - перемещение объектов
             bool rWasPressed = false;
              bool tWasPressed = false;
@@ -722,51 +739,88 @@ namespace Mafia2Tool
                     Graphics.RotateCamera(dx, dy);
                     bCameraUpdated = true;
                 }
-                else if (Input.IsButtonDown(MouseButtons.Left) && selectTimer <= 0.0f)
+                else if (Input.IsButtonDown(MouseButtons.Left))
                 {
-                    if (bSelectMode)
+                    // Handle gizmo manipulation
+                    if (Graphics.IsGizmoActive())
                     {
-                        Pick(mousePos.X, mousePos.Y);
-                        selectTimer = 0.1f;
+                        // Continue gizmo manipulation during drag
+                        Graphics.UpdateGizmoManipulation(mousePos.X, mousePos.Y, RenderPanel.Width, RenderPanel.Height);
+                        SyncGizmoToSelectedObject();
                     }
-                    else
+                    else if (selectTimer <= 0.0f)
                     {
-                        if (dSceneTree.SelectedNode != null)
-                        {
-                            var node = dSceneTree.SelectedNode;
-                            var tag = dSceneTree.SelectedNode.Tag;
+                        // Check if clicking on gizmo first
+                        GizmoAxis clickedAxis = Graphics.PickGizmoAxis(mousePos.X, mousePos.Y, RenderPanel.Width, RenderPanel.Height);
 
-                            if (FrameResource.IsFrameType(tag))
+                        if (clickedAxis != GizmoAxis.None)
+                        {
+                            // Start gizmo manipulation
+                            Graphics.StartGizmoManipulation(clickedAxis, mousePos.X, mousePos.Y, RenderPanel.Width, RenderPanel.Height);
+                        }
+                        else if (bSelectMode)
+                        {
+                            // Normal object picking
+                            Pick(mousePos.X, mousePos.Y);
+                            selectTimer = 0.1f;
+                        }
+                        else
+                        {
+                            // Legacy: Move object with mouse (MoveObjectWithMouse mode)
+                            if (dSceneTree.SelectedNode != null)
                             {
-                                FrameObjectBase fObject = (tag as FrameObjectBase);
-                                var translation = MoveObjectWithMouse(fObject.LocalTransform.Translation.Z, mousePos.X, mousePos.Y);
-                                var local = fObject.LocalTransform;
-                                translation.Z = local.Translation.Z;
-                                fObject.LocalTransform = Matrix4x4Extensions.SetTranslation(local, translation);
-                                TreeViewUpdateSelected();
-                                ApplyChangesToRenderable(fObject);
-                            }
-                            else if (tag is Collision.Placement)
-                            {
-                                Collision.Placement placement = (tag as Collision.Placement);
-                                var translation = MoveObjectWithMouse(placement.Position.Z, mousePos.X, mousePos.Y);
-                                var local = placement.Position;
-                                translation.Z = local.Z;
-                                placement.Position = translation;
-                                TreeViewUpdateSelected();
-                                IRenderer asset;
-                                Graphics.Assets.TryGetValue(int.Parse(node.Name), out asset);
-                                RenderInstance instance = (asset as RenderInstance);
-                                instance.SetTransform(placement.Transform);
+                                var node = dSceneTree.SelectedNode;
+                                var tag = dSceneTree.SelectedNode.Tag;
+
+                                if (FrameResource.IsFrameType(tag))
+                                {
+                                    FrameObjectBase fObject = (tag as FrameObjectBase);
+                                    var translation = MoveObjectWithMouse(fObject.LocalTransform.Translation.Z, mousePos.X, mousePos.Y);
+                                    var local = fObject.LocalTransform;
+                                    translation.Z = local.Translation.Z;
+                                    fObject.LocalTransform = Matrix4x4Extensions.SetTranslation(local, translation);
+                                    TreeViewUpdateSelected();
+                                    ApplyChangesToRenderable(fObject);
+                                }
+                                else if (tag is Collision.Placement)
+                                {
+                                    Collision.Placement placement = (tag as Collision.Placement);
+                                    var translation = MoveObjectWithMouse(placement.Position.Z, mousePos.X, mousePos.Y);
+                                    var local = placement.Position;
+                                    translation.Z = local.Z;
+                                    placement.Position = translation;
+                                    TreeViewUpdateSelected();
+                                    IRenderer asset;
+                                    Graphics.Assets.TryGetValue(int.Parse(node.Name), out asset);
+                                    RenderInstance instance = (asset as RenderInstance);
+                                    instance.SetTransform(placement.Transform);
+                                }
                             }
                         }
+                    }
+                }
+                else
+                {
+                    // Mouse button released - end gizmo manipulation if active
+                    if (Graphics.IsGizmoActive())
+                    {
+                        Graphics.EndGizmoManipulation();
                     }
                 }
 
                 // Перемещение выбранного объекта стрелками
                 if (dSceneTree.SelectedNode != null && dSceneTree.SelectedNode.Tag != null)
                 {
-                    float moveSpeed = 0.1f; // Скорость перемещения объекта
+                    // Alt = медленное перемещение, Shift = быстрое перемещение
+                    float moveSpeed = 0.1f;
+                    if (Input.IsKeyDown(Keys.LMenu) || Input.IsKeyDown(Keys.RMenu))
+                    {
+                        moveSpeed = 0.01f; // Медленное перемещение с Alt
+                    }
+                    else if (Input.IsKeyDown(Keys.LShiftKey) || Input.IsKeyDown(Keys.RShiftKey))
+                    {
+                        moveSpeed = 1.0f; // Быстрое перемещение с Shift
+                    }
                     Vector3 moveDelta = Vector3.Zero;
 
                     if (Input.IsKeyDown(Keys.Up))
@@ -2836,6 +2890,72 @@ namespace Mafia2Tool
                 }
             }
             dPropertyGrid.SetObject(node.Tag);
+        }
+
+        // Sync gizmo transform changes to the selected object
+        private void SyncGizmoToSelectedObject()
+        {
+            if (dSceneTree.SelectedNode == null || dSceneTree.SelectedNode.Tag == null)
+                return;
+
+            var node = dSceneTree.SelectedNode;
+            var tag = node.Tag;
+
+            // Get the updated transform from Graphics
+            if (!int.TryParse(node.Name, out int refID))
+                return;
+
+            IRenderer asset = Graphics.GetAsset(refID);
+            if (asset == null)
+                return;
+
+            Matrix4x4 newTransform = asset.Transform;
+
+            if (FrameResource.IsFrameType(tag))
+            {
+                FrameObjectBase fObject = (tag as FrameObjectBase);
+                fObject.LocalTransform = newTransform;
+                dPropertyGrid.SetObject(fObject);
+            }
+            else if (tag is Collision.Placement placement)
+            {
+                // Extract position and rotation from transform matrix
+                placement.Position = newTransform.Translation;
+
+                // Extract rotation as euler angles (in radians)
+                if (Matrix4x4.Decompose(newTransform, out Vector3 scale, out Quaternion rotation, out Vector3 translation))
+                {
+                    // Convert quaternion to euler angles (radians)
+                    placement.Rotation = QuaternionToEuler(rotation);
+                }
+
+                dPropertyGrid.SetObject(placement);
+            }
+        }
+
+        // Convert quaternion to euler angles (radians)
+        private Vector3 QuaternionToEuler(Quaternion q)
+        {
+            Vector3 euler = new Vector3();
+
+            // Roll (X-axis rotation)
+            float sinr_cosp = 2 * (q.W * q.X + q.Y * q.Z);
+            float cosr_cosp = 1 - 2 * (q.X * q.X + q.Y * q.Y);
+            euler.X = MathF.Atan2(sinr_cosp, cosr_cosp);
+
+            // Pitch (Y-axis rotation)
+            float sinp = 2 * (q.W * q.Y - q.Z * q.X);
+            if (MathF.Abs(sinp) >= 1)
+                euler.Y = MathF.CopySign(MathF.PI / 2, sinp); // Use 90 degrees if out of range
+            else
+                euler.Y = MathF.Asin(sinp);
+
+            // Yaw (Z-axis rotation)
+            float siny_cosp = 2 * (q.W * q.Z + q.X * q.Y);
+            float cosy_cosp = 1 - 2 * (q.Y * q.Y + q.Z * q.Z);
+            euler.Z = MathF.Atan2(siny_cosp, cosy_cosp);
+
+            return euler;
         }
 
         private void btnAddType4_Click(object sender, EventArgs e)

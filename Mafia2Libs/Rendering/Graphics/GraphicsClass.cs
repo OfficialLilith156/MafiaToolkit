@@ -636,6 +636,107 @@ namespace Rendering.Graphics
             TranslationGizmo.ManipulateGizmo(Camera, sx, sy, Width, Height);
         }
 
+        // Gizmo mode management
+        public void SetGizmoMode(GizmoMode mode)
+        {
+            TranslationGizmo.SetMode(mode);
+        }
+
+        public GizmoMode GetGizmoMode()
+        {
+            return TranslationGizmo.GetMode();
+        }
+
+        // Gizmo state queries
+        public bool IsGizmoActive()
+        {
+            return TranslationGizmo.IsActive();
+        }
+
+        public GizmoAxis PickGizmoAxis(int sx, int sy, int width, int height)
+        {
+            return TranslationGizmo.PickAxis(Camera, sx, sy, width, height);
+        }
+
+        // Gizmo manipulation
+        public void StartGizmoManipulation(GizmoAxis axis, int sx, int sy, int width, int height)
+        {
+            TranslationGizmo.StartManipulation(axis, Camera, sx, sy, width, height);
+        }
+
+        public void UpdateGizmoManipulation(int sx, int sy, int width, int height)
+        {
+            Vector3 delta = TranslationGizmo.UpdateManipulation(Camera, sx, sy, width, height);
+
+            if (delta != Vector3.Zero)
+            {
+                ApplyGizmoDelta(delta);
+            }
+        }
+
+        public void EndGizmoManipulation()
+        {
+            TranslationGizmo.EndManipulation();
+        }
+
+        private void ApplyGizmoDelta(Vector3 delta)
+        {
+            IRenderer selected = GetAsset(selectedID);
+            if (selected == null) return;
+
+            GizmoMode mode = TranslationGizmo.GetMode();
+            Matrix4x4 currentTransform = selected.Transform;
+
+            switch (mode)
+            {
+                case GizmoMode.Translate:
+                    currentTransform.Translation += delta;
+                    break;
+
+                case GizmoMode.Rotate:
+                    // delta contains rotation angles in radians for each axis
+                    Matrix4x4 rotationX = Matrix4x4.CreateRotationX(delta.X);
+                    Matrix4x4 rotationY = Matrix4x4.CreateRotationY(delta.Y);
+                    Matrix4x4 rotationZ = Matrix4x4.CreateRotationZ(delta.Z);
+                    Matrix4x4 combinedRotation = rotationX * rotationY * rotationZ;
+
+                    // Apply rotation around object's current position
+                    Vector3 position = currentTransform.Translation;
+                    currentTransform.Translation = Vector3.Zero;
+                    currentTransform = currentTransform * combinedRotation;
+                    currentTransform.Translation = position;
+                    break;
+
+                case GizmoMode.Scale:
+                    // delta contains scale factors for each axis
+                    Vector3 currentScale = new Vector3(
+                        new Vector3(currentTransform.M11, currentTransform.M12, currentTransform.M13).Length(),
+                        new Vector3(currentTransform.M21, currentTransform.M22, currentTransform.M23).Length(),
+                        new Vector3(currentTransform.M31, currentTransform.M32, currentTransform.M33).Length()
+                    );
+                    Vector3 newScale = currentScale + delta;
+                    newScale = Vector3.Max(newScale, new Vector3(0.01f)); // Prevent zero/negative scale
+
+                    // Apply scale change
+                    Matrix4x4 scaleMatrix = Matrix4x4.CreateScale(
+                        newScale.X / currentScale.X,
+                        newScale.Y / currentScale.Y,
+                        newScale.Z / currentScale.Z
+                    );
+                    Vector3 pos = currentTransform.Translation;
+                    currentTransform.Translation = Vector3.Zero;
+                    currentTransform = currentTransform * scaleMatrix;
+                    currentTransform.Translation = pos;
+                    break;
+            }
+
+            selected.SetTransform(currentTransform);
+            selectionBox.SetTransform(currentTransform);
+
+            // Notify listeners that the selected object has been updated
+            OnSelectedObjectUpdated?.Invoke(this, new UpdateSelectedEventArgs { RefID = selectedID });
+        }
+
         public void OnResize(int width, int height)
         {
             Camera.SetProjectionMatrix(width, height);
