@@ -41,7 +41,6 @@ namespace Rendering.Graphics
         public EventHandler<UpdateSelectedEventArgs> OnSelectedObjectUpdated;
 
         public Dictionary<int, IRenderer> Assets { get; private set; }
-        private SceneManager sceneManager;
         private int selectedID;
         private Dictionary<int, int> selectedInstances;//refframe refid, instance refid
         private RenderBoundingBox selectionBox;
@@ -499,18 +498,15 @@ namespace Rendering.Graphics
             D3D.BeginScene(0.0f, 0f, 0f, 1.0f);
             Camera.Render();
 
-            // Update shaders once per frame instead of for each object
-            UpdateShaderBuffersOnce();
-
-            // Get visible objects through frustum culling
-            List<IRenderer> visibleObjects = GetVisibleObjects();
-
-            // Update buffers and render visible objects
-            foreach (IRenderer RenderEntry in visibleObjects)
+            foreach (BaseShader Shader in RenderStorageSingleton.Instance.ShaderManager.shaders.Values)
             {
-                // Always call UpdateBuffers - it's optimized internally in each renderer
+                Shader.InitCBuffersFrame(D3D.DeviceContext, Camera, WorldSettings);
+            }
+
+            foreach (IRenderer RenderEntry in Assets.Values)
+            {
                 RenderEntry.UpdateBuffers(D3D.Device, D3D.DeviceContext);
-                RenderEntry.Render(D3D.Device, D3D.DeviceContext, Camera);
+                RenderEntry.Render(D3D.Device, D3D.DeviceContext, Camera);    
             }
             
             //navigationGrids[0].Render(D3D.Device, D3D.DeviceContext, Camera);
@@ -574,36 +570,6 @@ namespace Rendering.Graphics
         {
             // Clear completed BVH tasks
             NumBVHBuilt += BVHBuildingTasks.RemoveAll(t => t.IsCompleted);
-        }
-
-        public void SetSceneManager(SceneManager manager)
-        {
-            sceneManager = manager;
-        }
-
-        private void UpdateShaderBuffersOnce()
-        {
-            foreach (BaseShader Shader in RenderStorageSingleton.Instance.ShaderManager.shaders.Values)
-            {
-                Shader.InitCBuffersFrame(D3D.DeviceContext, Camera, WorldSettings);
-            }
-        }
-
-        private List<IRenderer> GetVisibleObjects()
-        {
-            List<IRenderer> visible = new List<IRenderer>();
-
-            // For now, use simple frustum culling on all assets
-            // Spatial partition optimization will be enabled later when properly integrated
-            foreach (var entry in Assets.Values)
-            {
-                if (Camera.CheckBBoxFrustum(entry.Transform, entry.BoundingBox))
-                {
-                    visible.Add(entry);
-                }
-            }
-
-            return visible;
         }
 
         public void SelectEntry(int id)

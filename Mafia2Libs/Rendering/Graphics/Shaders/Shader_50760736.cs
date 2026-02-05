@@ -59,7 +59,7 @@ namespace Rendering.Graphics
                 ID3D11ShaderResourceView[] textures = new ID3D11ShaderResourceView[2];
 
                 HashName TextureFile = material.GetTextureByID("S000");
-                if (TextureFile != null && RenderStorageSingleton.Instance.TextureCache.ContainsKey(TextureFile.Hash))
+                if (TextureFile != null)
                 {
                     textures[0] = RenderStorageSingleton.Instance.TextureCache[TextureFile.Hash];
                 }
@@ -69,7 +69,7 @@ namespace Rendering.Graphics
                 }
 
                 TextureFile = material.GetTextureByID("S011");
-                if (TextureFile != null && RenderStorageSingleton.Instance.TextureCache.ContainsKey(TextureFile.Hash))
+                if (TextureFile != null)
                 {
                     textures[1] = RenderStorageSingleton.Instance.TextureCache[TextureFile.Hash];
                 }

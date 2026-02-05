@@ -202,23 +202,19 @@ namespace Rendering.Graphics
 
         private void SetupShaders()
         {
-            // Setup shaders for all LOD levels, not just LOD 0
-            for (int lodIndex = 0; lodIndex < LODs.Length; lodIndex++)
+            for (int x = 0; x != LODs[0].ModelParts.Length; x++)
             {
-                for (int x = 0; x != LODs[lodIndex].ModelParts.Length; x++)
+                ModelPart part = LODs[0].ModelParts[x];
+                if (part.Material == null)
+                    part.Shader = RenderStorageSingleton.Instance.ShaderManager.shaders[0];
+                else
                 {
-                    ModelPart part = LODs[lodIndex].ModelParts[x];
-                    if (part.Material == null)
-                        part.Shader = RenderStorageSingleton.Instance.ShaderManager.shaders[0];
-                    else
-                    {
-                        //Debug.WriteLine(LODs[lodIndex].ModelParts[x].Material.MaterialName + "\t" + LODs[lodIndex].ModelParts[x].Material.ShaderHash);
-                        part.Shader = (RenderStorageSingleton.Instance.ShaderManager.shaders.ContainsKey(LODs[lodIndex].ModelParts[x].Material.ShaderHash)
-                            ? RenderStorageSingleton.Instance.ShaderManager.shaders[LODs[lodIndex].ModelParts[x].Material.ShaderHash]
-                            : RenderStorageSingleton.Instance.ShaderManager.shaders[0]);
-                    }
-                    LODs[lodIndex].ModelParts[x] = part;
+                    //Debug.WriteLine(LODs[0].ModelParts[x].Material.MaterialName + "\t" + LODs[0].ModelParts[x].Material.ShaderHash);
+                    part.Shader = (RenderStorageSingleton.Instance.ShaderManager.shaders.ContainsKey(LODs[0].ModelParts[x].Material.ShaderHash)
+                        ? RenderStorageSingleton.Instance.ShaderManager.shaders[LODs[0].ModelParts[x].Material.ShaderHash]
+                        : RenderStorageSingleton.Instance.ShaderManager.shaders[0]);
                 }
+                LODs[0].ModelParts[x] = part;
             }
         }
 
@@ -342,22 +338,6 @@ namespace Rendering.Graphics
             Transform = matrix;
         }
 
-        private int SelectLOD(Camera camera)
-        {
-            if (LODs == null || LODs.Length == 1)
-                return 0;
-
-            Vector3 objCenter = Vector3.Transform(Vector3.Zero, Transform);
-            float distance = Vector3.Distance(camera.Position, objCenter);
-
-            // LOD thresholds (configurable)
-            if (distance < 50f) return 0;
-            if (distance < 150f && LODs.Length > 1) return 1;
-            if (LODs.Length > 2) return 2;
-
-            return Math.Min(LODs.Length - 1, 3);
-        }
-
         public override void Render(ID3D11Device device, ID3D11DeviceContext deviceContext, Camera camera)
         {
             if (!DoRender)
@@ -366,7 +346,6 @@ namespace Rendering.Graphics
             }
 
             bool BuffersSet = false;
-            int lodIndex = SelectLOD(camera); // Select LOD based on distance
 
             if (InstanceTransforms.Count > 0)
             {
@@ -378,7 +357,7 @@ namespace Rendering.Graphics
 
                 BuffersSet = true;
 
-                RenderInstancesWithLOD(deviceContext, camera, device, lodIndex);
+                RenderInstances(deviceContext, camera, device);
             }
 
             if (!camera.CheckBBoxFrustum(Transform, BoundingBox))
@@ -394,13 +373,9 @@ namespace Rendering.Graphics
                 BuffersSet = true;
             }
 
-            for (int i = 0; i != LODs[lodIndex].ModelParts.Length; i++)
+            for (int i = 0; i != LODs[0].ModelParts.Length; i++)
             {
-                ModelPart Segment = LODs[lodIndex].ModelParts[i];
-
-                // Skip rendering if shader is not initialized
-                if (Segment.Shader == null)
-                    continue;
+                ModelPart Segment = LODs[0].ModelParts[i];
 
                 if (InstanceTransforms.Count == 0)
                 {
@@ -443,38 +418,6 @@ namespace Rendering.Graphics
 
                 segment.Shader.setHightLightInstance(deviceContext, selectionInstance.instanceRefID);
 
-
-                segment.Shader.RenderInstanced(deviceContext, PrimitiveTopology.TriangleList, (int)segment.NumFaces * 3, (int)segment.StartIndex, InstanceTransforms.Count);
-                Profiler.NumDrawCallsThisFrame++;
-            }
-        }
-
-        public void RenderInstancesWithLOD(ID3D11DeviceContext deviceContext, Camera camera, ID3D11Device device, int lodIndex)
-        {
-            deviceContext.VSSetShaderResource(0, instanceBufferView);
-
-            colorTransitionTime += 0.1f;
-
-            float t = (float)(Math.Sin(colorTransitionTime) * 0.5 + 0.5);
-
-            Color startColor = Color.White;
-            Color endColor = Color.Yellow;
-
-            Color tint = Color.FromArgb(
-                (int)(startColor.A + (endColor.A - startColor.A) * t),
-                (int)(startColor.R + (endColor.R - startColor.R) * t),
-                (int)(startColor.G + (endColor.G - startColor.G) * t),
-                (int)(startColor.B + (endColor.B - startColor.B) * t)
-            );
-
-            for (int i = 0; i < LODs[lodIndex].ModelParts.Length; i++)
-            {
-                RenderModel.ModelPart segment = LODs[lodIndex].ModelParts[i];
-
-                segment.Shader.SetShaderParameters(device, deviceContext, new MaterialParameters(segment.Material, ToolkitSettings.bTranslokatorTint ? tint.Normalize() : startColor.Normalize()));
-                segment.Shader.SetSceneVariables(deviceContext, Transform, camera);
-
-                segment.Shader.setHightLightInstance(deviceContext, selectionInstance.instanceRefID);
 
                 segment.Shader.RenderInstanced(deviceContext, PrimitiveTopology.TriangleList, (int)segment.NumFaces * 3, (int)segment.StartIndex, InstanceTransforms.Count);
                 Profiler.NumDrawCallsThisFrame++;

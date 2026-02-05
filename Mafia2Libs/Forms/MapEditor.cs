@@ -45,10 +45,8 @@ namespace Mafia2Tool
 {
     public partial class MapEditor : Form
     {
-        private SceneManager sceneManager;
-        private SceneData SceneData = new SceneData(); // Keep for backward compatibility
+        private SceneData SceneData = new SceneData();
         private SceneData ImportedScene;
-        private Dictionary<string, TreeNode> sceneRoots = new Dictionary<string, TreeNode>();
         private InputClass Input { get; set; }
         private GraphicsClass Graphics { get; set; }
         private AIWorld.NavigationData navData;
@@ -59,7 +57,6 @@ namespace Mafia2Tool
         private DockSceneTree dSceneTree;
         private DockImportSceneTree dImportSceneTree;
         private DockViewProperties dViewProperties;
-        private DockSceneLayers dSceneLayers;
         private TreeNode frameResourceRoot;
         private TreeNode importFRRoot;
         private TreeNode collisionRoot;
@@ -83,16 +80,7 @@ namespace Mafia2Tool
 
         public MapEditor(FileInfo info, SceneData sceneData)
         {
-            // Initialize SceneManager
-            sceneManager = new SceneManager();
-
-            // Add primary scene to SceneManager
-            string primarySceneID = sceneManager.AddScene(sceneData, SceneLayer.Primary);
-            sceneManager.SetActiveScene(primarySceneID);
-
-            // Keep reference for backward compatibility
             SceneData = sceneData;
-
             TextureLoader.ScenePath = SceneData.ScenePath;
             InitializeComponent();
             Localise();
@@ -112,7 +100,7 @@ namespace Mafia2Tool
             ToolkitSettings.UpdateRichPresence(string.Format("Editing '{0}'", info.Directory.Name));
             fileLocation = info;
             InitDockingControls();
-            PopulateList(primarySceneID);
+            PopulateList();
             NamesAndDuplicationStore = new Dictionary<string, int>();
             CameraSpeedTool.Value = (decimal)ToolkitSettings.CameraSpeed;
             KeyPreview = true;
@@ -159,17 +147,9 @@ namespace Mafia2Tool
             dSceneTree = new DockSceneTree();
             dViewProperties = new DockViewProperties();
             dImportSceneTree = new DockImportSceneTree();
-            dSceneLayers = new DockSceneLayers(sceneManager);
-
             dPropertyGrid.Show(dockPanel1, DockState.DockRight);
             dSceneTree.Show(dockPanel1, DockState.DockLeft);
-            dSceneLayers.Show(dockPanel1, DockState.DockBottom);
             dSceneTree.Select();
-
-            // Setup Scene Layers panel events
-            dSceneLayers.OnSceneAdded += OnSceneLayerAdded;
-            dSceneLayers.OnSceneRemoved += OnSceneLayerRemoved;
-            dSceneLayers.OnActiveSceneChanged += OnActiveSceneChanged;
             dSceneTree.SetEventHandler("AfterSelect", new TreeViewEventHandler(OnAfterSelect));
             dSceneTree.ExportFrameButton.Click += new EventHandler(ExportFrame_Click);
             dSceneTree.Export3DButton.Click += new EventHandler(Export3DButton_Click);
@@ -485,26 +465,11 @@ namespace Mafia2Tool
             }
         }
 
-        public void PopulateList(string sceneID)
+        public void PopulateList()
         {
-            var scene = sceneManager.GetScene(sceneID);
-            if (scene == null)
-                return;
-
-            TreeNode tree = scene.SceneData.FrameResource.BuildTree(scene.SceneData.FrameNameTable);
-            tree.Tag = scene.SceneData.FrameResource.Header;
-            tree.BackColor = scene.SceneTint;
-            tree.Text = $"[{sceneID.Substring(0, 8)}] {tree.Text}";
-
-            // Store the root for this scene
-            sceneRoots[sceneID] = tree;
-
-            // For primary scene, keep the original reference
-            if (scene.Layer == SceneLayer.Primary)
-            {
-                frameResourceRoot = tree;
-            }
-
+            TreeNode tree = SceneData.FrameResource.BuildTree(SceneData.FrameNameTable);
+            tree.Tag = SceneData.FrameResource.Header;
+            frameResourceRoot = tree;
             dSceneTree.AddToTree(tree);
         }
 
@@ -543,7 +508,6 @@ namespace Mafia2Tool
             {
                 Graphics = new GraphicsClass();
                 Graphics.PreInit(handle);
-                Graphics.SetSceneManager(sceneManager);
                 BuildRenderObjects();
                 result = Graphics.InitScene(RenderPanel.Width, RenderPanel.Height);
             }
@@ -585,240 +549,6 @@ namespace Mafia2Tool
         private void SceneTreeOnClicked(object sender, EventArgs e) => dSceneTree.Show(dockPanel1, DockState.DockLeft);
         private void CurrentModeButton_ButtonClick(object sender, EventArgs e) => SwitchMode(!bSelectMode);
         private void ViewOptionProperties_Click(object sender, EventArgs e) => dViewProperties.Show(dockPanel1, DockState.DockRight);
-        private void ViewSceneLayersButton_Click(object sender, EventArgs e) => dSceneLayers.Show(dockPanel1, DockState.DockRight);
-
-        private void OnSceneLayerAdded(string sceneID)
-        {
-            // Populate tree for the new scene
-            PopulateList(sceneID);
-
-            // Build render objects for the new scene
-            BuildRenderObjectsForScene(sceneID);
-        }
-
-        private void BuildRenderObjectsForScene(string sceneID)
-        {
-            var scene = sceneManager.GetScene(sceneID);
-            if (scene == null || scene.SceneData == null)
-                return;
-
-            SceneData sceneData = scene.SceneData;
-
-            // Set context for texture loading and resource management
-            TextureLoader.SetSceneContext(sceneID, sceneData.ScenePath);
-            RenderStorageSingleton.Instance.SetSceneContext(sceneID);
-
-            // Load collisions for this scene
-            if (sceneData.Collisions != null && sceneData.Collisions.Models != null)
-            {
-                // Create collision tree root for this scene
-                TreeNode collisionRoot = new TreeNode("Collisions");
-                collisionRoot.Tag = "Folder";
-                collisionRoot.Name = $"{sceneID}_Collisions";
-
-                foreach (var collisionModel in sceneData.Collisions.Models)
-                {
-                    if (!RenderStorageSingleton.Instance.StaticCollisions.ContainsKey(collisionModel.Key))
-                    {
-                        RenderStaticCollision collision = new RenderStaticCollision();
-                        collision.ConvertCollisionToRender(collisionModel.Value.Hash, collisionModel.Value.Mesh);
-                        RenderStorageSingleton.Instance.StaticCollisions.Add(collisionModel.Key, collision);
-                    }
-
-                    // Add collision model to tree
-                    TreeNode colModelNode = new TreeNode(collisionModel.Value.Hash.ToString());
-                    colModelNode.Text = collisionModel.Value.Hash.ToString();
-                    colModelNode.Name = collisionModel.Value.Hash.ToString();
-                    colModelNode.Tag = collisionModel.Value;
-                    collisionRoot.Nodes.Add(colModelNode);
-                }
-
-                // Load collision placements (instances)
-                if (sceneData.Collisions.Placements != null)
-                {
-                    foreach (var placement in sceneData.Collisions.Placements)
-                    {
-                        // Check if collision model exists
-                        if (!RenderStorageSingleton.Instance.StaticCollisions.ContainsKey(placement.Hash))
-                        {
-                            System.Diagnostics.Debug.WriteLine($"Collision placement references non-existent collision hash: {placement.Hash}");
-                            continue;
-                        }
-
-                        // Generate new RefID for this instance (no translation needed - these are dynamically created)
-                        int refID = RefManager.GetNewRefID();
-
-                        RenderInstance instance = new RenderInstance();
-                        instance.Init(RenderStorageSingleton.Instance.StaticCollisions[placement.Hash]);
-                        instance.SetTransform(placement.Transform);
-
-                        if (!Graphics.InitObjectStack.ContainsKey(refID))
-                        {
-                            Graphics.InitObjectStack.Add(refID, instance);
-                        }
-
-                        // Add placement to tree under its collision model
-                        TreeNode[] colNodes = collisionRoot.Nodes.Find(placement.Hash.ToString(), false);
-                        if (colNodes.Length > 0)
-                        {
-                            TreeNode placementNode = new TreeNode("0");
-                            placementNode.Name = refID.ToString();
-                            placementNode.Tag = placement;
-                            colNodes[0].Nodes.Add(placementNode);
-                        }
-                    }
-                }
-
-                // Add collision root to scene tree
-                if (sceneRoots.ContainsKey(sceneID))
-                {
-                    dSceneTree.AddToTree(collisionRoot, sceneRoots[sceneID]);
-                }
-            }
-
-            if (sceneData.FrameResource != null && sceneData.FrameNameTable != null)
-            {
-                foreach (FrameObjectBase frameObject in sceneData.FrameResource.FrameObjects.Values)
-                {
-                    try
-                    {
-                        IRenderer newAsset = BuildRenderObjectFromFrame(frameObject, Graphics.InitObjectStack);
-                        if (newAsset != null)
-                        {
-                            // Use translated RefID for non-primary scenes
-                            int refID = frameObject.RefID;
-                            if (scene.Layer != SceneLayer.Primary)
-                            {
-                                refID = sceneManager.TranslateRefID(sceneID, frameObject.RefID);
-                            }
-
-                            if (!Graphics.InitObjectStack.ContainsKey(refID))
-                            {
-                                Graphics.InitObjectStack.Add(refID, newAsset);
-                            }
-                        }
-                    }
-                    catch (System.Collections.Generic.KeyNotFoundException ex)
-                    {
-                        // Log which object and key caused the issue with full stack trace
-                        string objectType = frameObject.GetType().Name;
-                        System.Diagnostics.Debug.WriteLine($"KeyNotFoundException loading {objectType} (RefID: {frameObject.RefID})");
-                        System.Diagnostics.Debug.WriteLine($"Message: {ex.Message}");
-                        System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
-
-                        // Show error to user
-                        System.Windows.Forms.MessageBox.Show(
-                            $"Failed to load object {objectType} (RefID: {frameObject.RefID})\n\n" +
-                            $"Error: {ex.Message}\n\n" +
-                            "This object will be skipped. Check Debug output for details.",
-                            "Object Load Error",
-                            System.Windows.Forms.MessageBoxButtons.OK,
-                            System.Windows.Forms.MessageBoxIcon.Warning);
-
-                        // Skip this object and continue
-                        continue;
-                    }
-                }
-
-                // Set transforms for all objects
-                foreach (FrameObjectBase frame in sceneData.FrameResource.FrameObjects.Values)
-                {
-                    int refID = frame.RefID;
-                    if (scene.Layer != SceneLayer.Primary)
-                    {
-                        refID = sceneManager.TranslateRefID(sceneID, frame.RefID);
-                    }
-
-                    if (Graphics.InitObjectStack.ContainsKey(refID))
-                    {
-                        Graphics.InitObjectStack[refID].SetTransform(frame.WorldTransform);
-                    }
-                }
-            }
-
-            // Don't restore context - leave it on the new scene so textures load correctly
-            // Textures are loaded lazily on first render and need the correct scene path
-
-            // Refresh the tree view to ensure new nodes are visible
-            dSceneTree.TreeView.Refresh();
-        }
-
-        private void OnSceneLayerRemoved(string sceneID)
-        {
-            var scene = sceneManager.GetScene(sceneID);
-            if (scene != null)
-            {
-                // Remove all render objects for this scene
-                RemoveRenderObjectsForScene(sceneID, scene);
-
-                // Cleanup scene resources
-                RenderStorageSingleton.Instance.CleanupScene(sceneID);
-                TextureLoader.RemoveSceneContext(sceneID);
-            }
-
-            // Remove scene tree node
-            if (sceneRoots.ContainsKey(sceneID))
-            {
-                TreeNode node = sceneRoots[sceneID];
-                dSceneTree.RemoveFromTree(node);
-                sceneRoots.Remove(sceneID);
-            }
-        }
-
-        private void RemoveRenderObjectsForScene(string sceneID, ManagedScene scene)
-        {
-            if (scene.SceneData == null || scene.SceneData.FrameResource == null)
-                return;
-
-            List<int> refIDsToRemove = new List<int>();
-
-            // Collect all RefIDs for this scene
-            foreach (FrameObjectBase frameObject in scene.SceneData.FrameResource.FrameObjects.Values)
-            {
-                int refID = frameObject.RefID;
-                if (scene.Layer != SceneLayer.Primary)
-                {
-                    refID = sceneManager.TranslateRefID(sceneID, frameObject.RefID);
-                }
-                refIDsToRemove.Add(refID);
-            }
-
-            // Remove from InitObjectStack
-            foreach (int refID in refIDsToRemove)
-            {
-                if (Graphics.InitObjectStack.ContainsKey(refID))
-                {
-                    var renderer = Graphics.InitObjectStack[refID];
-                    renderer.Shutdown();
-                    Graphics.InitObjectStack.Remove(refID);
-                }
-            }
-
-            // Remove from Assets (if already processed)
-            foreach (int refID in refIDsToRemove)
-            {
-                if (Graphics.Assets.ContainsKey(refID))
-                {
-                    var renderer = Graphics.Assets[refID];
-                    renderer.Shutdown();
-                    Graphics.Assets.Remove(refID);
-                }
-            }
-        }
-
-        private void OnActiveSceneChanged(string sceneID)
-        {
-            // Update active scene context
-            var scene = sceneManager.GetScene(sceneID);
-            if (scene != null)
-            {
-                SceneData = scene.SceneData;
-
-                // Update texture loading context to point to the active scene
-                TextureLoader.SetSceneContext(sceneID, scene.SceneData.ScenePath);
-                RenderStorageSingleton.Instance.SetSceneContext(sceneID);
-            }
-        }
 
         private void UpdateParent_Click(object sender, EventArgs e)
         {
