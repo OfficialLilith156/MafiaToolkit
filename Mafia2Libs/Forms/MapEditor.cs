@@ -3760,152 +3760,27 @@ namespace Mafia2Tool
         private void ImportButton_Click(object sender, EventArgs e)
         {
             var frnode = dImportSceneTree.SelectedNode;
-            if (frnode == null)
+            if (frnode.Tag.GetType() == typeof(FrameHeaderScene) || frnode.Tag.GetType() == typeof(FrameHeader))//this should catch scenes and frameresource content
             {
-                MessageBox.Show("Please select a node to import.", "Toolkit", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                //todo manage exporting scenes, skip frameheader
                 return;
             }
-
-            bool isFolder = frnode.Tag is FrameHeaderScene || (frnode.Tag is string s && s == "Folder");
-
-            if (isFolder || frnode.Tag is FrameObjectBase)
+            FrameObjectBase frame = frnode.Tag as FrameObjectBase;
+            TreeNode parent;
+            parent = SceneData.FrameResource.ReadFramesFromImport(frame.Name.String, ImportedScene.FrameResource.SaveFramesStream(frame));
+            if (dImportSceneTree.importTextures.Checked && parent != null && ImportedScene.FrameResource.CheckForMeshObjects(frnode))
             {
-                TreeNode importedRoot = null;
-
-                if (isFolder)
-                {
-                    importedRoot = ImportFolderRecursive(frnode, ImportedScene.FrameResource);
-                }
-                else
-                {
-                    FrameObjectBase frame = frnode.Tag as FrameObjectBase;
-                    importedRoot = SceneData.FrameResource.ReadFramesFromImport(
-                        frame.Name.String,
-                        ImportedScene.FrameResource.SaveFramesStream(frame)
-                    );
-
-                    if (importedRoot != null)
-                    {
-                        SceneData.ImportItemDescForNode(frnode, ImportedScene);
-                    }
-                }
-
-                if (importedRoot != null)
-                {
-                    if (dImportSceneTree.importTextures.Checked)
-                    {
-                        HashSet<string> allTextures = new HashSet<string>();
-                        CollectAllTexturesFromNode(frnode, ImportedScene.FrameResource, allTextures);
-
-                        if (allTextures.Count > 0)
-                        {
-                            SceneData.ImportTextures(new List<string>(allTextures), ImportedScene.ScenePath);
-                        }
-                    }
-
-                    dSceneTree.AddToTree(importedRoot, frameResourceRoot);
-                    ConvertNodeToFrame(importedRoot);
-                }
+                Dictionary<uint, string> allTexturesDict = new Dictionary<uint, string>();
+                ImportedScene.FrameResource.CollectAllTextureNames(frnode, allTexturesDict);
+                List<string> allTextures = allTexturesDict.Values.ToList();
+                SceneData.ImportTextures(allTextures, ImportedScene.ScenePath);
             }
-            else
+            if (parent != null)
             {
-                MessageBox.Show("Selected item cannot be imported.", "Toolkit", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                SceneData.ImportItemDescForNode(frnode, ImportedScene);
             }
-        }
-
-        private void CollectAllTexturesFromNode(TreeNode node, FrameResource sourceFrameResource, HashSet<string> textureNames)
-        {
-            if (node.Tag is FrameObjectBase frameObj && sourceFrameResource.CheckForMeshObjects(node))
-            {
-                Dictionary<uint, string> tempDict = new Dictionary<uint, string>();
-                sourceFrameResource.CollectAllTextureNames(node, tempDict);
-                foreach (var name in tempDict.Values)
-                {
-                    if (!string.IsNullOrEmpty(name))
-                        textureNames.Add(name);
-                }
-            }
-
-            foreach (TreeNode child in node.Nodes)
-            {
-                CollectAllTexturesFromNode(child, sourceFrameResource, textureNames);
-            }
-        }
-
-        private TreeNode ImportFolderRecursive(TreeNode sourceFolderNode, FrameResource sourceFrameResource)
-        {
-            if (sourceFolderNode.Tag is not FrameHeaderScene sceneHeader)
-            {
-                var newScene = SceneData.FrameResource.AddSceneFolder(sourceFolderNode.Text);
-                TreeNode newFolderNode = new TreeNode(newScene.ToString())
-                {
-                    Tag = newScene,
-                    Name = newScene.RefID.ToString()
-                };
-
-                foreach (TreeNode child in sourceFolderNode.Nodes)
-                {
-                    if (child.Tag is FrameHeaderScene || (child.Tag is string s && s == "Folder"))
-                    {
-                        TreeNode importedChild = ImportFolderRecursive(child, sourceFrameResource);
-                        if (importedChild != null)
-                            newFolderNode.Nodes.Add(importedChild);
-                    }
-                    else if (child.Tag is FrameObjectBase frameObj)
-                    {
-                        TreeNode importedObj = SceneData.FrameResource.ReadFramesFromImport(
-                            frameObj.Name.String,
-                            sourceFrameResource.SaveFramesStream(frameObj)
-                        );
-                        if (importedObj != null)
-                        {
-                            SceneData.FrameResource.SetParentOfObject(ParentInfo.ParentType.ParentIndex2,
-                                importedObj.Tag as FrameObjectBase, newScene);
-                            newFolderNode.Nodes.Add(importedObj);
-                        }
-                    }
-                }
-
-                return newFolderNode;
-            }
-            else
-            {
-                return ImportFolderRecursiveAsFolder(sourceFolderNode, sourceFrameResource);
-            }
-        }
-
-        private TreeNode ImportFolderRecursiveAsFolder(TreeNode sourceNode, FrameResource sourceFrameResource)
-        {
-            var newScene = SceneData.FrameResource.AddSceneFolder(sourceNode.Text);
-            TreeNode newNode = new TreeNode(newScene.ToString())
-            {
-                Tag = newScene,
-                Name = newScene.RefID.ToString()
-            };
-
-            foreach (TreeNode child in sourceNode.Nodes)
-            {
-                if (child.Tag is FrameHeaderScene || (child.Tag is string s && s == "Folder"))
-                {
-                    TreeNode imported = ImportFolderRecursive(child, sourceFrameResource);
-                    if (imported != null) newNode.Nodes.Add(imported);
-                }
-                else if (child.Tag is FrameObjectBase frame)
-                {
-                    TreeNode importedObj = SceneData.FrameResource.ReadFramesFromImport(
-                        frame.Name.String,
-                        sourceFrameResource.SaveFramesStream(frame)
-                    );
-                    if (importedObj != null)
-                    {
-                        SceneData.FrameResource.SetParentOfObject(ParentInfo.ParentType.ParentIndex2,
-                            importedObj.Tag as FrameObjectBase, newScene);
-                        newNode.Nodes.Add(importedObj);
-                    }
-                }
-            }
-
-            return newNode;
+            dSceneTree.AddToTree(parent, frameResourceRoot);
+            ConvertNodeToFrame(parent);
         }
 
         private void CancelButton_Click(object sender, EventArgs e)
@@ -4728,27 +4603,14 @@ namespace Mafia2Tool
 
         private void ConvertNodeToFrame(TreeNode node)
         {
-            if (node?.Tag == null) return;
-
-            if (node.Tag is FrameHeaderScene || node.Tag is string tagStr && tagStr == "Folder")
+            ConvertFrameToRender((node.Tag as FrameObjectBase));
+            foreach (TreeNode child in node.Nodes)
             {
-                foreach (TreeNode child in node.Nodes)
-                {
-                    ConvertNodeToFrame(child);
-                }
-                return;
-            }
-
-            if (node.Tag is FrameObjectBase frameObj)
-            {
-                ConvertFrameToRender(frameObj);
-
-                foreach (TreeNode child in node.Nodes)
-                {
-                    ConvertNodeToFrame(child);
-                }
+                ConvertFrameToRender((child.Tag as FrameObjectBase));
+                ConvertNodeToFrame(child);
             }
         }
+
         private void Button_ImportFrame_OnClicked(object sender, EventArgs e)
         {
             if (FrameBrowser.ShowDialog() == DialogResult.OK)
