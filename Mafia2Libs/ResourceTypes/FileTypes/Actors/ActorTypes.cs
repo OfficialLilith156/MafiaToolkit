@@ -2515,9 +2515,9 @@ namespace ResourceTypes.Actors
 
     public class ActorBlocker : IActorExtraDataInterface
     {
-        public bool BlockPlayer { get; set; }
+        public bool BlockVehicle { get; set; } 
+        public bool BlockPlayer { get; set; } 
         public bool BlockHuman { get; set; }
-        public bool BlockVehicle { get; set; }
         public Vector3 BBox { get; set; }
 
         public ActorBlocker()
