@@ -21,7 +21,7 @@ namespace Gibbed.Mafia2.FileFormats
         private int UnkTotal; //UnkCount1 and UnkCount2 added together.
 
         private int numTypes;
-        private ResourceType[] Types;
+        public ResourceType[] Types;
 
         public void Deserialize(Stream reader, Endian endian)
         {
@@ -47,9 +47,11 @@ namespace Gibbed.Mafia2.FileFormats
 
             int numTypes = reader.ReadValueS32(endian);
             Types = new ResourceType[numTypes];
-            for(int i = 0; i < numTypes; i++)
+            for (int i = 0; i < numTypes; i++)
             {
                 Types[i] = ResourceType.Read(reader, endian);
+                // Добавить логирование для отладки
+                Console.WriteLine($"Patch Type {i}: ID={Types[i].Id}, Name={Types[i].Name}");
             }
 
             List<string> indexes = new List<string>();
@@ -75,39 +77,106 @@ namespace Gibbed.Mafia2.FileFormats
             //if (UnkCount1 + UnkCount2 != UnkTotal)
             //throw new FormatException();        
 
-            if (UnkTotal == 0)          
+            if (UnkTotal == 0)
                 return;
 
             int pos = (int)reader.Position;
 
-            var blockStream = BlockReaderStream.FromStream(reader, endian);
-            reader.Position = pos;
-
-            resources = new ResourceEntry[UnkTotal];
-            for (uint i = 0; i < resources.Length; i++)
+            if (reader.Position >= reader.Length)
             {
-                Archive.ResourceHeader resourceHeader;
-                //always complains about hash errors; had to mix it up.
-                
-                using (var data = blockStream.ReadToMemoryStream(26))
+                resources = new ResourceEntry[0];
+                return;
+            }
+
+            try
+            {
+                var blockStream = BlockReaderStream.FromStream(reader, endian);
+                reader.Position = pos;
+
+                resources = new ResourceEntry[UnkTotal];
+                for (uint i = 0; i < resources.Length; i++)
                 {
-                    resourceHeader = Archive.ResourceHeader.Read(data, endian, 19);
+                    Archive.ResourceHeader resourceHeader;
+
+                    if (reader.Position + 26 > reader.Length)
+                    {
+                        resources[i] = new Archive.ResourceEntry()
+                        {
+                            TypeId = 0,
+                            Version = 0,
+                            Data = new byte[0]
+                        };
+                        continue;
+                    }
+
+                    using (var data = blockStream.ReadToMemoryStream(26))
+                    {
+                        resourceHeader = Archive.ResourceHeader.Read(data, endian, 19);
+                    }
+
+                    if (reader.Position + 4 > reader.Length)
+                    {
+                        resources[i] = new Archive.ResourceEntry()
+                        {
+                            TypeId = (int)resourceHeader.TypeId,
+                            Version = resourceHeader.Version,
+                            Data = new byte[0],
+                            SlotRamRequired = resourceHeader.SlotRamRequired,
+                            SlotVramRequired = resourceHeader.SlotVramRequired,
+                            OtherRamRequired = resourceHeader.OtherRamRequired,
+                            OtherVramRequired = resourceHeader.OtherVramRequired,
+                        };
+                        continue;
+                    }
+
+                    blockStream.ReadBytes(4); //checksum i think
+
+                    uint dataSize = 0;
+                    if (resourceHeader.Size >= 30)
+                    {
+                        dataSize = resourceHeader.Size - 30;
+                    }
+
+                    if (reader.Position + dataSize > reader.Length)
+                    {
+                        dataSize = (uint)Math.Max(0, reader.Length - reader.Position);
+                    }
+
+                    byte[] resourceData = null;
+                    if (dataSize > 0)
+                    {
+                        resourceData = blockStream.ReadBytes((int)dataSize);
+                    }
+                    else
+                    {
+                        resourceData = new byte[0];
+                    }
+
+                    resources[i] = new Archive.ResourceEntry()
+                    {
+                        TypeId = (int)resourceHeader.TypeId,
+                        Version = resourceHeader.Version,
+                        Data = resourceData,
+                        SlotRamRequired = resourceHeader.SlotRamRequired,
+                        SlotVramRequired = resourceHeader.SlotVramRequired,
+                        OtherRamRequired = resourceHeader.OtherRamRequired,
+                        OtherVramRequired = resourceHeader.OtherVramRequired,
+                    };
                 }
-                blockStream.ReadBytes(4); //checksum i think
-                if (resourceHeader.Size < 30)
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error reading patch file: {ex.Message}");
+                resources = new ResourceEntry[Math.Max(0, UnkTotal)];
+                for (int i = 0; i < resources.Length; i++)
                 {
-                    throw new FormatException();
+                    resources[i] = new Archive.ResourceEntry()
+                    {
+                        TypeId = 0,
+                        Version = 0,
+                        Data = new byte[0]
+                    };
                 }
-                resources[i] = new Archive.ResourceEntry()
-                {
-                    TypeId = (int)resourceHeader.TypeId,
-                    Version = resourceHeader.Version,
-                    Data = blockStream.ReadBytes((int)resourceHeader.Size - 30),
-                    SlotRamRequired = resourceHeader.SlotRamRequired,
-                    SlotVramRequired = resourceHeader.SlotVramRequired,
-                    OtherRamRequired = resourceHeader.OtherRamRequired,
-                    OtherVramRequired = resourceHeader.OtherVramRequired,
-                };
             }
         }
     }

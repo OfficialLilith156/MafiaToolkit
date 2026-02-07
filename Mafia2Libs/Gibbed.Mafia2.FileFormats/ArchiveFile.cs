@@ -464,78 +464,121 @@ namespace Gibbed.Mafia2.FileFormats
                     patchFile.Deserialize(data ?? input, Endian.Little);
                 }
             }
+
             Dictionary<string, Dictionary<int, string>> sortedResources = new Dictionary<string, Dictionary<int, string>>();
             Dictionary<string, List<KeyValuePair<int, bool>>> resPatchAvailable = new Dictionary<string, List<KeyValuePair<int, bool>>>();
 
-            for (int i = 0; i < ResourceTypes.Count; i++)
+            if (patchFile != null && patchFile.Types != null)
             {
-                sortedResources.Add(ResourceTypes[i].Name, new Dictionary<int, string>());
-                resPatchAvailable.Add(ResourceTypes[i].Name, new List<KeyValuePair<int, bool>>());
+                for (int i = 0; i < patchFile.Types.Length; i++)
+                {
+                    var typeName = patchFile.Types[i].Name;
+                    if (!string.IsNullOrEmpty(typeName) && !sortedResources.ContainsKey(typeName))
+                    {
+                        sortedResources.Add(typeName, new Dictionary<int, string>());
+                        resPatchAvailable.Add(typeName, new List<KeyValuePair<int, bool>>());
+                        Console.WriteLine($"Added patch type: {typeName}");
+                    }
+                }
             }
 
             for (int i = 0; i < ResourceEntries.Count; i++)
             {
-                var type = ResourceTypes[_ResourceEntries[i].TypeId].Name;
-                var name = (type == "Mipmap" ? ResourceNames[i].Remove(0, 4) : ResourceNames[i]);
+                var entry = ResourceEntries[i];
 
-                if (sortedResources.ContainsKey(type))
+                if (entry.TypeId >= 0 && entry.TypeId < ResourceTypes.Count)
                 {
-                    sortedResources[type].Add(i, name);
+                    var type = ResourceTypes[entry.TypeId].Name;
 
-                    if (patchFile.UnkInts1.Contains(i))
+                    if (!string.IsNullOrEmpty(type) && sortedResources.ContainsKey(type))
                     {
-                        resPatchAvailable[type].Add(new KeyValuePair<int, bool>(i, false));
+                        var name = (type == "Mipmap" && i < ResourceNames.Count ?
+                                   ResourceNames[i].Remove(0, 4) :
+                                   (i < ResourceNames.Count ? ResourceNames[i] : $"Resource_{i}"));
+
+                        sortedResources[type].Add(i, name);
+
+                        if (patchFile != null && patchFile.UnkInts1 != null && patchFile.UnkInts1.Contains(i))
+                        {
+                            resPatchAvailable[type].Add(new KeyValuePair<int, bool>(i, false));
+                        }
                     }
                 }
+            }
+
+            if (patchFile == null || patchFile.resources == null)
+            {
+                resourceXML.WriteEndElement();
+                resourceXML.Flush();
+                resourceXML.Dispose();
+                return;
             }
 
             for (int i = 0; i < patchFile.resources.Length; i++)
             {
                 var entry = patchFile.resources[i];
+                if (entry == null) continue;
 
-                string type = "";
-                if(entry.TypeId < ResourceTypes.Count)
+                string type = "Unknown";
+
+                if (patchFile.Types != null && entry.TypeId >= 0 && entry.TypeId < patchFile.Types.Length)
+                {
+                    type = patchFile.Types[entry.TypeId].Name;
+                }
+                else if (entry.TypeId >= 0 && entry.TypeId < ResourceTypes.Count)
                 {
                     type = ResourceTypes[entry.TypeId].Name;
                 }
-                else
-                {
-                    // NB: M2DE's midtown.sds.patch seems to have a bogus type. I think its a MipMap, but 
-                    // I've had to implement a huge-ass fallback hack just to accomodate this bogus entry.
-                    type = "Unknown";
-                }
 
-                string name = string.Format("{0}_{1}", type, i);
+                string name = DetermineNameForPatchResource(entry, type, i, patchFile);
                 if (resPatchAvailable.ContainsKey(type))
                 {
                     for (int z = 0; z < resPatchAvailable[type].Count; z++)
                     {
                         var res = resPatchAvailable[type][z];
-                        if (type == "Texture" || type == "Mipmap")
-                        {
-                            TextureResource tRes = new TextureResource();
-                            tRes.Deserialize(entry.Version, new MemoryStream(entry.Data), Endian.Little);
 
-                            if (FileNamesAndHash.ContainsKey(tRes.NameHash))
-                            {
-                                name = FileNamesAndHash[tRes.NameHash];
-                            }
-                        }
-                        else
+                        if (res.Key >= 0 && res.Key < ResourceEntries.Count)
                         {
-                            if (!res.Value)
+                            if (type == "Texture" || type == "Mipmap")
                             {
-                                string StoredName = sortedResources[type][res.Key];
-                                if (!StoredName.Equals("not available"))
+                                try
                                 {
-                                    name = StoredName;
-                                }
+                                    TextureResource tRes = new TextureResource();
+                                    tRes.Deserialize(entry.Version, new MemoryStream(entry.Data), Endian.Little);
 
-                                resPatchAvailable[type][z] = new KeyValuePair<int, bool>(res.Key, true);
-                                break;
+                                    if (FileNamesAndHash != null && tRes.NameHash != 0 &&
+                                        FileNamesAndHash.ContainsKey(tRes.NameHash))
+                                    {
+                                        name = FileNamesAndHash[tRes.NameHash];
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    Console.WriteLine($"Error deserializing texture: {ex.Message}");
+                                }
+                            }
+                            else
+                            {
+                                if (!res.Value)
+                                {
+                                    string StoredName = "not available";
+
+                                    if (sortedResources.ContainsKey(type) &&
+                                        sortedResources[type].ContainsKey(res.Key))
+                                    {
+                                        StoredName = sortedResources[type][res.Key];
+                                    }
+
+                                    if (!StoredName.Equals("not available"))
+                                    {
+                                        name = StoredName;
+                                    }
+
+                                    resPatchAvailable[type][z] = new KeyValuePair<int, bool>(res.Key, true);
+                                    break;
+                                }
                             }
                         }
-
                     }
                 }
 
@@ -543,6 +586,7 @@ namespace Gibbed.Mafia2.FileFormats
                 var saveName = "";
                 resourceXML.WriteStartElement("ResourceEntry");
                 resourceXML.WriteElementString("Type", type);
+
                 switch (type)
                 {
                     case "Texture":
@@ -635,13 +679,49 @@ namespace Gibbed.Mafia2.FileFormats
                         Console.WriteLine("Unhandled Resource Type {0}", type);
                         break;
                 }
+
                 resourceXML.WriteElementString("Version", entry.Version.ToString());
-                File.WriteAllBytes(finalPath + "/" + saveName, entry.Data);
+
+                if (entry.Data != null)
+                {
+                    File.WriteAllBytes(finalPath + "/" + saveName, entry.Data);
+                }
+
                 resourceXML.WriteEndElement();
             }
+
             resourceXML.WriteEndElement();
             resourceXML.Flush();
             resourceXML.Dispose();
+        }
+        private string DetermineNameForPatchResource(ResourceEntry entry, string type, int index, PatchFile patchFile)
+        {
+            if (type == "Texture" || type == "Mipmap")
+            {
+                try
+                {
+                    TextureResource tRes = new TextureResource();
+                    tRes.Deserialize(entry.Version, new MemoryStream(entry.Data), Endian.Little);
+
+                    if (tRes.NameHash != 0)
+                    {
+                        if (FileNamesAndHash != null && FileNamesAndHash.ContainsKey(tRes.NameHash))
+                        {
+                            return FileNamesAndHash[tRes.NameHash];
+                        }
+
+                        if (_TextureNames != null && _TextureNames.ContainsKey(tRes.NameHash))
+                        {
+                            return _TextureNames[tRes.NameHash];
+                        }
+
+                        return $"Texture_{tRes.NameHash:X16}";
+                    }
+                }
+                catch { }
+            }
+
+            return $"{type}_{index}";
         }
 
         public void SaveResources(FileInfo file)
