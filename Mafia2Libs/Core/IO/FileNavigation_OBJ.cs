@@ -1,6 +1,8 @@
-﻿using ResourceTypes.Navigation;
+﻿using Mafia2Tool.Forms;
+using ResourceTypes.Navigation;
 using System.Diagnostics;
 using System.IO;
+using System.Windows.Forms;
 
 namespace Core.IO
 {
@@ -18,13 +20,34 @@ namespace Core.IO
 
         public override bool Open()
         {
-            if (!Debugger.IsAttached)
+            using (var editorForm = new SizeNOVEditor(file.FullName))
             {
-                return false; // debug only for now
+                if (editorForm.ShowDialog() == DialogResult.OK)
+                {
+                }
             }
 
-            NAVData Data = new NAVData(file);
             return true;
+        }
+
+        public override bool CanContextMenuOpen()
+        {
+            return true;
+        }
+
+        public override string GetContextMenuOpenTitle()
+        {
+            return "Open with Info NOV";
+        }
+
+        public override bool CanContextMenuSave()
+        {
+            return false;
+        }
+
+        public override string GetContextMenuSaveTitle()
+        {
+            return "Save Navigation Data";
         }
     }
 }
