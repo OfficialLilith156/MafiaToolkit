@@ -64,49 +64,61 @@ namespace Gibbed.Mafia2.FileFormats
         private bool bHasSetGameType;
         #endregion
         #region Properties
-        public Endian Endian {
+        public Endian Endian
+        {
             get { return this._Endian; }
             set { this._Endian = value; }
         }
-        public uint Version {
+        public uint Version
+        {
             get { return this._Version; }
             set { this._Version = value; }
         }
-        public Archive.Platform Platform {
+        public Archive.Platform Platform
+        {
             get { return this._Platform; }
             set { this._Platform = value; }
         }
-        public uint SlotRamRequired {
+        public uint SlotRamRequired
+        {
             get { return this._SlotRamRequired; }
             set { this._SlotRamRequired = value; }
         }
-        public uint SlotVramRequired {
+        public uint SlotVramRequired
+        {
             get { return this._SlotVramRequired; }
             set { this._SlotVramRequired = value; }
         }
-        public uint OtherRamRequired {
+        public uint OtherRamRequired
+        {
             get { return this._OtherRamRequired; }
             set { this._OtherRamRequired = value; }
         }
-        public uint OtherVramRequired {
+        public uint OtherVramRequired
+        {
             get { return this._OtherVramRequired; }
             set { this._OtherVramRequired = value; }
         }
-        public byte[] Unknown20 {
+        public byte[] Unknown20
+        {
             get { return this._Unknown20; }
             set { this._Unknown20 = value; }
         }
-        public List<Archive.ResourceType> ResourceTypes {
+        public List<Archive.ResourceType> ResourceTypes
+        {
             get { return this._ResourceTypes; }
         }
-        public string ResourceInfoXml {
+        public string ResourceInfoXml
+        {
             get { return this._ResourceInfoXml; }
             set { this._ResourceInfoXml = value; }
         }
-        public List<Archive.ResourceEntry> ResourceEntries {
+        public List<Archive.ResourceEntry> ResourceEntries
+        {
             get { return this._ResourceEntries; }
         }
-        public List<string> ResourceNames {
+        public List<string> ResourceNames
+        {
             get { return this._ResourceNames; }
         }
         #endregion
@@ -168,7 +180,7 @@ namespace Gibbed.Mafia2.FileFormats
             var blockAlignment = (options & ArchiveSerializeOptions.OneBlock) != ArchiveSerializeOptions.None ? (uint)this._ResourceEntries.Sum(re => stride + (re.Data == null ? 0 : re.Data.Length)) : alignment;
             fileHeader.BlockTableOffset = (uint)(output.Position - basePosition);
             fileHeader.ResourceCount = 0;
-            var blockStream = BlockWriterStream.ToStream(output, blockAlignment, endian, compress, ChosenGameType == GamesEnumerator.MafiaI_DE);           
+            var blockStream = BlockWriterStream.ToStream(output, blockAlignment, endian, compress, ChosenGameType == GamesEnumerator.MafiaI_DE);
             foreach (var resourceEntry in this._ResourceEntries)
             {
                 Archive.ResourceHeader resourceHeader;
@@ -385,7 +397,7 @@ namespace Gibbed.Mafia2.FileFormats
             }
 
             // Check if document is valid. If it is, then we know it has been found and loaded without problems.
-            if(document == null)
+            if (document == null)
             {
                 MessageBox.Show(string.Format("Failed to open SDSContent.XML. \n{0}", SDSContentPath));
                 return false;
@@ -399,11 +411,11 @@ namespace Gibbed.Mafia2.FileFormats
             // Try and pack the resources found in SDSContent.
             bool bResult = false;
 
-            if(_Version == 19)
+            if (_Version == 19)
             {
                 bResult = BuildResourcesVersion19(document, xmlDoc, rootNode, sdsFolder);
             }
-            else if(_Version == 20)
+            else if (_Version == 20)
             {
                 bResult = BuildResourcesVersion20(document, xmlDoc, rootNode, sdsFolder);
             }
@@ -422,7 +434,7 @@ namespace Gibbed.Mafia2.FileFormats
 
         private bool IsGameType(GamesEnumerator TypeToCheck)
         {
-            if(bHasSetGameType)
+            if (bHasSetGameType)
             {
                 return ChosenGameType.Equals(TypeToCheck);
             }
@@ -464,121 +476,78 @@ namespace Gibbed.Mafia2.FileFormats
                     patchFile.Deserialize(data ?? input, Endian.Little);
                 }
             }
-
             Dictionary<string, Dictionary<int, string>> sortedResources = new Dictionary<string, Dictionary<int, string>>();
             Dictionary<string, List<KeyValuePair<int, bool>>> resPatchAvailable = new Dictionary<string, List<KeyValuePair<int, bool>>>();
 
-            if (patchFile != null && patchFile.Types != null)
+            for (int i = 0; i < ResourceTypes.Count; i++)
             {
-                for (int i = 0; i < patchFile.Types.Length; i++)
-                {
-                    var typeName = patchFile.Types[i].Name;
-                    if (!string.IsNullOrEmpty(typeName) && !sortedResources.ContainsKey(typeName))
-                    {
-                        sortedResources.Add(typeName, new Dictionary<int, string>());
-                        resPatchAvailable.Add(typeName, new List<KeyValuePair<int, bool>>());
-                        Console.WriteLine($"Added patch type: {typeName}");
-                    }
-                }
+                sortedResources.Add(ResourceTypes[i].Name, new Dictionary<int, string>());
+                resPatchAvailable.Add(ResourceTypes[i].Name, new List<KeyValuePair<int, bool>>());
             }
 
             for (int i = 0; i < ResourceEntries.Count; i++)
             {
-                var entry = ResourceEntries[i];
+                var type = ResourceTypes[_ResourceEntries[i].TypeId].Name;
+                var name = (type == "Mipmap" ? ResourceNames[i].Remove(0, 4) : ResourceNames[i]);
 
-                if (entry.TypeId >= 0 && entry.TypeId < ResourceTypes.Count)
+                if (sortedResources.ContainsKey(type))
                 {
-                    var type = ResourceTypes[entry.TypeId].Name;
+                    sortedResources[type].Add(i, name);
 
-                    if (!string.IsNullOrEmpty(type) && sortedResources.ContainsKey(type))
+                    if (patchFile.UnkInts1.Contains(i))
                     {
-                        var name = (type == "Mipmap" && i < ResourceNames.Count ?
-                                   ResourceNames[i].Remove(0, 4) :
-                                   (i < ResourceNames.Count ? ResourceNames[i] : $"Resource_{i}"));
-
-                        sortedResources[type].Add(i, name);
-
-                        if (patchFile != null && patchFile.UnkInts1 != null && patchFile.UnkInts1.Contains(i))
-                        {
-                            resPatchAvailable[type].Add(new KeyValuePair<int, bool>(i, false));
-                        }
+                        resPatchAvailable[type].Add(new KeyValuePair<int, bool>(i, false));
                     }
                 }
-            }
-
-            if (patchFile == null || patchFile.resources == null)
-            {
-                resourceXML.WriteEndElement();
-                resourceXML.Flush();
-                resourceXML.Dispose();
-                return;
             }
 
             for (int i = 0; i < patchFile.resources.Length; i++)
             {
                 var entry = patchFile.resources[i];
-                if (entry == null) continue;
 
-                string type = "Unknown";
-
-                if (patchFile.Types != null && entry.TypeId >= 0 && entry.TypeId < patchFile.Types.Length)
-                {
-                    type = patchFile.Types[entry.TypeId].Name;
-                }
-                else if (entry.TypeId >= 0 && entry.TypeId < ResourceTypes.Count)
+                string type = "";
+                if (entry.TypeId < ResourceTypes.Count)
                 {
                     type = ResourceTypes[entry.TypeId].Name;
                 }
+                else
+                {
+                    // NB: M2DE's midtown.sds.patch seems to have a bogus type. I think its a MipMap, but 
+                    // I've had to implement a huge-ass fallback hack just to accomodate this bogus entry.
+                    type = "Unknown";
+                }
 
-                string name = DetermineNameForPatchResource(entry, type, i, patchFile);
+                string name = string.Format("{0}_{1}", type, i);
                 if (resPatchAvailable.ContainsKey(type))
                 {
                     for (int z = 0; z < resPatchAvailable[type].Count; z++)
                     {
                         var res = resPatchAvailable[type][z];
-
-                        if (res.Key >= 0 && res.Key < ResourceEntries.Count)
+                        if (type == "Texture" || type == "Mipmap")
                         {
-                            if (type == "Texture" || type == "Mipmap")
+                            TextureResource tRes = new TextureResource();
+                            tRes.Deserialize(entry.Version, new MemoryStream(entry.Data), Endian.Little);
+
+                            if (FileNamesAndHash.ContainsKey(tRes.NameHash))
                             {
-                                try
-                                {
-                                    TextureResource tRes = new TextureResource();
-                                    tRes.Deserialize(entry.Version, new MemoryStream(entry.Data), Endian.Little);
-
-                                    if (FileNamesAndHash != null && tRes.NameHash != 0 &&
-                                        FileNamesAndHash.ContainsKey(tRes.NameHash))
-                                    {
-                                        name = FileNamesAndHash[tRes.NameHash];
-                                    }
-                                }
-                                catch (Exception ex)
-                                {
-                                    Console.WriteLine($"Error deserializing texture: {ex.Message}");
-                                }
-                            }
-                            else
-                            {
-                                if (!res.Value)
-                                {
-                                    string StoredName = "not available";
-
-                                    if (sortedResources.ContainsKey(type) &&
-                                        sortedResources[type].ContainsKey(res.Key))
-                                    {
-                                        StoredName = sortedResources[type][res.Key];
-                                    }
-
-                                    if (!StoredName.Equals("not available"))
-                                    {
-                                        name = StoredName;
-                                    }
-
-                                    resPatchAvailable[type][z] = new KeyValuePair<int, bool>(res.Key, true);
-                                    break;
-                                }
+                                name = FileNamesAndHash[tRes.NameHash];
                             }
                         }
+                        else
+                        {
+                            if (!res.Value)
+                            {
+                                string StoredName = sortedResources[type][res.Key];
+                                if (!StoredName.Equals("not available"))
+                                {
+                                    name = StoredName;
+                                }
+
+                                resPatchAvailable[type][z] = new KeyValuePair<int, bool>(res.Key, true);
+                                break;
+                            }
+                        }
+
                     }
                 }
 
@@ -586,7 +555,6 @@ namespace Gibbed.Mafia2.FileFormats
                 var saveName = "";
                 resourceXML.WriteStartElement("ResourceEntry");
                 resourceXML.WriteElementString("Type", type);
-
                 switch (type)
                 {
                     case "Texture":
@@ -679,49 +647,13 @@ namespace Gibbed.Mafia2.FileFormats
                         Console.WriteLine("Unhandled Resource Type {0}", type);
                         break;
                 }
-
                 resourceXML.WriteElementString("Version", entry.Version.ToString());
-
-                if (entry.Data != null)
-                {
-                    File.WriteAllBytes(finalPath + "/" + saveName, entry.Data);
-                }
-
+                File.WriteAllBytes(finalPath + "/" + saveName, entry.Data);
                 resourceXML.WriteEndElement();
             }
-
             resourceXML.WriteEndElement();
             resourceXML.Flush();
             resourceXML.Dispose();
-        }
-        private string DetermineNameForPatchResource(ResourceEntry entry, string type, int index, PatchFile patchFile)
-        {
-            if (type == "Texture" || type == "Mipmap")
-            {
-                try
-                {
-                    TextureResource tRes = new TextureResource();
-                    tRes.Deserialize(entry.Version, new MemoryStream(entry.Data), Endian.Little);
-
-                    if (tRes.NameHash != 0)
-                    {
-                        if (FileNamesAndHash != null && FileNamesAndHash.ContainsKey(tRes.NameHash))
-                        {
-                            return FileNamesAndHash[tRes.NameHash];
-                        }
-
-                        if (_TextureNames != null && _TextureNames.ContainsKey(tRes.NameHash))
-                        {
-                            return _TextureNames[tRes.NameHash];
-                        }
-
-                        return $"Texture_{tRes.NameHash:X16}";
-                    }
-                }
-                catch { }
-            }
-
-            return $"{type}_{index}";
         }
 
         public void SaveResources(FileInfo file)
@@ -737,13 +669,13 @@ namespace Gibbed.Mafia2.FileFormats
                     doc = new XPathDocument(reader);
                 }
             }
-            else if(Version == 19)
+            else if (Version == 19)
             {
                 doc = CheckForCrySDS();
             }
 
             // stub out file names
-            for(int i = 0; i < ResourceEntries.Count; i++)
+            for (int i = 0; i < ResourceEntries.Count; i++)
             {
                 ResourceEntry Entry = ResourceEntries[i];
 
@@ -777,7 +709,7 @@ namespace Gibbed.Mafia2.FileFormats
                 while (nodes.MoveNext() == true)
                 {
                     string Name = nodes.Current.Value;
-                    if(!Name.Equals("not available"))
+                    if (!Name.Equals("not available"))
                     {
                         _ResourceNames[index] = Name;
                     }
@@ -788,11 +720,11 @@ namespace Gibbed.Mafia2.FileFormats
                 Log.WriteLine("Found all items; count is " + nodes.Count);
             }
 
-            if(Version == 19)
+            if (Version == 19)
             {
                 SaveResourcesVersion19(file, _ResourceNames);
-            } 
-            else if(Version == 20)
+            }
+            else if (Version == 20)
             {
                 SaveResourcesVersion20(file, _ResourceNames);
             }
@@ -816,7 +748,7 @@ namespace Gibbed.Mafia2.FileFormats
 
             var game = GameStorage.Instance.GetSelectedGame();
 
-            if(game.GameType == GamesEnumerator.MafiaI_DE)
+            if (game.GameType == GamesEnumerator.MafiaI_DE)
             {
                 FileName = "/Resources/GameData/M1_Textures.txt";
             }
