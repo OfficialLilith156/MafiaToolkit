@@ -43,6 +43,8 @@ namespace Core.IO
                     return new FileLua(info);
                 case "EDS":
                     return new FileEntityDataStorage(info);
+                case "IDS":
+                    return new FileIDS(info);
                 case "SPE":
                     return new FileSpeech(info);
                 case "TBL":

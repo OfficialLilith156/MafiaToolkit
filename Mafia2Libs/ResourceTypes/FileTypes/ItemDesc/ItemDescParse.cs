@@ -26,11 +26,13 @@ namespace ResourceTypes.ItemDesc
         public object[] Collisions { get; set; }
 
         public string FileName { get; private set; }
+        public string FullPath { get; private set; }
 
         public ItemDescLoader(string fileName)
         {
             Log.WriteLine("Trying to Parse: " + fileName, LoggingTypes.WARNING, LogCategoryTypes.FUNCTION);
             FileName = Path.GetFileName(fileName);
+            FullPath = fileName;
 
             using (BinaryReader reader = new BinaryReader(File.Open(fileName, FileMode.Open)))
             {
