@@ -231,9 +231,14 @@ namespace ResourceTypes.ModelHelpers.ModelExporter
             MT_Object NewObject = new MT_Object();
             NewObject.ObjectName = DesiredName;
             NewObject.ObjectType = DesiredType;
+            var correction = Quaternion.CreateFromAxisAngle(Vector3.UnitX, MathF.PI / 2f);
+
+            var importedRotation = CurrentNode.LocalTransform.Rotation;
+            var correctedRotation = correction * importedRotation;
+
             NewObject.Position = CurrentNode.LocalTransform.Translation;
-            NewObject.RotationQuat = CurrentNode.LocalTransform.Rotation;
-            NewObject.Rotation = NewObject.RotationQuat.ToEuler();
+            NewObject.RotationQuat = correctedRotation;
+            NewObject.Rotation = correctedRotation.ToEuler();
             NewObject.Scale = CurrentNode.LocalTransform.Scale;
 
             // see if we need to store frame name table data
