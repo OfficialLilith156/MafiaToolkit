@@ -1,6 +1,8 @@
-﻿using Microsoft.Win32;
+﻿using Mafia2Tool.Forms;
+using Microsoft.Win32;
 using ResourceTypes.SoundTable;
 using System.IO;
+using System.Windows.Forms;
 
 namespace Core.IO
 {
@@ -17,25 +19,11 @@ namespace Core.IO
 
         public override bool Open()
         {
-            // TODO: Make editor
-
-            SaveFileDialog saveFile = new SaveFileDialog()
+            using (var editorForm = new SoundTableEditor(file.FullName))
             {
-                InitialDirectory = Path.GetDirectoryName(file.FullName),
-                FileName = Path.GetFileNameWithoutExtension(file.FullName),
-                Filter = "XML (*.xml)|*.xml"
-            };
-
-            if (saveFile.ShowDialog() == true)
-            {
-                SoundTable Table = new SoundTable();
-
-                using (MemoryStream ReaderStream = new MemoryStream(File.ReadAllBytes(file.FullName)))
+                if (editorForm.ShowDialog() == DialogResult.OK)
                 {
-                    Table.ReadFromFile(ReaderStream, false);
                 }
-
-                Table.ConvertToXML(saveFile.FileName);
             }
 
             return true;
@@ -43,20 +31,33 @@ namespace Core.IO
 
         public override void Save()
         {
-            OpenFileDialog openFile = new OpenFileDialog()
+            System.Windows.Forms.OpenFileDialog openFile = new System.Windows.Forms.OpenFileDialog()
             {
                 InitialDirectory = Path.GetDirectoryName(file.FullName),
                 FileName = Path.GetFileNameWithoutExtension(file.FullName),
-                Filter = "XML (*.xml)|*.xml"
+                Filter = "XML files (*.xml)|*.xml"
             };
 
-            if (openFile.ShowDialog() == true)
+            if (openFile.ShowDialog() == DialogResult.OK)
             {
-                SoundTable Table = new SoundTable();
-                Table.ConvertFromXML(openFile.FileName);
+                try
+                {
+                    SoundTable Table = new SoundTable();
+                    Table.ConvertFromXML(openFile.FileName);
+                    if (File.Exists(file.FullName))
+                    {
+                        string backupPath = file.FullName + ".backup";
+                        File.Copy(file.FullName, backupPath, true);
+                    }
 
-                File.Copy(file.FullName, file.FullName + "_old", true);
-                Table.WriteToFile(file.FullName, false);
+                    Table.WriteToFile(file.FullName, false);
+
+                    MessageBox.Show($"Successfully converted {Path.GetFileName(openFile.FileName)} to {Path.GetFileName(file.FullName)}", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (System.Exception ex)
+                {
+                    MessageBox.Show($"Error converting file: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 
