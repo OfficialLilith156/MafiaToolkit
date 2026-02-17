@@ -20,12 +20,8 @@ namespace Core.IO
 
         public override bool Open()
         {
-            using (var editorForm = new SizeNOVEditor(file.FullName))
-            {
-                if (editorForm.ShowDialog() == DialogResult.OK)
-                {
-                }
-            }
+            var editorForm = new SizeNOVEditor(file.FullName);
+            editorForm.Show();
 
             return true;
         }
