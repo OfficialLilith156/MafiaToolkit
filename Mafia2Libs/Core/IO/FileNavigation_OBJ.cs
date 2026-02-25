@@ -23,7 +23,7 @@ namespace Core.IO
             var editorForm = new SizeNOVEditor(file.FullName);
             editorForm.Show();
 
-            return true;
+            return false;
         }
 
         public override bool CanContextMenuOpen()
