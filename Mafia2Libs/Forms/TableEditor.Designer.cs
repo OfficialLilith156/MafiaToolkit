@@ -141,6 +141,7 @@
             DataGrid.TabIndex = 16;
             DataGrid.CellValueChanged += CellContent_Changed;
             DataGrid.SelectionChanged += OnSelectedChange;
+            DataGrid.KeyDown += DataGrid_KeyDown;
             // 
             // statusStrip1
             // 

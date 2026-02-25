@@ -40,6 +40,9 @@ namespace Mafia2Tool
 
         public void Initialise()
         {
+            DataGrid.MultiSelect = true;
+            DataGrid.SelectionMode = DataGridViewSelectionMode.CellSelect;
+            DataGrid.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             ReadExternalHashes();
             LoadTableData();
             GetCellProperties(0, 0);
@@ -280,6 +283,91 @@ namespace Mafia2Tool
                     e.Cancel = true;
                 }
             }
+        }
+
+        private void DataGrid_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control && e.KeyCode == Keys.C)
+            {
+                CopySelectedCells();
+                e.Handled = true;
+            }
+
+            if (e.Control && e.KeyCode == Keys.V)
+            {
+                PasteToSelectedCells();
+                e.Handled = true;
+            }
+        }
+
+        private void CopySelectedCells()
+        {
+            if (DataGrid.GetCellCount(DataGridViewElementStates.Selected) > 0)
+            {
+                try
+                {
+                    Clipboard.SetDataObject(DataGrid.GetClipboardContent());
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("Copy failed.", "Toolkit", MessageBoxButtons.OK);
+                }
+            }
+        }
+
+        private void PasteToSelectedCells()
+        {
+            string clipboardText = Clipboard.GetText();
+
+            if (string.IsNullOrEmpty(clipboardText))
+                return;
+
+            string[] rows = clipboardText
+                .Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+            if (rows.Length == 1 && !rows[0].Contains("\t"))
+            {
+                foreach (DataGridViewCell cell in DataGrid.SelectedCells)
+                {
+                    try
+                    {
+                        cell.Value = rows[0];
+                    }
+                    catch
+                    {}
+                }
+            }
+            else
+            {
+                int startRow = DataGrid.CurrentCell.RowIndex;
+                int startCol = DataGrid.CurrentCell.ColumnIndex;
+
+                for (int i = 0; i < rows.Length; i++)
+                {
+                    string[] cells = rows[i].Split('\t');
+
+                    for (int j = 0; j < cells.Length; j++)
+                    {
+                        int rowIndex = startRow + i;
+                        int colIndex = startCol + j;
+
+                        if (rowIndex < DataGrid.RowCount &&
+                            colIndex < DataGrid.ColumnCount)
+                        {
+                            try
+                            {
+                                DataGrid.Rows[rowIndex]
+                                        .Cells[colIndex].Value = cells[j];
+                            }
+                            catch
+                            {}
+                        }
+                    }
+                }
+            }
+
+            Text = Language.GetString("$TABLE_EDITOR_TITLE") + "*";
+            bIsFileEdited = true;
         }
     }
 }
