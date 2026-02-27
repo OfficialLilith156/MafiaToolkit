@@ -899,5 +899,53 @@ namespace Mafia2Tool
             UnpackCurrentSDSButton.Enabled = enabled;
             PackCurrentSDSButton.Enabled = enabled;
         }
+
+        private void PackAllSDSButton_Click(object sender, EventArgs e)
+        {
+            DialogResult Result = MessageBox.Show("Are you sure you want to pack all SDS Archives? This will pack all unpacked SDS folders back into SDS files.", "Toolkit", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (Result == DialogResult.No)
+            {
+                return;
+            }
+            PackSDSRecurse(rootDirectory);
+            infoText.Text = "Finished packing all SDS files.";
+            OpenDirectory(currentDirectory);
+        }
+
+        private void PackSDSRecurse(DirectoryInfo info)
+        {
+            foreach (var file in info.GetFiles("*.sds"))
+            {
+                try
+                {
+                    string extractedFolder = Path.Combine(file.Directory.FullName, "extracted", file.Name);
+                    if (Directory.Exists(extractedFolder))
+                    {
+                        Debug.WriteLine("Packing " + file.FullName);
+                        var sdsFile = FileFactory.ConstructFromFileInfo(file) as FileSDS;
+                        if (sdsFile != null)
+                        {
+                            if (file.Attributes.HasFlag(FileAttributes.ReadOnly))
+                            {
+                                file.Attributes &= ~FileAttributes.ReadOnly;
+                            }
+                            sdsFile.Save();
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error packing {file.Name}: {ex.Message}", "Packing Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+
+            foreach (var directory in info.GetDirectories())
+            {
+                if (!directory.Name.Equals("extracted", StringComparison.OrdinalIgnoreCase))
+                {
+                    PackSDSRecurse(directory);
+                }
+            }
+        }
     }
 }

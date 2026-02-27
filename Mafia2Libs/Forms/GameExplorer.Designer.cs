@@ -95,6 +95,7 @@ namespace Mafia2Tool
             bottomContainer = new ToolStripContainer();
             status = new StatusStrip();
             infoText = new ToolStripStatusLabel();
+            packAllSDSToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)mainContainer).BeginInit();
             mainContainer.Panel1.SuspendLayout();
             mainContainer.Panel2.SuspendLayout();
@@ -232,7 +233,7 @@ namespace Mafia2Tool
             fileListView.Location = new System.Drawing.Point(4, 35);
             fileListView.Margin = new Padding(4, 3, 4, 3);
             fileListView.Name = "fileListView";
-            fileListView.Size = new System.Drawing.Size(604, 391);
+            fileListView.Size = new System.Drawing.Size(603, 391);
             fileListView.SmallImageList = imageBank;
             fileListView.TabIndex = 0;
             fileListView.UseCompatibleStateImageBehavior = false;
@@ -604,7 +605,7 @@ namespace Mafia2Tool
             // dropdownTools
             // 
             dropdownTools.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            dropdownTools.DropDownItems.AddRange(new ToolStripItem[] { OptionsItem, toolStripSeparator1, PackCurrentSDSButton, UnpackCurrentSDSButton, UnpackAllSDSButton });
+            dropdownTools.DropDownItems.AddRange(new ToolStripItem[] { OptionsItem, toolStripSeparator1, PackCurrentSDSButton, UnpackCurrentSDSButton, UnpackAllSDSButton, packAllSDSToolStripMenuItem });
             dropdownTools.Image = (System.Drawing.Image)resources.GetObject("dropdownTools.Image");
             dropdownTools.ImageTransparentColor = System.Drawing.Color.Magenta;
             dropdownTools.Name = "dropdownTools";
@@ -615,20 +616,20 @@ namespace Mafia2Tool
             // 
             OptionsItem.Image = (System.Drawing.Image)resources.GetObject("OptionsItem.Image");
             OptionsItem.Name = "OptionsItem";
-            OptionsItem.Size = new System.Drawing.Size(179, 22);
+            OptionsItem.Size = new System.Drawing.Size(180, 22);
             OptionsItem.Text = "$OPTIONS";
             OptionsItem.Click += OnOptionsItem_Clicked;
             // 
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new System.Drawing.Size(176, 6);
+            toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
             // 
             // PackCurrentSDSButton
             // 
             PackCurrentSDSButton.Image = (System.Drawing.Image)resources.GetObject("PackCurrentSDSButton.Image");
             PackCurrentSDSButton.Name = "PackCurrentSDSButton";
-            PackCurrentSDSButton.Size = new System.Drawing.Size(179, 22);
+            PackCurrentSDSButton.Size = new System.Drawing.Size(180, 22);
             PackCurrentSDSButton.Text = "$PACK_CUR_SDS";
             PackCurrentSDSButton.Click += ContextPackSelectedSDS_OnClick;
             // 
@@ -636,14 +637,14 @@ namespace Mafia2Tool
             // 
             UnpackCurrentSDSButton.Image = (System.Drawing.Image)resources.GetObject("UnpackCurrentSDSButton.Image");
             UnpackCurrentSDSButton.Name = "UnpackCurrentSDSButton";
-            UnpackCurrentSDSButton.Size = new System.Drawing.Size(179, 22);
+            UnpackCurrentSDSButton.Size = new System.Drawing.Size(180, 22);
             UnpackCurrentSDSButton.Text = "$UNPACK_CUR_SDS";
             UnpackCurrentSDSButton.Click += ContextUnpackSelectedSDS_OnClick;
             // 
             // UnpackAllSDSButton
             // 
             UnpackAllSDSButton.Name = "UnpackAllSDSButton";
-            UnpackAllSDSButton.Size = new System.Drawing.Size(179, 22);
+            UnpackAllSDSButton.Size = new System.Drawing.Size(180, 22);
             UnpackAllSDSButton.Text = "$UNPACK_ALL_SDS";
             UnpackAllSDSButton.Click += UnpackAllSDSButton_Click;
             // 
@@ -661,7 +662,7 @@ namespace Mafia2Tool
             // 
             AboutButton.Image = (System.Drawing.Image)resources.GetObject("AboutButton.Image");
             AboutButton.Name = "AboutButton";
-            AboutButton.Size = new System.Drawing.Size(118, 22);
+            AboutButton.Size = new System.Drawing.Size(180, 22);
             AboutButton.Text = "$ABOUT";
             AboutButton.Click += OnCredits_Pressed;
             // 
@@ -700,6 +701,13 @@ namespace Mafia2Tool
             // 
             infoText.Name = "infoText";
             infoText.Size = new System.Drawing.Size(0, 25);
+            // 
+            // packAllSDSToolStripMenuItem
+            // 
+            packAllSDSToolStripMenuItem.Name = "packAllSDSToolStripMenuItem";
+            packAllSDSToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            packAllSDSToolStripMenuItem.Text = "Pack All SDS";
+            packAllSDSToolStripMenuItem.Click += PackAllSDSButton_Click;
             // 
             // GameExplorer
             // 
@@ -808,5 +816,6 @@ namespace Mafia2Tool
         private ToolStripMenuItem ContextFileExport;
         private ToolStripMenuItem ContextFileImport;
         private ToolStripMenuItem ContextRemoveToCartFiles;
+        private ToolStripMenuItem packAllSDSToolStripMenuItem;
     }
 }
