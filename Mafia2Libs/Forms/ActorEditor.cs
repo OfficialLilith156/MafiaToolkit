@@ -85,7 +85,6 @@ namespace Mafia2Tool
             { ActorTypes.LightEntity, 71 },
             { ActorTypes.C_Cutscene, 73 },
             { ActorTypes.Telephone, 95 },
-            { ActorTypes.C_ScriptEntity, 98 },
             { ActorTypes.DangerZone, 103 },
             { ActorTypes.Airplane, 104 },
             { ActorTypes.C_Pinup, 106 },
@@ -95,6 +94,7 @@ namespace Mafia2Tool
             { ActorTypes.Wardrobe, 112 },
             { ActorTypes.PhysicsScene, 113 },
             { ActorTypes.CleanEntity, 114 },
+            { ActorTypes.C_ScriptEntity, 115 },
             { ActorTypes.None, 999 },
         };
         private void BuildData()
@@ -125,7 +125,8 @@ namespace Mafia2Tool
                 ActorTypes type = (ActorTypes)entry.ActorTypeID;
                 if (!groups.ContainsKey(type))
                 {
-                    TreeNode groupNode = new TreeNode(type.ToString()); 
+                    TreeNode groupNode = new TreeNode(type.ToString());
+                    groupNode.Tag = type;
                     groups[type] = groupNode;
                     items.Nodes.Add(groupNode);
                 }
@@ -444,7 +445,7 @@ namespace Mafia2Tool
                 }
                 // For now, Move Up/Down only active for ActorEntry.
                 ActorEntry Item = (SelectedNode.Tag as ActorEntry);
-                if (Item != null)
+                if (SelectedNode.Tag is ActorEntry || SelectedNode.Tag is ActorTypes)
                 {
                     Button_MoveDown.Visible = true;
                     Button_MoveUp.Visible = true;
@@ -454,71 +455,80 @@ namespace Mafia2Tool
 
         private void MoveItemDown()
         {
-            TreeNode SelectedNode = ActorTreeView.SelectedNode;
-            if (SelectedNode == null || SelectedNode.Tag == null)
+            TreeNode selectedNode = ActorTreeView.SelectedNode;
+            if (selectedNode == null) return;
+
+            TreeNode parent = selectedNode.Parent;
+
+            if (selectedNode.Tag is ActorTypes)
             {
+                int index = items.Nodes.IndexOf(selectedNode);
+                if (index < 0 || index >= items.Nodes.Count - 1) return;
+
+                items.Nodes.RemoveAt(index);
+                items.Nodes.Insert(index + 1, selectedNode);
+                ActorTreeView.SelectedNode = selectedNode;
+
+                Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
+                bIsFileEdited = true;
                 return;
             }
 
-            ActorEntry Item = (SelectedNode.Tag as ActorEntry);
-            if (Item == null)
-            {
-                // Only works for ActorEntry for now
-                return;
-            }
-            int Index = actors.Items.IndexOf(Item);
-            int NextIndex = (actors.Items.Count != Index ? Index + 1 : -1);
-            if (NextIndex == -1)
-            {
-                return;
-            }
-            // Can move down, start by swapping entires
-            ActorEntry ItemBelow = actors.Items[NextIndex];
-            actors.Items[Index] = ItemBelow;
-            actors.Items[NextIndex] = Item;
-            // Now move down in TreeView
-            TreeNode ParentNode = SelectedNode.Parent;
-            int NodeIndex = ParentNode.Nodes.IndexOf(SelectedNode);
-            ParentNode.Nodes.RemoveAt(NodeIndex);
-            ParentNode.Nodes.Insert(NodeIndex + 1, SelectedNode);
-            ActorTreeView.SelectedNode = SelectedNode;
-            // Update UI
-            Text = Language.GetString("$STREAM_EDITOR_TITLE") + "*";
+            if (!(selectedNode.Tag is ActorEntry item)) return;
+
+            int listIndex = actors.Items.IndexOf(item);
+            if (listIndex < 0 || listIndex >= actors.Items.Count - 1) return;
+
+            var below = actors.Items[listIndex + 1];
+            actors.Items[listIndex] = below;
+            actors.Items[listIndex + 1] = item;
+
+            int nodeIndex = parent.Nodes.IndexOf(selectedNode);
+            parent.Nodes.RemoveAt(nodeIndex);
+            parent.Nodes.Insert(nodeIndex + 1, selectedNode);
+
+            ActorTreeView.SelectedNode = selectedNode;
+
+            Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
             bIsFileEdited = true;
         }
 
         private void MoveItemUp()
         {
-            TreeNode SelectedNode = ActorTreeView.SelectedNode;
-            if (SelectedNode == null || SelectedNode.Tag == null)
+            TreeNode selectedNode = ActorTreeView.SelectedNode;
+            if (selectedNode == null) return;
+
+            if (selectedNode.Tag is ActorTypes)
             {
+                int index = items.Nodes.IndexOf(selectedNode);
+                if (index <= 0) return;
+
+                items.Nodes.RemoveAt(index);
+                items.Nodes.Insert(index - 1, selectedNode);
+                ActorTreeView.SelectedNode = selectedNode;
+
+                Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
+                bIsFileEdited = true;
                 return;
             }
 
-            ActorEntry Item = (SelectedNode.Tag as ActorEntry);
-            if (Item == null)
-            {
-                // Only works for ActorEntry for now
-                return;
-            }
-            int Index = actors.Items.IndexOf(Item);
-            int NextIndex = (Index != 0 ? Index - 1 : -1);
-            if (NextIndex == -1)
-            {
-                return;
-            }
-            // Can move up, start by swapping entires
-            ActorEntry ItemAbove = actors.Items[NextIndex];
-            actors.Items[Index] = ItemAbove;
-            actors.Items[NextIndex] = Item;
-            // Now move up in TreeView
-            TreeNode ParentNode = SelectedNode.Parent;
-            int NodeIndex = ParentNode.Nodes.IndexOf(SelectedNode);
-            ParentNode.Nodes.RemoveAt(NodeIndex);
-            ParentNode.Nodes.Insert(NodeIndex - 1, SelectedNode);
-            ActorTreeView.SelectedNode = SelectedNode;
-            // Update UI
-            Text = Language.GetString("$STREAM_EDITOR_TITLE") + "*";
+            if (!(selectedNode.Tag is ActorEntry item)) return;
+
+            int listIndex = actors.Items.IndexOf(item);
+            if (listIndex <= 0) return;
+
+            var above = actors.Items[listIndex - 1];
+            actors.Items[listIndex] = above;
+            actors.Items[listIndex - 1] = item;
+
+            TreeNode parent = selectedNode.Parent;
+            int nodeIndex = parent.Nodes.IndexOf(selectedNode);
+            parent.Nodes.RemoveAt(nodeIndex);
+            parent.Nodes.Insert(nodeIndex - 1, selectedNode);
+
+            ActorTreeView.SelectedNode = selectedNode;
+
+            Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
             bIsFileEdited = true;
         }
 
