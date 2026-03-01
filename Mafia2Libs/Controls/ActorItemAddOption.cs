@@ -30,6 +30,7 @@ namespace Forms.EditorControls
             TypeCombo.Items.Add(ActorTypes.C_ActorDetector);
             TypeCombo.Items.Add(ActorTypes.Blocker);
             TypeCombo.Items.Add(ActorTypes.C_StaticWeapon);
+            TypeCombo.Items.Add(ActorTypes.C_StaticParticle);
             TypeCombo.Items.Add(ActorTypes.FireTarget);
             TypeCombo.Items.Add(ActorTypes.LightEntity);
             TypeCombo.Items.Add(ActorTypes.C_Cutscene);
@@ -47,6 +48,11 @@ namespace Forms.EditorControls
             TypeCombo.Items.Add(ActorTypes.DangerZone);
             TypeCombo.Items.Add(ActorTypes.FramesController);
             TypeCombo.Items.Add(ActorTypes.Wardrobe);
+
+            //TypeCombo.Items.Add(ActorTypes.C_Player2); //Not Work
+            //TypeCombo.Items.Add(ActorTypes.C_TranslocatedCar); //Not Work
+            //TypeCombo.Items.Add(ActorTypes.C_DummyDoor); //Not Work
+            //TypeCombo.Items.Add(ActorTypes.SpikeStrip); //Not Work
             TypeCombo.SelectedIndex = 0;
         }
 

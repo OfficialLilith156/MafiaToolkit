@@ -51,61 +51,12 @@ namespace Mafia2Tool
             ContextDelete.Text = Language.GetString("$DELETE");
         }
 
-        private static readonly Dictionary<ActorTypes, int> TypePriority = new Dictionary<ActorTypes, int>()
-        {
-            { ActorTypes.Human, 14 },
-            { ActorTypes.C_Player2, 16 },
-            { ActorTypes.C_Car, 18 },
-            { ActorTypes.C_Train, 19 },
-            { ActorTypes.C_CrashObject, 20 },
-            { ActorTypes.C_TrafficCar, 21 },
-            { ActorTypes.C_TrafficHuman, 22 },
-            { ActorTypes.C_TrafficTrain, 23 },
-            { ActorTypes.ActionPoint, 25 },
-            { ActorTypes.ActionPointScript, 30 },
-            { ActorTypes.ActionPointSearch, 32 },
-            { ActorTypes.C_Item, 36 },
-            { ActorTypes.C_Door, 38 },
-            { ActorTypes.Tree, 39 },
-            { ActorTypes.Lift, 40 },
-            { ActorTypes.C_Sound, 41 },
-            { ActorTypes.SoundMixer, 43 },
-            { ActorTypes.Boat, 47 },
-            { ActorTypes.Radio, 48 },
-            { ActorTypes.JukeBox, 49 },
-            { ActorTypes.StaticEntity, 52 },
-            { ActorTypes.C_TranslocatedCar, 53 },
-            { ActorTypes.Garage, 54 },
-            { ActorTypes.FrameWrapper, 55 },
-            { ActorTypes.C_ActorDetector, 56 },
-            { ActorTypes.Blocker, 63 },
-            { ActorTypes.C_StaticWeapon, 64 },
-            { ActorTypes.C_StaticParticle, 66 },
-            { ActorTypes.FireTarget, 70 },
-            { ActorTypes.LightEntity, 71 },
-            { ActorTypes.C_Cutscene, 73 },
-            { ActorTypes.Telephone, 95 },
-            { ActorTypes.DangerZone, 103 },
-            { ActorTypes.Airplane, 104 },
-            { ActorTypes.C_Pinup, 106 },
-            { ActorTypes.SpikeStrip, 107 },
-            { ActorTypes.C_DummyDoor, 109 },
-            { ActorTypes.FramesController, 110 },
-            { ActorTypes.Wardrobe, 112 },
-            { ActorTypes.PhysicsScene, 113 },
-            { ActorTypes.CleanEntity, 114 },
-            { ActorTypes.C_ScriptEntity, 115 },
-            { ActorTypes.None, 999 },
-        };
+        
         private void BuildData()
         {
             actors = new Actor(actorFile);
             actors.Items.Sort((a, b) =>
             {
-                int pa = TypePriority.ContainsKey((ActorTypes)a.ActorTypeID) ? TypePriority[(ActorTypes)a.ActorTypeID] : 999;
-                int pb = TypePriority.ContainsKey((ActorTypes)b.ActorTypeID) ? TypePriority[(ActorTypes)b.ActorTypeID] : 999;
-                int typeCompare = pa.CompareTo(pb);
-                if (typeCompare != 0) return typeCompare;
                 return string.Compare(a.EntityName, b.EntityName, StringComparison.InvariantCultureIgnoreCase);
             });
             definitions = new TreeNode("Definitions");
