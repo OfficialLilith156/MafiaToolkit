@@ -112,7 +112,6 @@ namespace Mafia2Tool
 
         private void Localise()
         {
-            FileButton.Text = Language.GetString("$FILE");
             EditButton.Text = Language.GetString("$CREATE");
             ViewButton.Text = Language.GetString("$VIEW");
             ViewTopButton.Text = Language.GetString("$TOP");
@@ -130,8 +129,6 @@ namespace Mafia2Tool
             Button_ImportFrame.Text = Language.GetString("$IMPORT_FRAME");
             Button_ImportBundle.Text = Language.GetString("$IMPORT_BUNDLE");
             AddSceneFolderButton.Text = Language.GetString("$ADD_SCENE_FOLDER");
-            SaveButton.Text = Language.GetString("$SAVE");
-            ExitButton.Text = Language.GetString("$EXIT");
             Button_TestConvert32.Text = Language.GetString("$TEST_CONVERT_32BIT");
             Button_TestConvert16.Text = Language.GetString("$TEST_CONVERT_16BIT");
             Button_DumpTexture.Text = Language.GetString("$DUMP_TEXTURES");
