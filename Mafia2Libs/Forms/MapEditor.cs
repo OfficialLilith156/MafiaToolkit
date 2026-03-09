@@ -4807,6 +4807,10 @@ namespace Mafia2Tool
                 // we can just delete root node here, all children are vanquished
                 dSceneTree.RemoveNode(node);
             }
+            else if (node.Tag is OBJData.VertexStruct)
+            {
+                DeleteNavVertex(node);
+            }
             else if (node.Tag.GetType() == typeof(FrameHeaderScene))
             {
                 FrameHeaderScene scene = (node.Tag as FrameHeaderScene);
@@ -4863,6 +4867,98 @@ namespace Mafia2Tool
                 }
                 dSceneTree.RemoveNode(node);
             }
+        }
+        private void DeleteNavVertex(TreeNode node)
+        {
+            TreeNode parentNavNode = node.Parent;
+            while (parentNavNode != null && !(parentNavNode.Tag is RenderNav))
+                parentNavNode = parentNavNode.Parent;
+
+            if (parentNavNode == null || !(parentNavNode.Tag is RenderNav nav))
+            {
+                MessageBox.Show("Cannot find parent RenderNav.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            OBJData data = nav.GetData();
+            OBJData.VertexStruct vertexToDelete = node.Tag as OBJData.VertexStruct;
+
+            int oldIndex = -1;
+            for (int i = 0; i < data.vertices.Length; i++)
+            {
+                if (data.vertices[i] == vertexToDelete)
+                {
+                    oldIndex = i;
+                    break;
+                }
+            }
+
+            if (oldIndex == -1)
+            {
+                MessageBox.Show("Vertex not found in data.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (int.TryParse(node.Name, out int refID))
+            {
+                Graphics.DeleteAsset(refID);
+            }
+
+            OBJData.VertexStruct[] newVertices = new OBJData.VertexStruct[data.vertices.Length - 1];
+            int[] oldToNewIndex = new int[data.vertices.Length];
+            for (int i = 0, j = 0; i < data.vertices.Length; i++)
+            {
+                if (i == oldIndex)
+                {
+                    oldToNewIndex[i] = -1;
+                    continue;
+                }
+                newVertices[j] = data.vertices[i];
+                oldToNewIndex[i] = j;
+                j++;
+            }
+
+            List<OBJData.ConnectionStruct> validConnections = new List<OBJData.ConnectionStruct>();
+            foreach (var conn in data.connections)
+            {
+                int nodeID = (int)conn.NodeID;
+                int connectedID = (int)conn.ConnectedNodeID;
+                if (nodeID == oldIndex || connectedID == oldIndex)
+                    continue;
+
+                if (oldToNewIndex[nodeID] == -1 || oldToNewIndex[connectedID] == -1)
+                    continue;
+
+                OBJData.ConnectionStruct newConn = conn;
+                newConn.NodeID = (uint)oldToNewIndex[nodeID];
+                newConn.ConnectedNodeID = (uint)oldToNewIndex[connectedID];
+                validConnections.Add(newConn);
+            }
+
+            List<OBJData.ConnectionStruct> newConnectionsList = new List<OBJData.ConnectionStruct>();
+            int[] newUnk2 = new int[newVertices.Length];
+
+            for (int newIdx = 0; newIdx < newVertices.Length; newIdx++)
+            {
+                var outgoing = validConnections.Where(c => c.NodeID == newIdx).ToList();
+                newUnk2[newIdx] = newConnectionsList.Count;
+                newConnectionsList.AddRange(outgoing);
+            }
+
+            data.vertices = newVertices;
+            data.connections = newConnectionsList.ToArray();
+            data.vertSize = newVertices.Length;
+
+            for (int i = 0; i < newVertices.Length; i++)
+            {
+                newVertices[i].Unk2 = newUnk2[i];
+            }
+
+            data.GenerateConnections();
+
+            nav.RebuildAllConnections();
+
+            node.Remove();
         }
 
         private void DeleteAIPoint(TreeNode node)
