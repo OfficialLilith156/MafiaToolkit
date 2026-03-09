@@ -109,7 +109,7 @@ namespace ResourceTypes.Navigation
             //Unk9 = reader.ReadUInt32();
             //Unk10 = reader.ReadUInt32();
 
-            DebugWriteToFile();
+            //DebugWriteToFile();
         }
 
         public void WriteToFile(BinaryWriter Writer)

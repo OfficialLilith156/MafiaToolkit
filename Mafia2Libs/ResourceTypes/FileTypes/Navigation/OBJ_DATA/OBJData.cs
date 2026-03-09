@@ -166,7 +166,7 @@ namespace ResourceTypes.Navigation
             Footer = reader.ReadBytes((int)(reader.BaseStream.Length - reader.BaseStream.Position));
 
             GenerateConnections();
-            DumpToASCII("NAV_OBJ_DATA_"+fileIDHPD+".txt");
+            //DumpToASCII("NAV_OBJ_DATA_"+fileIDHPD+".txt");
         }
 
         public void WriteToFile(NavigationWriter writer)
@@ -283,7 +283,7 @@ namespace ResourceTypes.Navigation
                     Index++;
                 }
 
-                runtimeMesh.DumpToASCII(writer);
+                //runtimeMesh.DumpToASCII(writer);
 
                 writer.Close();
             }
