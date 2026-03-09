@@ -11,6 +11,10 @@ namespace Rendering.Graphics
     public class RenderNav : IRenderer
     {
         private OBJData data = null;
+        public OBJData GetData()
+        {
+            return data;
+        }
 
         private GraphicsClass OwnGraphics;
 
@@ -77,37 +81,109 @@ namespace Rendering.Graphics
             OwnGraphics.OurPrimitiveManager.AddPrimitiveBatch(PointConnectionsBatch);
         }
 
+        public void UpdateVertexPosition(int index, Vector3 newPosition)
+        {
+            if (index < 0 || index >= BoundingBoxes.Count)
+                return;
+
+            BoundingBoxes[index].SetTransform(Matrix4x4.CreateTranslation(newPosition));
+
+            if (index == SelectedIndex)
+            {
+                RebuildConnectionLines();
+            }
+
+            PathVertexBatch?.SetIsDirty();
+            PointConnectionsBatch?.SetIsDirty();
+        }
+        public void AddVertex(RenderBoundingBox box, OBJData.VertexStruct vertex)
+        {
+            BoundingBoxes.Add(box);
+            int handle = RefManager.GetNewRefID();
+            PathVertexBatch.AddObject(handle, box);
+            PathVertexBatch.SetIsDirty();
+        }
+        public void RebuildConnectionLines()
+        {
+            if (SelectedIndex == -1 || data == null)
+                return;
+
+            OBJData.VertexStruct selectedVertex = data.vertices[SelectedIndex];
+            PointConnectionsBatch.ClearObjects();
+
+            if (selectedVertex.Unk3 >= 0 && selectedVertex.Unk3 < data.vertices.Length)
+            {
+                var line = CreateConnectionLine(selectedVertex, data.vertices[selectedVertex.Unk3], System.Drawing.Color.Yellow);
+                PointConnectionsBatch.AddObject(RefManager.GetNewRefID(), line);
+            }
+            if (selectedVertex.Unk4 >= 0 && selectedVertex.Unk4 < data.vertices.Length)
+            {
+                var line = CreateConnectionLine(selectedVertex, data.vertices[selectedVertex.Unk4], System.Drawing.Color.Brown);
+                PointConnectionsBatch.AddObject(RefManager.GetNewRefID(), line);
+            }
+            if (selectedVertex.Unk5 >= 0 && selectedVertex.Unk5 < data.vertices.Length)
+            {
+                var line = CreateConnectionLine(selectedVertex, data.vertices[selectedVertex.Unk5], System.Drawing.Color.Red);
+                PointConnectionsBatch.AddObject(RefManager.GetNewRefID(), line);
+            }
+
+            foreach (var incoming in selectedVertex.IncomingConnections)
+            {
+                var line = CreateConnectionLine(selectedVertex, incoming, System.Drawing.Color.Green);
+                PointConnectionsBatch.AddObject(RefManager.GetNewRefID(), line);
+            }
+            foreach (var outgoing in selectedVertex.OutgoingConnections)
+            {
+                var line = CreateConnectionLine(selectedVertex, outgoing, System.Drawing.Color.Blue);
+                PointConnectionsBatch.AddObject(RefManager.GetNewRefID(), line);
+            }
+
+            PointConnectionsBatch.SetIsDirty();
+        }
+
+        public void RebuildAllConnections()
+        {
+            if (SelectedIndex != -1)
+                RebuildConnectionLines();
+        }
         public void SelectNode(int Index)
         {
-            // TODO: Big problem here - The graphics class isn't aware of the selecting logic here.
-            // So we'll one day need to support the graphics class aware of this and deselect this whenever another
-            // object has been selected.
-            if (SelectedIndex != -1)
+            if (Index < 0 || Index >= BoundingBoxes.Count)
+                return;
+
+            if (SelectedIndex != -1 && SelectedIndex < BoundingBoxes.Count)
             {
                 BoundingBoxes[SelectedIndex].Unselect();
             }
 
-            // Move the selection to the new Vertex
             BoundingBoxes[Index].Select();
             SelectedIndex = Index;
 
-            // Render debug work
             OBJData.VertexStruct PathPoint = data.vertices[Index];
-            RenderLine FromA = CreateConnectionLine(PathPoint, data.vertices[PathPoint.Unk3], System.Drawing.Color.Yellow);
-            RenderLine FromB = CreateConnectionLine(PathPoint, data.vertices[PathPoint.Unk4], System.Drawing.Color.Brown);
-            RenderLine FromC = CreateConnectionLine(PathPoint, data.vertices[PathPoint.Unk5], System.Drawing.Color.Red);
-
             PointConnectionsBatch.ClearObjects();
-            PointConnectionsBatch.AddObject(RefManager.GetNewRefID(), FromA);
-            PointConnectionsBatch.AddObject(RefManager.GetNewRefID(), FromB);
-            PointConnectionsBatch.AddObject(RefManager.GetNewRefID(), FromC);
 
+            if (PathPoint.Unk3 >= 0 && PathPoint.Unk3 < data.vertices.Length)
+            {
+                RenderLine FromA = CreateConnectionLine(PathPoint, data.vertices[PathPoint.Unk3], System.Drawing.Color.Yellow);
+                PointConnectionsBatch.AddObject(RefManager.GetNewRefID(), FromA);
+            }
+            if (PathPoint.Unk4 >= 0 && PathPoint.Unk4 < data.vertices.Length)
+            {
+                RenderLine FromB = CreateConnectionLine(PathPoint, data.vertices[PathPoint.Unk4], System.Drawing.Color.Brown);
+                PointConnectionsBatch.AddObject(RefManager.GetNewRefID(), FromB);
+            }
+            if (PathPoint.Unk5 >= 0 && PathPoint.Unk5 < data.vertices.Length)
+            {
+                RenderLine FromC = CreateConnectionLine(PathPoint, data.vertices[PathPoint.Unk5], System.Drawing.Color.Red);
+                PointConnectionsBatch.AddObject(RefManager.GetNewRefID(), FromC);
+            }
+
+            
             foreach (var IncomingPoint in PathPoint.IncomingConnections)
             {
                 RenderLine Connection = CreateConnectionLine(PathPoint, IncomingPoint, System.Drawing.Color.Green);
                 PointConnectionsBatch.AddObject(RefManager.GetNewRefID(), Connection);
             }
-
             foreach (var OutgoingPoint in PathPoint.OutgoingConnections)
             {
                 RenderLine Connection = CreateConnectionLine(PathPoint, OutgoingPoint, System.Drawing.Color.Blue);

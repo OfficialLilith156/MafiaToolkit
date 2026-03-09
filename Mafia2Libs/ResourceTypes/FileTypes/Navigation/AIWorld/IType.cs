@@ -9,7 +9,7 @@ namespace ResourceTypes.Navigation
 {
     public class IType
     {
-        protected int RefID;
+        public int RefID;
         protected AIWorld OwnWorld;
         public AIWorld World => OwnWorld;
         public int ID => RefID;

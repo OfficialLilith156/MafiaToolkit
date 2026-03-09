@@ -94,7 +94,7 @@ namespace ResourceTypes.Navigation
         int fileIDHPD;
         int unk3HPD; // Usually 100412
         int bitFlagsHPD;
-        int vertSize;
+        public int vertSize;
         int triSize;
         public VertexStruct[] vertices;
         public ConnectionStruct[] connections;
@@ -175,8 +175,8 @@ namespace ResourceTypes.Navigation
             writer.Write(fileIDHPD);
             writer.Write(unk3HPD);
             writer.Write(bitFlagsHPD);
-            writer.Write(vertSize);
-            writer.Write(triSize);
+            writer.Write(vertices.Length);   
+            writer.Write(connections.Length);
 
             for (int i = 0; i < vertices.Length; i++)
             {
@@ -226,11 +226,11 @@ namespace ResourceTypes.Navigation
                 VertexStruct vertex = vertices[i];
 
                 int ConnectionOffset = vertex.Unk2 - 1;
-                if (ConnectionOffset != -1)
+                if (ConnectionOffset >= 0 && ConnectionOffset < connections.Length)
                 {
                     bool bEndOfArray = false;
                     ConnectionStruct CurConnection = connections[ConnectionOffset];
-                    while(CurConnection.NodeID == i && !bEndOfArray)
+                    while (CurConnection.NodeID == i && !bEndOfArray)
                     {
                         VertexStruct ConnectedVertex = vertices[CurConnection.ConnectedNodeID];
                         vertex.OutgoingConnections.Add(ConnectedVertex);

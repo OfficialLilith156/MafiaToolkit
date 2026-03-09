@@ -19,6 +19,7 @@ using ResourceTypes.Navigation.Traffic;
 using ResourceTypes.Translokator;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -46,6 +47,13 @@ namespace Mafia2Tool
 {
     public partial class MapEditor : Form
     {
+        private List<SoundSectorData> loadedSoundSectors = new List<SoundSectorData>();
+        private List<PortalData> loadedPortals = new List<PortalData>();
+        private string _soundSectorsFilePath;
+        private XmlDocument _soundSectorsXmlDoc;
+        private string _soundSectorsRootName;
+        private List<ulong> _soundSectorsHashes = new List<ulong>();
+
         private SceneData SceneData = new SceneData();
         private SceneData ImportedScene;
         private InputClass Input { get; set; }
@@ -167,6 +175,648 @@ namespace Mafia2Tool
             dSceneTree.TranslokatorNewInstanceButton.Click += new EventHandler(TranslokatorNewInstanceButton_Click);
             dSceneTree.ActorEntryNewTRObjectButton.Click += new EventHandler(ActorEntryNewTRObjectButton_Click);
             dSceneTree.TRRebuildObjectButton.Click += new EventHandler(TRRebuildObjectButton_Click);
+
+        }
+
+        public class SoundSectorData
+        {
+            public string Name { get; set; }
+            public List<Plane4> Planes { get; set; } = new List<Plane4>();
+            public int RefID { get; set; }
+
+            [Browsable(false)] 
+            public RenderBoundingBox RenderBox { get; set; }
+            public string Type { get; set; } 
+            public List<ushort> Unk0 { get; set; } = new List<ushort>();
+            public uint Unk1 { get; set; }
+            public uint Unk2 { get; set; }
+            public short Unk3 { get; set; }
+            public ushort Unk4 { get; set; }
+            public ushort Unk5 { get; set; }
+            public bool bBasicSceneOnly { get; set; }
+
+            public void RebuildRenderBox()
+            {
+                if (RenderBox == null) return;
+
+                List<Vector3> vertices = MapEditor.CalculateVerticesFromPlanes(Planes, 50.0f);
+                if (vertices.Count >= 2)
+                {
+                    Vector3 min = vertices[0], max = vertices[0];
+                    foreach (var v in vertices)
+                    {
+                        min = Vector3.Min(min, v);
+                        max = Vector3.Max(max, v);
+                    }
+                    BoundingBox bbox = new BoundingBox(min, max);
+                    RenderBox.Update(bbox);
+                }
+            }
+
+            private Vector3 _min;
+            private Vector3 _max;
+
+            [Browsable(false)] 
+            public Vector3 BMin { get => _min; set => _min = value; }
+
+            [Browsable(false)]
+            public Vector3 BMax { get => _max; set => _max = value; }
+
+            [Category("Bounds")]
+            [Description("Minimum corner of the sector box")]
+            public Vector3 Min
+            {
+                get => _min;
+                set
+                {
+                    if (_min != value)
+                    {
+                        _min = value;
+                        UpdateFromBounds();
+                    }
+                }
+            }
+
+            [Category("Bounds")]
+            [Description("Maximum corner of the sector box")]
+            public Vector3 Max
+            {
+                get => _max;
+                set
+                {
+                    if (_max != value)
+                    {
+                        _max = value;
+                        UpdateFromBounds();
+                    }
+                }
+            }
+
+            public void UpdateFromBounds()
+            {
+                Planes.Clear();
+                Planes.Add(new Plane4 { X = 1, Y = 0, Z = 0, W = -_max.X });
+                Planes.Add(new Plane4 { X = -1, Y = 0, Z = 0, W = _min.X });
+                Planes.Add(new Plane4 { X = 0, Y = 1, Z = 0, W = -_max.Y });
+                Planes.Add(new Plane4 { X = 0, Y = -1, Z = 0, W = _min.Y });
+                Planes.Add(new Plane4 { X = 0, Y = 0, Z = 1, W = -_max.Z });
+                Planes.Add(new Plane4 { X = 0, Y = 0, Z = -1, W = _min.Z });
+
+                RebuildRenderBox();
+            }
+
+            public void UpdateBoundsFromPlanes()
+            {
+                if (Planes == null || Planes.Count == 0)
+                    return;
+
+                float minX = float.MaxValue, maxX = float.MinValue;
+                float minY = float.MaxValue, maxY = float.MinValue;
+                float minZ = float.MaxValue, maxZ = float.MinValue;
+                bool hasAxisPlanes = false;
+
+                foreach (var p in Planes)
+                {
+                    Vector3 normal = new Vector3(p.X, p.Y, p.Z);
+                    float d = p.W;
+
+                    if (Math.Abs(normal.X) > 0.99f)
+                    {
+                        if (normal.X > 0) maxX = -d;
+                        else minX = d;
+                        hasAxisPlanes = true;
+                    }
+                    else if (Math.Abs(normal.Y) > 0.99f)
+                    {
+                        if (normal.Y > 0) maxY = -d;
+                        else minY = d;
+                        hasAxisPlanes = true;
+                    }
+                    else if (Math.Abs(normal.Z) > 0.99f)
+                    {
+                        if (normal.Z > 0) maxZ = -d;
+                        else minZ = d;
+                        hasAxisPlanes = true;
+                    }
+                }
+
+                if (hasAxisPlanes &&
+                    minX != float.MaxValue && maxX != float.MinValue &&
+                    minY != float.MaxValue && maxY != float.MinValue &&
+                    minZ != float.MaxValue && maxZ != float.MinValue)
+                {
+                    _min = new Vector3(minX, minY, minZ);
+                    _max = new Vector3(maxX, maxY, maxZ);
+                }
+                else
+                {
+                    List<Vector3> vertices = MapEditor.CalculateVerticesFromPlanes(Planes, 50.0f);
+                    if (vertices.Count >= 2)
+                    {
+                        Vector3 min = vertices[0], max = vertices[0];
+                        foreach (var v in vertices)
+                        {
+                            min = Vector3.Min(min, v);
+                            max = Vector3.Max(max, v);
+                        }
+                        _min = min;
+                        _max = max;
+                    }
+                    else
+                    {
+                        _min = Vector3.Zero;
+                        _max = Vector3.Zero;
+                    }
+                }
+            }
+        }
+
+        public class PortalData
+        {
+            public string Name { get; set; }
+            public Vector3 Position { get; set; }
+            public float Unk0 { get; set; } 
+            public float OpenRatio { get; set; }
+            public string LinkA { get; set; }
+            public byte Unk2 { get; set; }
+            public string LinkB { get; set; }
+            public byte Unk3 { get; set; }
+            public float CostFactor { get; set; }
+            public string EntityName { get; set; }
+            public byte Unk6 { get; set; }
+            public byte bVolumeFactorEnabled { get; set; }
+            public float VolumeFactor { get; set; }
+            public int RefID { get; set; }
+            public RenderBoundingBox RenderBox { get; set; }
+        }
+
+        public class Plane4
+        {
+            public float X { get; set; }
+            public float Y { get; set; }
+            public float Z { get; set; }
+            public float W { get; set; }
+        }
+
+        private void BtnLoadSoundSectors_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                OpenFileDialog openFileDialog = new OpenFileDialog();
+                openFileDialog.Filter = "XML Files (*.xml)|*.xml|All Files (*.*)|*.*";
+                openFileDialog.Title = "Select Sound Sectors XML file";
+
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    Cursor.Current = Cursors.WaitCursor;
+                    LoadAndVisualizeSoundSectors(openFileDialog.FileName);
+                    Cursor.Current = Cursors.Default;
+                    MessageBox.Show("Sound sectors loaded successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                Cursor.Current = Cursors.Default;
+                MessageBox.Show($"Error loading sound sectors: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void LoadAndVisualizeSoundSectors(string xmlFilePath)
+        {
+            foreach (var sector in loadedSoundSectors)
+                if (sector.RenderBox != null)
+                    Graphics.DeleteAsset(sector.RefID);
+            loadedSoundSectors.Clear();
+
+            foreach (var portal in loadedPortals)
+                if (portal.RenderBox != null)
+                    Graphics.DeleteAsset(portal.RefID);
+            loadedPortals.Clear();
+
+            TreeNode[] oldSectorNodes = dSceneTree.TreeView.Nodes.Find("SoundSectors", false);
+            foreach (var node in oldSectorNodes) dSceneTree.RemoveNode(node);
+            TreeNode[] oldPortalNodes = dSceneTree.TreeView.Nodes.Find("SoundPortals", false);
+            foreach (var node in oldPortalNodes) dSceneTree.RemoveNode(node);
+
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.Load(xmlFilePath);
+            XmlNode root = xmlDoc.SelectSingleNode("SoundSectorResource");
+            if (root == null) throw new Exception("Invalid SoundSectorResource XML format");
+
+            XmlNode rootNameNode = root.SelectSingleNode("Name");
+            _soundSectorsRootName = rootNameNode?.InnerText;
+
+            XmlNode hashesNode = root.SelectSingleNode("Hashes");
+            _soundSectorsHashes.Clear();
+            if (hashesNode != null)
+            {
+                foreach (XmlNode hashNode in hashesNode.SelectNodes("UInt64"))
+                    _soundSectorsHashes.Add(ulong.Parse(hashNode.InnerText));
+            }
+
+            TreeNode soundSectorsRoot = new TreeNode("Sound Sectors") { Tag = "Folder", Name = "SoundSectors" };
+            TreeNode portalsRoot = new TreeNode("Portals") { Tag = "Folder", Name = "SoundPortals" };
+
+            XmlNode sectorsNode = root.SelectSingleNode("Sectors");
+            if (sectorsNode != null)
+            {
+                foreach (XmlNode elementNode in sectorsNode.SelectNodes("Element"))
+                {
+                    string type = elementNode.Attributes["Type"]?.Value;
+                    if (type != "SoundSectorNormal" && type != "SoundSectorPrimary")
+                        continue;
+
+                    SoundSectorData sector = new SoundSectorData();
+                    sector.RefID = RefManager.GetNewRefID();
+                    sector.Type = type;
+
+                    XmlNode nameNode = elementNode.SelectSingleNode("Name");
+                    sector.Name = nameNode?.InnerText ?? $"Sector_{loadedSoundSectors.Count}";
+
+                    XmlNode unk0Node = elementNode.SelectSingleNode("Unk0");
+                    if (unk0Node != null)
+                    {
+                        foreach (XmlNode u16 in unk0Node.SelectNodes("UInt16"))
+                            sector.Unk0.Add(ushort.Parse(u16.InnerText));
+                    }
+
+                    XmlNode unk1Node = elementNode.SelectSingleNode("Unk1");
+                    if (unk1Node != null)
+                        sector.Unk1 = uint.Parse(unk1Node.InnerText);
+
+                    XmlNode unk2Node = elementNode.SelectSingleNode("Unk2");
+                    if (unk2Node != null)
+                        sector.Unk2 = uint.Parse(unk2Node.InnerText);
+
+                    XmlNode unk3Node = elementNode.SelectSingleNode("Unk3");
+                    if (unk3Node != null)
+                        sector.Unk3 = short.Parse(unk3Node.InnerText);
+
+                    XmlNode unk4Node = elementNode.SelectSingleNode("Unk4");
+                    if (unk4Node != null)
+                        sector.Unk4 = ushort.Parse(unk4Node.InnerText);
+
+                    XmlNode unk5Node = elementNode.SelectSingleNode("Unk5");
+                    if (unk5Node != null)
+                        sector.Unk5 = ushort.Parse(unk5Node.InnerText);
+
+                    XmlNode basicNode = elementNode.SelectSingleNode("bBasicSceneOnly");
+                    if (basicNode != null)
+                        sector.bBasicSceneOnly = bool.Parse(basicNode.InnerText);
+
+                    XmlNode planesNode = elementNode.SelectSingleNode("Planes");
+                    if (planesNode != null)
+                    {
+                        foreach (XmlNode planeNode in planesNode.SelectNodes("Element"))
+                        {
+                            Plane4 plane = new Plane4
+                            {
+                                X = float.Parse(planeNode.SelectSingleNode("X")?.InnerText ?? "0", CultureInfo.InvariantCulture),
+                                Y = float.Parse(planeNode.SelectSingleNode("Y")?.InnerText ?? "0", CultureInfo.InvariantCulture),
+                                Z = float.Parse(planeNode.SelectSingleNode("Z")?.InnerText ?? "0", CultureInfo.InvariantCulture),
+                                W = float.Parse(planeNode.SelectSingleNode("W")?.InnerText ?? "0", CultureInfo.InvariantCulture)
+                            };
+                            sector.Planes.Add(plane);
+                        }
+                    }
+
+                    if (sector.Planes.Count >= 4)
+                    {
+                        List<Vector3> vertices = CalculateVerticesFromPlanes(sector.Planes, 50.0f);
+                        if (vertices.Count >= 2)
+                        {
+                            Vector3 min = vertices[0], max = vertices[0];
+                            foreach (var v in vertices)
+                            {
+                                min = Vector3.Min(min, v);
+                                max = Vector3.Max(max, v);
+                            }
+                            sector.RenderBox = new RenderBoundingBox();
+                            sector.RenderBox.SetColour(System.Drawing.Color.Lime);
+                            sector.RenderBox.Init(new BoundingBox(min, max));
+                            sector.RenderBox.SetTransform(Matrix4x4.Identity);
+                            Graphics.InitObjectStack[sector.RefID] = sector.RenderBox;
+                        }
+                    }
+
+                    TreeNode sectorNode = new TreeNode(sector.Name) { Name = sector.RefID.ToString(), Tag = sector };
+                    soundSectorsRoot.Nodes.Add(sectorNode);
+                    loadedSoundSectors.Add(sector);
+                    sector.UpdateBoundsFromPlanes();
+                }
+            }
+
+            XmlNode portalsNode = root.SelectSingleNode("Portals");
+            if (portalsNode != null)
+            {
+                foreach (XmlNode portalNode in portalsNode.SelectNodes("PortalSphere"))
+                {
+                    PortalData portal = new PortalData();
+                    portal.RefID = RefManager.GetNewRefID();
+
+                    portal.Name = portalNode.SelectSingleNode("Name")?.InnerText ?? $"Portal_{loadedPortals.Count}";
+
+                    XmlNode posNode = portalNode.SelectSingleNode("Position");
+                    if (posNode != null)
+                    {
+                        portal.Position = new Vector3(
+                            float.Parse(posNode.SelectSingleNode("X")?.InnerText ?? "0", CultureInfo.InvariantCulture),
+                            float.Parse(posNode.SelectSingleNode("Y")?.InnerText ?? "0", CultureInfo.InvariantCulture),
+                            float.Parse(posNode.SelectSingleNode("Z")?.InnerText ?? "0", CultureInfo.InvariantCulture));
+                    }
+
+                    portal.Unk0 = float.Parse(portalNode.SelectSingleNode("Unk0")?.InnerText ?? "5", CultureInfo.InvariantCulture);
+                    portal.OpenRatio = float.Parse(portalNode.SelectSingleNode("OpenRatio")?.InnerText ?? "0.05", CultureInfo.InvariantCulture);
+                    portal.LinkA = portalNode.SelectSingleNode("LinkA")?.InnerText ?? "";
+                    portal.Unk2 = byte.Parse(portalNode.SelectSingleNode("Unk2")?.InnerText ?? "0");
+                    portal.LinkB = portalNode.SelectSingleNode("LinkB")?.InnerText ?? "";
+                    portal.Unk3 = byte.Parse(portalNode.SelectSingleNode("Unk3")?.InnerText ?? "0");
+                    portal.CostFactor = float.Parse(portalNode.SelectSingleNode("CostFactor")?.InnerText ?? "8", CultureInfo.InvariantCulture);
+                    portal.EntityName = portalNode.SelectSingleNode("EntityName")?.InnerText ?? "";
+                    portal.Unk6 = byte.Parse(portalNode.SelectSingleNode("Unk6")?.InnerText ?? "1");
+                    portal.bVolumeFactorEnabled = byte.Parse(portalNode.SelectSingleNode("bVolumeFactorEnabled")?.InnerText ?? "1");
+                    portal.VolumeFactor = float.Parse(portalNode.SelectSingleNode("VolumeFactor")?.InnerText ?? "0.4", CultureInfo.InvariantCulture);
+
+                    float size = portal.Unk0 * 0.1f;
+                    BoundingBox bbox = new BoundingBox(portal.Position - new Vector3(size), portal.Position + new Vector3(size));
+                    portal.RenderBox = new RenderBoundingBox();
+                    portal.RenderBox.SetColour(System.Drawing.Color.Orange);
+                    portal.RenderBox.Init(bbox);
+                    portal.RenderBox.SetTransform(Matrix4x4.Identity);
+                    Graphics.InitObjectStack[portal.RefID] = portal.RenderBox;
+
+                    TreeNode portalNodeTree = new TreeNode(portal.Name) { Name = portal.RefID.ToString(), Tag = portal };
+                    portalNodeTree.Nodes.Add($"Links: {portal.LinkA} <-> {portal.LinkB}");
+                    portalsRoot.Nodes.Add(portalNodeTree);
+                    loadedPortals.Add(portal);
+                }
+            }
+
+            if (soundSectorsRoot.Nodes.Count > 0)
+                dSceneTree.AddToTree(soundSectorsRoot);
+            if (portalsRoot.Nodes.Count > 0)
+                dSceneTree.AddToTree(portalsRoot);
+
+            _soundSectorsFilePath = xmlFilePath;
+        }
+
+       
+        private void BtnAddSoundSector_Click(object sender, EventArgs e)
+        {
+            SoundSectorData newSector = new SoundSectorData();
+            newSector.RefID = RefManager.GetNewRefID();
+            newSector.Type = "SoundSectorNormal";
+            newSector.Name = "NewSector";
+
+            if (loadedSoundSectors.Count > 0)
+            {
+                var first = loadedSoundSectors[0];
+                newSector.Unk0 = new List<ushort>(first.Unk0);
+                newSector.Unk1 = first.Unk1;
+                newSector.Unk2 = first.Unk2;
+                newSector.Unk3 = first.Unk3;
+                newSector.Unk4 = first.Unk4;
+                newSector.Unk5 = first.Unk5;
+                newSector.bBasicSceneOnly = first.bBasicSceneOnly;
+            }
+            else
+            {
+                newSector.Unk0 = new List<ushort> { 1, 2, 3, 4, 5, 6, 7, 8 };
+                newSector.Unk1 = 0;
+                newSector.Unk2 = 0;
+                newSector.Unk3 = 0;
+                newSector.Unk4 = 0;
+                newSector.Unk5 = 0;
+                newSector.bBasicSceneOnly = false;
+            }
+
+            newSector.Min = new Vector3(-5, -5, -5);
+            newSector.Max = new Vector3(5, 5, 5);
+
+            newSector.RenderBox = new RenderBoundingBox();
+            newSector.RenderBox.SetColour(System.Drawing.Color.Lime);
+            newSector.RebuildRenderBox();
+            Graphics.InitObjectStack[newSector.RefID] = newSector.RenderBox;
+            loadedSoundSectors.Add(newSector);
+
+            TreeNode soundSectorsRoot = null;
+            foreach (TreeNode node in dSceneTree.TreeView.Nodes)
+            {
+                if (node.Name == "SoundSectors")
+                {
+                    soundSectorsRoot = node;
+                    break;
+                }
+            }
+            if (soundSectorsRoot == null)
+            {
+                soundSectorsRoot = new TreeNode("Sound Sectors") { Tag = "Folder", Name = "SoundSectors" };
+                dSceneTree.AddToTree(soundSectorsRoot);
+            }
+
+            TreeNode sectorNode = new TreeNode(newSector.Name) { Name = newSector.RefID.ToString(), Tag = newSector };
+            soundSectorsRoot.Nodes.Add(sectorNode);
+            soundSectorsRoot.Expand();
+
+            dSceneTree.SelectedNode = sectorNode;
+            TreeViewUpdateSelected();
+            dPropertyGrid.SetObject(newSector);
+        }
+
+        private void BtnAddSoundPortal_Click(object sender, EventArgs e)
+        {
+            PortalData newPortal = new PortalData();
+            newPortal.RefID = RefManager.GetNewRefID();
+            newPortal.Name = "NewPortal";
+            newPortal.Position = Vector3.Zero;
+            newPortal.Unk0 = 1f;
+            newPortal.OpenRatio = 0f;
+            newPortal.LinkA = "Name";
+            newPortal.Unk2 = 0;
+            newPortal.LinkB = "Name";
+            newPortal.Unk3 = 0;
+            newPortal.CostFactor = 0f;
+            newPortal.EntityName = "Name";
+            newPortal.Unk6 = 0;
+            newPortal.bVolumeFactorEnabled = 0;
+            newPortal.VolumeFactor = 0f;
+
+            float size = newPortal.Unk0 * 0.1f;
+            BoundingBox bbox = new BoundingBox(newPortal.Position - new Vector3(size), newPortal.Position + new Vector3(size));
+            newPortal.RenderBox = new RenderBoundingBox();
+            newPortal.RenderBox.SetColour(System.Drawing.Color.Orange);
+            newPortal.RenderBox.Init(bbox);
+            newPortal.RenderBox.SetTransform(Matrix4x4.Identity);
+            Graphics.InitObjectStack[newPortal.RefID] = newPortal.RenderBox;
+
+            loadedPortals.Add(newPortal);
+
+            TreeNode portalsRoot = null;
+            foreach (TreeNode node in dSceneTree.TreeView.Nodes)
+            {
+                if (node.Name == "SoundPortals")
+                {
+                    portalsRoot = node;
+                    break;
+                }
+            }
+            if (portalsRoot == null)
+            {
+                portalsRoot = new TreeNode("Portals") { Tag = "Folder", Name = "SoundPortals" };
+                dSceneTree.AddToTree(portalsRoot);
+            }
+
+            TreeNode portalNode = new TreeNode(newPortal.Name) { Name = newPortal.RefID.ToString(), Tag = newPortal };
+            portalNode.Nodes.Add($"Links: {newPortal.LinkA} <-> {newPortal.LinkB}");
+            portalsRoot.Nodes.Add(portalNode);
+            portalsRoot.Expand();
+
+            dSceneTree.SelectedNode = portalNode;
+            TreeViewUpdateSelected();
+            dPropertyGrid.SetObject(newPortal);
+        }
+
+        private void BtnDeleteSoundItem_Click(object sender, EventArgs e)
+        {
+            TreeNode selected = dSceneTree.SelectedNode;
+            if (selected == null)
+            {
+                MessageBox.Show("No item selected.", "Toolkit", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (selected.Tag is SoundSectorData sector)
+            {
+                if (sector.RenderBox != null)
+                    Graphics.DeleteAsset(sector.RefID);
+                loadedSoundSectors.Remove(sector);
+                dSceneTree.RemoveNode(selected);
+            }
+            else if (selected.Tag is PortalData portal)
+            {
+                if (portal.RenderBox != null)
+                    Graphics.DeleteAsset(portal.RefID);
+                loadedPortals.Remove(portal);
+                dSceneTree.RemoveNode(selected);
+            }
+            else
+            {
+                MessageBox.Show("Selected item is not a sound sector or portal.", "Toolkit", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private static List<Vector3> CalculateVerticesFromPlanes(List<Plane4> planes, float margin = 50.0f)
+        {
+            List<Vector3> vertices = new List<Vector3>();
+            for (int i = 0; i < planes.Count; i++)
+            {
+                var p = planes[i];
+                Console.WriteLine($"  Plane {i}: normal=({p.X:F6}, {p.Y:F6}, {p.Z:F6}), d={p.W:F6}");
+            }
+
+            int totalCombinations = 0;
+            for (int i = 0; i < planes.Count - 2; i++)
+            {
+                for (int j = i + 1; j < planes.Count - 1; j++)
+                {
+                    for (int k = j + 1; k < planes.Count; k++)
+                    {
+                        totalCombinations++;
+                    }
+                }
+            }
+
+            int validCount = 0;
+            for (int i = 0; i < planes.Count - 2; i++)
+            {
+                for (int j = i + 1; j < planes.Count - 1; j++)
+                {
+                    for (int k = j + 1; k < planes.Count; k++)
+                    {
+                        Vector3? point = PlaneIntersection(planes[i], planes[j], planes[k]);
+
+                        if (point.HasValue)
+                        {
+                            bool isInside = PointInSector(point.Value, planes, margin);
+
+                            if (isInside)
+                            {
+                                vertices.Add(point.Value);
+                                validCount++;
+                            }
+                        }
+                    }
+                }
+            }
+            List<Vector3> uniqueVerts = RemoveDuplicateVertices(vertices, tolerance: 1.0f);
+
+            return uniqueVerts;
+        }
+
+        private static Vector3? PlaneIntersection(Plane4 p1, Plane4 p2, Plane4 p3)
+        {
+            Vector3 n1 = new Vector3(p1.X, p1.Y, p1.Z);
+            Vector3 n2 = new Vector3(p2.X, p2.Y, p2.Z);
+            Vector3 n3 = new Vector3(p3.X, p3.Y, p3.Z);
+
+            float d1 = p1.W;
+            float d2 = p2.W;
+            float d3 = p3.W;
+
+            Vector3 cross23 = Vector3.Cross(n2, n3);
+            float denom = Vector3.Dot(n1, cross23);
+
+            if (Math.Abs(denom) < 1e-6f)
+            {
+                return null;
+            }
+
+            Vector3 cross31 = Vector3.Cross(n3, n1);
+            Vector3 cross12 = Vector3.Cross(n1, n2);
+
+            Vector3 point = (-d1 * cross23 - d2 * cross31 - d3 * cross12) / denom;
+
+            return point;
+        }
+
+        private static bool PointInSector(Vector3 point, List<Plane4> planes, float margin = 50.0f)
+        {
+            foreach (var p in planes)
+            {
+                Vector3 normal = new Vector3(p.X, p.Y, p.Z);
+                float d = p.W;
+                float dist = Vector3.Dot(normal, point) + d;
+
+                if (dist > margin)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private static List<Vector3> RemoveDuplicateVertices(List<Vector3> vertices, float tolerance = 1.0f)
+        {
+            List<Vector3> unique = new List<Vector3>();
+
+            foreach (var v in vertices)
+            {
+                bool isDuplicate = false;
+                foreach (var uv in unique)
+                {
+                    if (Vector3.Distance(v, uv) < tolerance)
+                    {
+                        isDuplicate = true;
+                        break;
+                    }
+                }
+                if (!isDuplicate)
+                {
+                    unique.Add(v);
+                }
+            }
+
+            return unique;
         }
 
         private void RenderPanel_MouseWheel(object sender, MouseEventArgs e)
@@ -536,6 +1186,7 @@ namespace Mafia2Tool
         private void SaveButton_Click(object sender, EventArgs e) => Save();
         private void SaveButtonScene_Click(object sender, EventArgs e) => SaveScene();
         private void SaveButtonCollision_Click(object sender, EventArgs e) => SaveCollision();
+        private void SaveButtonSoundSector_Click(object sender, EventArgs e) => SaveSoundSectors();
         private void SaveButtonATP_Click(object sender, EventArgs e) => SaveATP();
         private void SaveButtonItemDesc_Click(object sender, EventArgs e) => SaveCollisionItemDesc();
         private void SaveButtonSelItemDesc_Click(object sender, EventArgs e) => SaveSELCollisionItemDesc();
@@ -1398,6 +2049,141 @@ namespace Mafia2Tool
                 }
                 Cursor.Current = Cursors.Default;
             }
+        }
+
+        private void SaveSoundSectors()
+        {
+            if (string.IsNullOrEmpty(_soundSectorsFilePath))
+            {
+                MessageBox.Show("No sound sectors file loaded.", "Toolkit", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            DialogResult result = MessageBox.Show("Save sound sectors to file?", "Toolkit", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (result != DialogResult.Yes) return;
+
+            Cursor.Current = Cursors.WaitCursor;
+
+            try
+            {
+                XmlDocument xmlDoc = new XmlDocument();
+                XmlDeclaration decl = xmlDoc.CreateXmlDeclaration("1.0", "UTF-8", null);
+                xmlDoc.AppendChild(decl);
+
+                XmlElement root = xmlDoc.CreateElement("SoundSectorResource");
+                xmlDoc.AppendChild(root);
+
+                if (!string.IsNullOrEmpty(_soundSectorsRootName))
+                {
+                    XmlElement nameElem = xmlDoc.CreateElement("Name");
+                    nameElem.SetAttribute("Type", "String");
+                    nameElem.InnerText = _soundSectorsRootName;
+                    root.AppendChild(nameElem);
+                }
+
+                if (_soundSectorsHashes.Count > 0)
+                {
+                    XmlElement hashesElem = xmlDoc.CreateElement("Hashes");
+                    foreach (ulong hash in _soundSectorsHashes)
+                    {
+                        XmlElement hashElem = xmlDoc.CreateElement("UInt64");
+                        hashElem.InnerText = hash.ToString();
+                        hashesElem.AppendChild(hashElem);
+                    }
+                    root.AppendChild(hashesElem);
+                }
+
+                XmlElement sectorsElem = xmlDoc.CreateElement("Sectors");
+                foreach (var sector in loadedSoundSectors)
+                {
+                    XmlElement elem = xmlDoc.CreateElement("Element");
+                    elem.SetAttribute("Type", sector.Type);
+
+                    XmlElement planesElem = xmlDoc.CreateElement("Planes");
+                    foreach (var plane in sector.Planes)
+                    {
+                        XmlElement planeElem = xmlDoc.CreateElement("Element");
+                        planeElem.SetAttribute("Type", "Plane");
+                        AddElementWithType(xmlDoc, planeElem, "X", "Single", plane.X);
+                        AddElementWithType(xmlDoc, planeElem, "Y", "Single", plane.Y);
+                        AddElementWithType(xmlDoc, planeElem, "Z", "Single", plane.Z);
+                        AddElementWithType(xmlDoc, planeElem, "W", "Single", plane.W);
+                        planesElem.AppendChild(planeElem);
+                    }
+                    elem.AppendChild(planesElem);
+
+                    if (sector.Unk0.Count > 0)
+                    {
+                        XmlElement unk0Elem = xmlDoc.CreateElement("Unk0");
+                        foreach (ushort val in sector.Unk0)
+                        {
+                            XmlElement u16Elem = xmlDoc.CreateElement("UInt16");
+                            u16Elem.InnerText = val.ToString();
+                            unk0Elem.AppendChild(u16Elem);
+                        }
+                        elem.AppendChild(unk0Elem);
+                    }
+
+                    AddElementWithType(xmlDoc, elem, "Unk1", "UInt32", sector.Unk1);
+                    AddElementWithType(xmlDoc, elem, "Unk2", "UInt32", sector.Unk2);
+                    AddElementWithType(xmlDoc, elem, "Name", "String", sector.Name);
+                    AddElementWithType(xmlDoc, elem, "Unk3", "Int16", sector.Unk3);
+                    AddElementWithType(xmlDoc, elem, "Unk4", "UInt16", sector.Unk4);
+                    AddElementWithType(xmlDoc, elem, "Unk5", "UInt16", sector.Unk5);
+                    AddElementWithType(xmlDoc, elem, "bBasicSceneOnly", "Boolean", sector.bBasicSceneOnly);
+
+                    sectorsElem.AppendChild(elem);
+                }
+                root.AppendChild(sectorsElem);
+
+                XmlElement portalsElem = xmlDoc.CreateElement("Portals");
+                foreach (var portal in loadedPortals)
+                {
+                    XmlElement portalElem = xmlDoc.CreateElement("PortalSphere");
+
+                    AddElementWithType(xmlDoc, portalElem, "Name", "String", portal.Name);
+
+                    XmlElement posElem = xmlDoc.CreateElement("Position");
+                    posElem.SetAttribute("Type", "Vec3");
+                    AddElementWithType(xmlDoc, posElem, "X", "Single", portal.Position.X);
+                    AddElementWithType(xmlDoc, posElem, "Y", "Single", portal.Position.Y);
+                    AddElementWithType(xmlDoc, posElem, "Z", "Single", portal.Position.Z);
+                    portalElem.AppendChild(posElem);
+
+                    AddElementWithType(xmlDoc, portalElem, "Unk0", "Single", portal.Unk0);
+                    AddElementWithType(xmlDoc, portalElem, "OpenRatio", "Single", portal.OpenRatio);
+                    AddElementWithType(xmlDoc, portalElem, "LinkA", "String", portal.LinkA);
+                    AddElementWithType(xmlDoc, portalElem, "Unk2", "Byte", portal.Unk2);
+                    AddElementWithType(xmlDoc, portalElem, "LinkB", "String", portal.LinkB);
+                    AddElementWithType(xmlDoc, portalElem, "Unk3", "Byte", portal.Unk3);
+                    AddElementWithType(xmlDoc, portalElem, "CostFactor", "Single", portal.CostFactor);
+                    AddElementWithType(xmlDoc, portalElem, "EntityName", "String", portal.EntityName);
+                    AddElementWithType(xmlDoc, portalElem, "Unk6", "Byte", portal.Unk6);
+                    AddElementWithType(xmlDoc, portalElem, "bVolumeFactorEnabled", "Byte", portal.bVolumeFactorEnabled);
+                    AddElementWithType(xmlDoc, portalElem, "VolumeFactor", "Single", portal.VolumeFactor);
+
+                    portalsElem.AppendChild(portalElem);
+                }
+                root.AppendChild(portalsElem);
+
+                xmlDoc.Save(_soundSectorsFilePath);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error saving sound sectors: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                Cursor.Current = Cursors.Default;
+            }
+        }
+
+        private void AddElementWithType(XmlDocument doc, XmlElement parent, string name, string type, object value)
+        {
+            XmlElement elem = doc.CreateElement(name);
+            elem.SetAttribute("Type", type);
+            elem.InnerText = Convert.ToString(value, CultureInfo.InvariantCulture);
+            parent.AppendChild(elem);
         }
 
         private void SaveCollision()
@@ -2915,8 +3701,28 @@ namespace Mafia2Tool
             }
             else if (node.Parent != null && node.Parent.Tag is RenderNav)
             {
-                RenderNav ObjNav = (node.Parent.Tag as RenderNav);
-                ObjNav.SelectNode(node.Index);
+                if (node.Tag is OBJData.VertexStruct vertex)
+                {
+                    RenderNav objNav = (node.Parent.Tag as RenderNav);
+                    int vertexIndex = Array.IndexOf(objNav.GetData().vertices, vertex);
+                    if (vertexIndex >= 0)
+                    {
+                        objNav.SelectNode(vertexIndex);
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine("Vertex not found in data.vertices");
+                    }
+                }
+            }
+            else if (node.Tag is SoundSectorData sector)
+            {
+                Graphics.SelectEntry(sector.RefID);
+                dPropertyGrid.SetObject(sector);
+            }
+            else if (node.Tag is PortalData portal)
+            {
+                dPropertyGrid.SetObject(portal);
             }
             else if (node.Tag is Instance instance)
             {
@@ -3135,29 +3941,50 @@ namespace Mafia2Tool
             if (dSceneTree == null) return;
 
             TreeNode selectedNode = dSceneTree.SelectedNode;
+            AIWorld targetWorld = null;
+            IType newPoint = null;
 
             if (selectedNode?.Tag is AIWorld_Type1 group)
             {
-                IType newPoint = AIWorld_Factory.ConstructByTypeID(group.World, 7);
+                targetWorld = group.World;
+                newPoint = AIWorld_Factory.ConstructByTypeID(group.World, 7);
                 group.AddPoint(newPoint);
-                TreeNode newNode = newPoint.PopulateTreeNode();
-                selectedNode.Nodes.Add(newNode);
-                selectedNode.Expand();
-                dSceneTree.SelectedNode = newNode;
-                return;
             }
-            if (selectedNode?.Tag is AIWorld world)
+            else if (selectedNode?.Tag is AIWorld world)
             {
-                IType newPoint = AIWorld_Factory.ConstructByTypeID(world, 7);
+                targetWorld = world;
+                newPoint = AIWorld_Factory.ConstructByTypeID(world, 7);
                 world.AIPoints.Add(newPoint);
-                world.RequestPrimitiveBatchUpdate();
-                TreeNode newNode = newPoint.PopulateTreeNode();
-                selectedNode.Nodes.Add(newNode);
-                selectedNode.Expand();
-                dSceneTree.SelectedNode = newNode;
+            }
+            else
+            {
+                MessageBox.Show("Select AIWorld or a Type1 group.");
                 return;
             }
-            MessageBox.Show("Select AIWorld or a Type1 group.");
+
+            if (newPoint is AIWorld_Type7 type7 && targetWorld != null)
+            {
+                uint maxId = 0;
+                foreach (var point in targetWorld.AIPoints)
+                {
+                    if (point is AIWorld_Type7 t7 && t7.Unk3 > maxId)
+                        maxId = t7.Unk3;
+                    else if (point is AIWorld_Type1 t1)
+                    {
+                        foreach (var child in t1.AIPoints)
+                            if (child is AIWorld_Type7 ct7 && ct7.Unk3 > maxId)
+                                maxId = ct7.Unk3;
+                    }
+                }
+                type7.Unk3 = maxId + 1;
+            }
+
+            TreeNode newNode = newPoint.PopulateTreeNode();
+            selectedNode.Nodes.Add(newNode);
+            selectedNode.Expand();
+            dSceneTree.SelectedNode = newNode;
+
+            targetWorld?.RequestPrimitiveBatchUpdate();
         }
 
         private void Button_AddType1Group_Click(object sender, EventArgs e)
@@ -3226,6 +4053,20 @@ namespace Mafia2Tool
                     dPropertyGrid.UpdateObject();
                     ApplyChangesToRenderable(fObject);
                 }
+                else if (selected.Tag is OBJData.VertexStruct vertex)
+                {
+                    dPropertyGrid.UpdateObject();
+
+                    TreeNode parentNode = selected.Parent;
+                    while (parentNode != null && !(parentNode.Tag is RenderNav))
+                        parentNode = parentNode.Parent;
+
+                    if (parentNode?.Tag is RenderNav nav)
+                    {
+                        int vertexIndex = selected.Index;
+                        nav.UpdateVertexPosition(vertexIndex, vertex.Position);
+                    }
+                }
                 else if (selected.Tag is FrameHeaderScene)
                 {
                     FrameHeaderScene scene = (selected.Tag as FrameHeaderScene);
@@ -3255,6 +4096,13 @@ namespace Mafia2Tool
                     dPropertyGrid.UpdateObject();
                     SyncActorEntryWithFrame(actorEntry);
                     UpdateActorVisualization(actorEntry, selected);
+                }
+                else if (selected.Tag is AIWorld_Type7 type7)
+                {
+                    dPropertyGrid.UpdateObject();
+                    AIWorld world = FindParentAIWorld(selected);
+                    world?.RequestPrimitiveBatchUpdate();
+                    Graphics.SelectEntry(type7.RefID);
                 }
                 else if (selected.Tag is Instance)
                 {
@@ -3286,6 +4134,56 @@ namespace Mafia2Tool
                         Graphics.SelectEntry(refID);
                     }
                 }
+            }
+        }
+        private void AddNavVertexButton_Click(object sender, EventArgs e)
+        {
+            TreeNode selectedNode = dSceneTree.SelectedNode;
+            if (selectedNode?.Tag is RenderNav nav)
+            {
+                OBJData data = nav.GetData();
+
+                var newVertex = new OBJData.VertexStruct();
+                if (data.vertices.Length > 0)
+                {
+                    var first = data.vertices[0];
+                    newVertex.Unk0 = first.Unk0;
+                    newVertex.Unk1 = first.Unk1;
+                    newVertex.Unk6 = first.Unk6;
+                    newVertex.Unk7 = first.Unk7;
+                }
+                else
+                {
+                    newVertex.Unk0 = 0;
+                    newVertex.Unk1 = 0;
+                    newVertex.Unk6 = 0;
+                    newVertex.Unk7 = 0;
+                }
+
+                newVertex.Unk2 = -1;
+                newVertex.Unk3 = -1;
+                newVertex.Unk4 = -1;
+                newVertex.Unk5 = -1;
+
+                int oldLength = data.vertices.Length;
+                Array.Resize(ref data.vertices, data.vertices.Length + 1);
+                data.vertices[data.vertices.Length - 1] = newVertex;
+                data.vertSize = data.vertices.Length;
+
+                RenderBoundingBox newBox = new RenderBoundingBox();
+                newBox.Init(new BoundingBox(new Vector3(-0.1f), new Vector3(0.1f)));
+                newBox.SetColour(System.Drawing.Color.Green);
+                newBox.SetTransform(Matrix4x4.CreateTranslation(newVertex.Position));
+
+                nav.AddVertex(newBox, newVertex);
+
+                TreeNode vertexNode = new TreeNode($"NAVNode: {newVertex.Unk7}");
+                vertexNode.Tag = newVertex;
+                vertexNode.Name = RefManager.GetNewRefID().ToString();
+                selectedNode.Nodes.Add(vertexNode);
+
+                data.GenerateConnections();
+                nav.RebuildAllConnections();
             }
         }
 
@@ -3812,6 +4710,21 @@ namespace Mafia2Tool
                 RenderJunction junction = (pGrid.SelectedObject as RenderJunction);
                 junction.UpdateVertices();
             }
+            if (pGrid.SelectedObject is SoundSectorData sector)
+            {
+                sector.RebuildRenderBox();
+                Graphics.SelectEntry(sector.RefID);
+            }
+            if (pGrid.SelectedObject is AIWorld_Type7 type7)
+            {
+                TreeNode node = dSceneTree.SelectedNode;
+                if (node != null)
+                {
+                    AIWorld world = FindParentAIWorld(node);
+                    world?.RequestPrimitiveBatchUpdate();
+                }
+                Graphics.SelectEntry(type7.RefID);
+            }
             if (pGrid.SelectedObject is ActorEntry)
             {
                 if (dSceneTree.SelectedNode.Tag == pGrid.SelectedObject)
@@ -3851,6 +4764,16 @@ namespace Mafia2Tool
                 RebuildTranslokatorGrids();
             }
             pGrid.Refresh();
+        }
+        private AIWorld FindParentAIWorld(TreeNode node)
+        {
+            while (node != null)
+            {
+                if (node.Tag is AIWorld world)
+                    return world;
+                node = node.Parent;
+            }
+            return null;
         }
 
         private void CameraSpeedUpdate(object sender, EventArgs e)

@@ -66,12 +66,78 @@ namespace Utils.Models
 
         public ModelWrapper(FrameObjectBase FrameObject)
         {
+            if (FrameObject == null)
+                throw new ArgumentNullException(nameof(FrameObject));
+
             modelObject = MT_Object.TryBuildObject(FrameObject);
+
+            if (modelObject == null)
+            {
+                modelObject = new MT_Object();
+                modelObject.ObjectName = FrameObject.Name.String;
+                modelObject.ObjectType = MT_ObjectType.Dummy;
+
+                Matrix4x4.Decompose(FrameObject.LocalTransform, out Vector3 scale, out Quaternion rotation, out Vector3 translation);
+                modelObject.Position = translation;
+                modelObject.Rotation = QuaternionToEuler(rotation);
+                modelObject.Scale = scale;
+
+            }
+
+            if (FrameObject.Children != null && FrameObject.Children.Count > 0)
+            {
+                var childrenObjects = new List<MT_Object>();
+                foreach (var child in FrameObject.Children)
+                {
+                    if (child == null) continue;
+
+                    var childWrapper = new ModelWrapper(child);
+                    if (childWrapper.ModelObject != null)
+                        childrenObjects.Add(childWrapper.ModelObject);
+                }
+
+                if (childrenObjects.Count > 0)
+                {
+                    modelObject.Children = childrenObjects.ToArray();
+                    modelObject.ObjectFlags |= MT_ObjectFlags.HasChildren;
+                }
+            }
+        }
+
+        private static Vector3 QuaternionToEuler(Quaternion q)
+        {
+            float sinr_cosp = 2 * (q.W * q.X + q.Y * q.Z);
+            float cosr_cosp = 1 - 2 * (q.X * q.X + q.Y * q.Y);
+            float x = MathF.Atan2(sinr_cosp, cosr_cosp);
+
+            float sinp = 2 * (q.W * q.Y - q.Z * q.X);
+            float y;
+            if (MathF.Abs(sinp) >= 1)
+                y = MathF.CopySign(MathF.PI / 2, sinp);
+            else
+                y = MathF.Asin(sinp);
+
+            float siny_cosp = 2 * (q.W * q.Z + q.X * q.Y);
+            float cosy_cosp = 1 - 2 * (q.Y * q.Y + q.Z * q.Z);
+            float z = MathF.Atan2(siny_cosp, cosy_cosp);
+
+            return new Vector3(x, y, z);
         }
 
         public ModelWrapper(FrameHeaderScene FrameScene)
         {
             modelObject = MT_Object.TryBuildObject(FrameScene);
+            if (FrameScene.Children != null && FrameScene.Children.Count > 0)
+            {
+                var childrenObjects = new List<MT_Object>();
+                foreach (var child in FrameScene.Children)
+                {
+                    var childWrapper = new ModelWrapper(child);
+                    childrenObjects.Add(childWrapper.ModelObject);
+                }
+                modelObject.Children = childrenObjects.ToArray();
+                modelObject.ObjectFlags |= MT_ObjectFlags.HasChildren;
+            }
         }
 
         /// <summary>
