@@ -70,15 +70,23 @@ namespace ResourceTypes.ModelHelpers.ModelExporter
             Quaternion R_z2y = Quaternion.CreateFromAxisAngle(Vector3.UnitX, -MathF.PI / 2f);
             Quaternion conj_R = Quaternion.Conjugate(R_z2y);
 
-            Vector3 pos_zup = Position;
-            Vector3 pos_yup = Vector3.Transform(pos_zup, R_z2y);
+            Vector3 pos_yup;
+            Quaternion rot_yup;
 
-            Quaternion rot_zup = RotationQuat;
-            Quaternion rot_yup = R_z2y * rot_zup * conj_R;
+            if (ParentNode == null)
+            {
+                pos_yup = Vector3.Transform(Position, R_z2y);
+                rot_yup = R_z2y * RotationQuat * conj_R;
+            }
+            else
+            {
+                pos_yup = Position;
+                rot_yup = RotationQuat;
+            }
 
             NodeBuilder ThisNode = new NodeBuilder(ObjectName)
                 .WithLocalTranslation(pos_yup)
-                .WithLocalScale(Scale)
+                .WithLocalScale(Scale)        
                 .WithLocalRotation(rot_yup);
 
             if (ParentNode != null)
