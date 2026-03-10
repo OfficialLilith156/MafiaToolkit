@@ -5608,58 +5608,12 @@ namespace Mafia2Tool
             modelForm.Dispose();
         }
 
-        private void ConstructFrameFromImportedObject(MT_Object ObjectInfo, TreeNode Parent)
+        private void ConstructFrameFromImportedObject(MT_Object ObjectInfo, TreeNode Parent, FrameObjectBase topLevelFrame = null)
         {
             ModelWrapper Wrapper = new ModelWrapper();
             Wrapper.ModelObject = ObjectInfo;
-            // Prep for frame node
             TreeNode FrameNode = null;
-            // Convert object into SingleMesh
-            FrameObjectBase NewFrame = FrameFactory.ConstructFrameByObjectType(ObjectInfo.ObjectType, SceneData.FrameResource);
-            if (NewFrame != null)
-            {
-                // Set other MetaInfo
-                Matrix4x4 LocalTransform = MatrixUtils.SetMatrix(ObjectInfo.Rotation, ObjectInfo.Scale, ObjectInfo.Position);
-                NewFrame.LocalTransform = LocalTransform;
-                NewFrame.Name.Set(ObjectInfo.ObjectName);
-                NewFrame.IsOnFrameTable = true;
-                // Construct mesh (if applicable)
-                if (ObjectInfo.ObjectType == MT_ObjectType.StaticMesh)
-                {
-                    FrameObjectSingleMesh NewMesh = (NewFrame as FrameObjectSingleMesh);
-                    NewMesh.CreateMeshFromRawModel(Wrapper);
-                    CreateMeshBuffers(Wrapper);
-                }
-                else if (ObjectInfo.ObjectType == MT_ObjectType.RiggedMesh)
-                {
-                    FrameObjectModel NewMesh = (NewFrame as FrameObjectModel);
-                    NewMesh.CreateMeshFromRawModel(Wrapper);
-                    CreateMeshBuffers(Wrapper);
-                }
-                // Construct TreeNode
-                FrameNode = new TreeNode(NewFrame.Name.ToString());
-                FrameNode.Tag = NewFrame;
-                FrameNode.Name = NewFrame.RefID.ToString();
-                dSceneTree.AddToTree(FrameNode, Parent);
-                if (Parent.Tag is FrameHeaderScene)
-                {
-                    FrameHeaderScene SceneEntry = (Parent.Tag as FrameHeaderScene);
-                    SceneData.FrameResource.SetParentOfObject(ParentInfo.ParentType.ParentIndex2, NewFrame, SceneEntry);
-                }
-                else if (Parent.Tag is FrameEntry)
-                {
-                    FrameEntry ParentEntry = (Parent.Tag as FrameEntry);
-                    SceneData.FrameResource.SetParentOfObject(ParentInfo.ParentType.ParentIndex2, NewFrame, ParentEntry);
-                    SceneData.FrameResource.SetParentOfObject(ParentInfo.ParentType.ParentIndex1, NewFrame, ParentEntry);
-                }
-                // Construct renderer and add to stack
-                IRenderer Renderer = BuildRenderObjectFromFrame(NewFrame, null);
-                if (Renderer != null)
-                {
-                    Graphics.InitObjectStack.Add(NewFrame.RefID, Renderer);
-                }
-            }
-            // object is a scene so it has an alternative import route
+
             if (ObjectInfo.ObjectType == MT_ObjectType.Scene)
             {
                 var scene = SceneData.FrameResource.AddSceneFolder(ObjectInfo.ObjectName);
@@ -5668,22 +5622,87 @@ namespace Mafia2Tool
                 FrameNode.Name = scene.RefID.ToString();
                 dSceneTree.AddToTree(FrameNode, frameResourceRoot);
             }
+            else
+            {
+                FrameObjectBase NewFrame = FrameFactory.ConstructFrameByObjectType(ObjectInfo.ObjectType, SceneData.FrameResource);
+                if (NewFrame != null)
+                {
+                    if (topLevelFrame == null)
+                    {
+                        topLevelFrame = NewFrame;
+                    }
+
+                    Matrix4x4 LocalTransform = MatrixUtils.SetMatrix(ObjectInfo.Rotation, ObjectInfo.Scale, ObjectInfo.Position);
+                    NewFrame.LocalTransform = LocalTransform;
+                    NewFrame.Name.Set(ObjectInfo.ObjectName);
+                    NewFrame.IsOnFrameTable = true;
+
+                    if (ObjectInfo.ObjectType == MT_ObjectType.StaticMesh)
+                    {
+                        FrameObjectSingleMesh NewMesh = (NewFrame as FrameObjectSingleMesh);
+                        NewMesh.CreateMeshFromRawModel(Wrapper);
+                        CreateMeshBuffers(Wrapper);
+                    }
+                    else if (ObjectInfo.ObjectType == MT_ObjectType.RiggedMesh)
+                    {
+                        FrameObjectModel NewMesh = (NewFrame as FrameObjectModel);
+                        NewMesh.CreateMeshFromRawModel(Wrapper);
+                        CreateMeshBuffers(Wrapper);
+                    }
+
+                    FrameNode = new TreeNode(NewFrame.Name.ToString());
+                    FrameNode.Tag = NewFrame;
+                    FrameNode.Name = NewFrame.RefID.ToString();
+                    dSceneTree.AddToTree(FrameNode, Parent);
+
+                    if (Parent.Tag is FrameHeaderScene parentScene)
+                    {
+                        if (topLevelFrame != null && topLevelFrame != NewFrame)
+                        {
+                            SceneData.FrameResource.SetParentOfObject(ParentInfo.ParentType.ParentIndex2, NewFrame, topLevelFrame);
+                        }
+                    }
+                    else if (Parent.Tag is FrameEntry parentEntry)
+                    {
+                        SceneData.FrameResource.SetParentOfObject(ParentInfo.ParentType.ParentIndex1, NewFrame, parentEntry);
+                        if (topLevelFrame != null && topLevelFrame != NewFrame)
+                        {
+                            SceneData.FrameResource.SetParentOfObject(ParentInfo.ParentType.ParentIndex2, NewFrame, topLevelFrame);
+                        }
+                    }
+                    if (NewFrame is FrameObjectFrame frameFrame && !string.IsNullOrEmpty(ObjectInfo.ActorHash))
+                    {
+                        frameFrame.ActorHash.Set(ObjectInfo.ActorHash);
+                    }
+                    if (ObjectInfo.ObjectType == MT_ObjectType.ItemDesc && NewFrame is FrameObjectCollision collisionFrame)
+                    {
+                        collisionFrame.Hash = ObjectInfo.CollisionHash;
+                    }
+
+                    IRenderer Renderer = BuildRenderObjectFromFrame(NewFrame, null);
+                    if (Renderer != null)
+                    {
+                        Graphics.InitObjectStack.Add(NewFrame.RefID, Renderer);
+                    }
+                }
+            }
+
             if (ObjectInfo.ObjectFlags.HasFlag(MT_ObjectFlags.HasCollisions))
             {
                 ValidateCollisionFile();
                 Collision.CollisionModel collisionModel = new CollisionModelBuilder().BuildFromMTCollision(ObjectInfo.ObjectName, ObjectInfo.Collision);
                 CreateCollision(collisionModel);
-                // now add instances
                 foreach (MT_CollisionInstance ColInstance in ObjectInfo.Collision.Instances)
                 {
                     CreatePlacement(collisionModel, ColInstance.Position, ColInstance.Rotation);
                 }
             }
+
             if (ObjectInfo.ObjectFlags.HasFlag(MT_ObjectFlags.HasChildren))
             {
                 foreach (MT_Object Child in ObjectInfo.Children)
                 {
-                    ConstructFrameFromImportedObject(Child, FrameNode);
+                    ConstructFrameFromImportedObject(Child, FrameNode, topLevelFrame);
                 }
             }
         }

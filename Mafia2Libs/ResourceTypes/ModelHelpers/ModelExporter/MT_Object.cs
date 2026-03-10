@@ -35,11 +35,12 @@ namespace ResourceTypes.ModelHelpers.ModelExporter
         StaticMesh,
         RiggedMesh,
         Point,
-        Actor,
+        Frame,
         ItemDesc,
         Dummy,
         StaticCollision,
         Scene,
+        Joint,
     }
 
     public class MT_Object : IValidator
@@ -48,7 +49,8 @@ namespace ResourceTypes.ModelHelpers.ModelExporter
         private const string PROP_OBJECT_NAME = "NAME"; //Name Model
         private const string PROP_OBJECT_ON_FRT = "MT_ON_NAME_TABLE";
         private const string PROP_OBJECT_FRT_FLAGS = "MT_NAME_TABLE_FLAGS";
-
+        public ulong CollisionHash { get; set; }
+        public string ActorHash { get; set; }
         public string ObjectName { get; set; }
         public MT_ObjectFlags ObjectFlags { get; set; }
         public MT_ObjectType ObjectType { get; set; }
@@ -65,7 +67,19 @@ namespace ResourceTypes.ModelHelpers.ModelExporter
 
         public NodeBuilder BuildGLTF(SceneBuilder RootScene, NodeBuilder ParentNode)
         {
-            NodeBuilder ThisNode = new NodeBuilder(ObjectName).WithLocalTranslation(Position).WithLocalScale(Scale).WithLocalRotation(RotationQuat);
+            Quaternion R_z2y = Quaternion.CreateFromAxisAngle(Vector3.UnitX, -MathF.PI / 2f);
+            Quaternion conj_R = Quaternion.Conjugate(R_z2y);
+
+            Vector3 pos_zup = Position;
+            Vector3 pos_yup = Vector3.Transform(pos_zup, R_z2y);
+
+            Quaternion rot_zup = RotationQuat;
+            Quaternion rot_yup = R_z2y * rot_zup * conj_R;
+
+            NodeBuilder ThisNode = new NodeBuilder(ObjectName)
+                .WithLocalTranslation(pos_yup)
+                .WithLocalScale(Scale)
+                .WithLocalRotation(rot_yup);
 
             if (ParentNode != null)
             {
@@ -95,7 +109,7 @@ namespace ResourceTypes.ModelHelpers.ModelExporter
                         var BuiltMesh = Lods[Index].BuildSkinnedGLTF();
                         NodeBuilder[] SkeletonJoints = Skeleton.BuildGLTF(Index);
                         RootScene.AddSkinnedMesh(BuiltMesh, ThisNode.WorldMatrix, SkeletonJoints);
-                        
+
                         LodNode.AddNode(SkeletonJoints[0]);
                     }
                     else
@@ -105,12 +119,18 @@ namespace ResourceTypes.ModelHelpers.ModelExporter
                     }
                 }
             }
-
+            if (!string.IsNullOrEmpty(ActorHash))
+            {
+                ThisNode.Extras["ActorHash"] = ActorHash;
+            }
             if(Collision != null)
             {
                 Collision.BuildGLTF(RootScene, ThisNode);
             }
-
+            if(CollisionHash != 0)
+            {
+                ThisNode.Extras["CollisionHash"] = CollisionHash.ToString();
+            }
             if (Children != null)
             {
                 foreach (MT_Object ChildObject in Children)
@@ -160,7 +180,15 @@ namespace ResourceTypes.ModelHelpers.ModelExporter
                 NewObject.FrameNameTableFlags = (int)InFrame.FrameNameTableFlags;
                 NewObject.ObjectFlags |= MT_ObjectFlags.AddToFrameNameTable;
             }
-
+            FrameObjectCollision collisionFrame = InFrame as FrameObjectCollision;
+            if(collisionFrame != null)
+            {
+                NewObject.CollisionHash = collisionFrame.Hash;
+            }
+            if(InFrame is FrameObjectFrame frameFrame && frameFrame.ActorHash != null)
+            {
+                NewObject.ActorHash = frameFrame.ActorHash.String;
+            }
             // Check if this is a single mesh. If not, build as standard.
             FrameObjectSingleMesh CastedMesh = (InFrame as FrameObjectSingleMesh);
             if (CastedMesh != null)
@@ -231,14 +259,19 @@ namespace ResourceTypes.ModelHelpers.ModelExporter
             MT_Object NewObject = new MT_Object();
             NewObject.ObjectName = DesiredName;
             NewObject.ObjectType = DesiredType;
-            var correction = Quaternion.CreateFromAxisAngle(Vector3.UnitX, MathF.PI / 2f);
 
-            var importedRotation = CurrentNode.LocalTransform.Rotation;
-            var correctedRotation = correction * importedRotation;
+            Quaternion R_y2z = Quaternion.CreateFromAxisAngle(Vector3.UnitX, MathF.PI / 2f);
+            Quaternion conj_R = Quaternion.Conjugate(R_y2z);
 
-            NewObject.Position = CurrentNode.LocalTransform.Translation;
-            NewObject.RotationQuat = correctedRotation;
-            NewObject.Rotation = correctedRotation.ToEuler();
+            Vector3 pos_yup = CurrentNode.LocalTransform.Translation;
+            Vector3 pos_zup = Vector3.Transform(pos_yup, R_y2z);
+
+            Quaternion rot_yup = CurrentNode.LocalTransform.Rotation;
+            Quaternion rot_zup = R_y2z * rot_yup * conj_R;
+
+            NewObject.Position = pos_zup;
+            NewObject.RotationQuat = rot_zup;
+            NewObject.Rotation = rot_zup.ToEuler();
             NewObject.Scale = CurrentNode.LocalTransform.Scale;
 
             // see if we need to store frame name table data
@@ -250,6 +283,18 @@ namespace ResourceTypes.ModelHelpers.ModelExporter
                     NewObject.FrameNameTableFlags = Flags;
 
                     Logger.WriteInfo("Detected FrameNameTable flags [{0}] to Node [{1}]", Flags, CurrentNode.Name);
+                }
+            }
+            if(GLTFDefines.GetValueFromNode<string>(CurrentNode, "ActorHash", out string actorHash))
+            {
+                NewObject.ActorHash = actorHash;
+            }
+
+            if(GLTFDefines.GetValueFromNode<string>(CurrentNode, "CollisionHash", out string hashStr))
+            {
+                if (ulong.TryParse(hashStr, out ulong hash))
+                {
+                    NewObject.CollisionHash = hash;
                 }
             }
 

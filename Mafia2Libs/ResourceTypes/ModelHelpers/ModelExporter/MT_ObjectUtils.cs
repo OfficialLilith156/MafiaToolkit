@@ -17,6 +17,18 @@ namespace ResourceTypes.ModelHelpers.ModelExporter
             {
                 return MT_ObjectType.StaticMesh;
             }
+            else if (FrameType == typeof(FrameObjectJoint))
+            {
+                return MT_ObjectType.Joint;
+            }
+            else if (FrameType == typeof(FrameObjectCollision))
+            {
+                return MT_ObjectType.ItemDesc;
+            }
+            else if (FrameType == typeof(FrameObjectFrame))
+            {
+                return MT_ObjectType.Frame;
+            }
             else if (FrameType == typeof(FrameObjectModel))
             {
                 return MT_ObjectType.RiggedMesh;
