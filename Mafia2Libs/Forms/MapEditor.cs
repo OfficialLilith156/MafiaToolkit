@@ -109,7 +109,10 @@ namespace Mafia2Tool
             ToolkitSettings.UpdateRichPresence(string.Format("Editing '{0}'", info.Directory.Name));
             fileLocation = info;
             InitDockingControls();
-            PopulateList();
+            if (ToolkitSettings.LoadFrameResource)
+            {
+                PopulateList();
+            }
             NamesAndDuplicationStore = new Dictionary<string, int>();
             CameraSpeedTool.Value = (decimal)ToolkitSettings.CameraSpeed;
             KeyPreview = true;
@@ -2575,7 +2578,7 @@ namespace Mafia2Tool
         private void BuildRenderObjects()
         {
             Dictionary<int, IRenderer> assets = new Dictionary<int, IRenderer>();
-            if (SceneData.FrameResource != null && SceneData.FrameNameTable != null)
+            if (ToolkitSettings.LoadFrameResource && SceneData.FrameResource != null && SceneData.FrameNameTable != null)
             {
                 foreach (FrameObjectBase FrameObject in SceneData.FrameResource.FrameObjects.Values)
                 {
@@ -2586,7 +2589,7 @@ namespace Mafia2Tool
                     }
                 }
             }
-            if (SceneData.roadMap != null && ToolkitSettings.Experimental)
+            if (ToolkitSettings.LoadRoads && SceneData.roadMap != null && ToolkitSettings.Experimental)
             {
                 TreeNode node = new TreeNode("Road Data");
                 TreeNode node2 = new TreeNode("Junction Data");
@@ -2627,7 +2630,7 @@ namespace Mafia2Tool
                 dSceneTree.AddToTree(node);
                 dSceneTree.AddToTree(node2);
             }
-            if (SceneData.HPDData != null)
+            if (ToolkitSettings.LoadHPD && SceneData.HPDData != null)
             {
                 int generatedID = RefManager.GetNewRefID();
                 TreeNode navNode = new TreeNode();
@@ -2650,7 +2653,7 @@ namespace Mafia2Tool
                 }
                 dSceneTree.AddToTree(navNode);
             }
-            if (SceneData.OBJData != null && SceneData.OBJData.Length > 0)
+            if (ToolkitSettings.LoadOBJData && SceneData.OBJData != null && SceneData.OBJData.Length > 0)
             {
                 OBJDataRoot = new TreeNode();
                 OBJDataRoot.Tag = "Folder";
@@ -2760,7 +2763,7 @@ namespace Mafia2Tool
                 }
                 dSceneTree.AddToTree(OBJDataRoot);
             }
-            if (SceneData.AIWorlds != null && SceneData.AIWorlds.Length > 0)
+            if (ToolkitSettings.LoadAIWorld && SceneData.AIWorlds != null && SceneData.AIWorlds.Length > 0)
             {
                 AIWorldRoot = new TreeNode();
                 AIWorldRoot.Tag = "Folder";
@@ -2776,7 +2779,7 @@ namespace Mafia2Tool
                 }
                 dSceneTree.AddToTree(AIWorldRoot);
             }
-            if (SceneData.Collisions != null)
+            if (ToolkitSettings.LoadCollisions && SceneData.Collisions != null)
             {
                 TreeNode node = new TreeNode("Collision Data");
                 node.Tag = "Folder";
@@ -2816,7 +2819,7 @@ namespace Mafia2Tool
                 dSceneTree.AddToTree(node);
                 collisionRoot.Collapse(false);
             }
-            if (SceneData.ItemDescs != null && SceneData.ItemDescs.Length > 0)
+            if (ToolkitSettings.LoadItemDescs && SceneData.ItemDescs != null && SceneData.ItemDescs.Length > 0)
             {
                 TreeNode itemDescRoot = new TreeNode("Item Descriptions");
                 itemDescRoot.Tag = "Folder";
@@ -2898,7 +2901,7 @@ namespace Mafia2Tool
                 }
                 dSceneTree.AddToTree(itemDescRoot);
             }
-            if (SceneData.ATLoader != null)
+            if (ToolkitSettings.LoadATP && SceneData.ATLoader != null)
             {
                 animalTrafficRoot = new TreeNode("Animal Traffic Paths");
                 animalTrafficRoot.Tag = "Folder";
@@ -2924,7 +2927,7 @@ namespace Mafia2Tool
                 }
                 dSceneTree.AddToTree(animalTrafficRoot);
             }
-            if (SceneData.Prefabs != null && SceneData.Prefabs.Prefabs != null)
+            if (ToolkitSettings.LoadPrefabs && SceneData.Prefabs != null && SceneData.Prefabs.Prefabs != null)
             {
                 TreeNode prefabRoot = new TreeNode("Prefabs");
                 prefabRoot.Tag = "Folder";
@@ -2989,412 +2992,413 @@ namespace Mafia2Tool
                 }
                 dSceneTree.AddToTree(prefabRoot);
             }
-            if (SceneData.Actors.Length > 0 && ToolkitSettings.Experimental)
+            if (ToolkitSettings.LoadActors && SceneData.Actors.Length > 0 && ToolkitSettings.Experimental)
             {
                 LoadActorFiles();
-            }
-            foreach (var actor in SceneData.Actors)
-            {
-                foreach (var entry in actor.Items)
-                {
-                    if (entry.ActorTypeName == "LightEntity" || entry.ActorTypeID == (int)ActorTypes.LightEntity)
+                if (ToolkitSettings.LoadActors)
+                    foreach (var actor in SceneData.Actors)
                     {
-                        Vector3 position = entry.Position;
-                        Vector3 size = new Vector3(0.05f);
-                        BoundingBox smallBox = new BoundingBox(position - size, position + size);
-                        RenderBoundingBox renderSmallBox = new RenderBoundingBox();
-                        renderSmallBox.SetColour(System.Drawing.Color.LightGoldenrodYellow);
-                        renderSmallBox.Init(smallBox);
-                        int refIDSmallBox = RefManager.GetNewRefID();
-                        assets.Add(refIDSmallBox, renderSmallBox);
-                        RefIDToActorEntry[refIDSmallBox] = entry;
-
-                        TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
-                        if (foundNodes.Length > 0)
+                        foreach (var entry in actor.Items)
                         {
-                            TreeNode boxNode = new TreeNode("Light Box");
-                            boxNode.Name = refIDSmallBox.ToString();
-                            boxNode.Tag = renderSmallBox;
-                            foundNodes[0].Nodes.Add(boxNode);
-                        }
-                        if (entry.Data != null && entry.Data.Data is ActorLight light)
-                        {
-                            Vector3 min = light.BoundaryBoxMinimum;
-                            Vector3 max = light.BoundaryBoxMaximum;
-                            BoundingBox worldBBox = new BoundingBox(min, max);
-                            RenderBoundingBox renderBBox = new RenderBoundingBox();
-                            renderBBox.Init(worldBBox);
-                            int refID = RefManager.GetNewRefID();
-                            assets.Add(refID, renderBBox);
-                            RefIDToActorEntry[refID] = entry;
-
-                            if (foundNodes.Length > 0)
+                            if (entry.ActorTypeName == "LightEntity" || entry.ActorTypeID == (int)ActorTypes.LightEntity)
                             {
-                                TreeNode bboxNode = new TreeNode("Light BoundingBox");
-                                bboxNode.Name = refID.ToString();
-                                bboxNode.Tag = renderBBox;
-                                foundNodes[0].Nodes.Add(bboxNode);
+                                Vector3 position = entry.Position;
+                                Vector3 size = new Vector3(0.05f);
+                                BoundingBox smallBox = new BoundingBox(position - size, position + size);
+                                RenderBoundingBox renderSmallBox = new RenderBoundingBox();
+                                renderSmallBox.SetColour(System.Drawing.Color.LightGoldenrodYellow);
+                                renderSmallBox.Init(smallBox);
+                                int refIDSmallBox = RefManager.GetNewRefID();
+                                assets.Add(refIDSmallBox, renderSmallBox);
+                                RefIDToActorEntry[refIDSmallBox] = entry;
+
+                                TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
+                                if (foundNodes.Length > 0)
+                                {
+                                    TreeNode boxNode = new TreeNode("Light Box");
+                                    boxNode.Name = refIDSmallBox.ToString();
+                                    boxNode.Tag = renderSmallBox;
+                                    foundNodes[0].Nodes.Add(boxNode);
+                                }
+                                if (entry.Data != null && entry.Data.Data is ActorLight light)
+                                {
+                                    Vector3 min = light.BoundaryBoxMinimum;
+                                    Vector3 max = light.BoundaryBoxMaximum;
+                                    BoundingBox worldBBox = new BoundingBox(min, max);
+                                    RenderBoundingBox renderBBox = new RenderBoundingBox();
+                                    renderBBox.Init(worldBBox);
+                                    int refID = RefManager.GetNewRefID();
+                                    assets.Add(refID, renderBBox);
+                                    RefIDToActorEntry[refID] = entry;
+
+                                    if (foundNodes.Length > 0)
+                                    {
+                                        TreeNode bboxNode = new TreeNode("Light BoundingBox");
+                                        bboxNode.Name = refID.ToString();
+                                        bboxNode.Tag = renderBBox;
+                                        foundNodes[0].Nodes.Add(bboxNode);
+                                    }
+                                }
+                            }
+                            if (entry.ActorTypeName == "Tree" || entry.ActorTypeID == (int)ActorTypes.Tree)
+                            {
+                                Vector3 position = entry.Position;
+                                Vector3 size = new Vector3(0.05f);
+                                BoundingBox smallBox = new BoundingBox(position - size, position + size);
+                                RenderBoundingBox renderSmallBox = new RenderBoundingBox();
+                                renderSmallBox.SetColour(System.Drawing.Color.ForestGreen);
+                                renderSmallBox.Init(smallBox);
+                                int refIDSmallBox = RefManager.GetNewRefID();
+                                assets.Add(refIDSmallBox, renderSmallBox);
+                                RefIDToActorEntry[refIDSmallBox] = entry;
+
+                                TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
+                                if (foundNodes.Length > 0)
+                                {
+                                    TreeNode boxNode = new TreeNode("Tree Box");
+                                    boxNode.Name = refIDSmallBox.ToString();
+                                    boxNode.Tag = renderSmallBox;
+                                    foundNodes[0].Nodes.Add(boxNode);
+                                }
+                            }
+                            if (entry.ActorTypeName == "StaticEntity" || entry.ActorTypeID == (int)ActorTypes.StaticEntity)
+                            {
+                                Vector3 position = entry.Position;
+                                Vector3 size = new Vector3(0.05f);
+                                BoundingBox smallBox = new BoundingBox(position - size, position + size);
+                                RenderBoundingBox renderSmallBox = new RenderBoundingBox();
+                                renderSmallBox.SetColour(System.Drawing.Color.Gray);
+                                renderSmallBox.Init(smallBox);
+                                int refIDSmallBox = RefManager.GetNewRefID();
+                                assets.Add(refIDSmallBox, renderSmallBox);
+                                RefIDToActorEntry[refIDSmallBox] = entry;
+
+                                TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
+                                if (foundNodes.Length > 0)
+                                {
+                                    TreeNode boxNode = new TreeNode("Tree Box");
+                                    boxNode.Name = refIDSmallBox.ToString();
+                                    boxNode.Tag = renderSmallBox;
+                                    foundNodes[0].Nodes.Add(boxNode);
+                                }
+                            }
+                            if (entry.ActorTypeName == "C_TranslocatedCar" || entry.ActorTypeID == (int)ActorTypes.StaticEntity)
+                            {
+                                Vector3 position = entry.Position;
+                                Vector3 size = new Vector3(0.05f);
+                                BoundingBox smallBox = new BoundingBox(position - size, position + size);
+                                RenderBoundingBox renderSmallBox = new RenderBoundingBox();
+                                renderSmallBox.SetColour(System.Drawing.Color.Orange);
+                                renderSmallBox.Init(smallBox);
+                                int refIDSmallBox = RefManager.GetNewRefID();
+                                assets.Add(refIDSmallBox, renderSmallBox);
+                                RefIDToActorEntry[refIDSmallBox] = entry;
+
+                                TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
+                                if (foundNodes.Length > 0)
+                                {
+                                    TreeNode boxNode = new TreeNode("Tree Box");
+                                    boxNode.Name = refIDSmallBox.ToString();
+                                    boxNode.Tag = renderSmallBox;
+                                    foundNodes[0].Nodes.Add(boxNode);
+                                }
+                            }
+                            if (entry.ActorTypeName == "C_Sound" || entry.ActorTypeID == (int)ActorTypes.C_Sound)
+                            {
+                                Vector3 position = entry.Position;
+                                Vector3 size = new Vector3(0.05f);
+                                BoundingBox smallBox = new BoundingBox(position - size, position + size);
+                                RenderBoundingBox renderSmallBox = new RenderBoundingBox();
+                                renderSmallBox.SetColour(System.Drawing.Color.Lime);
+                                renderSmallBox.Init(smallBox);
+                                int refIDSmallBox = RefManager.GetNewRefID();
+                                assets.Add(refIDSmallBox, renderSmallBox);
+                                RefIDToActorEntry[refIDSmallBox] = entry;
+
+                                TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
+                                if (foundNodes.Length > 0)
+                                {
+                                    TreeNode boxNode = new TreeNode("C_Sound Box");
+                                    boxNode.Name = refIDSmallBox.ToString();
+                                    boxNode.Tag = renderSmallBox;
+                                    foundNodes[0].Nodes.Add(boxNode);
+                                }
+                            }
+                            if (entry.ActorTypeName == "C_StaticParticle" || entry.ActorTypeID == (int)ActorTypes.C_StaticWeapon)
+                            {
+                                Vector3 position = entry.Position;
+                                Vector3 size = new Vector3(0.05f);
+                                BoundingBox smallBox = new BoundingBox(position - size, position + size);
+                                RenderBoundingBox renderSmallBox = new RenderBoundingBox();
+                                renderSmallBox.SetColour(System.Drawing.Color.DodgerBlue);
+                                renderSmallBox.Init(smallBox);
+                                int refIDSmallBox = RefManager.GetNewRefID();
+                                assets.Add(refIDSmallBox, renderSmallBox);
+                                RefIDToActorEntry[refIDSmallBox] = entry;
+
+                                TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
+                                if (foundNodes.Length > 0)
+                                {
+                                    TreeNode boxNode = new TreeNode("C_Sound Box");
+                                    boxNode.Name = refIDSmallBox.ToString();
+                                    boxNode.Tag = renderSmallBox;
+                                    foundNodes[0].Nodes.Add(boxNode);
+                                }
+                            }
+                            if (entry.ActorTypeName == "C_TrafficCar" || entry.ActorTypeID == (int)ActorTypes.C_TrafficCar)
+                            {
+                                if (entry.Data != null && entry.Data.Data is ActorTrafficCar traffic)
+                                {
+                                    Vector3 min = traffic.BoundingBoxMinimum;
+                                    Vector3 max = traffic.BoundingBoxMaximum;
+                                    BoundingBox TrafficBBox = new BoundingBox(min, max);
+                                    RenderBoundingBox Traffic2BBox = new RenderBoundingBox();
+                                    Traffic2BBox.Init(TrafficBBox);
+                                    int refID = RefManager.GetNewRefID();
+                                    assets.Add(refID, Traffic2BBox);
+                                    RefIDToActorEntry[refID] = entry;
+
+                                    TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
+                                    if (foundNodes.Length > 0)
+                                    {
+                                        TreeNode bboxNode = new TreeNode("C_TrafficCar BoundingBox");
+                                        bboxNode.Name = refID.ToString();
+                                        bboxNode.Tag = Traffic2BBox;
+                                        foundNodes[0].Nodes.Add(bboxNode);
+                                    }
+                                }
+                            }
+                            if (entry.ActorTypeName == "C_TrafficTrain" || entry.ActorTypeID == (int)ActorTypes.C_TrafficTrain)
+                            {
+                                if (entry.Data != null && entry.Data.Data is ActorTrafficTrain traffictrain)
+                                {
+                                    Vector3 min = traffictrain.BoundingBoxMinimum;
+                                    Vector3 max = traffictrain.BoundingBoxMaximum;
+                                    BoundingBox TrainTrafficBBox = new BoundingBox(min, max);
+                                    RenderBoundingBox TrainTraffic2BBox = new RenderBoundingBox();
+                                    TrainTraffic2BBox.Init(TrainTrafficBBox);
+                                    int refID = RefManager.GetNewRefID();
+                                    assets.Add(refID, TrainTraffic2BBox);
+                                    RefIDToActorEntry[refID] = entry;
+
+                                    TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
+                                    if (foundNodes.Length > 0)
+                                    {
+                                        TreeNode bboxNode = new TreeNode("C_TrafficTrain BoundingBox");
+                                        bboxNode.Name = refID.ToString();
+                                        bboxNode.Tag = TrainTraffic2BBox;
+                                        foundNodes[0].Nodes.Add(bboxNode);
+                                    }
+                                }
+                            }
+                            if (entry.ActorTypeName == "C_TrafficHuman" || entry.ActorTypeID == (int)ActorTypes.C_TrafficHuman)
+                            {
+                                if (entry.Data != null && entry.Data.Data is ActorTrafficHuman traffichuman)
+                                {
+                                    Vector3 min = traffichuman.BoundingBoxMinimum;
+                                    Vector3 max = traffichuman.BoundingBoxMaximum;
+                                    BoundingBox HumanTrafficBBox = new BoundingBox(min, max);
+                                    RenderBoundingBox HumanTraffic2BBox = new RenderBoundingBox();
+                                    HumanTraffic2BBox.Init(HumanTrafficBBox);
+                                    int refID = RefManager.GetNewRefID();
+                                    assets.Add(refID, HumanTraffic2BBox);
+                                    RefIDToActorEntry[refID] = entry;
+
+                                    TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
+                                    if (foundNodes.Length > 0)
+                                    {
+                                        TreeNode bboxNode = new TreeNode("C_TrafficHuman BoundingBox");
+                                        bboxNode.Name = refID.ToString();
+                                        bboxNode.Tag = HumanTraffic2BBox;
+                                        foundNodes[0].Nodes.Add(bboxNode);
+                                    }
+                                }
+                            }
+                            if (entry.ActorTypeName == "C_Blocker" || entry.ActorTypeID == (int)ActorTypes.Blocker)
+                            {
+                                if (entry.Data != null && entry.Data.Data is ActorBlocker blocker)
+                                {
+                                    Vector3 position = entry.Position;
+                                    Vector3 bboxSize = blocker.BBox;
+                                    Vector3 halfSize = bboxSize * 0.5f;
+                                    BoundingBox blockerBox = new BoundingBox(position - halfSize, position + halfSize);
+                                    RenderBoundingBox renderBlockerBox = new RenderBoundingBox();
+                                    renderBlockerBox.Init(blockerBox);
+                                    int refID = RefManager.GetNewRefID();
+                                    assets.Add(refID, renderBlockerBox);
+                                    RefIDToActorEntry[refID] = entry;
+
+                                    TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
+                                    if (foundNodes.Length > 0)
+                                    {
+                                        TreeNode boxNode = new TreeNode("Blocker BBox");
+                                        boxNode.Name = refID.ToString();
+                                        boxNode.Tag = renderBlockerBox;
+                                        foundNodes[0].Nodes.Add(boxNode);
+                                    }
+                                }
+                            }
+                            if (entry.ActorTypeName == "FireTarget" || entry.ActorTypeID == (int)ActorTypes.FireTarget)
+                            {
+                                if (entry.Data != null && entry.Data.Data is ActorFireTarget fitetarget)
+                                {
+                                    Vector3 position = entry.Position;
+                                    Vector3 bboxSize = fitetarget.BoxExtents;
+                                    Vector3 halfSize = bboxSize * 0.5f;
+                                    BoundingBox fireBox = new BoundingBox(position - halfSize, position + halfSize);
+                                    RenderBoundingBox renderFireBox = new RenderBoundingBox();
+                                    renderFireBox.Init(fireBox);
+                                    int refID = RefManager.GetNewRefID();
+                                    assets.Add(refID, renderFireBox);
+                                    RefIDToActorEntry[refID] = entry;
+
+                                    TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
+                                    if (foundNodes.Length > 0)
+                                    {
+                                        TreeNode boxNode = new TreeNode("Fire Target Box Extents");
+                                        boxNode.Name = refID.ToString();
+                                        boxNode.Tag = renderFireBox;
+                                        foundNodes[0].Nodes.Add(boxNode);
+                                    }
+                                }
+                            }
+                            if (entry.ActorTypeName == "CleanEntity" || entry.ActorTypeID == (int)ActorTypes.CleanEntity)
+                            {
+                                if (entry.Data != null && entry.Data.Data is ActorCleanEntity Cleantarget)
+                                {
+                                    Vector3 position = entry.Position;
+                                    Vector3 bboxSize = Cleantarget.BBoxSize;
+                                    Vector3 halfSize = bboxSize * 0.5f;
+                                    BoundingBox cleaningBox = new BoundingBox(position - halfSize, position + halfSize);
+                                    RenderBoundingBox renderCleanBox = new RenderBoundingBox();
+                                    renderCleanBox.Init(cleaningBox);
+                                    int refID = RefManager.GetNewRefID();
+                                    assets.Add(refID, renderCleanBox);
+                                    RefIDToActorEntry[refID] = entry;
+
+                                    TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
+                                    if (foundNodes.Length > 0)
+                                    {
+                                        TreeNode boxNode = new TreeNode("Clean Entity Box");
+                                        boxNode.Name = refID.ToString();
+                                        boxNode.Tag = renderCleanBox;
+                                        foundNodes[0].Nodes.Add(boxNode);
+                                    }
+                                }
+                            }
+                            if (entry.ActorTypeName == "DangerZone" || entry.ActorTypeID == (int)ActorTypes.DangerZone)
+                            {
+                                if (entry.Data != null && entry.Data.Data is ActorDamageZone Damagetarget)
+                                {
+                                    Vector3 position = entry.Position;
+                                    Vector3 bboxSize = Damagetarget.BBoxExtents;
+                                    Vector3 halfSize = bboxSize * 0.5f;
+                                    BoundingBox cleaningBox = new BoundingBox(position - halfSize, position + halfSize);
+                                    RenderBoundingBox renderDamageBox = new RenderBoundingBox();
+                                    renderDamageBox.Init(cleaningBox);
+                                    int refID = RefManager.GetNewRefID();
+                                    assets.Add(refID, renderDamageBox);
+                                    RefIDToActorEntry[refID] = entry;
+
+                                    TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
+                                    if (foundNodes.Length > 0)
+                                    {
+                                        TreeNode boxNode = new TreeNode("Danger Zone Box");
+                                        boxNode.Name = refID.ToString();
+                                        boxNode.Tag = renderDamageBox;
+                                        foundNodes[0].Nodes.Add(boxNode);
+                                    }
+                                }
+                            }
+                            if (entry.ActorTypeName == "ActorPoint" || entry.ActorTypeID == (int)ActorTypes.ActionPoint)
+                            {
+                                if (entry.Data != null && entry.Data.Data is ActorActionPoint ActionPoint)
+                                {
+                                    Vector3 position = entry.Position;
+                                    Vector3 bboxSize = ActionPoint.BBox;
+                                    Vector3 halfSize = bboxSize * 0.5f;
+                                    BoundingBox ActionPBox = new BoundingBox(position - halfSize, position + halfSize);
+                                    RenderBoundingBox renderActionBox = new RenderBoundingBox();
+                                    renderActionBox.Init(ActionPBox);
+                                    int refID = RefManager.GetNewRefID();
+                                    assets.Add(refID, renderActionBox);
+                                    RefIDToActorEntry[refID] = entry;
+
+                                    TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
+                                    if (foundNodes.Length > 0)
+                                    {
+                                        TreeNode boxNode = new TreeNode("Action Point BBox");
+                                        boxNode.Name = refID.ToString();
+                                        boxNode.Tag = renderActionBox;
+                                        foundNodes[0].Nodes.Add(boxNode);
+                                    }
+                                }
+                            }
+                            if (entry.ActorTypeName == "ActorDetector" || entry.ActorTypeID == (int)ActorTypes.C_ActorDetector)
+                            {
+                                Vector3 position = entry.Position;
+                                Vector3 size = new Vector3(0.05f);
+                                BoundingBox smallBox = new BoundingBox(position - size, position + size);
+                                RenderBoundingBox renderSmallBox = new RenderBoundingBox();
+                                renderSmallBox.SetColour(System.Drawing.Color.Orchid);
+                                renderSmallBox.Init(smallBox);
+                                int refIDSmallBox = RefManager.GetNewRefID();
+                                assets.Add(refIDSmallBox, renderSmallBox);
+                                RefIDToActorEntry[refIDSmallBox] = entry;
+
+                                if (entry.Data != null && entry.Data.Data is ActorActorDetector detector)
+                                {
+                                    Vector3 halfSize = new Vector3(detector.SizeX * 0.5f, detector.SizeY * 0.5f, detector.SizeZ * 0.5f);
+                                    BoundingBox detectorBox = new BoundingBox(position - halfSize, position + halfSize);
+                                    RenderBoundingBox renderDetectorBox = new RenderBoundingBox();
+                                    renderDetectorBox.Init(detectorBox);
+                                    int refID = RefManager.GetNewRefID();
+                                    assets.Add(refID, renderDetectorBox);
+                                    RefIDToActorEntry[refID] = entry;
+
+                                    TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
+                                    if (foundNodes.Length > 0)
+                                    {
+                                        TreeNode boxNode = new TreeNode("Detector Box");
+                                        boxNode.Name = refID.ToString();
+                                        boxNode.Tag = renderDetectorBox;
+                                        foundNodes[0].Nodes.Add(boxNode);
+                                    }
+                                    if (foundNodes.Length > 0)
+                                    {
+                                        TreeNode boxNode = new TreeNode("ActorDetector Box");
+                                        boxNode.Name = refIDSmallBox.ToString();
+                                        boxNode.Tag = renderSmallBox;
+                                        foundNodes[0].Nodes.Add(boxNode);
+                                    }
+                                }
+                            }
+                            if (entry.ActorTypeName == "PhysicsScene" || entry.ActorTypeID == (int)ActorTypes.PhysicsScene)
+                            {
+                                if (entry.Data != null && entry.Data.Data is ActorPhysicsScene PhysScene)
+                                {
+                                    Vector3 position = entry.Position;
+                                    Vector3 bboxSize = PhysScene.BBox;
+                                    Vector3 halfSize = bboxSize * 0.5f;
+                                    BoundingBox PhysSceneBox = new BoundingBox(position - halfSize, position + halfSize);
+                                    RenderBoundingBox renderPhysSceneBox = new RenderBoundingBox();
+                                    renderPhysSceneBox.Init(PhysSceneBox);
+                                    int refID = RefManager.GetNewRefID();
+                                    assets.Add(refID, renderPhysSceneBox);
+                                    RefIDToActorEntry[refID] = entry;
+
+                                    TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
+                                    if (foundNodes.Length > 0)
+                                    {
+                                        TreeNode boxNode = new TreeNode("Physics Scene Box");
+                                        boxNode.Name = refID.ToString();
+                                        boxNode.Tag = renderPhysSceneBox;
+                                        foundNodes[0].Nodes.Add(boxNode);
+                                    }
+                                }
                             }
                         }
                     }
-                    if (entry.ActorTypeName == "Tree" || entry.ActorTypeID == (int)ActorTypes.Tree)
-                    {
-                        Vector3 position = entry.Position;
-                        Vector3 size = new Vector3(0.05f);
-                        BoundingBox smallBox = new BoundingBox(position - size, position + size);
-                        RenderBoundingBox renderSmallBox = new RenderBoundingBox();
-                        renderSmallBox.SetColour(System.Drawing.Color.ForestGreen);
-                        renderSmallBox.Init(smallBox);
-                        int refIDSmallBox = RefManager.GetNewRefID();
-                        assets.Add(refIDSmallBox, renderSmallBox);
-                        RefIDToActorEntry[refIDSmallBox] = entry;
-
-                        TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
-                        if (foundNodes.Length > 0)
-                        {
-                            TreeNode boxNode = new TreeNode("Tree Box");
-                            boxNode.Name = refIDSmallBox.ToString();
-                            boxNode.Tag = renderSmallBox;
-                            foundNodes[0].Nodes.Add(boxNode);
-                        }
-                    }
-                    if (entry.ActorTypeName == "StaticEntity" || entry.ActorTypeID == (int)ActorTypes.StaticEntity)
-                    {
-                        Vector3 position = entry.Position;
-                        Vector3 size = new Vector3(0.05f);
-                        BoundingBox smallBox = new BoundingBox(position - size, position + size);
-                        RenderBoundingBox renderSmallBox = new RenderBoundingBox();
-                        renderSmallBox.SetColour(System.Drawing.Color.Gray);
-                        renderSmallBox.Init(smallBox);
-                        int refIDSmallBox = RefManager.GetNewRefID();
-                        assets.Add(refIDSmallBox, renderSmallBox);
-                        RefIDToActorEntry[refIDSmallBox] = entry;
-
-                        TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
-                        if (foundNodes.Length > 0)
-                        {
-                            TreeNode boxNode = new TreeNode("Tree Box");
-                            boxNode.Name = refIDSmallBox.ToString();
-                            boxNode.Tag = renderSmallBox;
-                            foundNodes[0].Nodes.Add(boxNode);
-                        }
-                    }
-                    if (entry.ActorTypeName == "C_TranslocatedCar" || entry.ActorTypeID == (int)ActorTypes.StaticEntity)
-                    {
-                        Vector3 position = entry.Position;
-                        Vector3 size = new Vector3(0.05f);
-                        BoundingBox smallBox = new BoundingBox(position - size, position + size);
-                        RenderBoundingBox renderSmallBox = new RenderBoundingBox();
-                        renderSmallBox.SetColour(System.Drawing.Color.Orange);
-                        renderSmallBox.Init(smallBox);
-                        int refIDSmallBox = RefManager.GetNewRefID();
-                        assets.Add(refIDSmallBox, renderSmallBox);
-                        RefIDToActorEntry[refIDSmallBox] = entry;
-
-                        TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
-                        if (foundNodes.Length > 0)
-                        {
-                            TreeNode boxNode = new TreeNode("Tree Box");
-                            boxNode.Name = refIDSmallBox.ToString();
-                            boxNode.Tag = renderSmallBox;
-                            foundNodes[0].Nodes.Add(boxNode);
-                        }
-                    }
-                    if (entry.ActorTypeName == "C_Sound" || entry.ActorTypeID == (int)ActorTypes.C_Sound)
-                    {
-                        Vector3 position = entry.Position;
-                        Vector3 size = new Vector3(0.05f);
-                        BoundingBox smallBox = new BoundingBox(position - size, position + size);
-                        RenderBoundingBox renderSmallBox = new RenderBoundingBox();
-                        renderSmallBox.SetColour(System.Drawing.Color.Lime);
-                        renderSmallBox.Init(smallBox);
-                        int refIDSmallBox = RefManager.GetNewRefID();
-                        assets.Add(refIDSmallBox, renderSmallBox);
-                        RefIDToActorEntry[refIDSmallBox] = entry;
-
-                        TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
-                        if (foundNodes.Length > 0)
-                        {
-                            TreeNode boxNode = new TreeNode("C_Sound Box");
-                            boxNode.Name = refIDSmallBox.ToString();
-                            boxNode.Tag = renderSmallBox;
-                            foundNodes[0].Nodes.Add(boxNode);
-                        }
-                    }
-                    if (entry.ActorTypeName == "C_StaticParticle" || entry.ActorTypeID == (int)ActorTypes.C_StaticWeapon)
-                    {
-                        Vector3 position = entry.Position;
-                        Vector3 size = new Vector3(0.05f);
-                        BoundingBox smallBox = new BoundingBox(position - size, position + size);
-                        RenderBoundingBox renderSmallBox = new RenderBoundingBox();
-                        renderSmallBox.SetColour(System.Drawing.Color.DodgerBlue);
-                        renderSmallBox.Init(smallBox);
-                        int refIDSmallBox = RefManager.GetNewRefID();
-                        assets.Add(refIDSmallBox, renderSmallBox);
-                        RefIDToActorEntry[refIDSmallBox] = entry;
-
-                        TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
-                        if (foundNodes.Length > 0)
-                        {
-                            TreeNode boxNode = new TreeNode("C_Sound Box");
-                            boxNode.Name = refIDSmallBox.ToString();
-                            boxNode.Tag = renderSmallBox;
-                            foundNodes[0].Nodes.Add(boxNode);
-                        }
-                    }
-                    if (entry.ActorTypeName == "C_TrafficCar" || entry.ActorTypeID == (int)ActorTypes.C_TrafficCar)
-                    {
-                        if (entry.Data != null && entry.Data.Data is ActorTrafficCar traffic)
-                        {
-                            Vector3 min = traffic.BoundingBoxMinimum;
-                            Vector3 max = traffic.BoundingBoxMaximum;
-                            BoundingBox TrafficBBox = new BoundingBox(min, max);
-                            RenderBoundingBox Traffic2BBox = new RenderBoundingBox();
-                            Traffic2BBox.Init(TrafficBBox);
-                            int refID = RefManager.GetNewRefID();
-                            assets.Add(refID, Traffic2BBox);
-                            RefIDToActorEntry[refID] = entry;
-
-                            TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
-                            if (foundNodes.Length > 0)
-                            {
-                                TreeNode bboxNode = new TreeNode("C_TrafficCar BoundingBox");
-                                bboxNode.Name = refID.ToString();
-                                bboxNode.Tag = Traffic2BBox;
-                                foundNodes[0].Nodes.Add(bboxNode);
-                            }
-                        }
-                    }
-                    if (entry.ActorTypeName == "C_TrafficTrain" || entry.ActorTypeID == (int)ActorTypes.C_TrafficTrain)
-                    {
-                        if (entry.Data != null && entry.Data.Data is ActorTrafficTrain traffictrain)
-                        {
-                            Vector3 min = traffictrain.BoundingBoxMinimum;
-                            Vector3 max = traffictrain.BoundingBoxMaximum;
-                            BoundingBox TrainTrafficBBox = new BoundingBox(min, max);
-                            RenderBoundingBox TrainTraffic2BBox = new RenderBoundingBox();
-                            TrainTraffic2BBox.Init(TrainTrafficBBox);
-                            int refID = RefManager.GetNewRefID();
-                            assets.Add(refID, TrainTraffic2BBox);
-                            RefIDToActorEntry[refID] = entry;
-
-                            TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
-                            if (foundNodes.Length > 0)
-                            {
-                                TreeNode bboxNode = new TreeNode("C_TrafficTrain BoundingBox");
-                                bboxNode.Name = refID.ToString();
-                                bboxNode.Tag = TrainTraffic2BBox;
-                                foundNodes[0].Nodes.Add(bboxNode);
-                            }
-                        }
-                    }
-                    if (entry.ActorTypeName == "C_TrafficHuman" || entry.ActorTypeID == (int)ActorTypes.C_TrafficHuman)
-                    {
-                        if (entry.Data != null && entry.Data.Data is ActorTrafficHuman traffichuman)
-                        {
-                            Vector3 min = traffichuman.BoundingBoxMinimum;
-                            Vector3 max = traffichuman.BoundingBoxMaximum;
-                            BoundingBox HumanTrafficBBox = new BoundingBox(min, max);
-                            RenderBoundingBox HumanTraffic2BBox = new RenderBoundingBox();
-                            HumanTraffic2BBox.Init(HumanTrafficBBox);
-                            int refID = RefManager.GetNewRefID();
-                            assets.Add(refID, HumanTraffic2BBox);
-                            RefIDToActorEntry[refID] = entry;
-
-                            TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
-                            if (foundNodes.Length > 0)
-                            {
-                                TreeNode bboxNode = new TreeNode("C_TrafficHuman BoundingBox");
-                                bboxNode.Name = refID.ToString();
-                                bboxNode.Tag = HumanTraffic2BBox;
-                                foundNodes[0].Nodes.Add(bboxNode);
-                            }
-                        }
-                    }
-                    if (entry.ActorTypeName == "C_Blocker" || entry.ActorTypeID == (int)ActorTypes.Blocker)
-                    {
-                        if (entry.Data != null && entry.Data.Data is ActorBlocker blocker)
-                        {
-                            Vector3 position = entry.Position;
-                            Vector3 bboxSize = blocker.BBox;
-                            Vector3 halfSize = bboxSize * 0.5f;
-                            BoundingBox blockerBox = new BoundingBox(position - halfSize, position + halfSize);
-                            RenderBoundingBox renderBlockerBox = new RenderBoundingBox();
-                            renderBlockerBox.Init(blockerBox);
-                            int refID = RefManager.GetNewRefID();
-                            assets.Add(refID, renderBlockerBox);
-                            RefIDToActorEntry[refID] = entry;
-
-                            TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
-                            if (foundNodes.Length > 0)
-                            {
-                                TreeNode boxNode = new TreeNode("Blocker BBox");
-                                boxNode.Name = refID.ToString();
-                                boxNode.Tag = renderBlockerBox;
-                                foundNodes[0].Nodes.Add(boxNode);
-                            }
-                        }
-                    }
-                    if (entry.ActorTypeName == "FireTarget" || entry.ActorTypeID == (int)ActorTypes.FireTarget)
-                    {
-                        if (entry.Data != null && entry.Data.Data is ActorFireTarget fitetarget)
-                        {
-                            Vector3 position = entry.Position;
-                            Vector3 bboxSize = fitetarget.BoxExtents;
-                            Vector3 halfSize = bboxSize * 0.5f;
-                            BoundingBox fireBox = new BoundingBox(position - halfSize, position + halfSize);
-                            RenderBoundingBox renderFireBox = new RenderBoundingBox();
-                            renderFireBox.Init(fireBox);
-                            int refID = RefManager.GetNewRefID();
-                            assets.Add(refID, renderFireBox);
-                            RefIDToActorEntry[refID] = entry;
-
-                            TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
-                            if (foundNodes.Length > 0)
-                            {
-                                TreeNode boxNode = new TreeNode("Fire Target Box Extents");
-                                boxNode.Name = refID.ToString();
-                                boxNode.Tag = renderFireBox;
-                                foundNodes[0].Nodes.Add(boxNode);
-                            }
-                        }
-                    }
-                    if (entry.ActorTypeName == "CleanEntity" || entry.ActorTypeID == (int)ActorTypes.CleanEntity)
-                    {
-                        if (entry.Data != null && entry.Data.Data is ActorCleanEntity Cleantarget)
-                        {
-                            Vector3 position = entry.Position;
-                            Vector3 bboxSize = Cleantarget.BBoxSize;
-                            Vector3 halfSize = bboxSize * 0.5f;
-                            BoundingBox cleaningBox = new BoundingBox(position - halfSize, position + halfSize);
-                            RenderBoundingBox renderCleanBox = new RenderBoundingBox();
-                            renderCleanBox.Init(cleaningBox);
-                            int refID = RefManager.GetNewRefID();
-                            assets.Add(refID, renderCleanBox);
-                            RefIDToActorEntry[refID] = entry;
-
-                            TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
-                            if (foundNodes.Length > 0)
-                            {
-                                TreeNode boxNode = new TreeNode("Clean Entity Box");
-                                boxNode.Name = refID.ToString();
-                                boxNode.Tag = renderCleanBox;
-                                foundNodes[0].Nodes.Add(boxNode);
-                            }
-                        }
-                    }
-                    if (entry.ActorTypeName == "DangerZone" || entry.ActorTypeID == (int)ActorTypes.DangerZone)
-                    {
-                        if (entry.Data != null && entry.Data.Data is ActorDamageZone Damagetarget)
-                        {
-                            Vector3 position = entry.Position;
-                            Vector3 bboxSize = Damagetarget.BBoxExtents;
-                            Vector3 halfSize = bboxSize * 0.5f;
-                            BoundingBox cleaningBox = new BoundingBox(position - halfSize, position + halfSize);
-                            RenderBoundingBox renderDamageBox = new RenderBoundingBox();
-                            renderDamageBox.Init(cleaningBox);
-                            int refID = RefManager.GetNewRefID();
-                            assets.Add(refID, renderDamageBox);
-                            RefIDToActorEntry[refID] = entry;
-
-                            TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
-                            if (foundNodes.Length > 0)
-                            {
-                                TreeNode boxNode = new TreeNode("Danger Zone Box");
-                                boxNode.Name = refID.ToString();
-                                boxNode.Tag = renderDamageBox;
-                                foundNodes[0].Nodes.Add(boxNode);
-                            }
-                        }
-                    }
-                    if (entry.ActorTypeName == "ActorPoint" || entry.ActorTypeID == (int)ActorTypes.ActionPoint)
-                    {
-                        if (entry.Data != null && entry.Data.Data is ActorActionPoint ActionPoint)
-                        {
-                            Vector3 position = entry.Position;
-                            Vector3 bboxSize = ActionPoint.BBox;
-                            Vector3 halfSize = bboxSize * 0.5f;
-                            BoundingBox ActionPBox = new BoundingBox(position - halfSize, position + halfSize);
-                            RenderBoundingBox renderActionBox = new RenderBoundingBox();
-                            renderActionBox.Init(ActionPBox);
-                            int refID = RefManager.GetNewRefID();
-                            assets.Add(refID, renderActionBox);
-                            RefIDToActorEntry[refID] = entry;
-
-                            TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
-                            if (foundNodes.Length > 0)
-                            {
-                                TreeNode boxNode = new TreeNode("Action Point BBox");
-                                boxNode.Name = refID.ToString();
-                                boxNode.Tag = renderActionBox;
-                                foundNodes[0].Nodes.Add(boxNode);
-                            }
-                        }
-                    }
-                    if (entry.ActorTypeName == "ActorDetector" || entry.ActorTypeID == (int)ActorTypes.C_ActorDetector)
-                    {
-                        Vector3 position = entry.Position;
-                        Vector3 size = new Vector3(0.05f);
-                        BoundingBox smallBox = new BoundingBox(position - size, position + size);
-                        RenderBoundingBox renderSmallBox = new RenderBoundingBox();
-                        renderSmallBox.SetColour(System.Drawing.Color.Orchid);
-                        renderSmallBox.Init(smallBox);
-                        int refIDSmallBox = RefManager.GetNewRefID();
-                        assets.Add(refIDSmallBox, renderSmallBox);
-                        RefIDToActorEntry[refIDSmallBox] = entry;
-
-                        if (entry.Data != null && entry.Data.Data is ActorActorDetector detector)
-                        {
-                            Vector3 halfSize = new Vector3(detector.SizeX * 0.5f, detector.SizeY * 0.5f, detector.SizeZ * 0.5f);
-                            BoundingBox detectorBox = new BoundingBox(position - halfSize, position + halfSize);
-                            RenderBoundingBox renderDetectorBox = new RenderBoundingBox();
-                            renderDetectorBox.Init(detectorBox);
-                            int refID = RefManager.GetNewRefID();
-                            assets.Add(refID, renderDetectorBox);
-                            RefIDToActorEntry[refID] = entry;
-
-                            TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
-                            if (foundNodes.Length > 0)
-                            {
-                                TreeNode boxNode = new TreeNode("Detector Box");
-                                boxNode.Name = refID.ToString();
-                                boxNode.Tag = renderDetectorBox;
-                                foundNodes[0].Nodes.Add(boxNode);
-                            }
-                            if (foundNodes.Length > 0)
-                            {
-                                TreeNode boxNode = new TreeNode("ActorDetector Box");
-                                boxNode.Name = refIDSmallBox.ToString();
-                                boxNode.Tag = renderSmallBox;
-                                foundNodes[0].Nodes.Add(boxNode);
-                            }
-                        }
-                    }
-                    if (entry.ActorTypeName == "PhysicsScene" || entry.ActorTypeID == (int)ActorTypes.PhysicsScene)
-                    {
-                        if (entry.Data != null && entry.Data.Data is ActorPhysicsScene PhysScene)
-                        {
-                            Vector3 position = entry.Position;
-                            Vector3 bboxSize = PhysScene.BBox;
-                            Vector3 halfSize = bboxSize * 0.5f;
-                            BoundingBox PhysSceneBox = new BoundingBox(position - halfSize, position + halfSize);
-                            RenderBoundingBox renderPhysSceneBox = new RenderBoundingBox();
-                            renderPhysSceneBox.Init(PhysSceneBox);
-                            int refID = RefManager.GetNewRefID();
-                            assets.Add(refID, renderPhysSceneBox);
-                            RefIDToActorEntry[refID] = entry;
-
-                            TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + entry.EntityName, true);
-                            if (foundNodes.Length > 0)
-                            {
-                                TreeNode boxNode = new TreeNode("Physics Scene Box");
-                                boxNode.Name = refID.ToString();
-                                boxNode.Tag = renderPhysSceneBox;
-                                foundNodes[0].Nodes.Add(boxNode);
-                            }
-                        }
-                    }
-                }
             }
             for (int i = 0; i < SceneData.FrameNameTable.FrameData.Length; i++)
             {
@@ -3419,7 +3423,7 @@ namespace Mafia2Tool
             }
             Graphics.InitObjectStack = assets;
 
-            if (SceneData.Translokator != null && ToolkitSettings.Experimental)
+            if (ToolkitSettings.LoadTranslokator && SceneData.Translokator != null && ToolkitSettings.Experimental)
             {
                 ToggleTranslokatorTint.Enabled = true;
                 dSceneTree.hasTranslokatorData = true;
