@@ -67,19 +67,25 @@ namespace ResourceTypes.ModelHelpers.ModelExporter
 
         public NodeBuilder BuildGLTF(SceneBuilder RootScene, NodeBuilder ParentNode)
         {
-            Quaternion R_z2y = Quaternion.CreateFromAxisAngle(Vector3.UnitX, -MathF.PI / 2f);
-            Quaternion conj_R = Quaternion.Conjugate(R_z2y);
+            Vector3 posToUse;
+            Quaternion rotToUse;
 
-            Vector3 pos_zup = Position;
-            Vector3 pos_yup = Vector3.Transform(pos_zup, R_z2y);
-
-            Quaternion rot_zup = RotationQuat;
-            Quaternion rot_yup = R_z2y * rot_zup * conj_R;
+            if (ParentNode == null)
+            {
+                posToUse = new Vector3(Position.X, Position.Z, -Position.Y);
+                Quaternion correctionInv = Quaternion.CreateFromAxisAngle(Vector3.UnitX, -MathF.PI / 2f);
+                rotToUse = correctionInv * RotationQuat;
+            }
+            else
+            {
+                posToUse = Position;
+                rotToUse = RotationQuat;
+            }
 
             NodeBuilder ThisNode = new NodeBuilder(ObjectName)
-                .WithLocalTranslation(pos_yup)
+                .WithLocalTranslation(posToUse)
                 .WithLocalScale(Scale)
-                .WithLocalRotation(rot_yup);
+                .WithLocalRotation(rotToUse);
 
             if (ParentNode != null)
             {
