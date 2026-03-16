@@ -3,8 +3,9 @@ using ResourceTypes.Actors;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Runtime.Serialization;
 using System.IO;
+using System.Linq;
+using System.Runtime.Serialization;
 using System.Windows.Forms;
 using Utils.Helpers.Reflection;
 using Utils.Language;
@@ -55,10 +56,7 @@ namespace Mafia2Tool
         private void BuildData()
         {
             actors = new Actor(actorFile);
-            actors.Items.Sort((a, b) =>
-            {
-                return string.Compare(a.EntityName, b.EntityName, StringComparison.InvariantCultureIgnoreCase);
-            });
+            
             definitions = new TreeNode("Definitions");
             items = new TreeNode("Entities");
             for (int i = 0; i != actors.Definitions.Count; i++)
@@ -409,8 +407,6 @@ namespace Mafia2Tool
             TreeNode selectedNode = ActorTreeView.SelectedNode;
             if (selectedNode == null) return;
 
-            TreeNode parent = selectedNode.Parent;
-
             if (selectedNode.Tag is ActorTypes)
             {
                 int index = items.Nodes.IndexOf(selectedNode);
@@ -420,28 +416,20 @@ namespace Mafia2Tool
                 items.Nodes.Insert(index + 1, selectedNode);
                 ActorTreeView.SelectedNode = selectedNode;
 
+                List<ActorEntry> newItems = new List<ActorEntry>();
+                foreach (TreeNode groupNode in items.Nodes)
+                {
+                    ActorTypes type = (ActorTypes)groupNode.Tag;
+                    newItems.AddRange(actors.Items.Where(entry => (ActorTypes)entry.ActorTypeID == type));
+                }
+
+                actors.Items.Clear();
+                actors.Items.AddRange(newItems);
+
                 Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
                 bIsFileEdited = true;
                 return;
             }
-
-            if (!(selectedNode.Tag is ActorEntry item)) return;
-
-            int listIndex = actors.Items.IndexOf(item);
-            if (listIndex < 0 || listIndex >= actors.Items.Count - 1) return;
-
-            var below = actors.Items[listIndex + 1];
-            actors.Items[listIndex] = below;
-            actors.Items[listIndex + 1] = item;
-
-            int nodeIndex = parent.Nodes.IndexOf(selectedNode);
-            parent.Nodes.RemoveAt(nodeIndex);
-            parent.Nodes.Insert(nodeIndex + 1, selectedNode);
-
-            ActorTreeView.SelectedNode = selectedNode;
-
-            Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
-            bIsFileEdited = true;
         }
 
         private void MoveItemUp()
@@ -458,29 +446,20 @@ namespace Mafia2Tool
                 items.Nodes.Insert(index - 1, selectedNode);
                 ActorTreeView.SelectedNode = selectedNode;
 
+                List<ActorEntry> newItems = new List<ActorEntry>();
+                foreach (TreeNode groupNode in items.Nodes)
+                {
+                    ActorTypes type = (ActorTypes)groupNode.Tag;
+                    newItems.AddRange(actors.Items.Where(entry => (ActorTypes)entry.ActorTypeID == type));
+                }
+
+                actors.Items.Clear();
+                actors.Items.AddRange(newItems);
+
                 Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
                 bIsFileEdited = true;
                 return;
             }
-
-            if (!(selectedNode.Tag is ActorEntry item)) return;
-
-            int listIndex = actors.Items.IndexOf(item);
-            if (listIndex <= 0) return;
-
-            var above = actors.Items[listIndex - 1];
-            actors.Items[listIndex] = above;
-            actors.Items[listIndex - 1] = item;
-
-            TreeNode parent = selectedNode.Parent;
-            int nodeIndex = parent.Nodes.IndexOf(selectedNode);
-            parent.Nodes.RemoveAt(nodeIndex);
-            parent.Nodes.Insert(nodeIndex - 1, selectedNode);
-
-            ActorTreeView.SelectedNode = selectedNode;
-
-            Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
-            bIsFileEdited = true;
         }
 
         private void SearchBox_KeyDown(object sender, KeyEventArgs e)

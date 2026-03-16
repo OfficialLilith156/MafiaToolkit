@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Drawing;
 using Utils.Language;
 using Utils.Logging;
 using Utils.Settings;
@@ -35,6 +36,11 @@ namespace Mafia2Tool
             BuildData();
             Show();
             ToolkitSettings.UpdateRichPresence("Using the Stream editor.");
+            linesTree.AllowDrop = true;
+            linesTree.ItemDrag += LinesTree_ItemDrag;
+            linesTree.DragEnter += LinesTree_DragEnter;
+            linesTree.DragOver += LinesTree_DragOver;
+            linesTree.DragDrop += LinesTree_DragDrop;
         }
         private void InitializeHashDictionary()
         {
@@ -1898,6 +1904,102 @@ namespace Mafia2Tool
                     File.WriteAllText(sfd.FileName, json);
                     MessageBox.Show("Line exported successfully.", "Export", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
+            }
+        }
+        private void LinesTree_ItemDrag(object sender, ItemDragEventArgs e)
+        {
+            if (e.Item is TreeNode node && (node.Tag is StreamLine || node.Tag is StreamHeaderGroup))
+            {
+                DoDragDrop(node, DragDropEffects.Move);
+            }
+        }
+
+        private void LinesTree_DragEnter(object sender, DragEventArgs e)
+        {
+            e.Effect = e.Data.GetDataPresent(typeof(TreeNode)) ? DragDropEffects.Move : DragDropEffects.None;
+        }
+
+        private void LinesTree_DragOver(object sender, DragEventArgs e)
+        {
+            e.Effect = DragDropEffects.Move;
+        }
+
+        private void LinesTree_DragDrop(object sender, DragEventArgs e)
+        {
+            Point pt = linesTree.PointToClient(new Point(e.X, e.Y));
+            TreeNode targetNode = linesTree.GetNodeAt(pt);
+            if (targetNode == null) return;
+
+            TreeNode draggedNode = e.Data.GetData(typeof(TreeNode)) as TreeNode;
+            if (draggedNode == null || draggedNode == targetNode) return;
+
+            bool isDraggedGroup = draggedNode.Tag is StreamHeaderGroup;
+            bool isDraggedLine = draggedNode.Tag is StreamLine;
+            bool isTargetGroup = targetNode.Tag is StreamHeaderGroup;
+            bool isTargetLine = targetNode.Tag is StreamLine;
+
+            if (isDraggedGroup)
+            {
+                if (!isTargetGroup) return;
+
+                int insertIndex = targetNode.Index;
+                if (draggedNode.Index == insertIndex) return;
+
+                draggedNode.Remove();
+                linesTree.Nodes.Insert(insertIndex, draggedNode);
+                MarkAsEdited();
+                linesTree.SelectedNode = draggedNode;
+                return;
+            }
+
+            if (isDraggedLine)
+            {
+                StreamLine line = (StreamLine)draggedNode.Tag;
+
+                TreeNode newParent;
+                int insertIndex;
+
+                if (isTargetGroup)
+                {
+                    newParent = targetNode;
+                    insertIndex = targetNode.Nodes.Count;
+                }
+                else if (isTargetLine)
+                {
+                    newParent = targetNode.Parent;
+                    insertIndex = targetNode.Index + 1;
+                }
+                else
+                {
+                    return;
+                }
+
+                if (draggedNode.Parent == newParent && draggedNode.Index == insertIndex - 1) return;
+
+                draggedNode.Remove();
+
+                newParent.Nodes.Insert(insertIndex, draggedNode);
+
+                if (newParent.Tag is StreamHeaderGroup headerGroup)
+                {
+                    line.Group = headerGroup.HeaderName;
+                }
+                else
+                {
+                    line.Group = newParent.Text;
+                }
+
+                MarkAsEdited();
+                linesTree.SelectedNode = draggedNode;
+            }
+        }
+
+        private void MarkAsEdited()
+        {
+            if (!bIsFileEdited)
+            {
+                Text = Language.GetString("$STREAM_EDITOR_TITLE") + "*";
+                bIsFileEdited = true;
             }
         }
         private void ImportLine(object sender, EventArgs e)
