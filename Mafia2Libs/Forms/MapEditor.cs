@@ -50,7 +50,6 @@ namespace Mafia2Tool
         private List<SoundSectorData> loadedSoundSectors = new List<SoundSectorData>();
         private List<PortalData> loadedPortals = new List<PortalData>();
         private string _soundSectorsFilePath;
-        private XmlDocument _soundSectorsXmlDoc;
         private string _soundSectorsRootName;
         private List<ulong> _soundSectorsHashes = new List<ulong>();
 
@@ -131,7 +130,6 @@ namespace Mafia2Tool
             ToggleWireframeButton.Text = Language.GetString("$TOGGLE_WIREFRAME");
             ToggleCullingButton.Text = Language.GetString("$TOGGLE_CULLING");
             EditLighting.Text = Language.GetString("$EDIT_LIGHTING");
-            ToggleTranslokatorTint.Text = Language.GetString("$TOGGLE_TRANSLOKATOR_TINT");
             SceneTreeButton.Text = Language.GetString("$VIEW_SCENE_TREE");
             ObjectPropertiesButton.Text = Language.GetString("$VIEW_PROPERTY_GRID");
             WindowButton.Text = Language.GetString("$VIEW_OPTIONS");
@@ -218,12 +216,6 @@ namespace Mafia2Tool
 
             private Vector3 _min;
             private Vector3 _max;
-
-            [Browsable(false)] 
-            public Vector3 BMin { get => _min; set => _min = value; }
-
-            [Browsable(false)]
-            public Vector3 BMax { get => _max; set => _max = value; }
 
             [Category("Bounds")]
             [Description("Minimum corner of the sector box")]
@@ -940,7 +932,6 @@ namespace Mafia2Tool
             }
         }
 
-        
         private void ExportFrame_Click(object sender, EventArgs e)
         {
             var node = dSceneTree.SelectedNode;
@@ -1127,7 +1118,6 @@ namespace Mafia2Tool
         private void CullModeButton_Click(object sender, EventArgs e) => Graphics.ToggleD3DCullMode();
         private void FillModeButton_Click(object sender, EventArgs e) => Graphics.ToggleD3DFillMode();
         private void OnAfterSelect(object sender, TreeViewEventArgs e) => TreeViewUpdateSelected();
-        private void ExitButton_Click(object sender, EventArgs e) => Close();
         private void SaveButton_Click(object sender, EventArgs e) => Save();
         private void SaveButtonScene_Click(object sender, EventArgs e) => SaveScene();
         private void SaveButtonCollision_Click(object sender, EventArgs e) => SaveCollision();
@@ -2415,13 +2405,6 @@ namespace Mafia2Tool
             return indexEmpty || refIdEmpty || refIdZero;
         }
 
-        private bool HasNoParents(FrameObjectBase obj)
-        {
-            return ParentIsEmpty(obj.ParentIndex1) && ParentIsEmpty(obj.ParentIndex2);
-        }
-
-        
-
         private IRenderer BuildRenderObjectFromFrame(FrameObjectBase fObject, Dictionary<int, IRenderer> assets)
         {
             fObject.ConstructRenderable();
@@ -2812,48 +2795,7 @@ namespace Mafia2Tool
                         }
                     }
                 }
-                for (int i = 0; i < SceneData.Prefabs.Prefabs.Length; i++)
-                {
-                    var prefab = SceneData.Prefabs.Prefabs[i];
-                    string displayName = null;
-                    ActorEntry linkedActor = null;
-
-                    if (frameHashToActor.TryGetValue(prefab.Hash, out linkedActor))
-                    {
-                        displayName = linkedActor.EntityName;
-                        if (!string.IsNullOrEmpty(linkedActor.DefinitionName))
-                        {
-                            displayName = $"{displayName} [{linkedActor.DefinitionName}]";
-                        }
-                    }
-                    if (string.IsNullOrEmpty(displayName))
-                    {
-                        displayName = prefab.AssignedName;
-                    }
-                    if (string.IsNullOrEmpty(displayName))
-                    {
-                        string typeName = GetPrefabTypeName(prefab.PrefabType);
-                        displayName = $"{typeName}_{i}";
-                    }
-                    TreeNode prefabNode = new TreeNode(displayName);
-                    prefabNode.Tag = prefab;
-                    prefabNode.Name = $"prefab_{i}";
-                    string tooltip = $"Type: {GetPrefabTypeName(prefab.PrefabType)}\nHash: 0x{prefab.Hash:X16}";
-                    if (linkedActor != null)
-                    {
-                        tooltip += $"\nLinked Actor: {linkedActor.EntityName}";
-                        tooltip += $"\nActor Type: {linkedActor.ActorTypeName}";
-                    }
-                    prefabNode.ToolTipText = tooltip;
-                    if (linkedActor != null)
-                    {
-                        TreeNode actorLinkNode = new TreeNode($"Linked Actor: {linkedActor.EntityName}");
-                        actorLinkNode.Tag = linkedActor;
-                        prefabNode.Nodes.Add(actorLinkNode);
-                    }
-
-                    prefabRoot.Nodes.Add(prefabNode);
-                }
+                
                 dSceneTree.AddToTree(prefabRoot);
             }
             if (ToolkitSettings.LoadActors && SceneData.Actors.Length > 0 && ToolkitSettings.Experimental)
@@ -3289,7 +3231,6 @@ namespace Mafia2Tool
 
             if (ToolkitSettings.LoadTranslokator && SceneData.Translokator != null && ToolkitSettings.Experimental)
             {
-                ToggleTranslokatorTint.Enabled = true;
                 dSceneTree.hasTranslokatorData = true;
                 translokatorRoot = new TreeNode("Translokator Items");
                 translokatorRoot.Tag = "Folder";
@@ -3351,25 +3292,6 @@ namespace Mafia2Tool
                 translokatorRoot.Nodes.Add(gridNode);
                 dSceneTree.AddToTree(translokatorRoot);
                 Graphics.BuildTranslokatorGrid(SceneData.Translokator);
-            }
-        }
-        private string GetPrefabTypeName(int type)
-        {
-            switch (type)
-            {
-                case 0: return "DeformationInitData";
-                case 1: return "VehicleInitData";
-                case 2: return "CarInitData";
-                case 3: return "COInitData";
-                case 4: return "ActorDeformInitData";
-                case 5: return "WheelInitData";
-                case 6: return "PhThingActorBaseInitData";
-                case 7: return "DoorInitData";
-                case 8: return "LifeInitData";
-                case 9: return "BoatInitData";
-                case 10: return "WagonInitData";
-                case 11: return "BrainInitData";
-                default: return $"Type_{type}";
             }
         }
 
@@ -4406,8 +4328,6 @@ namespace Mafia2Tool
         {
             Button_ImportFrame.Enabled = true;
         }
-
-        
 
         private void UpdateObjectParentsRecurse(TreeNode parent, FrameObjectBase entry)
         {

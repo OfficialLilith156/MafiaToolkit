@@ -133,6 +133,11 @@ namespace Forms.Docking
         }
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
+            if (ActiveControl is NumericUpDown || ActiveControl is TextBox || ActiveControl is RichTextBox)
+            {
+                return base.ProcessCmdKey(ref msg, keyData);
+            }
+
             if (keyData == (Keys.Control | Keys.C))
             {
                 CopySelectedMaterial();
