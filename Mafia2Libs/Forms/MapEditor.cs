@@ -940,65 +940,7 @@ namespace Mafia2Tool
             }
         }
 
-        private void ExtractFromDummyButton_Click(object sender, EventArgs e)
-        {
-            ExtractModelsFromDummy();
-        }
-
-        private void ExtractModelsFromDummy()
-        {
-            TreeNode selectedNode = dSceneTree.SelectedNode;
-            if (selectedNode?.Tag is not FrameObjectDummy dummy)
-            {
-                MessageBox.Show("Please select a FrameObjectDummy node.", "Toolkit", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-            if (dummy.Children.Count == 0)
-            {
-                MessageBox.Show("The selected FrameObjectDummy has no child models.",
-                               "Toolkit", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
-            if (MessageBox.Show($"Extract {dummy.Children.Count} models from '{dummy.Name}'?\n\n" + "Models will keep their world positions and be moved to scene root.", "Extract Models", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
-            {
-                return;
-            }
-            try
-            {
-                Cursor.Current = Cursors.WaitCursor;
-                Matrix4x4 dummyWorldTransform = dummy.WorldTransform;
-                foreach (FrameObjectBase child in dummy.Children.ToList())
-                {
-                    Matrix4x4 childWorldTransform = child.WorldTransform;
-                    SceneData.FrameResource.SetParentOfObject(ParentInfo.ParentType.ParentIndex1, child, null);
-                    SceneData.FrameResource.SetParentOfObject(ParentInfo.ParentType.ParentIndex2, child, null);
-                    child.LocalTransform = childWorldTransform;
-                    ApplyChangesToRenderable(child);
-                    TreeNode[] childNodes = dSceneTree.Find(child.RefID.ToString(), true);
-                    foreach (TreeNode childNode in childNodes)
-                    {
-                        if (childNode.Parent != null)
-                        {
-                            childNode.Parent.Nodes.Remove(childNode);
-                        }
-                        TreeNode newNode = new TreeNode(child.ToString())
-                        {
-                            Tag = child,
-                            Name = child.RefID.ToString()
-                        };
-                        dSceneTree.AddToTree(newNode, frameResourceRoot);
-                    }
-                }
-                Cursor.Current = Cursors.Default;
-                MessageBox.Show($"Successfully extracted {dummy.Children.Count} models.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            catch (Exception ex)
-            {
-                Cursor.Current = Cursors.Default;
-                MessageBox.Show($"Error extracting models: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
+        
         private void ExportFrame_Click(object sender, EventArgs e)
         {
             var node = dSceneTree.SelectedNode;
@@ -2478,85 +2420,7 @@ namespace Mafia2Tool
             return ParentIsEmpty(obj.ParentIndex1) && ParentIsEmpty(obj.ParentIndex2);
         }
 
-        private void AssignAllToSceneFolderButton_Click(object sender, EventArgs e)
-        {
-            TreeNode selectedNode = dSceneTree.SelectedNode;
-            if (!(selectedNode?.Tag is FrameHeaderScene targetScene))
-            {
-                MessageBox.Show("Please select a Scene Folder node in the tree.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-            var modelsToAssign = new List<FrameObjectBase>();
-            foreach (var kvp in SceneData.FrameResource.FrameObjects)
-            {
-                var frameObj = kvp.Value as FrameObjectBase;
-
-                if (frameObj is FrameObjectSingleMesh || frameObj is FrameObjectModel)
-                {
-                    if (HasNoParents(frameObj))
-                    {
-                        modelsToAssign.Add(frameObj);
-                    }
-                }
-            }
-            if (modelsToAssign.Count == 0)
-            {
-                MessageBox.Show("There are no models without parents.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
-
-            var parentChoice = MessageBox.Show("Assign to ParentIndex1?\n\n" + "Yes = ParentIndex1\n" + "No = ParentIndex2\n" + "Cancel = Assign BOTH parents", "Choose Parents", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
-            bool assignParent1 = false;
-            bool assignParent2 = false;
-
-            if (parentChoice == DialogResult.Yes)
-            {
-                assignParent1 = true;
-            }
-            else if (parentChoice == DialogResult.No)
-            {
-                assignParent2 = true;
-            }
-            else if (parentChoice == DialogResult.Cancel)
-            {
-                assignParent1 = true;
-                assignParent2 = true;
-            }
-            else
-            {
-                return;
-            }
-
-            string assignText = assignParent1 && assignParent2 ? "Parent1 + Parent2" : assignParent1 ? "Parent1" : "Parent2";
-
-            var result = MessageBox.Show($"Assign {modelsToAssign.Count} models to scene '{targetScene.Name}' using {assignText}?", "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-            if (result != DialogResult.Yes) return;
-
-            foreach (var model in modelsToAssign)
-            {
-                if (assignParent1)
-                {
-                    SceneData.FrameResource.SetParentOfObject(ParentInfo.ParentType.ParentIndex1, model, targetScene);
-                }
-                if (assignParent2)
-                {
-                    SceneData.FrameResource.SetParentOfObject(ParentInfo.ParentType.ParentIndex2, model, targetScene);
-                }
-                TreeNode[] oldNodes = dSceneTree.TreeView.Nodes.Find(model.RefID.ToString(), true);
-                foreach (var oldNode in oldNodes)
-                {
-                    if (oldNode.Parent != null) oldNode.Parent.Nodes.Remove(oldNode);
-                }
-                TreeNode newNode = new TreeNode(model.ToString())
-                {
-                    Tag = model,
-                    Name = model.RefID.ToString()
-                };
-                dSceneTree.AddToTree(newNode, selectedNode);
-            }
-            MessageBox.Show($"{modelsToAssign.Count} models assigned.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
+        
 
         private IRenderer BuildRenderObjectFromFrame(FrameObjectBase fObject, Dictionary<int, IRenderer> assets)
         {
@@ -4543,48 +4407,7 @@ namespace Mafia2Tool
             Button_ImportFrame.Enabled = true;
         }
 
-        private void BatchSetParentButton_Click(object sender, EventArgs e)
-        {
-            var window = new MultiSelectParentWindow(SceneData.FrameResource, SceneData.FrameNameTable);
-            if (window.ShowDialog(this) == DialogResult.OK && window.SelectedObjects.Count > 0)
-            {
-                ListWindow parentSelector = new ListWindow();
-                parentSelector.PopulateForm(window.SelectedParentType, SceneData.FrameResource);
-                if (parentSelector.ShowDialog(this) != DialogResult.OK) return;
-
-                FrameEntry newParent = parentSelector.chosenObject as FrameEntry;
-
-                foreach (var obj in window.SelectedObjects)
-                {
-                    SceneData.FrameResource.SetParentOfObject(window.SelectedParentType, obj, newParent);
-                    TreeNode[] oldNodes = dSceneTree.TreeView.Nodes.Find(obj.RefID.ToString(), true);
-                    foreach (TreeNode oldNode in oldNodes)
-                    {
-                        if (oldNode.Parent != null) oldNode.Parent.Nodes.Remove(oldNode);
-                    }
-                    TreeNode newNode = new TreeNode(obj.ToString())
-                    {
-                        Tag = obj,
-                        Name = obj.RefID.ToString()
-                    };
-                    TreeNode parentNodeInTree = null;
-                    if (newParent != null)
-                    {
-                        TreeNode[] parentNodes = dSceneTree.TreeView.Nodes.Find(newParent.RefID.ToString(), true);
-                        parentNodeInTree = parentNodes.Length > 0 ? parentNodes[0] : frameResourceRoot;
-                    }
-                    dSceneTree.AddToTree(newNode, parentNodeInTree ?? frameResourceRoot);
-                    ApplyChangesToRenderable(obj);
-                }
-
-                TreeNode selected = dSceneTree.SelectedNode;
-                if (selected?.Tag is FrameObjectBase selectedObj && window.SelectedObjects.Contains(selectedObj))
-                {
-                    dPropertyGrid.SetObject(null);
-                    dPropertyGrid.SetObject(selectedObj);
-                }
-            }
-        }
+        
 
         private void UpdateObjectParentsRecurse(TreeNode parent, FrameObjectBase entry)
         {
@@ -4806,6 +4629,10 @@ namespace Mafia2Tool
             if (FrameResource.IsFrameType(node.Tag))
             {
                 FrameEntry entry = node.Tag as FrameEntry;
+                if (entry is FrameObjectFrame frame && frame.Item != null)
+                {
+                    DeleteActorEntry(frame.Item);
+                }
                 bool bDidRemove = SceneData.FrameResource.DeleteFrame(entry);
                 ToolkitAssert.Ensure(bDidRemove == true, "Failed to remove!");
                 // we can just delete root node here, all children are vanquished
@@ -4833,6 +4660,10 @@ namespace Mafia2Tool
             {
                 dSceneTree.RemoveNode(node);
                 Graphics.DeleteAsset(int.Parse(node.Name));
+            }
+            else if (node.Tag is ActorEntry actorEntry)
+            {
+                DeleteActorEntry(actorEntry);
             }
             else if (node.Tag.GetType() == typeof(RenderJunction))
             {
@@ -6663,202 +6494,6 @@ namespace Mafia2Tool
             }
         }
 
-        private ushort PromptCollisionMaterial()
-        {
-            using var form = new CollisionMaterialSelectForm();
-
-            if (form.ShowDialog() == DialogResult.OK)
-                return (ushort)form.SelectedMaterial;
-
-            return (ushort)CollisionMaterials.Concrete;
-        }
-
-        private void CreateCollisionFromMeshButton_Click(object sender, EventArgs e)
-        {
-            var node = dSceneTree.SelectedNode;
-            if (node?.Tag == null)
-            {
-                MessageBox.Show("Please select a valid mesh or collision object.");
-                return;
-            }
-
-            MT_Collision mtCol = null;
-            string baseName = "unnamed";
-            Matrix4x4? worldTransform = null;
-            bool isFromExistingCollision = false;
-            if (node.Tag is FrameObjectBase frameObj && frameObj is (FrameObjectSingleMesh or FrameObjectModel))
-            {
-                baseName = frameObj.Name.String;
-                worldTransform = frameObj.LocalTransform;
-                FrameGeometry geom = (frameObj as FrameObjectSingleMesh)?.Geometry;
-                if (geom == null || geom.LOD.Length == 0)
-                {
-                    MessageBox.Show("No geometry found.");
-                    return;
-                }
-                FrameLOD lod = geom.LOD[0];
-                VertexBuffer vbuf = SceneData.VertexBufferPool.GetBuffer(lod.VertexBufferRef.Hash);
-                IndexBuffer ibuf = SceneData.IndexBufferPool.GetBuffer(lod.IndexBufferRef.Hash);
-                if (vbuf == null || ibuf == null)
-                {
-                    MessageBox.Show("Failed to load vertex/index buffers.");
-                    return;
-                }
-                int vertexSize = 0;
-                Dictionary<VertexFlags, FrameLOD.VertexOffset> offsets = lod.GetVertexOffsets(out vertexSize);
-                List<Vector3> vertices = new();
-                for (int i = 0; i < lod.NumVerts; i++)
-                {
-                    byte[] data = new byte[vertexSize];
-                    Array.Copy(vbuf.Data, i * vertexSize, data, 0, vertexSize);
-                    Vertex vtx = VertexTranslator.DecompressVertex(data, lod.VertexDeclaration,
-                        geom.DecompressionOffset, geom.DecompressionFactor, offsets);
-                    vertices.Add(vtx.Position);
-                }
-                uint[] indices = ibuf.GetData();
-                ushort materialIndex = PromptCollisionMaterial();
-                mtCol = new MT_Collision
-                {
-                    Vertices = vertices.ToArray(),
-                    Indices = indices,
-                    FaceGroups = new[]
-                    {
-                new MT_FaceGroup
-                {
-                    StartIndex = 0,
-                    NumFaces = (uint)(indices.Length / 3),
-                    Material = new MT_MaterialInstance
-                    {
-                        Name = ((CollisionMaterials)materialIndex).ToString(),
-                        MaterialFlags = MT_MaterialInstanceFlags.IsCollision
-                    }
-                }
-            }
-                };
-            }
-            else if (node.Tag is Collision.CollisionModel existingColModel)
-            {
-                isFromExistingCollision = true;
-                baseName = $"copy_of_{existingColModel.Hash}";
-                var placements = SceneData.Collisions?.Placements.Where(p => p.Hash == existingColModel.Hash).ToList();
-                if (placements?.Count > 0)
-                {
-                    var firstPlacement = placements[0];
-                    worldTransform = firstPlacement.Transform;
-                }
-                else
-                {
-                    worldTransform = Matrix4x4.Identity;
-                }
-                TriangleMesh mesh = existingColModel.Mesh;
-                Vector3[] vertices = mesh.Vertices.ToArray();
-                uint[] indices = new uint[mesh.Triangles.Count * 3];
-                for (int i = 0; i < mesh.Triangles.Count; i++)
-                {
-                    indices[i * 3 + 0] = mesh.Triangles[i].v0;
-                    indices[i * 3 + 1] = mesh.Triangles[i].v1;
-                    indices[i * 3 + 2] = mesh.Triangles[i].v2;
-                }
-                ushort materialIndex = PromptCollisionMaterial();
-                mtCol = new MT_Collision
-                {
-                    Vertices = vertices,
-                    Indices = indices,
-                    FaceGroups = new[]
-                    {
-                new MT_FaceGroup
-                {
-                    StartIndex = 0,
-                    NumFaces = (uint)(mesh.Triangles.Count),
-                    Material = new MT_MaterialInstance
-                    {
-                        Name = ((CollisionMaterials)materialIndex).ToString(),
-                        MaterialFlags = MT_MaterialInstanceFlags.IsCollision
-                    }
-                    }
-                    }
-                    };
-                }
-            else
-            {
-                MessageBox.Show("Selected object is not a mesh or collision model.");
-                return;
-            }
-            CollisionModelBuilder builder = new CollisionModelBuilder();
-            string uniqueName = isFromExistingCollision
-                ? $"{baseName}_dup_{DateTime.Now.Ticks}"
-                : $"{baseName}_col_{DateTime.Now.Ticks}";
-
-            Collision.CollisionModel colModel = builder.BuildFromMTCollision(uniqueName, mtCol);
-            if (SceneData.Collisions == null)
-            {
-                SceneData.Collisions = new Collision();
-                SceneData.Collisions.Name = Path.Combine(SceneData.ScenePath, "Collisions_0.col");
-                collisionRoot = new TreeNode("Collision Data") { Tag = "Folder" };
-                dSceneTree.AddToTree(collisionRoot);
-            }
-            if (!SceneData.Collisions.Models.ContainsKey(colModel.Hash))
-            {
-                SceneData.Collisions.Models.Add(colModel.Hash, colModel);
-                TreeNode colNode = new TreeNode(colModel.Hash.ToString())
-                {
-                    Name = colModel.Hash.ToString(),
-                    Tag = colModel
-                };
-                dSceneTree.AddToTree(colNode, collisionRoot);
-                Vector3 pos = worldTransform?.Translation ?? Vector3.Zero;
-                Vector3 rotDeg = Vector3.Zero;
-                if (worldTransform.HasValue)
-                {
-                    Quaternion rot = worldTransform.Value.GetRotation();
-                    rotDeg = QuaternionToEulerDegrees(rot);
-                }
-                var placement = new Collision.Placement
-                {
-                    Hash = colModel.Hash,
-                    Position = pos,
-                    RotationDegrees = rotDeg
-                };
-                SceneData.Collisions.Placements.Add(placement);
-                TreeNode instNode = new TreeNode("0")
-                {
-                    Name = RefManager.GetNewRefID().ToString(),
-                    Tag = placement
-                };
-                colNode.Nodes.Add(instNode);
-                RenderStaticCollision renderCol = new RenderStaticCollision();
-                renderCol.ConvertCollisionToRender(colModel.Hash, colModel.Mesh);
-                RenderStorageSingleton.Instance.StaticCollisions[colModel.Hash] = renderCol;
-                RenderInstance renderInst = new RenderInstance();
-                renderInst.Init(renderCol);
-                renderInst.SetTransform(placement.Transform);
-                Graphics.InitObjectStack.Add(int.Parse(instNode.Name), renderInst);
-            }
-        }
-
-        private static Vector3 QuaternionToEulerDegrees(Quaternion q)
-        {
-            float ysqr = q.Y * q.Y;
-            float t0 = +2.0f * (q.W * q.X + q.Y * q.Z);
-            float t1 = +1.0f - 2.0f * (q.X * q.X + ysqr);
-            float pitch = MathF.Atan2(t0, t1);
-            float t2 = +2.0f * (q.W * q.Y - q.Z * q.X);
-            t2 = Clamp(t2, -1.0f, 1.0f);
-            float yaw = MathF.Asin(t2);
-            float t3 = +2.0f * (q.W * q.Z + q.X * q.Y);
-            float t4 = +1.0f - 2.0f * (ysqr + q.Z * q.Z);
-            float roll = MathF.Atan2(t3, t4);
-            const float rad2deg = 180f / MathF.PI;
-            return new Vector3(pitch * rad2deg, yaw * rad2deg, -roll * rad2deg);
-        }
-
-        private static float Clamp(float value, float min, float max)
-        {
-            if (value < min) return min;
-            if (value > max) return max;
-            return value;
-        }
-
         private void PasteXYZ_ButtonClick(object sender, EventArgs e)
         {
             if (!Clipboard.ContainsText()) return;
@@ -6880,85 +6515,66 @@ namespace Mafia2Tool
             else { }
         }
 
-        private void InvertFrameObjectFrameZRotation(object sender, EventArgs e)
+        private void DeleteActorEntry(ActorEntry actorEntry)
         {
-            var frameObjects = SceneData.FrameResource.FrameObjects.Values
-                .Where(obj => obj is FrameObjectFrame)
-                .Cast<FrameObjectFrame>()
-                .ToList();
-            if (frameObjects.Count == 0)
+            if (actorEntry == null)
+                return;
+
+            Actor owningActor = null;
+            foreach (var actor in SceneData.Actors)
             {
-                MessageBox.Show("No FrameObjectFrame objects found in the scene.", "Info",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                if (actor.Items.Contains(actorEntry))
+                {
+                    owningActor = actor;
+                    break;
+                }
+            }
+
+            if (owningActor == null)
+            {
+                ToolkitAssert.Ensure(false, "Could not find owning actor file for ActorEntry.");
                 return;
             }
-            Cursor.Current = Cursors.WaitCursor;
-            foreach (var frameObject in frameObjects)
+
+            owningActor.Items.Remove(actorEntry);
+
+            var defsToRemove = owningActor.Definitions
+                .Where(d => d.FrameNameHash == actorEntry.FrameNameHash)
+                .ToList();
+            foreach (var def in defsToRemove)
+                owningActor.Definitions.Remove(def);
+
+            if (actorEntry.FrameNameHash != 0)
             {
-                Matrix4x4 transform = frameObject.LocalTransform;
-                Vector3 scale, translation;
-                Quaternion rotation;
-                Matrix4x4.Decompose(transform, out scale, out rotation, out translation);
-                Vector3 eulerAngles = QuaternionToEulerDegrees2(rotation);
-                eulerAngles.Z = -eulerAngles.Z;
-                rotation = EulerDegreesToQuaternion(eulerAngles);
-                Matrix4x4 newTransform = Matrix4x4.CreateScale(scale) *
-                                        Matrix4x4.CreateFromQuaternion(rotation) *
-                                        Matrix4x4.CreateTranslation(translation);
-                frameObject.LocalTransform = newTransform;
-                if (frameObject.Item != null)
+                var frame = SceneData.FrameResource.GetObjectByHash<FrameObjectFrame>(actorEntry.FrameNameHash);
+                if (frame != null && frame.Item == actorEntry)
                 {
-                    frameObject.Item.Rotation = rotation;
-                    frameObject.Item.Position = translation;
-                    frameObject.Item.Scale = scale;
+                    frame.Item = null;
                 }
-                ApplyChangesToRenderable(frameObject);
             }
 
-            Cursor.Current = Cursors.Default;
+            TreeNode actorNode = null;
+            TreeNode[] foundNodes = dSceneTree.TreeView.Nodes.Find("actor_" + actorEntry.EntityName, true);
+            if (foundNodes.Length > 0)
+            {
+                actorNode = foundNodes[0];
+                foreach (TreeNode child in actorNode.Nodes)
+                {
+                    if (int.TryParse(child.Name, out int refID))
+                    {
+                        Graphics.DeleteAsset(refID);
+                        if (RefIDToActorEntry.ContainsKey(refID))
+                            RefIDToActorEntry.Remove(refID);
+                    }
+                }
+                dSceneTree.RemoveNode(actorNode);
+            }
 
-            MessageBox.Show($"Inverted Z rotation (sign) for {frameObjects.Count} FrameObjectFrame objects.",
-                "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-
-        private Vector3 QuaternionToEulerDegrees2(Quaternion q)
-        {
-            float ysqr = q.Y * q.Y;
-
-            float t0 = 2.0f * (q.W * q.X + q.Y * q.Z);
-            float t1 = 1.0f - 2.0f * (q.X * q.X + ysqr);
-            float pitch = MathF.Atan2(t0, t1);
-
-            float t2 = 2.0f * (q.W * q.Y - q.Z * q.X);
-            t2 = Math.Clamp(t2, -1.0f, 1.0f);
-            float yaw = MathF.Asin(t2);
-
-            float t3 = 2.0f * (q.W * q.Z + q.X * q.Y);
-            float t4 = 1.0f - 2.0f * (ysqr + q.Z * q.Z);
-            float roll = MathF.Atan2(t3, t4);
-
-            const float rad2deg = 180f / MathF.PI;
-            return new Vector3(pitch * rad2deg, yaw * rad2deg, roll * rad2deg);
-        }
-
-        private Quaternion EulerDegreesToQuaternion(Vector3 eulerDegrees)
-        {
-            const float deg2rad = MathF.PI / 180f;
-            Vector3 eulerRadians = eulerDegrees * deg2rad;
-
-            float cy = MathF.Cos(eulerRadians.Z * 0.5f);
-            float sy = MathF.Sin(eulerRadians.Z * 0.5f);
-            float cp = MathF.Cos(eulerRadians.X * 0.5f);
-            float sp = MathF.Sin(eulerRadians.X * 0.5f);
-            float cr = MathF.Cos(eulerRadians.Y * 0.5f);
-            float sr = MathF.Sin(eulerRadians.Y * 0.5f);
-
-            return new Quaternion(
-                sr * cp * cy - cr * sp * sy,
-                cr * sp * cy + sr * cp * sy,
-                cr * cp * sy - sr * sp * cy,
-                cr * cp * cy + sr * sp * sy
-            );
+            var keysToRemove = RefIDToActorEntry.Where(kvp => kvp.Value == actorEntry).Select(kvp => kvp.Key).ToList();
+            foreach (var key in keysToRemove)
+            {
+                RefIDToActorEntry.Remove(key);
+            }
         }
     }
 }

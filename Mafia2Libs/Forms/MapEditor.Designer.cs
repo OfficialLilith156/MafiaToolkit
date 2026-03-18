@@ -93,12 +93,6 @@ namespace Mafia2Tool
             toolStripDropDownButton3 = new System.Windows.Forms.ToolStripDropDownButton();
             moveGroupNodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            toolStripDropDownButton2 = new System.Windows.Forms.ToolStripDropDownButton();
-            addModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            batchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            generateColToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            fixFrameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripDropDownButton5 = new System.Windows.Forms.ToolStripDropDownButton();
             removeSectorSoundToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             addSectorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -247,7 +241,7 @@ namespace Mafia2Tool
             // 
             // ToolbarStrip
             // 
-            ToolbarStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripDropDownButton4, EditButton, ViewButton, OptionsButton, WindowButton, toolStripDropDownButton1, toolStripDropDownButton3, toolStripDropDownButton2, toolStripDropDownButton5 });
+            ToolbarStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripDropDownButton4, EditButton, ViewButton, OptionsButton, WindowButton, toolStripDropDownButton1, toolStripDropDownButton3, toolStripDropDownButton5 });
             ToolbarStrip.Location = new System.Drawing.Point(0, 0);
             ToolbarStrip.Name = "ToolbarStrip";
             ToolbarStrip.Size = new System.Drawing.Size(1420, 25);
@@ -618,62 +612,16 @@ namespace Mafia2Tool
             // moveGroupNodeToolStripMenuItem
             // 
             moveGroupNodeToolStripMenuItem.Name = "moveGroupNodeToolStripMenuItem";
-            moveGroupNodeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            moveGroupNodeToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             moveGroupNodeToolStripMenuItem.Text = "Move Group Node";
             moveGroupNodeToolStripMenuItem.Click += btnMoveNAV_Click;
             // 
             // addToolStripMenuItem
             // 
             addToolStripMenuItem.Name = "addToolStripMenuItem";
-            addToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            addToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             addToolStripMenuItem.Text = "Add Node";
             addToolStripMenuItem.Click += AddNavVertexButton_Click;
-            // 
-            // toolStripDropDownButton2
-            // 
-            toolStripDropDownButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            toolStripDropDownButton2.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { addModelToolStripMenuItem, batchToolStripMenuItem, generateColToolStripMenuItem, testToolStripMenuItem, fixFrameToolStripMenuItem });
-            toolStripDropDownButton2.Image = (System.Drawing.Image)resources.GetObject("toolStripDropDownButton2.Image");
-            toolStripDropDownButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
-            toolStripDropDownButton2.Name = "toolStripDropDownButton2";
-            toolStripDropDownButton2.Size = new System.Drawing.Size(85, 22);
-            toolStripDropDownButton2.Text = "Debug Tools";
-            // 
-            // addModelToolStripMenuItem
-            // 
-            addModelToolStripMenuItem.Name = "addModelToolStripMenuItem";
-            addModelToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
-            addModelToolStripMenuItem.Text = "Add Models to the Scene";
-            addModelToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            addModelToolStripMenuItem.Click += AssignAllToSceneFolderButton_Click;
-            // 
-            // batchToolStripMenuItem
-            // 
-            batchToolStripMenuItem.Name = "batchToolStripMenuItem";
-            batchToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
-            batchToolStripMenuItem.Text = "Changing parents of models";
-            batchToolStripMenuItem.Click += BatchSetParentButton_Click;
-            // 
-            // generateColToolStripMenuItem
-            // 
-            generateColToolStripMenuItem.Name = "generateColToolStripMenuItem";
-            generateColToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
-            generateColToolStripMenuItem.Text = "Create Collision";
-            generateColToolStripMenuItem.Click += CreateCollisionFromMeshButton_Click;
-            // 
-            // testToolStripMenuItem
-            // 
-            testToolStripMenuItem.Name = "testToolStripMenuItem";
-            testToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
-            testToolStripMenuItem.Text = "Extract from FOD + save positions";
-            testToolStripMenuItem.Click += ExtractFromDummyButton_Click;
-            // 
-            // fixFrameToolStripMenuItem
-            // 
-            fixFrameToolStripMenuItem.Name = "fixFrameToolStripMenuItem";
-            fixFrameToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
-            fixFrameToolStripMenuItem.Text = "Fix Frame";
-            fixFrameToolStripMenuItem.Click += InvertFrameObjectFrameZRotation;
             // 
             // toolStripDropDownButton5
             // 
@@ -819,9 +767,6 @@ namespace Mafia2Tool
         private System.Windows.Forms.ToolStripMenuItem addGroupType1ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addType7ToolStripMenuItem;
         private System.Windows.Forms.ToolStripSplitButton toolStripSplitButton1;
-        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton2;
-        private System.Windows.Forms.ToolStripMenuItem addModelToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem batchToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addType11ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addType8ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addType9ToolStripMenuItem;
@@ -840,9 +785,6 @@ namespace Mafia2Tool
         private System.Windows.Forms.ToolStripMenuItem exportXmlToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem moveAIGroupToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem rotateAIToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem generateColToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem testToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem fixFrameToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveAnimalTraffciPathToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveAllnotSafeToolStripMenuItem;
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton5;

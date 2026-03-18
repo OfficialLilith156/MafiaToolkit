@@ -1,7 +1,8 @@
-﻿using System;
+﻿using ResourceTypes.City;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
-using ResourceTypes.City;
 using Utils.Language;
 using Utils.Settings;
 
@@ -77,12 +78,23 @@ namespace Mafia2Tool
 
         private void Delete()
         {
-            if (ListBox_Areas.SelectedItem != null)
+            if (ListBox_Areas.SelectedItems.Count > 0)
             {
-                areas.AreaCollection.Remove((CityAreas.AreaData)ListBox_Areas.SelectedItem);
-                ListBox_Areas.Items.Remove(ListBox_Areas.SelectedItem);
+                var selectedAreas = new List<CityAreas.AreaData>();
+                foreach (var item in ListBox_Areas.SelectedItems)
+                {
+                    selectedAreas.Add((CityAreas.AreaData)item);
+                }
+                foreach (var area in selectedAreas)
+                {
+                    areas.AreaCollection.Remove(area);
+                    ListBox_Areas.Items.Remove(area);
+                }
+
                 Text = Language.GetString("$CITY_AREA_EDITOR_TITLE") + "*";
                 bIsFileEdited = true;
+
+                PropertyGrid_Area.SelectedObject = null;
             }
         }
 

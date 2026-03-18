@@ -74,7 +74,7 @@
             // 
             SaveButton.Name = "SaveButton";
             SaveButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S;
-            SaveButton.Size = new System.Drawing.Size(180, 22);
+            SaveButton.Size = new System.Drawing.Size(165, 22);
             SaveButton.Text = "$SAVE";
             SaveButton.Click += SaveButton_Click;
             // 
@@ -82,14 +82,14 @@
             // 
             ReloadButton.Name = "ReloadButton";
             ReloadButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R;
-            ReloadButton.Size = new System.Drawing.Size(180, 22);
+            ReloadButton.Size = new System.Drawing.Size(165, 22);
             ReloadButton.Text = "$RELOAD";
             ReloadButton.Click += ReloadButton_Click;
             // 
             // ExitButton
             // 
             ExitButton.Name = "ExitButton";
-            ExitButton.Size = new System.Drawing.Size(180, 22);
+            ExitButton.Size = new System.Drawing.Size(165, 22);
             ExitButton.Text = "$EXIT";
             ExitButton.Click += ExitButton_Click;
             // 
@@ -127,6 +127,7 @@
             ListBox_Areas.Location = new System.Drawing.Point(14, 62);
             ListBox_Areas.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             ListBox_Areas.Name = "ListBox_Areas";
+            ListBox_Areas.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             ListBox_Areas.Size = new System.Drawing.Size(447, 439);
             ListBox_Areas.TabIndex = 16;
             ListBox_Areas.SelectedIndexChanged += UpdateAreaData;
