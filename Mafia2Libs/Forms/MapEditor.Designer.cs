@@ -64,14 +64,10 @@ namespace Mafia2Tool
             ViewButton = new System.Windows.Forms.ToolStripDropDownButton();
             ViewTopButton = new System.Windows.Forms.ToolStripMenuItem();
             ViewFrontButton = new System.Windows.Forms.ToolStripMenuItem();
-            ViewSideButton = new System.Windows.Forms.ToolStripMenuItem();
-            ViewBottomButton = new System.Windows.Forms.ToolStripMenuItem();
-            ViewSide2Button = new System.Windows.Forms.ToolStripMenuItem();
             OptionsButton = new System.Windows.Forms.ToolStripDropDownButton();
             ToggleWireframeButton = new System.Windows.Forms.ToolStripMenuItem();
             ToggleCullingButton = new System.Windows.Forms.ToolStripMenuItem();
             EditLighting = new System.Windows.Forms.ToolStripMenuItem();
-            ToggleTranslokatorTint = new System.Windows.Forms.ToolStripMenuItem();
             Button_TestConvert32 = new System.Windows.Forms.ToolStripMenuItem();
             Button_TestConvert16 = new System.Windows.Forms.ToolStripMenuItem();
             Button_DumpTexture = new System.Windows.Forms.ToolStripMenuItem();
@@ -379,7 +375,7 @@ namespace Mafia2Tool
             // ViewButton
             // 
             ViewButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            ViewButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { ViewTopButton, ViewFrontButton, ViewSideButton, ViewBottomButton, ViewSide2Button });
+            ViewButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { ViewTopButton, ViewFrontButton });
             ViewButton.Image = (System.Drawing.Image)resources.GetObject("ViewButton.Image");
             ViewButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             ViewButton.Name = "ViewButton";
@@ -389,47 +385,21 @@ namespace Mafia2Tool
             // ViewTopButton
             // 
             ViewTopButton.Name = "ViewTopButton";
-            ViewTopButton.Size = new System.Drawing.Size(126, 22);
+            ViewTopButton.Size = new System.Drawing.Size(117, 22);
             ViewTopButton.Text = "$TOP";
             ViewTopButton.Click += OnViewTopButtonClicked;
             // 
             // ViewFrontButton
             // 
             ViewFrontButton.Name = "ViewFrontButton";
-            ViewFrontButton.Size = new System.Drawing.Size(126, 22);
+            ViewFrontButton.Size = new System.Drawing.Size(117, 22);
             ViewFrontButton.Text = "$FRONT";
             ViewFrontButton.Click += OnViewFrontButtonClicked;
-            // 
-            // ViewSideButton
-            // 
-            ViewSideButton.Enabled = false;
-            ViewSideButton.Name = "ViewSideButton";
-            ViewSideButton.Size = new System.Drawing.Size(126, 22);
-            ViewSideButton.Text = "$SIDE";
-            ViewSideButton.Visible = false;
-            ViewSideButton.Click += OnViewSideButtonClicked;
-            // 
-            // ViewBottomButton
-            // 
-            ViewBottomButton.Enabled = false;
-            ViewBottomButton.Name = "ViewBottomButton";
-            ViewBottomButton.Size = new System.Drawing.Size(126, 22);
-            ViewBottomButton.Text = "$BOTTOM";
-            ViewBottomButton.Visible = false;
-            ViewBottomButton.Click += OnViewBottomButtonClicked;
-            // 
-            // ViewSide2Button
-            // 
-            ViewSide2Button.Enabled = false;
-            ViewSide2Button.Name = "ViewSide2Button";
-            ViewSide2Button.Size = new System.Drawing.Size(126, 22);
-            ViewSide2Button.Text = "$SIDE 2";
-            ViewSide2Button.Visible = false;
             // 
             // OptionsButton
             // 
             OptionsButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            OptionsButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { ToggleWireframeButton, ToggleCullingButton, EditLighting, ToggleTranslokatorTint, Button_TestConvert32, Button_TestConvert16, Button_DumpTexture });
+            OptionsButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { ToggleWireframeButton, ToggleCullingButton, EditLighting, Button_TestConvert32, Button_TestConvert16, Button_DumpTexture });
             OptionsButton.Image = (System.Drawing.Image)resources.GetObject("OptionsButton.Image");
             OptionsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             OptionsButton.Name = "OptionsButton";
@@ -439,50 +409,42 @@ namespace Mafia2Tool
             // ToggleWireframeButton
             // 
             ToggleWireframeButton.Name = "ToggleWireframeButton";
-            ToggleWireframeButton.Size = new System.Drawing.Size(242, 22);
+            ToggleWireframeButton.Size = new System.Drawing.Size(193, 22);
             ToggleWireframeButton.Text = "$TOGGLE_WIREFRAME";
             ToggleWireframeButton.Click += FillModeButton_Click;
             // 
             // ToggleCullingButton
             // 
             ToggleCullingButton.Name = "ToggleCullingButton";
-            ToggleCullingButton.Size = new System.Drawing.Size(242, 22);
+            ToggleCullingButton.Size = new System.Drawing.Size(193, 22);
             ToggleCullingButton.Text = "$TOGGLE_CULLING";
             ToggleCullingButton.Click += CullModeButton_Click;
             // 
             // EditLighting
             // 
             EditLighting.Name = "EditLighting";
-            EditLighting.Size = new System.Drawing.Size(242, 22);
+            EditLighting.Size = new System.Drawing.Size(193, 22);
             EditLighting.Text = "$EDIT_LIGHTING";
             EditLighting.Click += EditLighting_Click;
-            // 
-            // ToggleTranslokatorTint
-            // 
-            ToggleTranslokatorTint.Enabled = false;
-            ToggleTranslokatorTint.Name = "ToggleTranslokatorTint";
-            ToggleTranslokatorTint.Size = new System.Drawing.Size(242, 22);
-            ToggleTranslokatorTint.Text = "$TOGGLE_TRANSLOKATOR_TINT";
-            ToggleTranslokatorTint.Click += TranslokatorTint_Click;
             // 
             // Button_TestConvert32
             // 
             Button_TestConvert32.Name = "Button_TestConvert32";
-            Button_TestConvert32.Size = new System.Drawing.Size(242, 22);
+            Button_TestConvert32.Size = new System.Drawing.Size(193, 22);
             Button_TestConvert32.Text = "$TEST_CONVERT_32BIT";
             Button_TestConvert32.Click += Button_TestConvert32_Click;
             // 
             // Button_TestConvert16
             // 
             Button_TestConvert16.Name = "Button_TestConvert16";
-            Button_TestConvert16.Size = new System.Drawing.Size(242, 22);
+            Button_TestConvert16.Size = new System.Drawing.Size(193, 22);
             Button_TestConvert16.Text = "$TEST_CONVERT_16BIT";
             Button_TestConvert16.Click += Button_TestConvert_Click;
             // 
             // Button_DumpTexture
             // 
             Button_DumpTexture.Name = "Button_DumpTexture";
-            Button_DumpTexture.Size = new System.Drawing.Size(242, 22);
+            Button_DumpTexture.Size = new System.Drawing.Size(193, 22);
             Button_DumpTexture.Text = "$DUMP_TEXTURES";
             Button_DumpTexture.Click += Button_DumpTexture_Click;
             // 
@@ -612,14 +574,14 @@ namespace Mafia2Tool
             // moveGroupNodeToolStripMenuItem
             // 
             moveGroupNodeToolStripMenuItem.Name = "moveGroupNodeToolStripMenuItem";
-            moveGroupNodeToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            moveGroupNodeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             moveGroupNodeToolStripMenuItem.Text = "Move Group Node";
             moveGroupNodeToolStripMenuItem.Click += btnMoveNAV_Click;
             // 
             // addToolStripMenuItem
             // 
             addToolStripMenuItem.Name = "addToolStripMenuItem";
-            addToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            addToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             addToolStripMenuItem.Text = "Add Node";
             addToolStripMenuItem.Click += AddNavVertexButton_Click;
             // 
@@ -636,28 +598,28 @@ namespace Mafia2Tool
             // removeSectorSoundToolStripMenuItem
             // 
             removeSectorSoundToolStripMenuItem.Name = "removeSectorSoundToolStripMenuItem";
-            removeSectorSoundToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            removeSectorSoundToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             removeSectorSoundToolStripMenuItem.Text = "Load Sector Sound";
             removeSectorSoundToolStripMenuItem.Click += BtnLoadSoundSectors_Click;
             // 
             // addSectorToolStripMenuItem
             // 
             addSectorToolStripMenuItem.Name = "addSectorToolStripMenuItem";
-            addSectorToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            addSectorToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             addSectorToolStripMenuItem.Text = "Add Sector";
             addSectorToolStripMenuItem.Click += BtnAddSoundSector_Click;
             // 
             // addPortalToolStripMenuItem
             // 
             addPortalToolStripMenuItem.Name = "addPortalToolStripMenuItem";
-            addPortalToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            addPortalToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             addPortalToolStripMenuItem.Text = "Add Portal";
             addPortalToolStripMenuItem.Click += BtnAddSoundPortal_Click;
             // 
             // deleteItemToolStripMenuItem
             // 
             deleteItemToolStripMenuItem.Name = "deleteItemToolStripMenuItem";
-            deleteItemToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            deleteItemToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             deleteItemToolStripMenuItem.Text = "Delete Item";
             deleteItemToolStripMenuItem.Click += BtnDeleteSoundItem_Click;
             // 
@@ -745,13 +707,9 @@ namespace Mafia2Tool
         private System.Windows.Forms.ToolStripDropDownButton ViewButton;
         private System.Windows.Forms.ToolStripMenuItem ViewTopButton;
         private System.Windows.Forms.ToolStripMenuItem ViewFrontButton;
-        private System.Windows.Forms.ToolStripMenuItem ViewSideButton;
-        private System.Windows.Forms.ToolStripMenuItem ViewBottomButton;
-        private System.Windows.Forms.ToolStripMenuItem ViewSide2Button;
         private System.Windows.Forms.ToolStripSplitButton CurrentModeButton;
         private WeifenLuo.WinFormsUI.Docking.DockPanel dockPanel1;
         private System.Windows.Forms.ToolStripMenuItem EditLighting;
-        private System.Windows.Forms.ToolStripMenuItem ToggleTranslokatorTint;
         private System.Windows.Forms.ToolStripMenuItem Button_TestConvert16;
         private System.Windows.Forms.ToolStripMenuItem Button_TestConvert32;
         private System.Windows.Forms.ToolStripStatusLabel Label_MemoryUsage;

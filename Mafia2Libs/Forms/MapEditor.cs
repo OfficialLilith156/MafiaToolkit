@@ -5204,18 +5204,6 @@ namespace Mafia2Tool
             lastMousePos = new Point(RenderPanel.Height / 2, RenderPanel.Width / 2);
         }
 
-        private void OnViewSideButtonClicked(object sender, EventArgs e)
-        {
-            Graphics.Camera.SetRotation(90.0f, 270.0f);
-            lastMousePos = new Point(RenderPanel.Height / 2, RenderPanel.Width / 2);
-        }
-
-        private void OnViewBottomButtonClicked(object sender, EventArgs e)
-        {
-            Graphics.Camera.SetRotation(90.0f, 90.0f);
-            lastMousePos = new Point(RenderPanel.Height / 2, RenderPanel.Width / 2);
-        }
-
         private void OnKeyUpDockedPanel(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.ControlKey)
@@ -5261,12 +5249,6 @@ namespace Mafia2Tool
         private void EditLighting_Click(object sender, EventArgs e)
         {
             dPropertyGrid.SetObject(Graphics.WorldSettings);
-        }
-
-        private void TranslokatorTint_Click(object sender, EventArgs e)
-        {
-            ToolkitSettings.bTranslokatorTint = !ToolkitSettings.bTranslokatorTint;
-            ToolkitSettings.WriteKey("EnableTranslokator", "ModelViewer", ToolkitSettings.bTranslokatorTint.ToString());
         }
 
         private void Button_TestConvert_Click(object sender, EventArgs e)
