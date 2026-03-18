@@ -42,8 +42,7 @@ namespace Utils.Settings
         public static bool LoadAIWorld = true;      
         public static bool LoadOBJData = true;      
         public static bool LoadRoads = true;        
-        public static bool LoadATP = true;              
-        public static bool LoadPrefabs = true;          
+        public static bool LoadATP = true;                       
         public static bool LoadItemDescs = true;        
         public static bool LoadHPD = true;              
         public static bool LoadSoundSectors = true;
@@ -115,7 +114,6 @@ namespace Utils.Settings
             bool.TryParse(ReadKey("LoadOBJData", "LoadOptions", "True"), out LoadOBJData);
             bool.TryParse(ReadKey("LoadRoads", "LoadOptions", "True"), out LoadRoads);
             bool.TryParse(ReadKey("LoadATP", "LoadOptions", "True"), out LoadATP);
-            bool.TryParse(ReadKey("LoadPrefabs", "LoadOptions", "True"), out LoadPrefabs);
             bool.TryParse(ReadKey("LoadItemDescs", "LoadOptions", "True"), out LoadItemDescs);
             bool.TryParse(ReadKey("LoadHPD", "LoadOptions", "True"), out LoadHPD);
             bool.TryParse(ReadKey("LoadSoundSectors", "LoadOptions", "True"), out LoadSoundSectors);

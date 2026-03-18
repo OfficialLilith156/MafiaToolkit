@@ -32,7 +32,6 @@
             chkLoadSoundSectors = new System.Windows.Forms.CheckBox();
             chkLoadHPD = new System.Windows.Forms.CheckBox();
             chkLoadItemDescs = new System.Windows.Forms.CheckBox();
-            chkLoadPrefabs = new System.Windows.Forms.CheckBox();
             chkLoadATP = new System.Windows.Forms.CheckBox();
             chkLoadRoads = new System.Windows.Forms.CheckBox();
             chkLoadOBJData = new System.Windows.Forms.CheckBox();
@@ -53,7 +52,6 @@
             RenderGroup.Controls.Add(chkLoadSoundSectors);
             RenderGroup.Controls.Add(chkLoadHPD);
             RenderGroup.Controls.Add(chkLoadItemDescs);
-            RenderGroup.Controls.Add(chkLoadPrefabs);
             RenderGroup.Controls.Add(chkLoadATP);
             RenderGroup.Controls.Add(chkLoadRoads);
             RenderGroup.Controls.Add(chkLoadOBJData);
@@ -77,7 +75,7 @@
             // chkLoadSoundSectors
             // 
             chkLoadSoundSectors.AutoSize = true;
-            chkLoadSoundSectors.Location = new System.Drawing.Point(7, 341);
+            chkLoadSoundSectors.Location = new System.Drawing.Point(7, 316);
             chkLoadSoundSectors.Name = "chkLoadSoundSectors";
             chkLoadSoundSectors.Size = new System.Drawing.Size(96, 19);
             chkLoadSoundSectors.TabIndex = 37;
@@ -88,7 +86,7 @@
             // chkLoadHPD
             // 
             chkLoadHPD.AutoSize = true;
-            chkLoadHPD.Location = new System.Drawing.Point(7, 316);
+            chkLoadHPD.Location = new System.Drawing.Point(7, 291);
             chkLoadHPD.Name = "chkLoadHPD";
             chkLoadHPD.Size = new System.Drawing.Size(50, 19);
             chkLoadHPD.TabIndex = 36;
@@ -99,24 +97,13 @@
             // chkLoadItemDescs
             // 
             chkLoadItemDescs.AutoSize = true;
-            chkLoadItemDescs.Location = new System.Drawing.Point(8, 291);
+            chkLoadItemDescs.Location = new System.Drawing.Point(8, 266);
             chkLoadItemDescs.Name = "chkLoadItemDescs";
             chkLoadItemDescs.Size = new System.Drawing.Size(78, 19);
             chkLoadItemDescs.TabIndex = 35;
             chkLoadItemDescs.Text = "Item Desc";
             chkLoadItemDescs.UseVisualStyleBackColor = true;
             chkLoadItemDescs.CheckedChanged += chkLoadItemDescs_CheckedChanged;
-            // 
-            // chkLoadPrefabs
-            // 
-            chkLoadPrefabs.AutoSize = true;
-            chkLoadPrefabs.Location = new System.Drawing.Point(8, 266);
-            chkLoadPrefabs.Name = "chkLoadPrefabs";
-            chkLoadPrefabs.Size = new System.Drawing.Size(60, 19);
-            chkLoadPrefabs.TabIndex = 34;
-            chkLoadPrefabs.Text = "Prefab";
-            chkLoadPrefabs.UseVisualStyleBackColor = true;
-            chkLoadPrefabs.CheckedChanged += chkLoadPrefabs_CheckedChanged;
             // 
             // chkLoadATP
             // 
@@ -272,6 +259,5 @@
         private System.Windows.Forms.CheckBox chkLoadSoundSectors;
         private System.Windows.Forms.CheckBox chkLoadHPD;
         private System.Windows.Forms.CheckBox chkLoadItemDescs;
-        private System.Windows.Forms.CheckBox chkLoadPrefabs;
     }
 }

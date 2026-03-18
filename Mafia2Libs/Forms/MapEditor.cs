@@ -2774,30 +2774,6 @@ namespace Mafia2Tool
                 }
                 dSceneTree.AddToTree(animalTrafficRoot);
             }
-            if (ToolkitSettings.LoadPrefabs && SceneData.Prefabs != null && SceneData.Prefabs.Prefabs != null)
-            {
-                TreeNode prefabRoot = new TreeNode("Prefabs");
-                prefabRoot.Tag = "Folder";
-                Dictionary<ulong, ActorEntry> frameHashToActor = new Dictionary<ulong, ActorEntry>();
-                if (SceneData.Actors != null)
-                {
-                    foreach (var actorFile in SceneData.Actors)
-                    {
-                        if (actorFile?.Items != null)
-                        {
-                            foreach (var actorEntry in actorFile.Items)
-                            {
-                                if (actorEntry.FrameNameHash != 0)
-                                {
-                                    frameHashToActor[actorEntry.FrameNameHash] = actorEntry;
-                                }
-                            }
-                        }
-                    }
-                }
-                
-                dSceneTree.AddToTree(prefabRoot);
-            }
             if (ToolkitSettings.LoadActors && SceneData.Actors.Length > 0 && ToolkitSettings.Experimental)
             {
                 LoadActorFiles();

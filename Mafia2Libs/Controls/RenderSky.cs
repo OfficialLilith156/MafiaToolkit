@@ -28,7 +28,6 @@ namespace Forms.OptionControls
             chkLoadOBJData.Checked = ToolkitSettings.LoadOBJData;
             chkLoadRoads.Checked = ToolkitSettings.LoadRoads;
             chkLoadATP.Checked = ToolkitSettings.LoadATP;
-            chkLoadPrefabs.Checked = ToolkitSettings.LoadPrefabs;
             chkLoadItemDescs.Checked = ToolkitSettings.LoadItemDescs;
             chkLoadHPD.Checked = ToolkitSettings.LoadHPD;
             chkLoadSoundSectors.Checked = ToolkitSettings.LoadSoundSectors;
@@ -43,8 +42,6 @@ namespace Forms.OptionControls
             ToolkitSettings.LoadCollisions = chkLoadCollisions.Checked;
             ToolkitSettings.WriteKey("LoadCollisions", "LoadOptions", ToolkitSettings.LoadCollisions.ToString());
         }
-
-
         private void chkLoadActors_CheckedChanged(object sender, EventArgs e)
         {
             ToolkitSettings.LoadActors = chkLoadActors.Checked;
@@ -76,11 +73,6 @@ namespace Forms.OptionControls
         {
             ToolkitSettings.LoadATP = chkLoadATP.Checked;
             ToolkitSettings.WriteKey("LoadATP", "LoadOptions", ToolkitSettings.LoadATP.ToString());
-        }
-        private void chkLoadPrefabs_CheckedChanged(object sender, EventArgs e)
-        {
-            ToolkitSettings.LoadPrefabs = chkLoadPrefabs.Checked;
-            ToolkitSettings.WriteKey("LoadPrefabs", "LoadOptions", ToolkitSettings.LoadPrefabs.ToString());
         }
         private void chkLoadItemDescs_CheckedChanged(object sender, EventArgs e)
         {
