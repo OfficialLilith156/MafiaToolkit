@@ -430,6 +430,41 @@ namespace Mafia2Tool
                 bIsFileEdited = true;
                 return;
             }
+            else if (selectedNode.Tag is ActorEntry)
+            {
+                TreeNode parentGroup = selectedNode.Parent;
+                if (parentGroup == null || !(parentGroup.Tag is ActorTypes))
+                    return;
+
+                int indexInGroup = parentGroup.Nodes.IndexOf(selectedNode);
+                if (indexInGroup < 0 || indexInGroup >= parentGroup.Nodes.Count - 1)
+                    return;
+
+                parentGroup.Nodes.RemoveAt(indexInGroup);
+                parentGroup.Nodes.Insert(indexInGroup + 1, selectedNode);
+                ActorTreeView.SelectedNode = selectedNode;
+
+                ReorderItemsFromTree();
+
+                Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
+                bIsFileEdited = true;
+            }
+        }
+        private void ReorderItemsFromTree()
+        {
+            List<ActorEntry> newItems = new List<ActorEntry>();
+            foreach (TreeNode groupNode in items.Nodes)
+            {
+                foreach (TreeNode entryNode in groupNode.Nodes)
+                {
+                    if (entryNode.Tag is ActorEntry entry)
+                    {
+                        newItems.Add(entry);
+                    }
+                }
+            }
+            actors.Items.Clear();
+            actors.Items.AddRange(newItems);
         }
 
         private void MoveItemUp()
@@ -459,6 +494,24 @@ namespace Mafia2Tool
                 Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
                 bIsFileEdited = true;
                 return;
+            }
+            else if (selectedNode.Tag is ActorEntry)
+            {
+                TreeNode parentGroup = selectedNode.Parent;
+                if (parentGroup == null || !(parentGroup.Tag is ActorTypes))
+                    return;
+
+                int indexInGroup = parentGroup.Nodes.IndexOf(selectedNode);
+                if (indexInGroup <= 0) return;
+
+                parentGroup.Nodes.RemoveAt(indexInGroup);
+                parentGroup.Nodes.Insert(indexInGroup - 1, selectedNode);
+                ActorTreeView.SelectedNode = selectedNode;
+
+                ReorderItemsFromTree();
+
+                Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
+                bIsFileEdited = true;
             }
         }
 
