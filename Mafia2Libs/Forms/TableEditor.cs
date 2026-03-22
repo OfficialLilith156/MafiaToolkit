@@ -1,11 +1,13 @@
-﻿using System.IO;
+﻿using Gibbed.Illusion.FileFormats.Hashing;
 using Gibbed.Mafia2.ResourceFormats;
-using System.Windows.Forms;
 using System;
-using Utils.Language;
-using Utils.Extensions;
 using System.Collections.Generic;
-using Gibbed.Illusion.FileFormats.Hashing;
+using System.ComponentModel;
+using System.IO;
+using System.Runtime.CompilerServices;
+using System.Windows.Forms;
+using Utils.Language;
+using static ResourceTypes.Misc.StreamMapLoader;
 
 namespace Mafia2Tool
 {
@@ -16,41 +18,68 @@ namespace Mafia2Tool
         private Dictionary<uint, string> columnNames = new Dictionary<uint, string>();
         private ushort Version;
         private bool bIsFileEdited = false;
+        private Dictionary<uint, string> columnDescriptions = new Dictionary<uint, string>();
 
         public TableEditor(FileInfo file)
         {
             InitializeComponent();
             this.file = file;
-            versionComboBox.SelectedIndexChanged += VersionComboBox_SelectedIndexChanged;
-            Localise();
             Initialise();
             Show();
         }
 
-        public void Localise()
-        {
-            Text = Language.GetString("$TABLE_EDITOR_TITLE");
-            FileButton.Text = Language.GetString("$FILE");
-            EditButton.Text = Language.GetString("$EDIT");
-            SaveButton.Text = Language.GetString("$SAVE");
-            ExitButton.Text = Language.GetString("$EXIT");
-            ReloadButton.Text = Language.GetString("$RELOAD");
-            AddRowButton.Text = Language.GetString("$TABLE_ADD_ROW");
-            DeleteRowButton.Text = Language.GetString("$DELETE_ROW");
-        }
 
         public void Initialise()
         {
-            DataGrid.MultiSelect = true;
-            DataGrid.SelectionMode = DataGridViewSelectionMode.CellSelect;
-            DataGrid.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             ReadExternalHashes();
+            LoadColumnDescriptions();
             LoadTableData();
-            GetCellProperties(0, 0);
         }
+        private void LoadColumnDescriptions()
+        {
+            string descFilePath = Path.Combine("Resources", "column_descriptions.txt");
+            if (!File.Exists(descFilePath))
+                return;
 
+            try
+            {
+                string[] lines = File.ReadAllLines(descFilePath);
+                foreach (string line in lines)
+                {
+                    if (string.IsNullOrWhiteSpace(line)) continue;
+                    string[] parts = line.Split(new char[] { ' ' }, 2);
+                    if (parts.Length < 2) continue;
+
+                    string hashStr = parts[0];
+                    string description = parts[1].Trim();
+
+                    uint hash;
+                    if (hashStr.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
+                        hash = Convert.ToUInt32(hashStr.Substring(2), 16);
+                    else if (hashStr.IndexOfAny("ABCDEFabcdef".ToCharArray()) >= 0)
+                        hash = Convert.ToUInt32(hashStr, 16);
+                    else
+                        hash = uint.Parse(hashStr);
+
+                    columnDescriptions[hash] = description;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to load column descriptions: {ex.Message}");
+            }
+        }
+        private string GetColumnDescription(uint hash)
+        {
+            if (columnDescriptions.TryGetValue(hash, out string desc))
+                return desc;
+            return null;
+        }
         private void ReadExternalHashes()
         {
+            columnNames.Clear();
+            columnDescriptions.Clear();
+
             try
             {
                 string[] hashes = File.ReadAllLines(Path.Combine("Resources", "hashes.txt"));
@@ -65,79 +94,71 @@ namespace Mafia2Tool
                 MessageBox.Show("Missing hashes.txt, No column names will be present.", "Toolkit", MessageBoxButtons.OK);
                 columnNames = new Dictionary<uint, string>();
             }
-            // Load custom hashes. This is optional. Expects format like [uint32] [string]
             FileInfo CustomHashesFile = new FileInfo(Path.Combine("Resources", "custom_hashes.txt"));
             if (CustomHashesFile.Exists)
             {
                 string[] CustomHashes = File.ReadAllLines(CustomHashesFile.FullName);
                 foreach (string Line in CustomHashes)
                 {
-                    string[] values = Line.Split(" ");
+                    if (string.IsNullOrWhiteSpace(Line)) continue;
+
+                    string[] parts = Line.Split(new char[] { ' ' }, 2);
+                    if (parts.Length < 2) continue;
+
+                    string hashStr = parts[0];
+                    string rest = parts[1].Trim();
+
+                    string name = rest;
+                    string description = null;
+
+                    int pipeIndex = rest.IndexOf('|');
+                    if (pipeIndex >= 0)
+                    {
+                        name = rest.Substring(0, pipeIndex).Trim();
+                        description = rest.Substring(pipeIndex + 1).Trim();
+                    }
+
                     uint hash;
-                    string hashStr = values[0];
                     if (hashStr.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
                         hash = Convert.ToUInt32(hashStr.Substring(2), 16);
                     else if (hashStr.IndexOfAny("ABCDEFabcdef".ToCharArray()) >= 0)
                         hash = Convert.ToUInt32(hashStr, 16);
                     else
                         hash = uint.Parse(hashStr);
-                    columnNames.TryAdd(hash, values[1]);
+
+                    columnNames.TryAdd(hash, name);
+                    if (!string.IsNullOrEmpty(description))
+                        columnDescriptions.TryAdd(hash, description);
                 }
             }
         }
-
+        
         private string GetColumnName(uint hash)
         {
             if (columnNames.ContainsKey(hash))
-            {
                 return columnNames[hash];
-            }
             return hash.ToString("X8");
         }
 
         private void LoadTableData()
         {
-            DataGrid.Rows.Clear();
-            DataGrid.Columns.Clear();
             data = new TableData();
             using (BinaryReader reader = new BinaryReader(File.Open(file.FullName, FileMode.Open)))
             {
                 Version = (ushort)reader.ReadInt32();
                 data.Deserialize(Version, reader.BaseStream, Gibbed.IO.Endian.Little);
             }
-            foreach (TableData.Column column in data.Columns)
+            treeViewRows.Nodes.Clear();
+            for (int i = 0; i < data.Rows.Count; i++)
             {
-                MTableColumn newCol = new MTableColumn();
-                newCol.NameHash = column.NameHash;
-                newCol.HeaderText = GetColumnName(newCol.NameHash);
-                newCol.Unk2 = column.Unknown2;
-                newCol.Unk3 = column.Unknown3;
-                newCol.TypeM2 = column.Type;
-                switch (newCol.TypeM2)
-                {
-                    case TableData.ColumnType.Boolean:
-                        newCol.CellTemplate = new DataGridViewCheckBoxCell();
-                        break;
-                    case TableData.ColumnType.String16:
-                    case TableData.ColumnType.String32:
-                    case TableData.ColumnType.String64:
-                        newCol.CellTemplate = new DataGridViewTextBoxCell();
-                        break;
-                    default:
-                        newCol.CellTemplate = new DataGridViewTextBoxCell();
-                        break;
-                }
-                DataGrid.Columns.Add(newCol);
+                TreeNode node = new TreeNode(GetRowDisplayName(data.Rows[i], i));
+                node.Tag = data.Rows[i];
+                treeViewRows.Nodes.Add(node);
             }
-            foreach (TableData.Row row in data.Rows)
-            {
-                DataGrid.Rows.Add(row.Values.ToArray());
-            }
-            Label_Version.Text = string.Format("Version: {0}", Version);
-            int selectedIndex = (Version == 1) ? 0 : (Version == 2) ? 1 : 0;
-            versionComboBox.SelectedIndex = selectedIndex;
-            Text = Language.GetString("$TABLE_EDITOR_TITLE");
+            versionComboBox.SelectedIndex = (Version == 1) ? 0 : (Version == 2) ? 1 : 0;
+            versionLabel.Text = $"Version: {Version}";
             bIsFileEdited = false;
+            this.Text = Language.GetString("$TABLE_EDITOR_TITLE");
         }
 
         private void SaveTableData()
@@ -152,14 +173,11 @@ namespace Mafia2Tool
             }
 
             if (selectedVersion == 2 && data.PatchedName == null)
-            {
                 data.PatchedName = "";
-            }
 
             TableData newData = new TableData();
             newData.NameHash = data.NameHash;
             newData.Name = data.Name;
-
             if (selectedVersion == 1)
             {
                 newData.PatchedNameHash = 0;
@@ -176,23 +194,11 @@ namespace Mafia2Tool
             }
             newData.Unk1 = data.Unk1;
             newData.Unk2 = data.Unk2;
-            for (int i = 0; i < DataGrid.ColumnCount; i++)
+
+            newData.Columns = data.Columns;
+
+            foreach (var row in data.Rows)
             {
-                TableData.Column column = new TableData.Column();
-                MTableColumn col = (DataGrid.Columns[i] as MTableColumn);
-                column.Type = col.TypeM2;
-                column.Unknown2 = col.Unk2;
-                column.Unknown3 = col.Unk3;
-                column.NameHash = col.NameHash;
-                newData.Columns.Add(column);
-            }
-            for (int i = 0; i < DataGrid.RowCount; i++)
-            {
-                TableData.Row row = new TableData.Row();
-                for (int x = 0; x < DataGrid.ColumnCount; x++)
-                {
-                    row.Values.Add(DataGrid.Rows[i].Cells[x].Value);
-                }
                 newData.Rows.Add(row);
             }
             if (!newData.Validate())
@@ -207,217 +213,253 @@ namespace Mafia2Tool
             }
             data = newData;
             Version = selectedVersion;
-            Label_Version.Text = string.Format("Version: {0}", Version);
-            Text = Language.GetString("$TABLE_EDITOR_TITLE");
+            versionLabel.Text = $"Version: {Version}";
             bIsFileEdited = false;
+            this.Text = Language.GetString("$TABLE_EDITOR_TITLE");
         }
 
-        private void GetCellProperties(int r, int c)
+        private void TreeViewRows_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            RowIndexLabel.Text = string.Format("[Row Index: {0}]", r);
-            ColumnIndexLabel.Text = string.Format("[Column Index: {0}]", c);
-            Label_DataType.Text = string.Format("[Data Type: {0}]", data.Columns[c].Type);
-            Label_ValueDataType.Text = string.Format("[Value Type: {0}]", DataGrid.Rows[r].Cells[c].Value.GetType());
+            if (e.Node != null && e.Node.Tag is TableData.Row row)
+            {
+                var wrapper = new DynamicRowWrapper(row, data.Columns, this);
+                propertyGrid.SelectedObject = wrapper;
+            }
         }
 
-        private void ExitButtonOnClick(object sender, EventArgs e) => Close();
-        private void ReloadOnClick(object sender, EventArgs e) => LoadTableData();
-        private void SaveOnClick(object sender, EventArgs e) => SaveTableData();
+        private void PropertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        {
+            if (!bIsFileEdited)
+            {
+                bIsFileEdited = true;
+                this.Text = Language.GetString("$TABLE_EDITOR_TITLE") + "*";
+            }
+            if (treeViewRows.SelectedNode != null && treeViewRows.SelectedNode.Tag is TableData.Row row)
+            {
+                int rowIndex = treeViewRows.SelectedNode.Index;
+                treeViewRows.SelectedNode.Text = GetRowDisplayName(row, rowIndex);
+            }
+        }
 
         private void AddRowOnClick(object sender, EventArgs e)
         {
-            List<object> data = new List<object>();
-            foreach (MTableColumn column in DataGrid.Columns)
+            List<object> newRowValues = new List<object>();
+            foreach (var column in data.Columns)
             {
-                Type DataType = TableData.GetValueTypeForColumnType(column.TypeM2);
-                switch (column.TypeM2)
+                Type dataType = TableData.GetValueTypeForColumnType(column.Type);
+                if (dataType == typeof(bool))
+                    newRowValues.Add(false);
+                else if (dataType == typeof(uint) || dataType == typeof(int) || dataType == typeof(float))
+                    newRowValues.Add(Activator.CreateInstance(dataType));
+                else if (dataType == typeof(string))
                 {
-                    case TableData.ColumnType.Boolean:
-                    case TableData.ColumnType.Unsigned32:
-                    case TableData.ColumnType.Signed32:
-                    case TableData.ColumnType.Hash64:
-                    case TableData.ColumnType.Float32:
-                    case TableData.ColumnType.Flags32:
-                        data.Add(Activator.CreateInstance(DataType));
-                        break;
-                    case TableData.ColumnType.Color:
-                        data.Add("255 255 255");
-                        break;
-                    default:
-                        data.Add("");
-                        break;
+                    if (column.Type == TableData.ColumnType.Color)
+                        newRowValues.Add("255 255 255");
+                    else
+                        newRowValues.Add("");
                 }
+                else
+                    newRowValues.Add("");
             }
-            DataGrid.Rows.Add(data.ToArray());
-            Text = Language.GetString("$TABLE_EDITOR_TITLE") + "*";
+            TableData.Row newRow = new TableData.Row { Values = newRowValues };
+            data.Rows.Add(newRow);
+
+            TreeNode newNode = new TreeNode($"Row {data.Rows.Count - 1}");
+            newNode.Tag = newRow;
+            treeViewRows.Nodes.Add(newNode);
             bIsFileEdited = true;
+            this.Text = Language.GetString("$TABLE_EDITOR_TITLE") + "*";
         }
 
-        private void OnSelectedChange(object sender, EventArgs e)
+        private void DeleteRowOnClick(object sender, EventArgs e)
         {
-            if (DataGrid.SelectedCells.Count > 0)
+            if (treeViewRows.SelectedNode != null)
             {
-                GetCellProperties(DataGrid.SelectedCells[0].RowIndex, DataGrid.SelectedCells[0].ColumnIndex);
+                data.Rows.Remove((TableData.Row)treeViewRows.SelectedNode.Tag);
+                treeViewRows.Nodes.Remove(treeViewRows.SelectedNode);
+                bIsFileEdited = true;
+                this.Text = Language.GetString("$TABLE_EDITOR_TITLE") + "*";
+                propertyGrid.SelectedObject = null;
             }
         }
 
         private void SearchBox_TextChanged(object sender, EventArgs e)
         {
-            string query = SearchBox.Text?.Trim();
-            DataGrid.ClearSelection();
-            if (string.IsNullOrEmpty(query)) return;
-            foreach (DataGridViewRow row in DataGrid.Rows)
+            string query = searchBox.Text?.Trim();
+            if (string.IsNullOrEmpty(query))
             {
-                foreach (DataGridViewCell cell in row.Cells)
+                treeViewRows.SelectedNode = null;
+                return;
+            }
+
+            foreach (TreeNode node in treeViewRows.Nodes)
+            {
+                TableData.Row row = node.Tag as TableData.Row;
+                if (row != null)
                 {
-                    if (cell.Value != null &&
-                        cell.Value.ToString().IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0)
+                    bool found = false;
+                    foreach (object val in row.Values)
                     {
-                        cell.Selected = true;
-                        DataGrid.FirstDisplayedScrollingRowIndex = row.Index;
-                        return; 
+                        if (val != null && val.ToString().IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0)
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    if (!found && node.Text.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0)
+                        found = true;
+
+                    if (found)
+                    {
+                        treeViewRows.SelectedNode = node;
+                        node.EnsureVisible();
+                        return;
                     }
                 }
             }
         }
-        private void CellContent_Changed(object sender, DataGridViewCellEventArgs e)
+        private string GetRowDisplayName(TableData.Row row, int rowIndex)
         {
-            MTableColumn Column = (DataGrid.Columns[e.ColumnIndex] as MTableColumn);
-            DataGridViewCell Cell = DataGrid.Rows[e.RowIndex].Cells[e.ColumnIndex];
-            if (Cell.Value.GetType() != TableData.GetValueTypeForColumnType(Column.TypeM2))
+            string[] priorityNames = { "Model", "Name", "Descrip", "Description", "Title", "Caption", "DisplayName" };
+
+            int targetColumnIndex = -1;
+
+            foreach (string pName in priorityNames)
             {
-                object Output = Convert.ChangeType(Cell.Value, TableData.GetValueTypeForColumnType(Column.TypeM2));
-                Cell.Value = Output;
+                for (int i = 0; i < data.Columns.Count; i++)
+                {
+                    string colName = GetColumnName(data.Columns[i].NameHash);
+                    if (colName.Equals(pName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        targetColumnIndex = i;
+                        break;
+                    }
+                }
+                if (targetColumnIndex >= 0) break;
             }
-            Text = Language.GetString("$TABLE_EDITOR_TITLE") + "*";
+
+            if (targetColumnIndex < 0 && data.Columns.Count > 0)
+                targetColumnIndex = 0;
+
+            if (targetColumnIndex >= 0 && targetColumnIndex < row.Values.Count)
+            {
+                object val = row.Values[targetColumnIndex];
+                return val?.ToString() ?? "(null)";
+            }
+
+            return $"Row {rowIndex}";
+        }
+        private void VersionComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (data == null) return;
+            ushort newVersion = (ushort)(versionComboBox.SelectedIndex == 0 ? 1 : 2);
+            if (newVersion == Version) return;
+            if (newVersion == 2 && data.PatchedName == null)
+                data.PatchedName = "";
             bIsFileEdited = true;
+            this.Text = Language.GetString("$TABLE_EDITOR_TITLE") + "*";
         }
 
-        private void DeleteRowOnClick(object sender, EventArgs e)
-        {
-            if (DataGrid.SelectedRows.Count > 0)
-            {
-                DataGrid.Rows.Remove(DataGrid.SelectedRows[0]);
-                Text = Language.GetString("$TABLE_EDITOR_TITLE") + "*";
-                bIsFileEdited = true;
-            }
-        }
+        private void ReloadOnClick(object sender, EventArgs e) => LoadTableData();
+        private void SaveOnClick(object sender, EventArgs e) => SaveTableData();
+        private void ExitButtonOnClick(object sender, EventArgs e) => Close();
 
         private void TableEditor_Closing(object sender, FormClosingEventArgs e)
         {
             if (bIsFileEdited)
             {
-                System.Windows.MessageBoxResult SaveChanges = System.Windows.MessageBox.Show(Language.GetString("$SAVE_PROMPT"), "Toolkit", System.Windows.MessageBoxButton.YesNoCancel);
-                if (SaveChanges == System.Windows.MessageBoxResult.Yes)
-                {
+                DialogResult result = MessageBox.Show(Language.GetString("$SAVE_PROMPT"), "Toolkit", MessageBoxButtons.YesNoCancel);
+                if (result == DialogResult.Yes)
                     SaveTableData();
-                }
-                else if (SaveChanges == System.Windows.MessageBoxResult.Cancel)
-                {
+                else if (result == DialogResult.Cancel)
                     e.Cancel = true;
-                }
             }
         }
-
-        private void DataGrid_KeyDown(object sender, KeyEventArgs e)
+        private class DynamicRowWrapper : ICustomTypeDescriptor
         {
-            if (e.Control && e.KeyCode == Keys.C)
+            private TableData.Row row;
+            private List<TableData.Column> columns;
+            private TableEditor editor;
+
+
+            public DynamicRowWrapper(TableData.Row row, List<TableData.Column> columns, TableEditor editor)
             {
-                CopySelectedCells();
-                e.Handled = true;
+                this.row = row;
+                this.columns = columns;
+                this.editor = editor;
             }
 
-            if (e.Control && e.KeyCode == Keys.V)
-            {
-                PasteToSelectedCells();
-                e.Handled = true;
-            }
-        }
+            public AttributeCollection GetAttributes() => TypeDescriptor.GetAttributes(this, true);
+            public string GetClassName() => "Table Row";
+            public string GetComponentName() => null;
+            public TypeConverter GetConverter() => null;
+            public EventDescriptor GetDefaultEvent() => null;
+            public PropertyDescriptor GetDefaultProperty() => null;
+            public object GetEditor(Type editorBaseType) => null;
+            public EventDescriptorCollection GetEvents() => EventDescriptorCollection.Empty;
+            public EventDescriptorCollection GetEvents(Attribute[] attributes) => EventDescriptorCollection.Empty;
 
-        private void CopySelectedCells()
-        {
-            if (DataGrid.GetCellCount(DataGridViewElementStates.Selected) > 0)
+            public PropertyDescriptorCollection GetProperties()
             {
-                try
+                return GetProperties(new Attribute[0]);
+            }
+
+            public PropertyDescriptorCollection GetProperties(Attribute[] attributes)
+            {
+                List<PropertyDescriptor> props = new List<PropertyDescriptor>();
+                for (int i = 0; i < columns.Count; i++)
                 {
-                    Clipboard.SetDataObject(DataGrid.GetClipboardContent());
+                    var col = columns[i];
+                    string name = editor.GetColumnName(col.NameHash);
+                    string desc = editor.GetColumnDescription(col.NameHash) ?? "";
+                    Type valueType = TableData.GetValueTypeForColumnType(col.Type);
+                    props.Add(new RowPropertyDescriptor(name, valueType, i, desc));
                 }
-                catch (Exception)
-                {
-                    MessageBox.Show("Copy failed.", "Toolkit", MessageBoxButtons.OK);
-                }
+                return new PropertyDescriptorCollection(props.ToArray());
             }
-        }
 
-        private void PasteToSelectedCells()
-        {
-            string clipboardText = Clipboard.GetText();
+            public object GetPropertyOwner(PropertyDescriptor pd) => this;
 
-            if (string.IsNullOrEmpty(clipboardText))
-                return;
-
-            string[] rows = clipboardText
-                .Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries);
-
-            if (rows.Length == 1 && !rows[0].Contains("\t"))
+            private class RowPropertyDescriptor : PropertyDescriptor
             {
-                foreach (DataGridViewCell cell in DataGrid.SelectedCells)
+                private int columnIndex;
+                private Type propertyType;
+
+                public RowPropertyDescriptor(string name, Type type, int index, string description) : base(name, new Attribute[] { new DescriptionAttribute(description) })
                 {
-                    try
+                    columnIndex = index;
+                    propertyType = type;
+                }
+
+                public override Type ComponentType => typeof(DynamicRowWrapper);
+                public override bool IsReadOnly => false;
+                public override Type PropertyType => propertyType;
+
+                public override object GetValue(object component)
+                {
+                    var wrapper = component as DynamicRowWrapper;
+                    if (wrapper != null && wrapper.row.Values.Count > columnIndex)
+                        return wrapper.row.Values[columnIndex];
+                    return null;
+                }
+
+                public override void SetValue(object component, object value)
+                {
+                    var wrapper = component as DynamicRowWrapper;
+                    if (wrapper != null && wrapper.row.Values.Count > columnIndex)
                     {
-                        cell.Value = rows[0];
-                    }
-                    catch
-                    {}
-                }
-            }
-            else
-            {
-                int startRow = DataGrid.CurrentCell.RowIndex;
-                int startCol = DataGrid.CurrentCell.ColumnIndex;
-
-                for (int i = 0; i < rows.Length; i++)
-                {
-                    string[] cells = rows[i].Split('\t');
-
-                    for (int j = 0; j < cells.Length; j++)
-                    {
-                        int rowIndex = startRow + i;
-                        int colIndex = startCol + j;
-
-                        if (rowIndex < DataGrid.RowCount &&
-                            colIndex < DataGrid.ColumnCount)
-                        {
-                            try
-                            {
-                                DataGrid.Rows[rowIndex]
-                                        .Cells[colIndex].Value = cells[j];
-                            }
-                            catch
-                            {}
-                        }
+                        wrapper.row.Values[columnIndex] = value;
+                        wrapper.editor.bIsFileEdited = true;
+                        wrapper.editor.Text = Language.GetString("$TABLE_EDITOR_TITLE") + "*";
+                        OnValueChanged(component, EventArgs.Empty);
                     }
                 }
+
+                public override bool CanResetValue(object component) => false;
+                public override void ResetValue(object component) { }
+                public override bool ShouldSerializeValue(object component) => false;
             }
-
-            Text = Language.GetString("$TABLE_EDITOR_TITLE") + "*";
-            bIsFileEdited = true;
-        }
-        private void VersionComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (data == null) return;
-
-            ushort newVersion = (ushort)(versionComboBox.SelectedIndex == 0 ? 1 : 2);
-            if (newVersion == Version) return;
-
-            if (newVersion == 2)
-            {
-                if (data.PatchedName == null)
-                    data.PatchedName = "";
-            }
-
-            bIsFileEdited = true;
-            Text = Language.GetString("$TABLE_EDITOR_TITLE") + "*";
         }
     }
 }

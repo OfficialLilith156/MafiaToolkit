@@ -15,7 +15,7 @@
 BA00855E Quantity
 2314E5A4 Texture
 E2C1600E Color
-D52EC5D6 Flag
+D52EC5D6 Type
 3D803D2B Unknown
 140315B2 ID
 48259F31 Text1
@@ -31,3 +31,41 @@ D4B2D13C Unkonwn
 94EEA386 Unknown
 34AE8438 Unknown
 104829B5 Model_Name
+5D67AC10 Ammo | Патроны
+634EDA3E Ammo_Shop | Обойма
+EA4D91CF Unknown0
+DC5FA338 Recoil0 | Отдача работает если игрок, стоит и в укрытие
+CFE239B6 Scatter0 | Разброс при стрельбе
+C934E0F9 Unknown1
+C88ED92B Recoil1 | Отдача влияет на камеру, если игрок в укрытие и просто стоит 
+C7C30323 Unknown2
+C3DAB1D3 Unknown3
+BF71758B Unknown4
+70607F87 Unknown5
+6E95FE98 Unknown6
+60457819 Unknown7
+52FC3EC8 Unknown8
+49C655E2 Unknown9
+466FE6B3 Unknown10
+382F1FB1 CameraFOV | Насколько камера будет отдаляться при стрельбе
+37A7D316 Recoil2 | Отдача на бег
+2EE5AD83 Unknown11
+2C5A96EA Recoil3 | Отдача работает если не целиться и стоять
+29EF8225 Unknown12
+27A83C01 Unknown13
+23E76235 Scatter1 | Разброс при прицеливание
+1BE755DB Scatter2 | Реагирует на прицел, разброс если стоять
+11DE53BF Unknown14
+10031920 Unknown15
+EA8850B2 Speed | Скорость стрельбы
+1B08E791 PowerA | Сила патрона если быть близко к объекту 
+1B08E792 PowerB | Сила патрона если быть чуть дальше к объекту
+1B08E7E0 PowerС | Сила патрона если быть далеко от объекта
+6C62C3C5 Priority | Приоритет, но реакции нету возможно используеться для НПС
+A661FDBE Unknonw16
+8171A995 RangeA | Урон по диапозону здесь урон если НПС близко от игрока по расстоянию
+8171A996 RangeB | Урон по диапозону здесь урон если НПС средне от игрока по расстоянию
+8171A997 RangeC | Урон по диапозону здесь урон если НПС далеко от игрока по расстоянию
+04C07DF9 Weight | Вес оружия, возможно)))
+1F634399 Unknown17 
+01961E9D TracerID | Здесь указан ID Пули которая вылетает из дула оружия

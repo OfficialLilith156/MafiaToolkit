@@ -1,4 +1,7 @@
-﻿namespace Mafia2Tool
+﻿using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ScrollBar;
+
+namespace Mafia2Tool
 {
     partial class TableEditor
     {
@@ -29,214 +32,153 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TableEditor));
-            toolStrip1 = new System.Windows.Forms.ToolStrip();
-            FileButton = new System.Windows.Forms.ToolStripDropDownButton();
-            SaveButton = new System.Windows.Forms.ToolStripMenuItem();
-            ReloadButton = new System.Windows.Forms.ToolStripMenuItem();
-            ExitButton = new System.Windows.Forms.ToolStripMenuItem();
-            EditButton = new System.Windows.Forms.ToolStripDropDownButton();
-            AddRowButton = new System.Windows.Forms.ToolStripMenuItem();
-            DeleteRowButton = new System.Windows.Forms.ToolStripMenuItem();
-            Label_Version = new System.Windows.Forms.ToolStripLabel();
-            DataGrid = new System.Windows.Forms.DataGridView();
-            statusStrip1 = new System.Windows.Forms.StatusStrip();
-            ColumnIndexLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            RowIndexLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            Label_DataType = new System.Windows.Forms.ToolStripStatusLabel();
-            Label_ValueDataType = new System.Windows.Forms.ToolStripStatusLabel();
-            SearchBox = new System.Windows.Forms.TextBox();
-            versionComboBox = new System.Windows.Forms.ComboBox();
+            treeViewRows = new TreeView();
+            propertyGrid = new PropertyGrid();
+            toolStrip1 = new ToolStrip();
+            toolStripDropDownButton1 = new ToolStripDropDownButton();
+            saveToolStripMenuItem = new ToolStripMenuItem();
+            reloadToolStripMenuItem = new ToolStripMenuItem();
+            exitToolStripMenuItem = new ToolStripMenuItem();
+            toolStripDropDownButton2 = new ToolStripDropDownButton();
+            addRowToolStripMenuItem = new ToolStripMenuItem();
+            deleteRowToolStripMenuItem = new ToolStripMenuItem();
+            versionLabel = new ToolStripLabel();
+            versionComboBox = new ToolStripComboBox();
+            searchBox = new ToolStripTextBox();
             toolStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)DataGrid).BeginInit();
-            statusStrip1.SuspendLayout();
             SuspendLayout();
+            // 
+            // treeViewRows
+            // 
+            treeViewRows.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            treeViewRows.Location = new System.Drawing.Point(12, 28);
+            treeViewRows.Name = "treeViewRows";
+            treeViewRows.Size = new System.Drawing.Size(272, 521);
+            treeViewRows.TabIndex = 1;
+            treeViewRows.AfterSelect += TreeViewRows_AfterSelect;
+            // 
+            // propertyGrid
+            // 
+            propertyGrid.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            propertyGrid.Location = new System.Drawing.Point(290, 28);
+            propertyGrid.Name = "propertyGrid";
+            propertyGrid.Size = new System.Drawing.Size(582, 521);
+            propertyGrid.TabIndex = 0;
+            propertyGrid.PropertyValueChanged += PropertyGrid_PropertyValueChanged;
             // 
             // toolStrip1
             // 
-            toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { FileButton, EditButton, Label_Version });
+            toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripDropDownButton1, toolStripDropDownButton2, versionLabel, versionComboBox, searchBox });
             toolStrip1.Location = new System.Drawing.Point(0, 0);
             toolStrip1.Name = "toolStrip1";
-            toolStrip1.Size = new System.Drawing.Size(933, 25);
-            toolStrip1.TabIndex = 15;
-            toolStrip1.Text = "MainStrip";
+            toolStrip1.Size = new System.Drawing.Size(884, 25);
+            toolStrip1.TabIndex = 3;
+            toolStrip1.Text = "toolStrip1";
             // 
-            // FileButton
+            // toolStripDropDownButton1
             // 
-            FileButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            FileButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { SaveButton, ReloadButton, ExitButton });
-            FileButton.Image = (System.Drawing.Image)resources.GetObject("FileButton.Image");
-            FileButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            FileButton.Name = "FileButton";
-            FileButton.Size = new System.Drawing.Size(47, 22);
-            FileButton.Text = "$FILE";
+            toolStripDropDownButton1.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripDropDownButton1.DropDownItems.AddRange(new ToolStripItem[] { saveToolStripMenuItem, reloadToolStripMenuItem, exitToolStripMenuItem });
+            toolStripDropDownButton1.Image = (System.Drawing.Image)resources.GetObject("toolStripDropDownButton1.Image");
+            toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            toolStripDropDownButton1.Name = "toolStripDropDownButton1";
+            toolStripDropDownButton1.Size = new System.Drawing.Size(38, 22);
+            toolStripDropDownButton1.Text = "File";
+            toolStripDropDownButton1.ToolTipText = "File";
             // 
-            // SaveButton
+            // saveToolStripMenuItem
             // 
-            SaveButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            SaveButton.Name = "SaveButton";
-            SaveButton.ShortcutKeyDisplayString = "";
-            SaveButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S;
-            SaveButton.Size = new System.Drawing.Size(165, 22);
-            SaveButton.Text = "$SAVE";
-            SaveButton.Click += SaveOnClick;
+            saveToolStripMenuItem.Name = "saveToolStripMenuItem";
+            saveToolStripMenuItem.Size = new System.Drawing.Size(110, 22);
+            saveToolStripMenuItem.Text = "Save";
+            saveToolStripMenuItem.Click += SaveOnClick;
             // 
-            // ReloadButton
+            // reloadToolStripMenuItem
             // 
-            ReloadButton.Name = "ReloadButton";
-            ReloadButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R;
-            ReloadButton.Size = new System.Drawing.Size(165, 22);
-            ReloadButton.Text = "$RELOAD";
-            ReloadButton.Click += ReloadOnClick;
+            reloadToolStripMenuItem.Name = "reloadToolStripMenuItem";
+            reloadToolStripMenuItem.Size = new System.Drawing.Size(110, 22);
+            reloadToolStripMenuItem.Text = "Reload";
+            reloadToolStripMenuItem.Click += ReloadOnClick;
             // 
-            // ExitButton
+            // exitToolStripMenuItem
             // 
-            ExitButton.Name = "ExitButton";
-            ExitButton.Size = new System.Drawing.Size(165, 22);
-            ExitButton.Text = "$EXIT";
-            ExitButton.Click += ExitButtonOnClick;
+            exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+            exitToolStripMenuItem.Size = new System.Drawing.Size(110, 22);
+            exitToolStripMenuItem.Text = "Exit";
+            exitToolStripMenuItem.Click += ExitButtonOnClick;
             // 
-            // EditButton
+            // toolStripDropDownButton2
             // 
-            EditButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            EditButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { AddRowButton, DeleteRowButton });
-            EditButton.Image = (System.Drawing.Image)resources.GetObject("EditButton.Image");
-            EditButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            EditButton.Name = "EditButton";
-            EditButton.Size = new System.Drawing.Size(49, 22);
-            EditButton.Text = "$EDIT";
+            toolStripDropDownButton2.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripDropDownButton2.DropDownItems.AddRange(new ToolStripItem[] { addRowToolStripMenuItem, deleteRowToolStripMenuItem });
+            toolStripDropDownButton2.Image = (System.Drawing.Image)resources.GetObject("toolStripDropDownButton2.Image");
+            toolStripDropDownButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
+            toolStripDropDownButton2.Name = "toolStripDropDownButton2";
+            toolStripDropDownButton2.Size = new System.Drawing.Size(40, 22);
+            toolStripDropDownButton2.Text = "Edit";
             // 
-            // AddRowButton
+            // addRowToolStripMenuItem
             // 
-            AddRowButton.Name = "AddRowButton";
-            AddRowButton.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.A;
-            AddRowButton.Size = new System.Drawing.Size(222, 22);
-            AddRowButton.Text = "$ADD_ROW";
-            AddRowButton.Click += AddRowOnClick;
+            addRowToolStripMenuItem.Name = "addRowToolStripMenuItem";
+            addRowToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            addRowToolStripMenuItem.Text = "Add Row";
+            addRowToolStripMenuItem.Click += AddRowOnClick;
             // 
-            // DeleteRowButton
+            // deleteRowToolStripMenuItem
             // 
-            DeleteRowButton.Name = "DeleteRowButton";
-            DeleteRowButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Delete;
-            DeleteRowButton.Size = new System.Drawing.Size(222, 22);
-            DeleteRowButton.Text = "$DELETE_ROW";
-            DeleteRowButton.Click += DeleteRowOnClick;
+            deleteRowToolStripMenuItem.Name = "deleteRowToolStripMenuItem";
+            deleteRowToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            deleteRowToolStripMenuItem.Text = "Delete Row";
+            deleteRowToolStripMenuItem.Click += DeleteRowOnClick;
             // 
-            // Label_Version
+            // versionLabel
             // 
-            Label_Version.Name = "Label_Version";
-            Label_Version.Size = new System.Drawing.Size(60, 22);
-            Label_Version.Text = "$VERSION";
-            // 
-            // DataGrid
-            // 
-            DataGrid.AllowUserToAddRows = false;
-            DataGrid.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            DataGrid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
-            DataGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            DataGrid.Location = new System.Drawing.Point(0, 32);
-            DataGrid.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            DataGrid.MultiSelect = false;
-            DataGrid.Name = "DataGrid";
-            DataGrid.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            DataGrid.Size = new System.Drawing.Size(933, 458);
-            DataGrid.TabIndex = 16;
-            DataGrid.CellValueChanged += CellContent_Changed;
-            DataGrid.SelectionChanged += OnSelectedChange;
-            DataGrid.KeyDown += DataGrid_KeyDown;
-            // 
-            // statusStrip1
-            // 
-            statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { ColumnIndexLabel, RowIndexLabel, Label_DataType, Label_ValueDataType });
-            statusStrip1.Location = new System.Drawing.Point(0, 497);
-            statusStrip1.Name = "statusStrip1";
-            statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 16, 0);
-            statusStrip1.Size = new System.Drawing.Size(933, 22);
-            statusStrip1.TabIndex = 17;
-            statusStrip1.Text = "statusStrip1";
-            // 
-            // ColumnIndexLabel
-            // 
-            ColumnIndexLabel.Name = "ColumnIndexLabel";
-            ColumnIndexLabel.Size = new System.Drawing.Size(79, 17);
-            ColumnIndexLabel.Text = "ColumnIndex";
-            // 
-            // RowIndexLabel
-            // 
-            RowIndexLabel.Name = "RowIndexLabel";
-            RowIndexLabel.Size = new System.Drawing.Size(59, 17);
-            RowIndexLabel.Text = "RowIndex";
-            // 
-            // Label_DataType
-            // 
-            Label_DataType.Name = "Label_DataType";
-            Label_DataType.Size = new System.Drawing.Size(103, 17);
-            Label_DataType.Text = "$CELL_DATA_TYPE";
-            // 
-            // Label_ValueDataType
-            // 
-            Label_ValueDataType.Name = "Label_ValueDataType";
-            Label_ValueDataType.Size = new System.Drawing.Size(111, 17);
-            Label_ValueDataType.Text = "$VALUE_DATA_TYPE";
-            // 
-            // SearchBox
-            // 
-            SearchBox.Location = new System.Drawing.Point(183, 3);
-            SearchBox.Name = "SearchBox";
-            SearchBox.Size = new System.Drawing.Size(139, 23);
-            SearchBox.TabIndex = 18;
-            SearchBox.TextChanged += SearchBox_TextChanged;
+            versionLabel.Name = "versionLabel";
+            versionLabel.Size = new System.Drawing.Size(0, 22);
             // 
             // versionComboBox
             // 
-            versionComboBox.FormattingEnabled = true;
             versionComboBox.Items.AddRange(new object[] { "1 (Classic)", "2 (Definitive Edition)" });
-            versionComboBox.Location = new System.Drawing.Point(330, 3);
             versionComboBox.Name = "versionComboBox";
-            versionComboBox.Size = new System.Drawing.Size(121, 23);
-            versionComboBox.TabIndex = 19;
+            versionComboBox.Size = new System.Drawing.Size(150, 25);
+            versionComboBox.SelectedIndexChanged += VersionComboBox_SelectedIndexChanged;
+            // 
+            // searchBox
+            // 
+            searchBox.Name = "searchBox";
+            searchBox.Size = new System.Drawing.Size(150, 25);
+            searchBox.TextChanged += SearchBox_TextChanged;
             // 
             // TableEditor
             // 
-            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(933, 519);
-            Controls.Add(versionComboBox);
-            Controls.Add(SearchBox);
-            Controls.Add(statusStrip1);
+            ClientSize = new System.Drawing.Size(884, 561);
             Controls.Add(toolStrip1);
-            Controls.Add(DataGrid);
-            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
-            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Controls.Add(propertyGrid);
+            Controls.Add(treeViewRows);
             Name = "TableEditor";
-            Text = "$TABLE_EDITOR";
+            Text = "Table Editor";
             FormClosing += TableEditor_Closing;
             toolStrip1.ResumeLayout(false);
             toolStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)DataGrid).EndInit();
-            statusStrip1.ResumeLayout(false);
-            statusStrip1.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
 
         #endregion
 
-        private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.ToolStripDropDownButton FileButton;
-        private System.Windows.Forms.ToolStripMenuItem SaveButton;
-        private System.Windows.Forms.ToolStripMenuItem ReloadButton;
-        private System.Windows.Forms.ToolStripMenuItem ExitButton;
-        private System.Windows.Forms.DataGridView DataGrid;
-        private System.Windows.Forms.ToolStripDropDownButton EditButton;
-        private System.Windows.Forms.ToolStripMenuItem AddRowButton;
-        private System.Windows.Forms.StatusStrip statusStrip1;
-        private System.Windows.Forms.ToolStripStatusLabel ColumnIndexLabel;
-        private System.Windows.Forms.ToolStripStatusLabel RowIndexLabel;
-        private System.Windows.Forms.ToolStripStatusLabel Label_DataType;
-        private System.Windows.Forms.ToolStripMenuItem DeleteRowButton;
-        private System.Windows.Forms.ToolStripLabel Label_Version;
-        private System.Windows.Forms.ToolStripStatusLabel Label_ValueDataType;
-        private System.Windows.Forms.TextBox SearchBox;
-        private System.Windows.Forms.ComboBox versionComboBox;
+        private TreeView treeViewRows;
+        private PropertyGrid propertyGrid;
+        private Label rowIndexLabel;
+        private ToolStrip toolStrip1;
+        private ToolStripDropDownButton toolStripDropDownButton1;
+        private ToolStripMenuItem saveToolStripMenuItem;
+        private ToolStripMenuItem reloadToolStripMenuItem;
+        private ToolStripMenuItem exitToolStripMenuItem;
+        private ToolStripDropDownButton toolStripDropDownButton2;
+        private ToolStripMenuItem addRowToolStripMenuItem;
+        private ToolStripMenuItem deleteRowToolStripMenuItem;
+        private ToolStripLabel versionLabel;
+        private ToolStripComboBox versionComboBox;
+        private ToolStripTextBox searchBox;
     }
 }
