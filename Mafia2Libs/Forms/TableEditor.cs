@@ -19,6 +19,7 @@ namespace Mafia2Tool
         private ushort Version;
         private bool bIsFileEdited = false;
         private Dictionary<uint, string> columnDescriptions = new Dictionary<uint, string>();
+        public string FileName => file?.Name ?? "";
 
         public TableEditor(FileInfo file)
         {
@@ -158,7 +159,7 @@ namespace Mafia2Tool
             versionComboBox.SelectedIndex = (Version == 1) ? 0 : (Version == 2) ? 1 : 0;
             versionLabel.Text = $"Version: {Version}";
             bIsFileEdited = false;
-            this.Text = Language.GetString("$TABLE_EDITOR_TITLE");
+            this.Text = $"{FileName} - {Language.GetString("$TABLE_EDITOR_TITLE")}";
         }
 
         private void SaveTableData()
@@ -215,7 +216,7 @@ namespace Mafia2Tool
             Version = selectedVersion;
             versionLabel.Text = $"Version: {Version}";
             bIsFileEdited = false;
-            this.Text = Language.GetString("$TABLE_EDITOR_TITLE");
+            this.Text = $"{FileName} - {Language.GetString("$TABLE_EDITOR_TITLE")}";
         }
 
         private void TreeViewRows_AfterSelect(object sender, TreeViewEventArgs e)
@@ -232,7 +233,7 @@ namespace Mafia2Tool
             if (!bIsFileEdited)
             {
                 bIsFileEdited = true;
-                this.Text = Language.GetString("$TABLE_EDITOR_TITLE") + "*";
+                this.Text = $"{FileName} - {Language.GetString("$TABLE_EDITOR_TITLE")}*";
             }
             if (treeViewRows.SelectedNode != null && treeViewRows.SelectedNode.Tag is TableData.Row row)
             {
@@ -268,7 +269,7 @@ namespace Mafia2Tool
             newNode.Tag = newRow;
             treeViewRows.Nodes.Add(newNode);
             bIsFileEdited = true;
-            this.Text = Language.GetString("$TABLE_EDITOR_TITLE") + "*";
+            this.Text = $"{FileName} - {Language.GetString("$TABLE_EDITOR_TITLE")}*";
         }
 
         private void DeleteRowOnClick(object sender, EventArgs e)
@@ -278,7 +279,7 @@ namespace Mafia2Tool
                 data.Rows.Remove((TableData.Row)treeViewRows.SelectedNode.Tag);
                 treeViewRows.Nodes.Remove(treeViewRows.SelectedNode);
                 bIsFileEdited = true;
-                this.Text = Language.GetString("$TABLE_EDITOR_TITLE") + "*";
+                this.Text = $"{FileName} - {Language.GetString("$TABLE_EDITOR_TITLE")}*";
                 propertyGrid.SelectedObject = null;
             }
         }
@@ -321,7 +322,7 @@ namespace Mafia2Tool
         }
         private string GetRowDisplayName(TableData.Row row, int rowIndex)
         {
-            string[] priorityNames = { "Model", "Name", "Descrip", "Description", "Title", "Caption", "DisplayName" };
+            string[] priorityNames = { "Model", "Name", "Notes", "Description", "Descr", "Civil", "E8939FBA", "Path", "File_Name", "ADBBFF55", "74203AAC" };
 
             int targetColumnIndex = -1;
 
@@ -358,7 +359,7 @@ namespace Mafia2Tool
             if (newVersion == 2 && data.PatchedName == null)
                 data.PatchedName = "";
             bIsFileEdited = true;
-            this.Text = Language.GetString("$TABLE_EDITOR_TITLE") + "*";
+            this.Text = $"{FileName} - {Language.GetString("$TABLE_EDITOR_TITLE")}*";
         }
 
         private void ReloadOnClick(object sender, EventArgs e) => LoadTableData();
@@ -451,7 +452,7 @@ namespace Mafia2Tool
                     {
                         wrapper.row.Values[columnIndex] = value;
                         wrapper.editor.bIsFileEdited = true;
-                        wrapper.editor.Text = Language.GetString("$TABLE_EDITOR_TITLE") + "*";
+                        wrapper.editor.Text = $"{wrapper.editor.FileName} - {Language.GetString("$TABLE_EDITOR_TITLE")}*";
                         OnValueChanged(component, EventArgs.Empty);
                     }
                 }

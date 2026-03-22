@@ -69,3 +69,4 @@ A661FDBE Unknonw16
 04C07DF9 Weight | Вес оружия, возможно)))
 1F634399 Unknown17 
 01961E9D TracerID | Здесь указан ID Пули которая вылетает из дула оружия
+BD38FB35 Name
