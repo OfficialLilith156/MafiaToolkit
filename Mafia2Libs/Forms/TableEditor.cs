@@ -21,6 +21,7 @@ namespace Mafia2Tool
         {
             InitializeComponent();
             this.file = file;
+            versionComboBox.SelectedIndexChanged += VersionComboBox_SelectedIndexChanged;
             Localise();
             Initialise();
             Show();
@@ -72,7 +73,14 @@ namespace Mafia2Tool
                 foreach (string Line in CustomHashes)
                 {
                     string[] values = Line.Split(" ");
-                    uint hash = uint.Parse(values[0]);
+                    uint hash;
+                    string hashStr = values[0];
+                    if (hashStr.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
+                        hash = Convert.ToUInt32(hashStr.Substring(2), 16);
+                    else if (hashStr.IndexOfAny("ABCDEFabcdef".ToCharArray()) >= 0)
+                        hash = Convert.ToUInt32(hashStr, 16);
+                    else
+                        hash = uint.Parse(hashStr);
                     columnNames.TryAdd(hash, values[1]);
                 }
             }
@@ -126,21 +134,46 @@ namespace Mafia2Tool
                 DataGrid.Rows.Add(row.Values.ToArray());
             }
             Label_Version.Text = string.Format("Version: {0}", Version);
+            int selectedIndex = (Version == 1) ? 0 : (Version == 2) ? 1 : 0;
+            versionComboBox.SelectedIndex = selectedIndex;
             Text = Language.GetString("$TABLE_EDITOR_TITLE");
             bIsFileEdited = false;
         }
 
         private void SaveTableData()
         {
-            // TODO: This *really* sucks. Can't we just remove the rows/columns and repopulate them?
-            // Instead of doing the whole TableData structure...
+            ushort selectedVersion = (ushort)(versionComboBox.SelectedIndex == 0 ? 1 : 2);
+
+            if (selectedVersion == 1 && (data.PatchedNameHash != 0 || !string.IsNullOrEmpty(data.PatchedName) || data.PatchedUnk1 != 0 || data.PatchedUnk2 != 0))
+            {
+                var result = MessageBox.Show("Switching to version 1 will discard Patched fields (PatchedName, PatchedUnk1, PatchedUnk2). Continue?", "Warning", MessageBoxButtons.YesNo);
+                if (result != DialogResult.Yes)
+                    return;
+            }
+
+            if (selectedVersion == 2 && data.PatchedName == null)
+            {
+                data.PatchedName = "";
+            }
+
             TableData newData = new TableData();
             newData.NameHash = data.NameHash;
             newData.Name = data.Name;
-            newData.PatchedName = data.PatchedName;
-            newData.PatchedNameHash = data.PatchedNameHash;
-            newData.PatchedUnk1 = data.PatchedUnk1;
-            newData.PatchedUnk2 = data.PatchedUnk2;
+
+            if (selectedVersion == 1)
+            {
+                newData.PatchedNameHash = 0;
+                newData.PatchedName = null;
+                newData.PatchedUnk1 = 0;
+                newData.PatchedUnk2 = 0;
+            }
+            else
+            {
+                newData.PatchedNameHash = data.PatchedNameHash;
+                newData.PatchedName = data.PatchedName;
+                newData.PatchedUnk1 = data.PatchedUnk1;
+                newData.PatchedUnk2 = data.PatchedUnk2;
+            }
             newData.Unk1 = data.Unk1;
             newData.Unk2 = data.Unk2;
             for (int i = 0; i < DataGrid.ColumnCount; i++)
@@ -162,7 +195,6 @@ namespace Mafia2Tool
                 }
                 newData.Rows.Add(row);
             }
-            // Don't save the file if we fail to validate
             if (!newData.Validate())
             {
                 MessageBox.Show("Failed to validate. Not saving data.", "Toolkit", MessageBoxButtons.OK);
@@ -170,10 +202,12 @@ namespace Mafia2Tool
             }
             using (BinaryWriter writer = new BinaryWriter(File.Open(file.FullName, FileMode.Create)))
             {
-                writer.Write((int)Version);
-                newData.Serialize(Version, writer.BaseStream, Gibbed.IO.Endian.Little);
+                writer.Write((int)selectedVersion);
+                newData.Serialize(selectedVersion, writer.BaseStream, Gibbed.IO.Endian.Little);
             }
             data = newData;
+            Version = selectedVersion;
+            Label_Version.Text = string.Format("Version: {0}", Version);
             Text = Language.GetString("$TABLE_EDITOR_TITLE");
             bIsFileEdited = false;
         }
@@ -368,6 +402,22 @@ namespace Mafia2Tool
 
             Text = Language.GetString("$TABLE_EDITOR_TITLE") + "*";
             bIsFileEdited = true;
+        }
+        private void VersionComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (data == null) return;
+
+            ushort newVersion = (ushort)(versionComboBox.SelectedIndex == 0 ? 1 : 2);
+            if (newVersion == Version) return;
+
+            if (newVersion == 2)
+            {
+                if (data.PatchedName == null)
+                    data.PatchedName = "";
+            }
+
+            bIsFileEdited = true;
+            Text = Language.GetString("$TABLE_EDITOR_TITLE") + "*";
         }
     }
 }

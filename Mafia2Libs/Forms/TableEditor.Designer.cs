@@ -45,6 +45,7 @@
             Label_DataType = new System.Windows.Forms.ToolStripStatusLabel();
             Label_ValueDataType = new System.Windows.Forms.ToolStripStatusLabel();
             SearchBox = new System.Windows.Forms.TextBox();
+            versionComboBox = new System.Windows.Forms.ComboBox();
             toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)DataGrid).BeginInit();
             statusStrip1.SuspendLayout();
@@ -185,11 +186,21 @@
             SearchBox.TabIndex = 18;
             SearchBox.TextChanged += SearchBox_TextChanged;
             // 
+            // versionComboBox
+            // 
+            versionComboBox.FormattingEnabled = true;
+            versionComboBox.Items.AddRange(new object[] { "1 (Classic)", "2 (Definitive Edition)" });
+            versionComboBox.Location = new System.Drawing.Point(330, 3);
+            versionComboBox.Name = "versionComboBox";
+            versionComboBox.Size = new System.Drawing.Size(121, 23);
+            versionComboBox.TabIndex = 19;
+            // 
             // TableEditor
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(933, 519);
+            Controls.Add(versionComboBox);
             Controls.Add(SearchBox);
             Controls.Add(statusStrip1);
             Controls.Add(toolStrip1);
@@ -226,5 +237,6 @@
         private System.Windows.Forms.ToolStripLabel Label_Version;
         private System.Windows.Forms.ToolStripStatusLabel Label_ValueDataType;
         private System.Windows.Forms.TextBox SearchBox;
+        private System.Windows.Forms.ComboBox versionComboBox;
     }
 }

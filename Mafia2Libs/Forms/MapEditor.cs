@@ -3783,7 +3783,6 @@ namespace Mafia2Tool
                     ActorEntry item = actor.Items[c];
                     if (definition.FrameNameHash == item.FrameNameHash)
                     {
-                        bool sorted = false;
                         for (int x = 0; x < frames.Count; x++)
                         {
                             FrameObjectFrame nFrame = frames[x];
@@ -3797,7 +3796,6 @@ namespace Mafia2Tool
                                 frame = nFrame;
                                 frame.Item = actor.Items[c];
                                 frame.LocalTransform = MatrixUtils.SetMatrix(actor.Items[c].Rotation, actor.Items[c].Scale, actor.Items[c].Position);
-                                sorted = true;
                             }
                         }
                     }

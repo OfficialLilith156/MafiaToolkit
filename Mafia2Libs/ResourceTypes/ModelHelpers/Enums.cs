@@ -133,7 +133,7 @@ namespace Utils.Models
 
         //FaceRight
         Brow2R = 826,
-        Brow1R827,
+        Brow1R = 827,
         Lo_LidR = 828,
         NostrilR = 829,
         Up_CheekR = 830,

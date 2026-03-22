@@ -86,6 +86,9 @@
     <None Remove="Localisations\ar_AR.xml" />
     <None Remove="Resources\Splash.png" />
     <None Remove="Rendering\Graphics\RenderTypes\Instances\**" />
+    <None Update="Resources\custom_hashes.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\Translokator.m2t">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

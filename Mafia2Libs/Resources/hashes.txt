@@ -6,7 +6,6 @@
 5
 6
 B
-Bigearls
 BlockId
 BlockingTime
 Bottom
@@ -51,7 +50,6 @@ Model
 Name
 Notes
 Popis
-Possibility
 Power0
 PowerA
 PowerB
@@ -61,7 +59,6 @@ RangeC
 Price
 Priorita
 Priority
-Probability
 R
 Range
 Reaction
