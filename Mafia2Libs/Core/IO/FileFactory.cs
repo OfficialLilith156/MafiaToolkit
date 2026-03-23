@@ -49,6 +49,8 @@ namespace Core.IO
                     return new FileSpeech(info);
                 case "TBL":
                     return new FileTable(info);
+                case "DAT":
+                    return new FileDAT(info);
                 case "TRA":
                     return new FileTranslokator(info);
                 case "ACT":
