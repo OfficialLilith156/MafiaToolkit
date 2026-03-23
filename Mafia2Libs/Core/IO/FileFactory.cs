@@ -1,4 +1,6 @@
-﻿using System.Globalization;
+﻿using ResourceTypes.City;
+using System;
+using System.Globalization;
 using System.IO;
 
 namespace Core.IO
@@ -10,7 +12,11 @@ namespace Core.IO
             // Set culture to invariant, potential fix with Turkish windows and XBin
             CultureInfo SavedCulture = CultureInfo.CurrentCulture;
             CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
-
+            if (info.Name.Equals("CityAreas.xml", StringComparison.InvariantCultureIgnoreCase))
+            {
+                CultureInfo.CurrentCulture = SavedCulture;
+                return new FileCityAreas(info);
+            }
             string extension = info.Extension.Replace(".", "").ToUpper();
             FileBase File = null;
 
@@ -18,6 +24,9 @@ namespace Core.IO
             {
                 case "XBIN":
                     File = new FileXBin(info);
+                    break;
+                case "CityAreas.xml":
+                    File = new FileCityAreas(info);
                     break;
                 case "XLAYBIN":
                     File = new FileXlaybin(info);
