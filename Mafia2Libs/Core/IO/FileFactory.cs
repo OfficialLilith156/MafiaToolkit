@@ -17,6 +17,11 @@ namespace Core.IO
                 CultureInfo.CurrentCulture = SavedCulture;
                 return new FileCityAreas(info);
             }
+            if (info.Name.Equals("HudWidgets.xml", StringComparison.InvariantCultureIgnoreCase))
+            {
+                CultureInfo.CurrentCulture = SavedCulture;
+                return new FileHudWidgets(info);
+            }
             string extension = info.Extension.Replace(".", "").ToUpper();
             FileBase File = null;
 

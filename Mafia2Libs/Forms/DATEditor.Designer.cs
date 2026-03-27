@@ -63,11 +63,11 @@ namespace Mafia2Tool.Forms
             // 
             // openFileDialog
             // 
-            openFileDialog.Filter = "DAT файлы (*.dat)|*.dat|Все файлы (*.*)|*.*";
+            openFileDialog.Filter = "DAT Files (*.dat)|*.dat|All Files (*.*)|*.*";
             // 
             // saveFileDialog
             // 
-            saveFileDialog.Filter = "DAT файлы (*.dat)|*.dat|Все файлы (*.*)|*.*";
+            saveFileDialog.Filter = "DAT Files (*.dat)|*.dat|All Files (*.*)|*.*";
             // 
             // menuStrip
             // 
@@ -87,19 +87,19 @@ namespace Mafia2Tool.Forms
             // 
             openToolStripMenuItem.Name = "openToolStripMenuItem";
             openToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
-            openToolStripMenuItem.Text = "Открыть";
+            openToolStripMenuItem.Text = "Open";
             // 
             // saveToolStripMenuItem
             // 
             saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             saveToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
-            saveToolStripMenuItem.Text = "Сохранить";
+            saveToolStripMenuItem.Text = "Save";
             // 
             // exitToolStripMenuItem
             // 
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             exitToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
-            exitToolStripMenuItem.Text = "Выход";
+            exitToolStripMenuItem.Text = "Exit";
             // 
             // toolStrip
             // 
@@ -137,7 +137,7 @@ namespace Mafia2Tool.Forms
             // 
             tbSearch.Name = "tbSearch";
             tbSearch.Size = new System.Drawing.Size(200, 25);
-            tbSearch.ToolTipText = "Поиск по ID или тексту";
+            tbSearch.ToolTipText = "Search by ID or text";
             // 
             // btnSearch
             // 
@@ -244,7 +244,7 @@ namespace Mafia2Tool.Forms
             Controls.Add(toolStrip);
             MainMenuStrip = menuStrip;
             Name = "DATEditor";
-            Text = "Редактор текстов Mafia II";
+            Text = "Mafia II Text Editor";
             menuStrip.ResumeLayout(false);
             menuStrip.PerformLayout();
             toolStrip.ResumeLayout(false);

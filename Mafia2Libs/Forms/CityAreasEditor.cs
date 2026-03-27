@@ -59,11 +59,10 @@ namespace Mafia2Tool.Forms
             try
             {
                 cityData.Save(currentFilePath);
-                MessageBox.Show("Файл сохранён.", "Сохранение", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка сохранения: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Save error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         private void CanvasPanel_Paint(object sender, PaintEventArgs e)
@@ -178,7 +177,7 @@ namespace Mafia2Tool.Forms
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show($"Ошибка загрузки изображения: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show($"Error loading image: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
             }

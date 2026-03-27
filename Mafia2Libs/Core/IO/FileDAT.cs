@@ -15,7 +15,7 @@ namespace Core.IO
 
         public override string GetExtensionUpper()
         {
-            return "DAT";
+            return "Dat";
         }
 
         public override bool Open()

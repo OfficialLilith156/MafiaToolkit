@@ -179,7 +179,7 @@ namespace Mafia2Tool.Forms
             txtName.Location = new System.Drawing.Point(0, 23);
             txtName.Margin = new Padding(5);
             txtName.Name = "txtName";
-            txtName.PlaceholderText = "Название района";
+            txtName.PlaceholderText = "District name";
             txtName.Size = new System.Drawing.Size(250, 23);
             txtName.TabIndex = 1;
             txtName.TextChanged += TxtName_TextChanged;

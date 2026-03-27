@@ -6,9 +6,9 @@ using System.Windows.Forms;
 
 namespace Core.IO
 {
-    public class FileCityAreas : FileBase
+    public class FileHudWidgets : FileBase
     {
-        public FileCityAreas(FileInfo info) : base(info)
+        public FileHudWidgets(FileInfo info) : base(info)
         {
 
         }
@@ -20,9 +20,8 @@ namespace Core.IO
 
         public override bool Open()
         {
-            var editorForm = new CityAreasEditor(file);
+            var editorForm = new HudWidgets(file.FullName);
             editorForm.Show();
-
             return false;
         }
 
