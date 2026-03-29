@@ -5,7 +5,6 @@
 4
 5
 6
-B
 BlockId
 BlockingTime
 Bottom
@@ -30,7 +29,6 @@ FadeIn
 FadeOut
 FadeTime
 Flags
-G
 Group
 HP
 HeightMax
@@ -49,7 +47,6 @@ Notes
 Popis
 Price
 Priority
-R
 Range
 Reaction
 RideAlpha

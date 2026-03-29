@@ -1,6 +1,8 @@
 ﻿using Gibbed.Illusion.FileFormats.Hashing;
 using Gibbed.Mafia2.ResourceFormats;
 using System;
+using System.Drawing;
+using System.Drawing.Design;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -405,19 +407,122 @@ namespace Mafia2Tool
             {
                 return GetProperties(new Attribute[0]);
             }
+            private bool TryGetRgbColumnIndices(List<TableData.Column> columns, out int rIndex, out int gIndex, out int bIndex)
+            {
+                rIndex = gIndex = bIndex = -1;
+                for (int i = 0; i < columns.Count - 2; i++)
+                {
+                    if (columns[i].NameHash == 0x050C5D4D &&
+                        columns[i + 1].NameHash == 0x050C5D58 &&
+                        columns[i + 2].NameHash == 0x050C5D5D)
+                    {
+                        rIndex = i;
+                        gIndex = i + 1;
+                        bIndex = i + 2;
+                        return true;
+                    }
+                }
+                return false;
+            }
 
             public PropertyDescriptorCollection GetProperties(Attribute[] attributes)
             {
                 List<PropertyDescriptor> props = new List<PropertyDescriptor>();
-                for (int i = 0; i < columns.Count; i++)
+                if (TryGetRgbColumnIndices(columns, out int rIdx, out int gIdx, out int bIdx))
                 {
-                    var col = columns[i];
-                    string name = editor.GetColumnName(col.NameHash);
-                    string desc = editor.GetColumnDescription(col.NameHash) ?? "";
-                    Type valueType = TableData.GetValueTypeForColumnType(col.Type);
-                    props.Add(new RowPropertyDescriptor(name, valueType, i, desc));
+                    string baseName = "Color"; 
+                    string description = $"RGB color (from columns {editor.GetColumnName(columns[rIdx].NameHash)}, {editor.GetColumnName(columns[gIdx].NameHash)}, {editor.GetColumnName(columns[bIdx].NameHash)})";
+                    props.Add(new RgbColorPropertyDescriptor(baseName, rIdx, gIdx, bIdx, description, editor));
+                    for (int i = 0; i < columns.Count; i++)
+                    {
+                        if (i == rIdx || i == gIdx || i == bIdx)
+                            continue;
+                        var col = columns[i];
+                        string name = editor.GetColumnName(col.NameHash);
+                        string desc = editor.GetColumnDescription(col.NameHash) ?? "";
+                        Type valueType = TableData.GetValueTypeForColumnType(col.Type);
+                        props.Add(new RowPropertyDescriptor(name, valueType, i, desc));
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < columns.Count; i++)
+                    {
+                        var col = columns[i];
+                        string name = editor.GetColumnName(col.NameHash);
+                        string desc = editor.GetColumnDescription(col.NameHash) ?? "";
+                        if (col.Type == TableData.ColumnType.Color &&
+                            (col.NameHash == 0xA0979CFC || col.NameHash == 0xA0979CFE || col.NameHash == 0xA0979CFF))
+                        {
+                            props.Add(new ColorPropertyDescriptor(name, i, desc));
+                        }
+                        else
+                        {
+                            Type valueType = TableData.GetValueTypeForColumnType(col.Type);
+                            props.Add(new RowPropertyDescriptor(name, valueType, i, desc));
+                        }
+                    }
                 }
                 return new PropertyDescriptorCollection(props.ToArray());
+            }
+            private class ColorPropertyDescriptor : PropertyDescriptor
+            {
+                private int columnIndex;
+
+                public ColorPropertyDescriptor(string name, int index, string description)
+                    : base(name, new Attribute[]
+                    {
+            new DescriptionAttribute(description),
+            new EditorAttribute(typeof(ColorEditor), typeof(UITypeEditor))
+                    })
+                {
+                    columnIndex = index;
+                }
+
+                public override Type ComponentType => typeof(DynamicRowWrapper);
+                public override bool IsReadOnly => false;
+                public override Type PropertyType => typeof(Color);
+
+                public override object GetValue(object component)
+                {
+                    var wrapper = component as DynamicRowWrapper;
+                    if (wrapper != null && wrapper.row.Values.Count > columnIndex)
+                    {
+                        string colorStr = wrapper.row.Values[columnIndex] as string;
+                        if (!string.IsNullOrEmpty(colorStr))
+                        {
+                            string[] parts = colorStr.Split(' ');
+                            if (parts.Length == 3 &&
+                                float.TryParse(parts[0], out float r) &&
+                                float.TryParse(parts[1], out float g) &&
+                                float.TryParse(parts[2], out float b))
+                            {
+                                return Color.FromArgb(
+                                    (int)(r * 255),
+                                    (int)(g * 255),
+                                    (int)(b * 255));
+                            }
+                        }
+                    }
+                    return Color.Black;
+                }
+
+                public override void SetValue(object component, object value)
+                {
+                    var wrapper = component as DynamicRowWrapper;
+                    if (wrapper != null && wrapper.row.Values.Count > columnIndex && value is Color color)
+                    {
+                        string newValue = $"{color.R / 255.0f} {color.G / 255.0f} {color.B / 255.0f}";
+                        wrapper.row.Values[columnIndex] = newValue;
+                        wrapper.editor.bIsFileEdited = true;
+                        wrapper.editor.Text = $"{wrapper.editor.FileName} - {Language.GetString("$TABLE_EDITOR_TITLE")}*";
+                        OnValueChanged(component, EventArgs.Empty);
+                    }
+                }
+
+                public override bool CanResetValue(object component) => false;
+                public override void ResetValue(object component) { }
+                public override bool ShouldSerializeValue(object component) => false;
             }
 
             public object GetPropertyOwner(PropertyDescriptor pd) => this;
@@ -453,6 +558,99 @@ namespace Mafia2Tool
                         wrapper.row.Values[columnIndex] = value;
                         wrapper.editor.bIsFileEdited = true;
                         wrapper.editor.Text = $"{wrapper.editor.FileName} - {Language.GetString("$TABLE_EDITOR_TITLE")}*";
+                        OnValueChanged(component, EventArgs.Empty);
+                    }
+                }
+
+                public override bool CanResetValue(object component) => false;
+                public override void ResetValue(object component) { }
+                public override bool ShouldSerializeValue(object component) => false;
+            }
+            private class RgbColorPropertyDescriptor : PropertyDescriptor
+            {
+                private int rIndex, gIndex, bIndex;
+                private TableEditor editor;
+
+                public RgbColorPropertyDescriptor(string name, int rIdx, int gIdx, int bIdx, string description, TableEditor editor)
+                    : base(name, new Attribute[] { new DescriptionAttribute(description), new EditorAttribute(typeof(ColorEditor), typeof(UITypeEditor)) })
+                {
+                    this.rIndex = rIdx;
+                    this.gIndex = gIdx;
+                    this.bIndex = bIdx;
+                    this.editor = editor;
+                }
+
+                public override Type ComponentType => typeof(DynamicRowWrapper);
+                public override bool IsReadOnly => false;
+                public override Type PropertyType => typeof(Color);
+
+                public override object GetValue(object component)
+                {
+                    var wrapper = component as DynamicRowWrapper;
+                    if (wrapper != null && wrapper.row.Values.Count > Math.Max(rIndex, Math.Max(gIndex, bIndex)))
+                    {
+                        object rObj = wrapper.row.Values[rIndex];
+                        object gObj = wrapper.row.Values[gIndex];
+                        object bObj = wrapper.row.Values[bIndex];
+
+                        float r = 0, g = 0, b = 0;
+
+                        if (rObj is float rf) r = rf;
+                        else if (rObj is int ri) r = ri / 255.0f;
+                        else if (rObj is uint rui) r = rui / 255.0f;
+                        else if (rObj is string rs) float.TryParse(rs, out r);
+
+                        if (gObj is float gf) g = gf;
+                        else if (gObj is int gi) g = gi / 255.0f;
+                        else if (gObj is uint gui) g = gui / 255.0f;
+                        else if (gObj is string gs) float.TryParse(gs, out g);
+
+                        if (bObj is float bf) b = bf;
+                        else if (bObj is int bi) b = bi / 255.0f;
+                        else if (bObj is uint bui) b = bui / 255.0f;
+                        else if (bObj is string bs) float.TryParse(bs, out b);
+
+                        return Color.FromArgb(
+                            (int)(Math.Clamp(r, 0, 1) * 255),
+                            (int)(Math.Clamp(g, 0, 1) * 255),
+                            (int)(Math.Clamp(b, 0, 1) * 255));
+                    }
+                    return Color.Black;
+                }
+
+                public override void SetValue(object component, object value)
+                {
+                    var wrapper = component as DynamicRowWrapper;
+                    if (wrapper != null && value is Color color)
+                    {
+                        object rValue, gValue, bValue;
+                        Type originalType = wrapper.row.Values[rIndex]?.GetType() ?? typeof(float);
+
+                        if (originalType == typeof(float))
+                        {
+                            rValue = color.R / 255.0f;
+                            gValue = color.G / 255.0f;
+                            bValue = color.B / 255.0f;
+                        }
+                        else if (originalType == typeof(int) || originalType == typeof(uint))
+                        {
+                            rValue = (int)color.R;
+                            gValue = (int)color.G;
+                            bValue = (int)color.B;
+                        }
+                        else
+                        {
+                            rValue = $"{color.R / 255.0f}";
+                            gValue = $"{color.G / 255.0f}";
+                            bValue = $"{color.B / 255.0f}";
+                        }
+
+                        wrapper.row.Values[rIndex] = rValue;
+                        wrapper.row.Values[gIndex] = gValue;
+                        wrapper.row.Values[bIndex] = bValue;
+
+                        editor.bIsFileEdited = true;
+                        editor.Text = $"{editor.FileName} - {Language.GetString("$TABLE_EDITOR_TITLE")}*";
                         OnValueChanged(component, EventArgs.Empty);
                     }
                 }

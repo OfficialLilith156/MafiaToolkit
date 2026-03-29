@@ -70,3 +70,21 @@ A661FDBE Unknonw16
 1F634399 Unknown17 
 01961E9D TracerID | Здесь указан ID Пули которая вылетает из дула оружия
 BD38FB35 Name
+A0979CFE 1_Leather | Цвет кожи 
+A0979CFC 2_Trousers | Цвет брюк
+A0979CFF 3_Suit | Цвет вверха
+8C2ADC20 Option_1_Body+Roof_Color | ID беруться с файла car_colors.tbl. Система очень странная, если выйти больше ID что указано в carcolors.tbl то у вас будет меняться цвет крыши либо кузова
+8C2ADC21 Option_2_Body+Roof_Color | ID беруться с файла car_colors.tbl. Система очень странная, если выйти больше ID что указано в carcolors.tbl то у вас будет меняться цвет крыши либо кузова
+8C2ADC29 Option_3_Body+Roof_Color | ID беруться с файла car_colors.tbl. Система очень странная, если выйти больше ID что указано в carcolors.tbl то у вас будет меняться цвет крыши либо кузова
+8C2ADC2A Option_4_Body+Roof_Color | ID беруться с файла car_colors.tbl. Система очень странная, если выйти больше ID что указано в carcolors.tbl то у вас будет меняться цвет крыши либо кузова
+8C2ADC2B Option_5_Body+Roof_Color | ID беруться с файла car_colors.tbl. Система очень странная, если выйти больше ID что указано в carcolors.tbl то у вас будет меняться цвет крыши либо кузова
+8C2ADC2C Option_6_Body+Roof_Color | ID беруться с файла car_colors.tbl. Система очень странная, если выйти больше ID что указано в carcolors.tbl то у вас будет меняться цвет крыши либо кузова
+8C2ADC2D Option_7_Body+Roof_Color | ID беруться с файла car_colors.tbl. Система очень странная, если выйти больше ID что указано в carcolors.tbl то у вас будет меняться цвет крыши либо кузова
+8C2ADC2E Option_8_Body+Roof_Color | ID беруться с файла car_colors.tbl. Система очень странная, если выйти больше ID что указано в carcolors.tbl то у вас будет меняться цвет крыши либо кузова
+8C2ADC2F Option_9_Body+Roof_Color | ID беруться с файла car_colors.tbl. Система очень странная, если выйти больше ID что указано в carcolors.tbl то у вас будет меняться цвет крыши либо кузова
+D07894B8 Option_10_Body_Color | ID беруться с файла car_colors.tbl. Здесь меняеться только цвет кузова
+D07894B9 Option_11_Body_Color | ID беруться с файла car_colors.tbl. Здесь меняеться только цвет кузова
+D07894BA Option_12_Body_Color | ID беруться с файла car_colors.tbl. Здесь меняеться только цвет кузова
+D07894BB Option_13_Body_Color | ID беруться с файла car_colors.tbl. Здесь меняеться только цвет кузова
+D07894BF Option_14_Body_Color | ID беруться с файла car_colors.tbl. Здесь меняеться только цвет кузова
+E8939FBA Name_Car 
