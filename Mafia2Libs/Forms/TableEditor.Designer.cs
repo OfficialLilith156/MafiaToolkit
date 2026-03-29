@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System.Drawing;
+using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ScrollBar;
 
 namespace Mafia2Tool
@@ -42,36 +43,40 @@ namespace Mafia2Tool
             toolStripDropDownButton2 = new ToolStripDropDownButton();
             addRowToolStripMenuItem = new ToolStripMenuItem();
             deleteRowToolStripMenuItem = new ToolStripMenuItem();
+            loadDATToolStripMenuItem = new ToolStripMenuItem();
             versionLabel = new ToolStripLabel();
             versionComboBox = new ToolStripComboBox();
             searchBox = new ToolStripTextBox();
+            toolStripSeparator1 = new ToolStripSeparator();
+            keyColumnComboBox = new ToolStripComboBox();
+            toolStripLabdsasdel1 = new ToolStripLabel();
             toolStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // treeViewRows
             // 
             treeViewRows.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
-            treeViewRows.Location = new System.Drawing.Point(12, 28);
+            treeViewRows.Location = new Point(12, 28);
             treeViewRows.Name = "treeViewRows";
-            treeViewRows.Size = new System.Drawing.Size(272, 521);
+            treeViewRows.Size = new Size(272, 521);
             treeViewRows.TabIndex = 1;
             treeViewRows.AfterSelect += TreeViewRows_AfterSelect;
             // 
             // propertyGrid
             // 
             propertyGrid.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            propertyGrid.Location = new System.Drawing.Point(290, 28);
+            propertyGrid.Location = new Point(290, 28);
             propertyGrid.Name = "propertyGrid";
-            propertyGrid.Size = new System.Drawing.Size(582, 521);
+            propertyGrid.Size = new Size(609, 521);
             propertyGrid.TabIndex = 0;
             propertyGrid.PropertyValueChanged += PropertyGrid_PropertyValueChanged;
             // 
             // toolStrip1
             // 
-            toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripDropDownButton1, toolStripDropDownButton2, versionLabel, versionComboBox, searchBox });
-            toolStrip1.Location = new System.Drawing.Point(0, 0);
+            toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripDropDownButton1, toolStripDropDownButton2, versionLabel, versionComboBox, searchBox, toolStripSeparator1, toolStripLabdsasdel1, keyColumnComboBox });
+            toolStrip1.Location = new Point(0, 0);
             toolStrip1.Name = "toolStrip1";
-            toolStrip1.Size = new System.Drawing.Size(884, 25);
+            toolStrip1.Size = new Size(911, 25);
             toolStrip1.TabIndex = 3;
             toolStrip1.Text = "toolStrip1";
             // 
@@ -79,79 +84,103 @@ namespace Mafia2Tool
             // 
             toolStripDropDownButton1.DisplayStyle = ToolStripItemDisplayStyle.Text;
             toolStripDropDownButton1.DropDownItems.AddRange(new ToolStripItem[] { saveToolStripMenuItem, reloadToolStripMenuItem, exitToolStripMenuItem });
-            toolStripDropDownButton1.Image = (System.Drawing.Image)resources.GetObject("toolStripDropDownButton1.Image");
-            toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            toolStripDropDownButton1.Image = (Image)resources.GetObject("toolStripDropDownButton1.Image");
+            toolStripDropDownButton1.ImageTransparentColor = Color.Magenta;
             toolStripDropDownButton1.Name = "toolStripDropDownButton1";
-            toolStripDropDownButton1.Size = new System.Drawing.Size(38, 22);
+            toolStripDropDownButton1.Size = new Size(38, 22);
             toolStripDropDownButton1.Text = "File";
             toolStripDropDownButton1.ToolTipText = "File";
             // 
             // saveToolStripMenuItem
             // 
             saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            saveToolStripMenuItem.Size = new System.Drawing.Size(110, 22);
+            saveToolStripMenuItem.Size = new Size(110, 22);
             saveToolStripMenuItem.Text = "Save";
             saveToolStripMenuItem.Click += SaveOnClick;
             // 
             // reloadToolStripMenuItem
             // 
             reloadToolStripMenuItem.Name = "reloadToolStripMenuItem";
-            reloadToolStripMenuItem.Size = new System.Drawing.Size(110, 22);
+            reloadToolStripMenuItem.Size = new Size(110, 22);
             reloadToolStripMenuItem.Text = "Reload";
             reloadToolStripMenuItem.Click += ReloadOnClick;
             // 
             // exitToolStripMenuItem
             // 
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            exitToolStripMenuItem.Size = new System.Drawing.Size(110, 22);
+            exitToolStripMenuItem.Size = new Size(110, 22);
             exitToolStripMenuItem.Text = "Exit";
             exitToolStripMenuItem.Click += ExitButtonOnClick;
             // 
             // toolStripDropDownButton2
             // 
             toolStripDropDownButton2.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            toolStripDropDownButton2.DropDownItems.AddRange(new ToolStripItem[] { addRowToolStripMenuItem, deleteRowToolStripMenuItem });
-            toolStripDropDownButton2.Image = (System.Drawing.Image)resources.GetObject("toolStripDropDownButton2.Image");
-            toolStripDropDownButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
+            toolStripDropDownButton2.DropDownItems.AddRange(new ToolStripItem[] { addRowToolStripMenuItem, deleteRowToolStripMenuItem, loadDATToolStripMenuItem });
+            toolStripDropDownButton2.Image = (Image)resources.GetObject("toolStripDropDownButton2.Image");
+            toolStripDropDownButton2.ImageTransparentColor = Color.Magenta;
             toolStripDropDownButton2.Name = "toolStripDropDownButton2";
-            toolStripDropDownButton2.Size = new System.Drawing.Size(40, 22);
+            toolStripDropDownButton2.Size = new Size(40, 22);
             toolStripDropDownButton2.Text = "Edit";
             // 
             // addRowToolStripMenuItem
             // 
             addRowToolStripMenuItem.Name = "addRowToolStripMenuItem";
-            addRowToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            addRowToolStripMenuItem.Size = new Size(133, 22);
             addRowToolStripMenuItem.Text = "Add Row";
             addRowToolStripMenuItem.Click += AddRowOnClick;
             // 
             // deleteRowToolStripMenuItem
             // 
             deleteRowToolStripMenuItem.Name = "deleteRowToolStripMenuItem";
-            deleteRowToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            deleteRowToolStripMenuItem.Size = new Size(133, 22);
             deleteRowToolStripMenuItem.Text = "Delete Row";
             deleteRowToolStripMenuItem.Click += DeleteRowOnClick;
+            // 
+            // loadDATToolStripMenuItem
+            // 
+            loadDATToolStripMenuItem.Name = "loadDATToolStripMenuItem";
+            loadDATToolStripMenuItem.Size = new Size(133, 22);
+            loadDATToolStripMenuItem.Text = "Load DAT";
+            loadDATToolStripMenuItem.Click += LoadTextDbButton_Click;
             // 
             // versionLabel
             // 
             versionLabel.Name = "versionLabel";
-            versionLabel.Size = new System.Drawing.Size(0, 22);
+            versionLabel.Size = new Size(0, 22);
             // 
             // versionComboBox
             // 
             versionComboBox.Items.AddRange(new object[] { "1 (Classic)", "2 (Definitive Edition)" });
             versionComboBox.Name = "versionComboBox";
-            versionComboBox.Size = new System.Drawing.Size(150, 25);
+            versionComboBox.Size = new Size(150, 25);
             versionComboBox.SelectedIndexChanged += VersionComboBox_SelectedIndexChanged;
             // 
             // searchBox
             // 
             searchBox.Name = "searchBox";
-            searchBox.Size = new System.Drawing.Size(150, 25);
+            searchBox.Size = new Size(150, 25);
             searchBox.TextChanged += SearchBox_TextChanged;
+            // 
+            // toolStripSeparator1
+            // 
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new Size(6, 25);
+            // 
+            // keyColumnComboBox
+            // 
+            keyColumnComboBox.Name = "keyColumnComboBox";
+            keyColumnComboBox.Size = new Size(121, 25);
+            keyColumnComboBox.SelectedIndexChanged += KeyColumnComboBox_SelectedIndexChanged;
+            // 
+            // toolStripLabdsasdel1
+            // 
+            toolStripLabdsasdel1.Name = "toolStripLabdsasdel1";
+            toolStripLabdsasdel1.Size = new Size(53, 22);
+            toolStripLabdsasdel1.Text = "Column:";
             // 
             // TableEditor
             // 
-            ClientSize = new System.Drawing.Size(884, 561);
+            ClientSize = new Size(911, 561);
             Controls.Add(toolStrip1);
             Controls.Add(propertyGrid);
             Controls.Add(treeViewRows);
@@ -165,7 +194,6 @@ namespace Mafia2Tool
         }
 
         #endregion
-
         private TreeView treeViewRows;
         private PropertyGrid propertyGrid;
         private Label rowIndexLabel;
@@ -180,5 +208,9 @@ namespace Mafia2Tool
         private ToolStripLabel versionLabel;
         private ToolStripComboBox versionComboBox;
         private ToolStripTextBox searchBox;
+        private ToolStripMenuItem loadDATToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator1;
+        private ToolStripComboBox keyColumnComboBox;
+        private ToolStripLabel toolStripLabdsasdel1;
     }
 }

@@ -1,15 +1,13 @@
 ﻿using Gibbed.Illusion.FileFormats.Hashing;
 using Gibbed.Mafia2.ResourceFormats;
 using System;
-using System.Drawing;
-using System.Drawing.Design;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
+using System.Drawing.Design;
 using System.IO;
-using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using Utils.Language;
-using static ResourceTypes.Misc.StreamMapLoader;
 
 namespace Mafia2Tool
 {
@@ -22,6 +20,11 @@ namespace Mafia2Tool
         private bool bIsFileEdited = false;
         private Dictionary<uint, string> columnDescriptions = new Dictionary<uint, string>();
         public string FileName => file?.Name ?? "";
+        private Dictionary<string, string> textDatabase = null;
+        private string selectedKeyColumnName = null;
+        private string textDbFilePath = null;
+
+
 
         public TableEditor(FileInfo file)
         {
@@ -31,6 +34,74 @@ namespace Mafia2Tool
             Show();
         }
 
+        private void LoadTextDbButton_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog ofd = new OpenFileDialog())
+            {
+                ofd.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
+                ofd.Title = "Load Text Database";
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    textDbFilePath = ofd.FileName;
+                    ParseTextDatabase(textDbFilePath);
+                    UpdateTextDatabaseUI();
+                }
+            }
+        }
+
+        private void ParseTextDatabase(string path)
+        {
+            textDatabase = new Dictionary<string, string>();
+            var lines = File.ReadAllLines(path);
+            foreach (string line in lines)
+            {
+                if (string.IsNullOrWhiteSpace(line)) continue;
+                int colonIndex = line.IndexOf(':');
+                if (colonIndex <= 0) continue;
+                string key = line.Substring(0, colonIndex).Trim();
+                string value = line.Substring(colonIndex + 1);
+                textDatabase[key] = value;
+            }
+            if (data != null && data.Columns != null)
+            {
+                keyColumnComboBox.Items.Clear();
+                foreach (var col in data.Columns)
+                {
+                    string colName = GetColumnName(col.NameHash);
+                    keyColumnComboBox.Items.Add(colName);
+                }
+                if (keyColumnComboBox.Items.Count > 0)
+                {
+                    keyColumnComboBox.SelectedIndex = 0;
+                    selectedKeyColumnName = keyColumnComboBox.SelectedItem.ToString();
+                }
+            }
+        }
+
+        private void UpdateTextDatabaseUI()
+        {
+
+            keyColumnComboBox.Enabled = textDatabase != null && data != null && data.Columns.Count > 0;
+            RefreshCurrentRow();
+        }
+
+        private void KeyColumnComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (keyColumnComboBox.SelectedItem != null)
+            {
+                selectedKeyColumnName = keyColumnComboBox.SelectedItem.ToString();
+                RefreshCurrentRow();
+            }
+        }
+
+        private void RefreshCurrentRow()
+        {
+            if (treeViewRows.SelectedNode != null && treeViewRows.SelectedNode.Tag is TableData.Row row)
+            {
+                var wrapper = new DynamicRowWrapper(row, data.Columns, this);
+                propertyGrid.SelectedObject = wrapper;
+            }
+        }
 
         public void Initialise()
         {
@@ -38,6 +109,7 @@ namespace Mafia2Tool
             LoadColumnDescriptions();
             LoadTableData();
         }
+
         private void LoadColumnDescriptions()
         {
             string descFilePath = Path.Combine("Resources", "column_descriptions.txt");
@@ -72,12 +144,14 @@ namespace Mafia2Tool
                 MessageBox.Show($"Failed to load column descriptions: {ex.Message}");
             }
         }
+
         private string GetColumnDescription(uint hash)
         {
             if (columnDescriptions.TryGetValue(hash, out string desc))
                 return desc;
             return null;
         }
+
         private void ReadExternalHashes()
         {
             columnNames.Clear();
@@ -197,7 +271,6 @@ namespace Mafia2Tool
             }
             newData.Unk1 = data.Unk1;
             newData.Unk2 = data.Unk2;
-
             newData.Columns = data.Columns;
 
             foreach (var row in data.Rows)
@@ -322,9 +395,10 @@ namespace Mafia2Tool
                 }
             }
         }
+
         private string GetRowDisplayName(TableData.Row row, int rowIndex)
         {
-            string[] priorityNames = { "Model", "Name", "Notes", "Description", "Descr", "Civil", "E8939FBA", "Path", "File_Name", "ADBBFF55", "74203AAC" };
+            string[] priorityNames = { "Model", "Name", "Notes", "Description", "Descr", "Civil", "E8939FBA", "Path", "File_Name", "ADBBFF55", "74203AAC", "Car_Name" };
 
             int targetColumnIndex = -1;
 
@@ -385,6 +459,78 @@ namespace Mafia2Tool
             private List<TableData.Column> columns;
             private TableEditor editor;
 
+            [DisplayName("Localized Text")]
+            [Description("Text from loaded database, key taken from selected column.")]
+            public string LocalizedText
+            {
+                get
+                {
+                    if (editor.textDatabase == null || string.IsNullOrEmpty(editor.selectedKeyColumnName))
+                        return null;
+
+                    int keyColumnIndex = FindKeyColumnIndex();
+                    if (keyColumnIndex == -1 || keyColumnIndex >= row.Values.Count)
+                        return null;
+
+                    object keyObj = row.Values[keyColumnIndex];
+                    string rawKey = keyObj?.ToString();
+                    if (string.IsNullOrEmpty(rawKey))
+                        return null;
+
+                    string formattedKey = FormatKey(rawKey, keyObj);
+                    if (editor.textDatabase.TryGetValue(formattedKey, out string text))
+                        return text;
+                    return null;
+                }
+                set
+                {
+                    if (editor.textDatabase == null || string.IsNullOrEmpty(editor.selectedKeyColumnName))
+                        return;
+
+                    int keyColumnIndex = FindKeyColumnIndex();
+                    if (keyColumnIndex == -1 || keyColumnIndex >= row.Values.Count)
+                        return;
+
+                    object keyObj = row.Values[keyColumnIndex];
+                    string rawKey = keyObj?.ToString();
+                    if (string.IsNullOrEmpty(rawKey))
+                        return;
+
+                    string formattedKey = FormatKey(rawKey, keyObj);
+                    editor.textDatabase[formattedKey] = value ?? "";
+                    editor.bIsFileEdited = true;
+                    editor.Text = $"{editor.FileName} - {Language.GetString("$TABLE_EDITOR_TITLE")}*";
+                }
+            }
+
+            private int FindKeyColumnIndex()
+            {
+                for (int i = 0; i < columns.Count; i++)
+                {
+                    string colName = editor.GetColumnName(columns[i].NameHash);
+                    if (colName == editor.selectedKeyColumnName)
+                        return i;
+                }
+                return -1;
+            }
+
+            private string FormatKey(string rawKey, object originalValue)
+            {
+                if (System.Text.RegularExpressions.Regex.IsMatch(rawKey, @"^\d{2}_\d{2}_\d{2}_\d{4}$"))
+                    return rawKey;
+
+                bool isNumeric = originalValue is int || originalValue is uint || originalValue is long || originalValue is ulong || (originalValue is string s && long.TryParse(s, out _));
+
+                if (isNumeric)
+                {
+                    string numStr = rawKey.PadLeft(10, '0');
+                    if (numStr.Length == 10)
+                    {
+                        return $"{numStr.Substring(0, 2)}_{numStr.Substring(2, 2)}_{numStr.Substring(4, 2)}_{numStr.Substring(6, 4)}";
+                    }
+                }
+                return rawKey;
+            }
 
             public DynamicRowWrapper(TableData.Row row, List<TableData.Column> columns, TableEditor editor)
             {
@@ -402,11 +548,11 @@ namespace Mafia2Tool
             public object GetEditor(Type editorBaseType) => null;
             public EventDescriptorCollection GetEvents() => EventDescriptorCollection.Empty;
             public EventDescriptorCollection GetEvents(Attribute[] attributes) => EventDescriptorCollection.Empty;
-
             public PropertyDescriptorCollection GetProperties()
             {
                 return GetProperties(new Attribute[0]);
             }
+
             private bool TryGetRgbColumnIndices(List<TableData.Column> columns, out int rIndex, out int gIndex, out int bIndex)
             {
                 rIndex = gIndex = bIndex = -1;
@@ -423,6 +569,34 @@ namespace Mafia2Tool
                     }
                 }
                 return false;
+            }
+
+            private class LocalizedTextPropertyDescriptor : PropertyDescriptor
+            {
+                public LocalizedTextPropertyDescriptor() : base("Localized Text", new Attribute[] { new DescriptionAttribute("Text from loaded database") }) { }
+                public override Type ComponentType => typeof(DynamicRowWrapper);
+                public override bool IsReadOnly => false;
+                public override Type PropertyType => typeof(string);
+
+                public override object GetValue(object component)
+                {
+                    var wrapper = component as DynamicRowWrapper;
+                    return wrapper?.LocalizedText;
+                }
+
+                public override void SetValue(object component, object value)
+                {
+                    var wrapper = component as DynamicRowWrapper;
+                    if (wrapper != null)
+                    {
+                        wrapper.LocalizedText = value as string;
+                        OnValueChanged(component, EventArgs.Empty);
+                    }
+                }
+
+                public override bool CanResetValue(object component) => false;
+                public override void ResetValue(object component) { }
+                public override bool ShouldSerializeValue(object component) => false;
             }
 
             public PropertyDescriptorCollection GetProperties(Attribute[] attributes)
@@ -463,18 +637,29 @@ namespace Mafia2Tool
                         }
                     }
                 }
+                if (editor.textDatabase != null && !string.IsNullOrEmpty(editor.selectedKeyColumnName))
+                {
+                    bool keyColumnExists = false;
+                    foreach (var col in columns)
+                    {
+                        if (editor.GetColumnName(col.NameHash) == editor.selectedKeyColumnName)
+                        {
+                            keyColumnExists = true;
+                            break;
+                        }
+                    }
+                    if (keyColumnExists)
+                    {
+                        props.Add(new LocalizedTextPropertyDescriptor());
+                    }
+                }
                 return new PropertyDescriptorCollection(props.ToArray());
             }
             private class ColorPropertyDescriptor : PropertyDescriptor
             {
                 private int columnIndex;
 
-                public ColorPropertyDescriptor(string name, int index, string description)
-                    : base(name, new Attribute[]
-                    {
-            new DescriptionAttribute(description),
-            new EditorAttribute(typeof(ColorEditor), typeof(UITypeEditor))
-                    })
+                public ColorPropertyDescriptor(string name, int index, string description) : base(name, new Attribute[] {new DescriptionAttribute(description), new EditorAttribute(typeof(ColorEditor), typeof(UITypeEditor))})
                 {
                     columnIndex = index;
                 }
@@ -537,11 +722,9 @@ namespace Mafia2Tool
                     columnIndex = index;
                     propertyType = type;
                 }
-
                 public override Type ComponentType => typeof(DynamicRowWrapper);
                 public override bool IsReadOnly => false;
                 public override Type PropertyType => propertyType;
-
                 public override object GetValue(object component)
                 {
                     var wrapper = component as DynamicRowWrapper;
@@ -571,8 +754,7 @@ namespace Mafia2Tool
                 private int rIndex, gIndex, bIndex;
                 private TableEditor editor;
 
-                public RgbColorPropertyDescriptor(string name, int rIdx, int gIdx, int bIdx, string description, TableEditor editor)
-                    : base(name, new Attribute[] { new DescriptionAttribute(description), new EditorAttribute(typeof(ColorEditor), typeof(UITypeEditor)) })
+                public RgbColorPropertyDescriptor(string name, int rIdx, int gIdx, int bIdx, string description, TableEditor editor) : base(name, new Attribute[] { new DescriptionAttribute(description), new EditorAttribute(typeof(ColorEditor), typeof(UITypeEditor)) })
                 {
                     this.rIndex = rIdx;
                     this.gIndex = gIdx;
@@ -583,7 +765,6 @@ namespace Mafia2Tool
                 public override Type ComponentType => typeof(DynamicRowWrapper);
                 public override bool IsReadOnly => false;
                 public override Type PropertyType => typeof(Color);
-
                 public override object GetValue(object component)
                 {
                     var wrapper = component as DynamicRowWrapper;
