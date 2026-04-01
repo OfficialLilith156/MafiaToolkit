@@ -191,17 +191,25 @@ namespace ResourceTypes.Animation2
                 NewTrack.BoneName = NewTrack.BoneID.ToString();
                 NewTrack.Duration = Track.Duration;
 
-                NewTrack.RotKeyFrames = new MT_RotKey[Track.KeyFrames.Length];
-                for (int i = 0; i < Track.KeyFrames.Length; i++)
-                {
-                    NewTrack.RotKeyFrames[i] = new MT_RotKey(Track.KeyFrames[i]);
-                }
+                var rotKeys = new List<MT_RotKey>();
+                foreach (var kf in Track.KeyFrames)
+                    rotKeys.Add(new MT_RotKey(kf));
 
-                NewTrack.PosKeyFrames = new MT_PosKey[Track.Positions.KeyFrames.Length];
-                for (int i = 0; i < Track.Positions.KeyFrames.Length; i++)
-                {
-                    NewTrack.PosKeyFrames[i] = new MT_PosKey(Track.Positions.KeyFrames[i]);
-                }
+                NewTrack.RotKeyFrames = rotKeys
+                    .GroupBy(k => k.Time)
+                    .Select(g => g.Last())  
+                    .OrderBy(k => k.Time)   
+                    .ToArray();
+
+                var posKeys = new List<MT_PosKey>();
+                foreach (var kf in Track.Positions.KeyFrames)
+                    posKeys.Add(new MT_PosKey(kf));
+
+                NewTrack.PosKeyFrames = posKeys
+                    .GroupBy(k => k.Time)
+                    .Select(g => g.Last())
+                    .OrderBy(k => k.Time)
+                    .ToArray();
             }
 
             return NewAnimation;
@@ -211,49 +219,42 @@ namespace ResourceTypes.Animation2
         {
             Header.Hash = FNV64.Hash(InAnimation.AnimName);
             Header.Duration = InAnimation.Duration;
-            List<short >UnkShorts01List = new();
-            short UnkShort01 = 0;
+            Header.Count = (short)InAnimation.Tracks.Length;
 
             List<AnimTrack> NewTracks = new List<AnimTrack>();
-            foreach (MT_AnimTrack Track in InAnimation.Tracks)
+            List<short> UnkShorts01List = new List<short>();
+
+            for (short i = 0; i < InAnimation.Tracks.Length; i++)
             {
+                MT_AnimTrack Track = InAnimation.Tracks[i];
                 AnimTrack NewTrack = new AnimTrack();
 
-                List<(float, Quaternion)> RotKeys = new List<(float, Quaternion)>();
-                Array.ForEach(Track.RotKeyFrames, delegate (MT_RotKey key) { RotKeys.Add(key.AsPair()); });
+                NewTrack.KeyFrames = Track.RotKeyFrames.Select(k => k.AsPair()).ToArray();
+                NewTrack.Positions.KeyFrames = Track.PosKeyFrames.Select(k => k.AsPair()).ToArray();
 
-                List<(float, Vector3)> PosKeys = new List<(float, Vector3)>();
-                Array.ForEach(Track.PosKeyFrames, delegate (MT_PosKey key) { PosKeys.Add(key.AsPair()); });
+                int posFlag = NewTrack.Positions.KeyFrames.Length > 0 ? 1 : 0;
+                int rotFlag = NewTrack.KeyFrames.Length > 0 ? 2 : 0;
+                int posDataFlag = NewTrack.Positions.KeyFrames.Length > 0 ? 2 : 0;
+                int rotDataFlag = NewTrack.KeyFrames.Length > 0 ? 1 : 0;
 
-                NewTrack.KeyFrames = RotKeys.ToArray();
-                NewTrack.Positions.KeyFrames = PosKeys.ToArray();
-                NewTrack.TrackDataChanged = true;
-                NewTrack.Positions.TrackDataChanged = true;
-
-                int PositionFlags = NewTrack.Positions.KeyFrames.Length > 0 ? 1 : 0;
-                int RotationFlags = NewTrack.KeyFrames.Length > 0 ? 2 : 0;
-                int PositionDataFlags = NewTrack.Positions.KeyFrames.Length > 0 ? 2 : 0;
-                int RotationDataFlags = NewTrack.KeyFrames.Length > 0 ? 1 : 0;
-                int Flags = PositionFlags | RotationFlags;
-                int DataFlags = PositionDataFlags | RotationDataFlags;
-
-                NewTrack.Flags = (byte)(0x20 | Flags);
-                NewTrack.DataFlags = (byte)(0x8 | DataFlags);
+                NewTrack.Flags = (byte)(0x20 | (posFlag | rotFlag));
+                NewTrack.DataFlags = (byte)(0x8 | (posDataFlag | rotDataFlag));
                 NewTrack.BoneID = Track.BoneID;
                 NewTrack.Duration = Track.Duration;
 
-                if (Flags != 0)
-                {
-                    NewTracks.Add(NewTrack);
-
-                    UnkShorts01List.Add(UnkShort01);
-                    UnkShort01++;
-                }
+                NewTracks.Add(NewTrack);
+                UnkShorts01List.Add(i);
             }
 
-            Tracks = NewTracks.OrderBy(x => (long)x.BoneID).ToArray();
-
+            Tracks = NewTracks.ToArray();
             UnkShorts01 = UnkShorts01List.ToArray();
+
+            Unk01 = (ushort)Tracks.Length;
+            UnkShorts00 = new short[Unk01];
+            for (int i = 0; i < UnkShorts00.Length; i++) UnkShorts00[i] = 0;
+
+            IsDataPresent = true;
+            Unk00 = 0;
         }
     }
 }

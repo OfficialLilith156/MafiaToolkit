@@ -136,7 +136,11 @@ namespace ResourceTypes.ModelHelpers.ModelExporter
                     IEnumerable<(float, Vector3)> PosKeys = PosSampler.GetLinearKeys();
                     Array.ForEach<(float, Vector3)>(PosKeys.ToArray(), (delegate ((float, Vector3) Item) { PositionKeyList.Add(new MT_PosKey(Item)); }));
 
-                    NewAnimTrack.PosKeyFrames = PositionKeyList.ToArray();
+                    NewAnimTrack.PosKeyFrames = PositionKeyList
+                     .GroupBy(k => k.Time)
+                     .Select(g => g.Last())
+                     .OrderBy(k => k.Time)
+                     .ToArray();
                 }
 
                 // Convert Rotation
@@ -148,13 +152,72 @@ namespace ResourceTypes.ModelHelpers.ModelExporter
                     IEnumerable<(float, Quaternion)> RotKeys = RotSampler.GetLinearKeys();
                     Array.ForEach<(float, Quaternion)>(RotKeys.ToArray(), (delegate ((float, Quaternion) Item) { RotationKeyList.Add(new MT_RotKey(Item)); }));
 
-                    NewAnimTrack.RotKeyFrames = RotationKeyList.ToArray();
+                    NewAnimTrack.RotKeyFrames = RotationKeyList
+                     .GroupBy(k => k.Time)
+                     .Select(g => g.Last())
+                     .OrderBy(k => k.Time)
+                     .ToArray();
                 }
+
             }
 
             Tracks = tracks.Values.ToArray();
+            Optimize();
+        }
+        public void Optimize(float rotationTolerance = 0.001f, float positionTolerance = 0.001f)
+        {
+            foreach (var track in Tracks)
+            {
+                if (track.RotKeyFrames?.Length > 2)
+                    track.RotKeyFrames = OptimizeRotationKeys(track.RotKeyFrames, rotationTolerance);
+                if (track.PosKeyFrames?.Length > 2)
+                    track.PosKeyFrames = OptimizePositionKeys(track.PosKeyFrames, positionTolerance);
+            }
         }
 
+        private static MT_RotKey[] OptimizeRotationKeys(MT_RotKey[] keys, float tolerance)
+        {
+            if (keys.Length <= 2) return keys;
+
+            var result = new List<MT_RotKey> { keys[0] };
+            int last = 0;
+
+            for (int i = 1; i < keys.Length - 1; i++)
+            {
+                float t = (keys[i].Time - keys[last].Time) / (keys[i + 1].Time - keys[last].Time);
+                Quaternion interpolated = Quaternion.Slerp(keys[last].Value, keys[i + 1].Value, t);
+                float angleDiff = 1.0f - Math.Abs(Quaternion.Dot(interpolated, keys[i].Value));
+                if (angleDiff > tolerance)
+                {
+                    result.Add(keys[i]);
+                    last = i;
+                }
+            }
+            result.Add(keys[^1]);
+            return result.ToArray();
+        }
+
+        private static MT_PosKey[] OptimizePositionKeys(MT_PosKey[] keys, float tolerance)
+        {
+            if (keys.Length <= 2) return keys;
+
+            var result = new List<MT_PosKey> { keys[0] };
+            int last = 0;
+
+            for (int i = 1; i < keys.Length - 1; i++)
+            {
+                float t = (keys[i].Time - keys[last].Time) / (keys[i + 1].Time - keys[last].Time);
+                Vector3 interpolated = Vector3.Lerp(keys[last].Value, keys[i + 1].Value, t);
+                float error = Vector3.Distance(interpolated, keys[i].Value);
+                if (error > tolerance)
+                {
+                    result.Add(keys[i]);
+                    last = i;
+                }
+            }
+            result.Add(keys[^1]);
+            return result.ToArray();
+        }
         protected override bool InternalValidate(MT_ValidationTracker TrackerObject)
         {
             // TODO
