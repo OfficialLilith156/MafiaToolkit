@@ -682,10 +682,14 @@ namespace Mafia2Tool
                                 float.TryParse(parts[1], out float g) &&
                                 float.TryParse(parts[2], out float b))
                             {
+                                if (r > 1.0f && r <= 255.0f) r /= 255.0f;
+                                if (g > 1.0f && g <= 255.0f) g /= 255.0f;
+                                if (b > 1.0f && b <= 255.0f) b /= 255.0f;
+
                                 return Color.FromArgb(
-                                    (int)(r * 255),
-                                    (int)(g * 255),
-                                    (int)(b * 255));
+                                    (int)(Math.Clamp(r, 0, 1) * 255),
+                                    (int)(Math.Clamp(g, 0, 1) * 255),
+                                    (int)(Math.Clamp(b, 0, 1) * 255));
                             }
                         }
                     }
@@ -776,20 +780,62 @@ namespace Mafia2Tool
 
                         float r = 0, g = 0, b = 0;
 
-                        if (rObj is float rf) r = rf;
-                        else if (rObj is int ri) r = ri / 255.0f;
-                        else if (rObj is uint rui) r = rui / 255.0f;
-                        else if (rObj is string rs) float.TryParse(rs, out r);
+                        if (rObj is float rf)
+                        {
+                            r = rf;
+                            if (r > 1.0f && r <= 255.0f) r /= 255.0f;
+                        }
+                        else if (rObj is int ri)
+                        {
+                            r = ri / 255.0f;
+                        }
+                        else if (rObj is uint rui)
+                        {
+                            r = rui / 255.0f;
+                        }
+                        else if (rObj is string rs)
+                        {
+                            float.TryParse(rs, out r);
+                            if (r > 1.0f && r <= 255.0f) r /= 255.0f;
+                        }
 
-                        if (gObj is float gf) g = gf;
-                        else if (gObj is int gi) g = gi / 255.0f;
-                        else if (gObj is uint gui) g = gui / 255.0f;
-                        else if (gObj is string gs) float.TryParse(gs, out g);
+                        if (gObj is float gf)
+                        {
+                            g = gf;
+                            if (g > 1.0f && g <= 255.0f) g /= 255.0f;
+                        }
+                        else if (gObj is int gi)
+                        {
+                            g = gi / 255.0f;
+                        }
+                        else if (gObj is uint gui)
+                        {
+                            g = gui / 255.0f;
+                        }
+                        else if (gObj is string gs)
+                        {
+                            float.TryParse(gs, out g);
+                            if (g > 1.0f && g <= 255.0f) g /= 255.0f;
+                        }
 
-                        if (bObj is float bf) b = bf;
-                        else if (bObj is int bi) b = bi / 255.0f;
-                        else if (bObj is uint bui) b = bui / 255.0f;
-                        else if (bObj is string bs) float.TryParse(bs, out b);
+                        if (bObj is float bf)
+                        {
+                            b = bf;
+                            if (b > 1.0f && b <= 255.0f) b /= 255.0f;
+                        }
+                        else if (bObj is int bi)
+                        {
+                            b = bi / 255.0f;
+                        }
+                        else if (bObj is uint bui)
+                        {
+                            b = bui / 255.0f;
+                        }
+                        else if (bObj is string bs)
+                        {
+                            float.TryParse(bs, out b);
+                            if (b > 1.0f && b <= 255.0f) b /= 255.0f;
+                        }
 
                         return Color.FromArgb(
                             (int)(Math.Clamp(r, 0, 1) * 255),
