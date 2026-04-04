@@ -33,13 +33,13 @@ namespace ResourceTypes.Collisions
             foreach (var part in sortedParts)
             {
                 var sameMaterialParts = part.Value;
-                collisionModel.Sections.Add(new Collision.Section
+                var section = new Collision.Section
                 {
-                    Material = part.Key - 2,
+                    MaterialEnum = (CollisionMaterials)part.Key,
                     Start = orderedTriangles.Count * 3,
                     NumEdges = (int)sameMaterialParts.Sum(p => p.NumFaces) * 3
-                });
-
+                };
+                collisionModel.Sections.Add(section);
                 foreach (var sameMaterialPart in sameMaterialParts)
                 {
                     var start = (int)sameMaterialPart.StartIndex;

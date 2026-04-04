@@ -4477,7 +4477,8 @@ namespace Mafia2Tool
             }
             if (pGrid.SelectedObject is Collision.CollisionModel collisionModel)
             {
-                if (e.ChangedItem.Label == "MainMaterial" || e.ChangedItem.Label == "MaterialEnum")
+                if (e.ChangedItem.Label == "MainMaterial" ||
+                    (e.ChangedItem.Label == "MaterialEnum" && e.ChangedItem.Parent?.PropertyDescriptor?.ComponentType == typeof(Collision.Section)))
                 {
                     UpdateCollisionModelRender(collisionModel);
                 }
