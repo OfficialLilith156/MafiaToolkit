@@ -1,6 +1,7 @@
 ﻿using ResourceTypes.Collisions;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -281,7 +282,32 @@ namespace ResourceTypes.Collisions
         {
             public ulong Hash { get; set; }
             public TriangleMesh Mesh { get; set; }
-            public IList<Section> Sections { get; set; } 
+            public IList<Section> Sections { get; set; }
+           
+            [Browsable(true)]
+            [DisplayName("Main Material")]
+            [Description("Set the same material for all sections (updates all triangles)")]
+            public CollisionMaterials MainMaterial
+            {
+                get
+                {
+                    if (Sections != null && Sections.Count > 0)
+                        return Sections[0].MaterialEnum;
+                    return CollisionMaterials.Undefined;
+                }
+                set
+                {
+                    foreach (var section in Sections)
+                        section.MaterialEnum = value;
+
+                    if (Mesh != null && Mesh.MaterialIndices != null)
+                    {
+                        ushort matIndex = (ushort)value;
+                        for (int i = 0; i < Mesh.MaterialIndices.Count; i++)
+                            Mesh.MaterialIndices[i] = matIndex;
+                    }
+                }
+            }
 
             public CollisionModel(BinaryReader reader)
             {
@@ -341,6 +367,16 @@ namespace ResourceTypes.Collisions
             /// Always == 0 (at least on PC)
             /// </summary>
             public int Unk2 { get; set; }
+            
+            [Browsable(true)]
+            [DisplayName("Material")]
+            [Description("Collision material for this section")]
+            public CollisionMaterials MaterialEnum
+            {
+                get => (CollisionMaterials)(Material + 2);
+                set => Material = (int)value - 2;
+            }
+
 
             public Section()
             {

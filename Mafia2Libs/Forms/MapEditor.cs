@@ -18,6 +18,7 @@ using ResourceTypes.Navigation;
 using ResourceTypes.Navigation.Traffic;
 using ResourceTypes.Translokator;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -3900,6 +3901,44 @@ namespace Mafia2Tool
                 }
             }
         }
+        private void UpdateCollisionModelRender(Collision.CollisionModel model)
+        {
+            if (RenderStorageSingleton.Instance.StaticCollisions.TryGetValue(model.Hash, out var oldRender))
+            {
+                oldRender.Shutdown();
+                RenderStorageSingleton.Instance.StaticCollisions.Remove(model.Hash);
+            }
+
+            var newRender = new RenderStaticCollision();
+            newRender.ConvertCollisionToRender(model.Hash, model.Mesh);
+            RenderStorageSingleton.Instance.StaticCollisions.Add(model.Hash, newRender);
+            TreeNode modelNode = null;
+            foreach (TreeNode node in collisionRoot.Nodes)
+            {
+                if (node.Tag == model)
+                {
+                    modelNode = node;
+                    break;
+                }
+            }
+            if (modelNode == null) return;
+
+            foreach (TreeNode placementNode in modelNode.Nodes)
+            {
+                if (!int.TryParse(placementNode.Name, out int refID))
+                    continue;
+
+                var placement = placementNode.Tag as Collision.Placement;
+                if (placement == null) continue;
+
+                Graphics.DeleteAsset(refID);
+
+                RenderInstance instance = new RenderInstance();
+                instance.Init(newRender);
+                instance.SetTransform(placement.Transform);
+                Graphics.InitObjectStack[refID] = instance;
+            }
+        }
         private void AddNavVertexButton_Click(object sender, EventArgs e)
         {
             TreeNode selectedNode = dSceneTree.SelectedNode;
@@ -4435,6 +4474,13 @@ namespace Mafia2Tool
             {
                 sector.RebuildRenderBox();
                 Graphics.SelectEntry(sector.RefID);
+            }
+            if (pGrid.SelectedObject is Collision.CollisionModel collisionModel)
+            {
+                if (e.ChangedItem.Label == "MainMaterial" || e.ChangedItem.Label == "MaterialEnum")
+                {
+                    UpdateCollisionModelRender(collisionModel);
+                }
             }
             if (pGrid.SelectedObject is AIWorld_Type7 type7)
             {
