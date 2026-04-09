@@ -282,18 +282,11 @@ namespace ResourceTypes.Collisions
         {
             public ulong Hash { get; set; }
             public TriangleMesh Mesh { get; set; }
-
-            [Browsable(true)]
-            [DisplayName("Sections")]
-            [Description("Collision sections with individual materials")]
-            [TypeConverter(typeof(ExpandableObjectConverter))]
-            [Editor(typeof(System.ComponentModel.Design.CollectionEditor), typeof(System.Drawing.Design.UITypeEditor))]
             public IList<Section> Sections { get; set; }
-
-
+           
             [Browsable(true)]
-            [DisplayName("Main Material (all sections)")]
-            [Description("Set the same material for all sections (overrides individual settings)")]
+            [DisplayName("Main Material")]
+            [Description("Set the same material for all sections (updates all triangles)")]
             public CollisionMaterials MainMaterial
             {
                 get
@@ -362,24 +355,32 @@ namespace ResourceTypes.Collisions
         public class Section
         {
             public int Start { get; set; }
-            public int NumEdges { get; set; }
-            public int Material { get; set; }
-            public int Unk2 { get; set; }
 
-            private CollisionMaterials _materialEnum;
+            public int NumEdges { get; set; }
+
+            /// <summary>
+            /// Actually it's materialIndex-2 (that's strange, isn't it?)
+            /// </summary>
+            public int Material { get; set; }
+
+            /// <summary>
+            /// Always == 0 (at least on PC)
+            /// </summary>
+            public int Unk2 { get; set; }
+            
+            [Browsable(true)]
             [DisplayName("Material")]
             [Description("Collision material for this section")]
             public CollisionMaterials MaterialEnum
             {
-                get => _materialEnum;
-                set
-                {
-                    _materialEnum = value;
-                    Material = (int)value - 2;
-                }
+                get => (CollisionMaterials)(Material + 2);
+                set => Material = (int)value - 2;
             }
 
-            public Section() { }
+
+            public Section()
+            {
+            }
 
             public Section(BinaryReader reader)
             {
@@ -387,12 +388,10 @@ namespace ResourceTypes.Collisions
                 NumEdges = reader.ReadInt32();
                 Material = reader.ReadInt32();
                 Unk2 = reader.ReadInt32();
-                _materialEnum = (CollisionMaterials)(Material + 2);
             }
 
             public void WriteToFile(BinaryWriter writer)
             {
-                Material = (int)_materialEnum - 2;
                 writer.Write(Start);
                 writer.Write(NumEdges);
                 writer.Write(Material);
