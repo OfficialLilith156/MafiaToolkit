@@ -39,6 +39,7 @@ using Utils.Settings;
 using Utils.VorticeUtils;
 using Vortice.Mathematics;
 using WeifenLuo.WinFormsUI.Docking;
+using static ResourceTypes.Collisions.Collision;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 using Collision = ResourceTypes.Collisions.Collision;
 using Object = ResourceTypes.Translokator.Object;
@@ -3459,6 +3460,10 @@ namespace Mafia2Tool
             if (FrameResource.IsFrameType(node.Tag))
             {
                 Graphics.SelectEntry((node.Tag as FrameEntry).RefID);
+            }
+            if (node.Tag is CollisionModel colModel)
+            {
+                dPropertyGrid.SetObject(colModel);
             }
             else if (node.Tag is SpatialCell)
             {

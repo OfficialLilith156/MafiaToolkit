@@ -8,6 +8,7 @@ using System.Numerics;
 using Utils.Helpers;
 using Utils.Logging;
 using Utils.VorticeUtils;
+using System.ComponentModel;
 using Vortice.Mathematics;
 
 namespace ResourceTypes.Collisions
@@ -15,14 +16,14 @@ namespace ResourceTypes.Collisions
     public class Collision
     {
         private const int Version = 0x11; // 17
- 
+
         public string Name { get; set; }
         /// <summary>
         /// Platform (== 0 on PC/Mac, == 1 on XBox360, == 2 on PS3)
         /// </summary>
         /// <remarks>Could be <c>NxPlatform</c> type, enum values are match</remarks>
         public uint Platform { get; set; } = 0;
-        public List<Placement> Placements { get; private set; }  = new List<Placement>(); 
+        public List<Placement> Placements { get; private set; }= new List<Placement>();
         public SortedDictionary<ulong, CollisionModel> Models { get; private set; } = new SortedDictionary<ulong, CollisionModel>();
 
 
@@ -42,13 +43,13 @@ namespace ResourceTypes.Collisions
         public void ReadFromFile(BinaryReader reader)
         {
             if (reader.ReadInt32() != Version)
-            { 
+            {
                 throw new Exception("Unknown collision version");
             }
 
             Platform = reader.ReadUInt32();
             if (Platform > 2)
-            { 
+            {
                 throw new Exception($"Unknown platform {Platform}");
             }
 
@@ -194,8 +195,10 @@ namespace ResourceTypes.Collisions
             /// Helper property to get/set rotation in degrees (with Z axes adopted to the Toolkit render coordinate system)
             /// instead of original rotation which is stored in radians
             /// </summary>
-            public Vector3 RotationDegrees {
-                get {
+            public Vector3 RotationDegrees
+            {
+                get
+                {
                     Vector3 vec = new Vector3();
                     vec.X = MathHelper.ToDegrees(Rotation.X);
                     vec.Y = MathHelper.ToDegrees(Rotation.Y);
@@ -206,7 +209,8 @@ namespace ResourceTypes.Collisions
                     vec.Z = /*Unk5 != 128 ? MathUtil.RadiansToDegrees(Rotation.Z) : */-MathHelper.ToDegrees(Rotation.Z);
                     return vec;
                 }
-                set {
+                set
+                {
                     Vector3 vec = new Vector3();
                     vec.X = MathHelper.ToRadians(value.X);
                     vec.Y = MathHelper.ToRadians(value.Y);
@@ -220,8 +224,10 @@ namespace ResourceTypes.Collisions
             /// <summary>
             /// Helper property to easily build the transform for the Toolkit render system.
             /// </summary>
-            public Matrix4x4 Transform { 
-                get {
+            public Matrix4x4 Transform
+            {
+                get
+                {
 
                     Matrix4x4 transform = MatrixUtils.SetMatrix(RotationDegrees, Vector3.One, Position);
                     ToolkitAssert.Ensure(!transform.IsNaN(), "Transform is NaN");
@@ -279,9 +285,16 @@ namespace ResourceTypes.Collisions
 
         public class CollisionModel
         {
+            [Category("General")]
+            [Description("Hash of the collision model.")]
             public ulong Hash { get; set; }
+
+            [Browsable(false)]
             public TriangleMesh Mesh { get; set; }
-            public IList<Section> Sections { get; set; } 
+
+            [Category("Collision Data")]
+            [Description("Material sections of this collision model. Click '...' to edit.")]
+            public List<Section> Sections { get; set; }
 
             public CollisionModel(BinaryReader reader)
             {
@@ -307,7 +320,9 @@ namespace ResourceTypes.Collisions
                 Sections = new List<Section>();
                 for (int i = 0; i < numSections; i++)
                 {
-                    Sections.Add(new Section(reader));
+                    Section sec = new Section(reader);
+                    sec.ParentModel = this;
+                    Sections.Add(sec);
                 }
             }
 
@@ -329,18 +344,54 @@ namespace ResourceTypes.Collisions
         public class Section
         {
             public int Start { get; set; }
-
             public int NumEdges { get; set; }
 
-            /// <summary>
-            /// Actually it's materialIndex-2 (that's strange, isn't it?)
-            /// </summary>
+            [Browsable(false)]
             public int Material { get; set; }
 
-            /// <summary>
-            /// Always == 0 (at least on PC)
-            /// </summary>
             public int Unk2 { get; set; }
+
+            [Browsable(false)]
+            public CollisionModel ParentModel { get; set; }
+
+            [Category("Material")]
+            [Description("The physics material type for this collision section.")]
+            [DisplayName("Material Type")]
+            public CollisionMaterials MaterialType
+            {
+                get
+                {
+                    int enumValue = Material + 2;
+                    if (Enum.IsDefined(typeof(CollisionMaterials), enumValue))
+                    {
+                        return (CollisionMaterials)enumValue;
+                    }
+                    return CollisionMaterials.Undefined;
+                }
+                set
+                {
+                    Material = (int)value - 2;
+                    ApplyMaterialToThisSection();
+                }
+            }
+
+            private void ApplyMaterialToThisSection()
+            {
+                if (ParentModel?.Mesh?.MaterialIndices == null) return;
+
+                ushort materialIndex = (ushort)(Material + 2);
+                int startTriangle = Start / 3;
+                int numTriangles = NumEdges / 3;
+
+                int maxTriangles = ParentModel.Mesh.MaterialIndices.Count;
+                if (startTriangle >= maxTriangles) return;
+                int trianglesToProcess = Math.Min(numTriangles, maxTriangles - startTriangle);
+
+                for (int i = 0; i < trianglesToProcess; i++)
+                {
+                    ParentModel.Mesh.MaterialIndices[startTriangle + i] = materialIndex;
+                }
+            }
 
             public Section()
             {
