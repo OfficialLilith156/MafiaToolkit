@@ -16,6 +16,9 @@ namespace Mafia2Tool.Forms
         private string filePath = string.Empty;
         private byte[] originalFileBytes;
         private (int TagPosition, int idPosition, int Tag2Position) currentPositions;
+        private int size8Position = -1;
+        private int objNamePosition = -1;
+        private ulong storedSizeValue = 0;
 
         public SizeNOVEditor(string filePath = "")
         {
@@ -103,10 +106,32 @@ namespace Mafia2Tool.Forms
 
                     btnSave.Enabled = true;
                 }
+                var (sizePos, namePos, sizeValue, objName) = FindSizeAndName(originalFileBytes);
+                if (sizePos >= 0 && namePos >= 0)
+                {
+                    size8Position = sizePos;
+                    objNamePosition = namePos;
+                    storedSizeValue = sizeValue;
+                    txtSizeHex.Text = $"0x{sizeValue:X}";
+                    byte[] sizeBytes = BitConverter.GetBytes(sizeValue);
+                    txtSizeHexBytes.Text = BitConverter.ToString(sizeBytes).Replace("-", " ");
+                    txtObjName.Text = objName;
+
+                    long expectedSize = size8Position - currentPositions.idPosition;
+                    txtExpectedSize.Text = $"{expectedSize} (0x{expectedSize:X})";
+
+                    if ((ulong)expectedSize != sizeValue)
+                    {
+                        txtExpectedSize.BackColor = Color.LightSalmon;
+                    }
+                    else
+                    {
+                        txtExpectedSize.BackColor = SystemColors.Control;
+                    }
+                }
                 else
                 {
-                    MessageBox.Show("Could not find ID, Tag, or Tag2 in the file.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    btnSave.Enabled = false;
+                    size8Position = -1;
                 }
             }
             catch (Exception ex)
@@ -244,6 +269,19 @@ namespace Mafia2Tool.Forms
 
             byte[] modifiedBytes = new byte[originalFileBytes.Length];
             Array.Copy(originalFileBytes, modifiedBytes, originalFileBytes.Length);
+            if (size8Position >= 0)
+            {
+                if (!string.IsNullOrEmpty(txtSizeHexBytes.Text))
+                {
+                    string[] parts = txtSizeHexBytes.Text.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (parts.Length == 8)
+                    {
+                        for (int i = 0; i < 8; i++)
+                            modifiedBytes[size8Position + i] = Convert.ToByte(parts[i], 16);
+                    }
+                }
+
+            }
             try
             {
                 if (!string.IsNullOrEmpty(txtTagHexBytes.Text))
@@ -394,6 +432,31 @@ namespace Mafia2Tool.Forms
                     txtTag2Hex.Text = $"0x{value:X}";
                 }
             }
+        }
+        private (int sizePos, int namePos, ulong sizeValue, string objName) FindSizeAndName(byte[] fileBytes)
+        {
+            for (int i = fileBytes.Length - 1; i >= 3; i--)
+            {
+                if (fileBytes[i] == 'j' && fileBytes[i - 1] == 'b' && fileBytes[i - 2] == 'o')
+                {
+                    int nameEnd = i;
+                    int nameStart = nameEnd;
+                    while (nameStart > 0 && fileBytes[nameStart - 1] >= 0x20 && fileBytes[nameStart - 1] <= 0x7E)
+                        nameStart--;
+
+                    int sizePos = nameStart - 8;
+                    if (sizePos >= 0 && sizePos + 8 <= fileBytes.Length)
+                    {
+                        byte[] sizeBytes = new byte[8];
+                        Array.Copy(fileBytes, sizePos, sizeBytes, 0, 8);
+                        ulong sizeValue = BitConverter.ToUInt64(sizeBytes, 0);
+                        string objName = Encoding.ASCII.GetString(fileBytes, nameStart, nameEnd - nameStart + 1);
+                        return (sizePos, nameStart, sizeValue, objName);
+                    }
+                    break;
+                }
+            }
+            return (-1, -1, 0, null);
         }
     }
 }

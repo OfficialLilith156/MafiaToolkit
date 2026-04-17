@@ -55,13 +55,19 @@
             toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
             btnSave = new System.Windows.Forms.ToolStripMenuItem();
             saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            txtSizeHex = new System.Windows.Forms.TextBox();
+            txtSizeHexBytes = new System.Windows.Forms.TextBox();
+            txtObjName = new System.Windows.Forms.TextBox();
+            txtExpectedSize = new System.Windows.Forms.TextBox();
+            label7 = new System.Windows.Forms.Label();
+            label8 = new System.Windows.Forms.Label();
             toolStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new System.Drawing.Point(21, 45);
+            label1.Location = new System.Drawing.Point(61, 45);
             label1.Name = "label1";
             label1.Size = new System.Drawing.Size(18, 15);
             label1.TabIndex = 0;
@@ -71,12 +77,12 @@
             // 
             txtFilePath.Location = new System.Drawing.Point(12, 431);
             txtFilePath.Name = "txtFilePath";
-            txtFilePath.Size = new System.Drawing.Size(284, 23);
+            txtFilePath.Size = new System.Drawing.Size(304, 23);
             txtFilePath.TabIndex = 1;
             // 
             // btnBrowse
             // 
-            btnBrowse.Location = new System.Drawing.Point(302, 431);
+            btnBrowse.Location = new System.Drawing.Point(322, 431);
             btnBrowse.Name = "btnBrowse";
             btnBrowse.Size = new System.Drawing.Size(75, 23);
             btnBrowse.TabIndex = 2;
@@ -87,7 +93,7 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new System.Drawing.Point(295, 24);
+            label4.Location = new System.Drawing.Point(340, 25);
             label4.Name = "label4";
             label4.Size = new System.Drawing.Size(35, 15);
             label4.TabIndex = 4;
@@ -95,7 +101,7 @@
             // 
             // txtTagHex
             // 
-            txtTagHex.Location = new System.Drawing.Point(257, 42);
+            txtTagHex.Location = new System.Drawing.Point(297, 42);
             txtTagHex.Name = "txtTagHex";
             txtTagHex.Size = new System.Drawing.Size(101, 23);
             txtTagHex.TabIndex = 5;
@@ -104,7 +110,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new System.Drawing.Point(188, 24);
+            label3.Location = new System.Drawing.Point(233, 25);
             label3.Name = "label3";
             label3.Size = new System.Drawing.Size(28, 15);
             label3.TabIndex = 6;
@@ -112,7 +118,7 @@
             // 
             // txtTagDecimal
             // 
-            txtTagDecimal.Location = new System.Drawing.Point(45, 42);
+            txtTagDecimal.Location = new System.Drawing.Point(85, 42);
             txtTagDecimal.Name = "txtTagDecimal";
             txtTagDecimal.Size = new System.Drawing.Size(100, 23);
             txtTagDecimal.TabIndex = 7;
@@ -121,7 +127,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new System.Drawing.Point(80, 24);
+            label2.Location = new System.Drawing.Point(125, 25);
             label2.Name = "label2";
             label2.Size = new System.Drawing.Size(35, 15);
             label2.TabIndex = 8;
@@ -133,7 +139,7 @@
             // 
             // txtTagHexBytes
             // 
-            txtTagHexBytes.Location = new System.Drawing.Point(151, 42);
+            txtTagHexBytes.Location = new System.Drawing.Point(191, 42);
             txtTagHexBytes.Name = "txtTagHexBytes";
             txtTagHexBytes.Size = new System.Drawing.Size(100, 23);
             txtTagHexBytes.TabIndex = 9;
@@ -141,7 +147,7 @@
             // 
             // txtIDHexBytes
             // 
-            txtIDHexBytes.Location = new System.Drawing.Point(151, 71);
+            txtIDHexBytes.Location = new System.Drawing.Point(191, 71);
             txtIDHexBytes.Name = "txtIDHexBytes";
             txtIDHexBytes.Size = new System.Drawing.Size(100, 23);
             txtIDHexBytes.TabIndex = 12;
@@ -149,7 +155,7 @@
             // 
             // txtIdDecimal
             // 
-            txtIdDecimal.Location = new System.Drawing.Point(45, 71);
+            txtIdDecimal.Location = new System.Drawing.Point(85, 71);
             txtIdDecimal.Name = "txtIdDecimal";
             txtIdDecimal.Size = new System.Drawing.Size(100, 23);
             txtIdDecimal.TabIndex = 11;
@@ -157,7 +163,7 @@
             // 
             // txtIDHex
             // 
-            txtIDHex.Location = new System.Drawing.Point(257, 71);
+            txtIDHex.Location = new System.Drawing.Point(297, 71);
             txtIDHex.Name = "txtIDHex";
             txtIDHex.Size = new System.Drawing.Size(101, 23);
             txtIDHex.TabIndex = 10;
@@ -166,7 +172,7 @@
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new System.Drawing.Point(9, 74);
+            label5.Location = new System.Drawing.Point(45, 74);
             label5.Name = "label5";
             label5.Size = new System.Drawing.Size(34, 15);
             label5.TabIndex = 13;
@@ -175,7 +181,7 @@
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new System.Drawing.Point(9, 103);
+            label6.Location = new System.Drawing.Point(45, 103);
             label6.Name = "label6";
             label6.Size = new System.Drawing.Size(34, 15);
             label6.TabIndex = 14;
@@ -183,7 +189,7 @@
             // 
             // txtTag2Decimal
             // 
-            txtTag2Decimal.Location = new System.Drawing.Point(45, 100);
+            txtTag2Decimal.Location = new System.Drawing.Point(85, 100);
             txtTag2Decimal.Name = "txtTag2Decimal";
             txtTag2Decimal.Size = new System.Drawing.Size(100, 23);
             txtTag2Decimal.TabIndex = 15;
@@ -191,7 +197,7 @@
             // 
             // txtTag2Hex
             // 
-            txtTag2Hex.Location = new System.Drawing.Point(257, 100);
+            txtTag2Hex.Location = new System.Drawing.Point(297, 100);
             txtTag2Hex.Name = "txtTag2Hex";
             txtTag2Hex.Size = new System.Drawing.Size(100, 23);
             txtTag2Hex.TabIndex = 16;
@@ -199,7 +205,7 @@
             // 
             // txtTag2HexBytes
             // 
-            txtTag2HexBytes.Location = new System.Drawing.Point(151, 100);
+            txtTag2HexBytes.Location = new System.Drawing.Point(191, 100);
             txtTag2HexBytes.Name = "txtTag2HexBytes";
             txtTag2HexBytes.Size = new System.Drawing.Size(100, 23);
             txtTag2HexBytes.TabIndex = 17;
@@ -207,9 +213,9 @@
             // 
             // txtContextHexBytes
             // 
-            txtContextHexBytes.Location = new System.Drawing.Point(12, 129);
+            txtContextHexBytes.Location = new System.Drawing.Point(12, 187);
             txtContextHexBytes.Name = "txtContextHexBytes";
-            txtContextHexBytes.Size = new System.Drawing.Size(361, 296);
+            txtContextHexBytes.Size = new System.Drawing.Size(385, 238);
             txtContextHexBytes.TabIndex = 20;
             txtContextHexBytes.Text = "";
             // 
@@ -222,7 +228,7 @@
             toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripDropDownButton1 });
             toolStrip1.Location = new System.Drawing.Point(0, 0);
             toolStrip1.Name = "toolStrip1";
-            toolStrip1.Size = new System.Drawing.Size(385, 25);
+            toolStrip1.Size = new System.Drawing.Size(417, 25);
             toolStrip1.TabIndex = 21;
             toolStrip1.Text = "toolStrip1";
             // 
@@ -250,11 +256,63 @@
             saveAsToolStripMenuItem.Text = "Save As";
             saveAsToolStripMenuItem.Click += btnSaveAs_Click;
             // 
+            // txtSizeHex
+            // 
+            txtSizeHex.Location = new System.Drawing.Point(297, 129);
+            txtSizeHex.Name = "txtSizeHex";
+            txtSizeHex.Size = new System.Drawing.Size(100, 23);
+            txtSizeHex.TabIndex = 24;
+            // 
+            // txtSizeHexBytes
+            // 
+            txtSizeHexBytes.Location = new System.Drawing.Point(191, 129);
+            txtSizeHexBytes.Name = "txtSizeHexBytes";
+            txtSizeHexBytes.Size = new System.Drawing.Size(100, 23);
+            txtSizeHexBytes.TabIndex = 23;
+            // 
+            // txtObjName
+            // 
+            txtObjName.Location = new System.Drawing.Point(85, 158);
+            txtObjName.Name = "txtObjName";
+            txtObjName.Size = new System.Drawing.Size(312, 23);
+            txtObjName.TabIndex = 25;
+            // 
+            // txtExpectedSize
+            // 
+            txtExpectedSize.Location = new System.Drawing.Point(85, 129);
+            txtExpectedSize.Name = "txtExpectedSize";
+            txtExpectedSize.Size = new System.Drawing.Size(100, 23);
+            txtExpectedSize.TabIndex = 26;
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Location = new System.Drawing.Point(52, 132);
+            label7.Name = "label7";
+            label7.Size = new System.Drawing.Size(27, 15);
+            label7.TabIndex = 27;
+            label7.Text = "Size";
+            // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Location = new System.Drawing.Point(12, 161);
+            label8.Name = "label8";
+            label8.Size = new System.Drawing.Size(67, 15);
+            label8.TabIndex = 28;
+            label8.Text = "Name_OBJ ";
+            // 
             // SizeNOVEditor
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(385, 462);
+            ClientSize = new System.Drawing.Size(417, 462);
+            Controls.Add(label8);
+            Controls.Add(label7);
+            Controls.Add(txtExpectedSize);
+            Controls.Add(txtObjName);
+            Controls.Add(txtSizeHex);
+            Controls.Add(txtSizeHexBytes);
             Controls.Add(toolStrip1);
             Controls.Add(txtContextHexBytes);
             Controls.Add(txtTag2HexBytes);
@@ -313,5 +371,11 @@
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
         private System.Windows.Forms.ToolStripMenuItem btnSave;
         private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
+        private System.Windows.Forms.TextBox txtSizeHex;
+        private System.Windows.Forms.TextBox txtSizeHexBytes;
+        private System.Windows.Forms.TextBox txtObjName;
+        private System.Windows.Forms.TextBox txtExpectedSize;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label8;
     }
 }
