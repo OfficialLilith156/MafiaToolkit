@@ -177,7 +177,85 @@ namespace Mafia2Tool
             dSceneTree.TranslokatorNewInstanceButton.Click += new EventHandler(TranslokatorNewInstanceButton_Click);
             dSceneTree.ActorEntryNewTRObjectButton.Click += new EventHandler(ActorEntryNewTRObjectButton_Click);
             dSceneTree.TRRebuildObjectButton.Click += new EventHandler(TRRebuildObjectButton_Click);
+        }
+        private void BtnAddEdgeBox_Click(object sender, EventArgs e)
+        {
+            TreeNode selectedNode = dSceneTree.SelectedNode;
+            if (selectedNode == null)
+            {
+                MessageBox.Show("Select a Set node (UnkSet0) or an existing EdgeBox first.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
 
+            UnkSet0 targetSet = null;
+            OBJData targetOBJData = null;
+            TreeNode setNode = null;
+
+            if (selectedNode.Tag is BoundingBox)
+            {
+                setNode = selectedNode.Parent;
+                targetSet = setNode.Tag as UnkSet0;
+                TreeNode navNode = setNode.Parent?.Parent;
+                if (navNode?.Tag is RenderNav renderNav)
+                    targetOBJData = renderNav.GetData();
+            }
+            else if (selectedNode.Tag is UnkSet0 set)
+            {
+                targetSet = set;
+                setNode = selectedNode;
+                TreeNode navNode = selectedNode.Parent?.Parent;
+                if (navNode?.Tag is RenderNav renderNav)
+                    targetOBJData = renderNav.GetData();
+            }
+
+            if (targetSet == null || targetOBJData == null)
+            {
+                MessageBox.Show("Cannot find parent navigation data.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            BoundingBox newBox = new BoundingBox(new Vector3(-1f), new Vector3(1f));
+            var boxesList = targetSet.EdgeBoxes?.ToList() ?? new List<BoundingBox>();
+            boxesList.Add(newBox);
+            targetSet.EdgeBoxes = boxesList.ToArray();
+            targetSet.NumEdges = targetSet.EdgeBoxes.Length;
+
+            int newIndex = targetSet.EdgeBoxes.Length - 1;
+            TreeNode newEdgeNode = new TreeNode($"EdgeBox {newIndex}: {newBox.Min} - {newBox.Max}");
+            newEdgeNode.Name = $"EDGEBOX_{Array.IndexOf(targetOBJData.runtimeMesh.Cells.SelectMany(c => c.Sets).ToArray(), targetSet)}_{newIndex}";
+            newEdgeNode.Tag = newBox;
+            setNode.Nodes.Add(newEdgeNode);
+            setNode.Expand();
+            dSceneTree.SelectedNode = newEdgeNode;
+
+            UpdateNavMeshVisualization(targetOBJData, targetSet);
+        }
+        private void UpdateNavMeshVisualization(OBJData objData, UnkSet0 set)
+        {
+            foreach (TreeNode rootNode in OBJDataRoot.Nodes)
+            {
+                if (rootNode.Tag is RenderNav nav && nav.GetData() == objData)
+                {
+                    foreach (TreeNode cellNode in rootNode.Nodes)
+                    {
+                        if (cellNode.Tag is KynogonRuntimeMesh.Cell cell && cell.Sets.Contains(set))
+                        {
+                            RenderNavCell renderCell = cellNode.Tag as RenderNavCell;
+                            if (renderCell != null)
+                            {
+                                renderCell.Shutdown();
+                            }
+                            RenderNavCell newRenderCell = new RenderNavCell(Graphics);
+                            newRenderCell.Init(cell);
+                            cellNode.Tag = newRenderCell;
+                            newRenderCell.SetVisibility(cellNode.Checked);
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
+            Graphics.Frame();
         }
 
         public class SoundSectorData
@@ -186,9 +264,9 @@ namespace Mafia2Tool
             public List<Plane4> Planes { get; set; } = new List<Plane4>();
             public int RefID { get; set; }
 
-            [Browsable(false)] 
+            [Browsable(false)]
             public RenderBoundingBox RenderBox { get; set; }
-            public string Type { get; set; } 
+            public string Type { get; set; }
             public List<ushort> Unk0 { get; set; } = new List<ushort>();
             public uint Unk1 { get; set; }
             public uint Unk2 { get; set; }
@@ -331,7 +409,7 @@ namespace Mafia2Tool
         {
             public string Name { get; set; }
             public Vector3 Position { get; set; }
-            public float Unk0 { get; set; } 
+            public float Unk0 { get; set; }
             public float OpenRatio { get; set; }
             public string LinkA { get; set; }
             public byte Unk2 { get; set; }
@@ -556,7 +634,7 @@ namespace Mafia2Tool
             _soundSectorsFilePath = xmlFilePath;
         }
 
-       
+
         private void BtnAddSoundSector_Click(object sender, EventArgs e)
         {
             SoundSectorData newSector = new SoundSectorData();
@@ -1011,6 +1089,11 @@ namespace Mafia2Tool
                         }
                     }
                 }
+                else if (node.Tag is BoundingBox)
+                {
+                    node.Checked = parent.Checked;
+                    return;
+                }
                 else if (node.Tag is Instance && node.Parent?.Tag is Object trObject)
                 {
                     UpdateInstanceVisualisation(node, trObject, isVisible);
@@ -1312,7 +1395,7 @@ namespace Mafia2Tool
 
             // Переключение режимов: R - поворот объектов, T - перемещение объектов
             bool rWasPressed = false;
-             bool tWasPressed = false;
+            bool tWasPressed = false;
 
             bool rIsDown = Input.IsKeyDown(Keys.R);
             bool tIsDown = Input.IsKeyDown(Keys.T);
@@ -1332,10 +1415,10 @@ namespace Mafia2Tool
             tWasPressed = tIsDown;
 
             // Режим поворота: выбор оси вращения
-             RotationAxis currentRotationAxis = RotationAxis.All;
-             bool xWasPressed = false;
-             bool yWasPressed = false;
-             bool zWasPressed = false;
+            RotationAxis currentRotationAxis = RotationAxis.All;
+            bool xWasPressed = false;
+            bool yWasPressed = false;
+            bool zWasPressed = false;
 
             bool xIsDown = Input.IsKeyDown(Keys.X);
             bool yIsDown = Input.IsKeyDown(Keys.Y);
@@ -2599,6 +2682,17 @@ namespace Mafia2Tool
                                             boxNode.Name = "NAV_BOX_NODE";
                                             boxNode.Tag = set.unk18Set[boxIndex].Points;
                                             setNode.Nodes.Add(boxNode);
+                                        }
+                                    }
+                                    if (set.EdgeBoxes != null)
+                                    {
+                                        for (int edgeIdx = 0; edgeIdx < set.EdgeBoxes.Length; edgeIdx++)
+                                        {
+                                            var edgeBox = set.EdgeBoxes[edgeIdx];
+                                            TreeNode edgeNode = new TreeNode($"EdgeBox {edgeIdx}: {edgeBox.Min} - {edgeBox.Max}");
+                                            edgeNode.Name = $"EDGEBOX_{setIndex}_{edgeIdx}";
+                                            edgeNode.Tag = edgeBox;
+                                            setNode.Nodes.Add(edgeNode);
                                         }
                                     }
                                     cellNode.Nodes.Add(setNode);
@@ -4451,6 +4545,18 @@ namespace Mafia2Tool
                 }
                 Graphics.SelectEntry(type7.RefID);
             }
+            if (pGrid.SelectedObject is BoundingBox bbox)
+            {
+                TreeNode selectedNode = dSceneTree.SelectedNode;
+                if (selectedNode?.Parent?.Tag is UnkSet0 parentSet)
+                {
+                    OBJData targetOBJData = FindParentOBJData(selectedNode);
+                    if (targetOBJData != null)
+                    {
+                        UpdateNavMeshVisualization(targetOBJData, parentSet);
+                    }
+                }
+            }
             if (pGrid.SelectedObject is ActorEntry)
             {
                 if (dSceneTree.SelectedNode.Tag == pGrid.SelectedObject)
@@ -4490,6 +4596,16 @@ namespace Mafia2Tool
                 RebuildTranslokatorGrids();
             }
             pGrid.Refresh();
+        }
+        private OBJData FindParentOBJData(TreeNode node)
+        {
+            while (node != null)
+            {
+                if (node.Tag is RenderNav renderNav)
+                    return renderNav.GetData();
+                node = node.Parent;
+            }
+            return null;
         }
         private AIWorld FindParentAIWorld(TreeNode node)
         {
@@ -4592,6 +4708,27 @@ namespace Mafia2Tool
             else if (node.Tag is Object obj)
             {
                 DeleteTRObject(node);
+            }
+            else if (node.Tag is BoundingBox bbox && node.Parent?.Tag is UnkSet0 parentSet)
+            {
+                OBJData targetOBJData = null;
+                TreeNode navNode = node.Parent?.Parent?.Parent;
+                if (navNode?.Tag is RenderNav renderNav)
+                    targetOBJData = renderNav.GetData();
+
+                if (targetOBJData == null)
+                {
+                    MessageBox.Show("Cannot find parent OBJData.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                var list = parentSet.EdgeBoxes.ToList();
+                list.Remove(bbox);
+                parentSet.EdgeBoxes = list.ToArray();
+                parentSet.NumEdges = list.Count;
+                dSceneTree.RemoveNode(node);
+
+                UpdateNavMeshVisualization(targetOBJData, parentSet);
             }
             else if (node.Tag is ObjectGroup og)
             {
@@ -5192,7 +5329,7 @@ namespace Mafia2Tool
         private void ConvertNodeToFrame(TreeNode node)
         {
 
-                if (node?.Tag == null) return;
+            if (node?.Tag == null) return;
 
             if (node.Tag is FrameHeaderScene || node.Tag is string tagStr && tagStr == "Folder")
             {
@@ -6459,4 +6596,3 @@ namespace Mafia2Tool
         }
     }
 }
-
