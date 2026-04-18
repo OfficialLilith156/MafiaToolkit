@@ -2618,6 +2618,26 @@ namespace Mafia2Tool
                             navNode.Nodes.Add(childNode);
                         }
                     }
+                    if (obj.connections != null && obj.connections.Length > 0)
+                    {
+                        TreeNode connFolder = new TreeNode("Connections") { Tag = "Folder", Name = "NAV_CONNECTIONS_FOLDER" };
+
+                        for (int connIdx = 0; connIdx < obj.connections.Length; connIdx++)
+                        {
+                            var conn = obj.connections[connIdx];
+
+                            uint fromUnk7 = (conn.NodeID < obj.vertices?.Length) ? obj.vertices[(int)conn.NodeID].Unk7 : conn.NodeID;
+                            uint toUnk7 = (conn.ConnectedNodeID < obj.vertices?.Length) ? obj.vertices[(int)conn.ConnectedNodeID].Unk7 : conn.ConnectedNodeID;
+
+                            TreeNode connNode = new TreeNode(
+                                $"Conn[{connIdx}]: Node {fromUnk7} -> {toUnk7} | Flags: 0x{conn.Flags:X4}"
+                            );
+                            connNode.Name = $"NAV_CONN_{connIdx}";
+                            connNode.Tag = conn;
+                            connFolder.Nodes.Add(connNode);
+                        }
+                        navNode.Nodes.Add(connFolder);
+                    }
                     if (obj.runtimeMesh != null && obj.runtimeMesh.Cells != null)
                     {
                         for (int cellIndex = 0; cellIndex < obj.runtimeMesh.Cells.Length; cellIndex++)
@@ -4544,6 +4564,24 @@ namespace Mafia2Tool
                     world?.RequestPrimitiveBatchUpdate();
                 }
                 Graphics.SelectEntry(type7.RefID);
+            }
+            if (pGrid.SelectedObject is OBJData.ConnectionStruct connCopy)
+            {
+                TreeNode connNode = dSceneTree.SelectedNode;
+                TreeNode parentNav = connNode.Parent?.Parent;
+                if (parentNav?.Tag is RenderNav renderNav)
+                {
+                    OBJData objData = renderNav.GetData();
+                    int index = connNode.Index;
+                    if (index >= 0 && index < objData.connections.Length)
+                    {
+                        objData.connections[index].Flags = connCopy.Flags;
+                        objData.connections[index].Unk80 = connCopy.Unk80;
+                        objData.connections[index].NodeID = connCopy.NodeID;
+                        objData.connections[index].ConnectedNodeID = connCopy.ConnectedNodeID;
+                        connNode.Tag = objData.connections[index];
+                    }
+                }
             }
             if (pGrid.SelectedObject is BoundingBox bbox)
             {

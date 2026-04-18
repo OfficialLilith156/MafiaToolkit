@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Numerics;
 using Utils.VorticeUtils;
@@ -7,24 +8,29 @@ namespace ResourceTypes.Navigation
 {
     public class OBJData : INavigationData
     {
-        public struct ConnectionStruct
+        public class ConnectionStruct
         {
-            uint flags;
-            uint nodeID;
-            uint connectedNodeID;
+            [Browsable(true)]
+            [Category("Connection")]
+            [Description("Connection flags (16-bit)")]
+            public ushort Flags { get; set; }
 
-            public uint Flags {
-                get { return flags; }
-                set { flags = value; }
-            }
-            public uint NodeID {
-                get { return nodeID; }
-                set { nodeID = value; }
-            }
-            public uint ConnectedNodeID {
-                get { return connectedNodeID; }
-                set { connectedNodeID = value; }
-            }
+            [Browsable(true)]
+            [Category("Connection")]
+            [Description("Unknown field")]
+            public ushort Unk80 { get; set; }
+
+            [Browsable(true)]
+            [Category("Connection")]
+            [Description("Source node ID")]
+            public uint NodeID { get; set; }
+
+            [Browsable(true)]
+            [Category("Connection")]
+            [Description("Connected node ID")]
+            public uint ConnectedNodeID { get; set; }
+
+            public override string ToString() => $"Flags:{Flags}  Node:{NodeID} -> {ConnectedNodeID}";
         }
         public class VertexStruct
         {
@@ -145,7 +151,8 @@ namespace ResourceTypes.Navigation
             for (int i = 0; i < triSize; i++)
             {
                 ConnectionStruct connection = new ConnectionStruct();
-                connection.Flags = reader.ReadUInt32() ^ 0x80000000;
+                connection.Flags = reader.ReadUInt16();
+                connection.Unk80 = reader.ReadUInt16();
                 connection.NodeID = reader.ReadUInt32();
                 connection.ConnectedNodeID = reader.ReadUInt32();
                 connections[i] = connection;
@@ -199,10 +206,11 @@ namespace ResourceTypes.Navigation
 
             for (int i = 0; i < connections.Length; i++)
             {
-                var connection = connections[i];
-                writer.Write(connection.Flags | 0x80000000);
-                writer.Write(connection.NodeID);
-                writer.Write(connection.ConnectedNodeID);
+                var c = connections[i];
+                writer.Write(c.Flags);
+                writer.Write(c.Unk80);
+                writer.Write(c.NodeID);
+                writer.Write(c.ConnectedNodeID);
             }
 
             runtimeMesh.WriteToFile(writer);
