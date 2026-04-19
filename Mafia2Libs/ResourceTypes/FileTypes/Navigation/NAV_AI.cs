@@ -28,9 +28,8 @@ namespace ResourceTypes.Navigation
     {
         //unk01_flags could be types; AIWORLDS seem to have 1005, while OBJDATA is 3604410608.
         FileInfo file;
-
+        public string FileName => file?.Name ?? Filename ?? "Unknown";
         int fileSize; //size - 4;
-
         public uint Flags { get; set; }
         public string Filename { get; set; }
         public INavigationData Data { get; set; }
@@ -42,6 +41,7 @@ namespace ResourceTypes.Navigation
         public NAVData(FileInfo info)
         {
             file = info;
+            Filename = info.Name;
 
             using (BinaryReader reader = new BinaryReader(File.Open(info.FullName, FileMode.Open)))
             {

@@ -2590,11 +2590,19 @@ namespace Mafia2Tool
                 OBJDataRoot.Tag = "Folder";
                 OBJDataRoot.Name = OBJDataRoot.Text = "Navigation: OBJDATA";
                 var data = new OBJData[SceneData.OBJData.Length];
+                string[] fileNames = new string[SceneData.OBJData.Length];
                 for (int i = 0; i < SceneData.OBJData.Length; i++)
                 {
                     data[i] = (OBJData)SceneData.OBJData[i].Data;
+                    fileNames[i] = SceneData.OBJData[i].FileName;
                 }
                 TreeNode Grids = Graphics.SetNavigationGrid(data);
+
+                for (int i = 0; i < Grids.Nodes.Count && i < fileNames.Length; i++)
+                {
+                    Grids.Nodes[i].Text = fileNames[i];
+                }
+
                 OBJDataRoot.Nodes.Add(Grids);
                 for (int i = 0; i < SceneData.OBJData.Length; i++)
                 {
@@ -2603,9 +2611,14 @@ namespace Mafia2Tool
                     RenderNav navigationPoints = new RenderNav(Graphics);
                     navigationPoints.Init(obj);
                     TreeNode navNode = new TreeNode();
-                    navNode.Text = string.Format("NAV: {0}", i);
+                    navNode.Text = SceneData.OBJData[i].FileName;
                     navNode.Name = "NAV_OBJ_DATA";
                     navNode.Tag = navigationPoints;
+
+                    TreeNode verticesFolder = new TreeNode("NavNodes");
+                    verticesFolder.Tag = "Folder";
+                    verticesFolder.Name = "NAV_VERTICES_FOLDER";
+                    navNode.Nodes.Add(verticesFolder);
 
                     if (obj.vertices != null)
                     {
@@ -2615,9 +2628,10 @@ namespace Mafia2Tool
                             childNode.Text = string.Format("NAVNode: {0}", obj.vertices[x].Unk7);
                             childNode.Name = "NAV_INDEXED_NODE";
                             childNode.Tag = obj.vertices[x];
-                            navNode.Nodes.Add(childNode);
+                            verticesFolder.Nodes.Add(childNode);
                         }
                     }
+
                     if (obj.connections != null && obj.connections.Length > 0)
                     {
                         TreeNode connFolder = new TreeNode("Connections") { Tag = "Folder", Name = "NAV_CONNECTIONS_FOLDER" };
@@ -2640,6 +2654,10 @@ namespace Mafia2Tool
                     }
                     if (obj.runtimeMesh != null && obj.runtimeMesh.Cells != null)
                     {
+                        TreeNode cellsFolder = new TreeNode("Cells");
+                        cellsFolder.Tag = "Folder";
+                        cellsFolder.Name = "NAV_CELLS_FOLDER";
+
                         for (int cellIndex = 0; cellIndex < obj.runtimeMesh.Cells.Length; cellIndex++)
                         {
                             KynogonRuntimeMesh.Cell cell = obj.runtimeMesh.Cells[cellIndex];
@@ -2648,78 +2666,10 @@ namespace Mafia2Tool
                             cellNode.Name = "NAV_CELL_NODE";
                             cellNode.Tag = cell;
 
-                            if (cell.Sets != null)
-                            {
-                                for (int setIndex = 0; setIndex < cell.Sets.Length; setIndex++)
-                                {
-                                    var set = cell.Sets[setIndex];
-                                    TreeNode setNode = new TreeNode();
-                                    setNode.Text = string.Format("Set: {0}", setIndex);
-                                    setNode.Name = "NAV_SET_NODE";
-                                    setNode.Tag = set;
 
-                                    if (set.unk12Boxes != null)
-                                    {
-                                        for (int boxIndex = 0; boxIndex < set.unk12Boxes.Length; boxIndex++)
-                                        {
-                                            RenderNavCell navCell = new RenderNavCell(Graphics);
-                                            TreeNode boxNode = new TreeNode();
-                                            boxNode.Text = string.Format("BoxUNK12: {0}", boxIndex);
-                                            boxNode.Name = "NAV_BOX_NODE";
-                                            boxNode.Tag = set.unk12Boxes[boxIndex].B1;
-                                            setNode.Nodes.Add(boxNode);
-                                            //navCell.Update();
-                                        }
-                                    }
-                                    if (set.unk10Boxes != null)
-                                    {
-                                        for (int boxIndex = 0; boxIndex < set.unk10Boxes.Length; boxIndex++)
-                                        {
-                                            TreeNode boxNode = new TreeNode();
-                                            boxNode.Text = string.Format("BoxUNK10: {0}", boxIndex);
-                                            boxNode.Name = "NAV_BOX_NODE";
-                                            boxNode.Tag = set.unk10Boxes[boxIndex].B1;
-                                            setNode.Nodes.Add(boxNode);
-                                        }
-                                    }
-                                    if (set.unk14Boxes != null)
-                                    {
-                                        for (int boxIndex = 0; boxIndex < set.unk14Boxes.Length; boxIndex++)
-                                        {
-                                            TreeNode boxNode = new TreeNode();
-                                            boxNode.Text = string.Format("BoxUNK14: {0}", boxIndex);
-                                            boxNode.Name = "NAV_BOX_NODE";
-                                            boxNode.Tag = set.unk14Boxes[boxIndex].Points;
-                                            setNode.Nodes.Add(boxNode);
-                                        }
-                                    }
-                                    if (set.unk18Set != null)
-                                    {
-                                        for (int boxIndex = 0; boxIndex < set.unk18Set.Length; boxIndex++)
-                                        {
-                                            TreeNode boxNode = new TreeNode();
-                                            boxNode.Text = string.Format("BoxUNK18: {0}", boxIndex);
-                                            boxNode.Name = "NAV_BOX_NODE";
-                                            boxNode.Tag = set.unk18Set[boxIndex].Points;
-                                            setNode.Nodes.Add(boxNode);
-                                        }
-                                    }
-                                    if (set.EdgeBoxes != null)
-                                    {
-                                        for (int edgeIdx = 0; edgeIdx < set.EdgeBoxes.Length; edgeIdx++)
-                                        {
-                                            var edgeBox = set.EdgeBoxes[edgeIdx];
-                                            TreeNode edgeNode = new TreeNode($"EdgeBox {edgeIdx}: {edgeBox.Min} - {edgeBox.Max}");
-                                            edgeNode.Name = $"EDGEBOX_{setIndex}_{edgeIdx}";
-                                            edgeNode.Tag = edgeBox;
-                                            setNode.Nodes.Add(edgeNode);
-                                        }
-                                    }
-                                    cellNode.Nodes.Add(setNode);
-                                }
-                            }
-                            navNode.Nodes.Add(cellNode);
+                            cellsFolder.Nodes.Add(cellNode);
                         }
+                        navNode.Nodes.Add(cellsFolder);
                     }
                     OBJDataRoot.Nodes.Add(navNode);
                 }
@@ -3385,7 +3335,7 @@ namespace Mafia2Tool
                 Graphics.BuildTranslokatorGrid(SceneData.Translokator);
             }
         }
-
+        
         private string GetCollisionTypeName(ResourceTypes.ItemDesc.CollisionTypes type)
         {
             switch (type)
@@ -4022,52 +3972,82 @@ namespace Mafia2Tool
         private void AddNavVertexButton_Click(object sender, EventArgs e)
         {
             TreeNode selectedNode = dSceneTree.SelectedNode;
-            if (selectedNode?.Tag is RenderNav nav)
+            if (selectedNode == null)
             {
-                OBJData data = nav.GetData();
-
-                var newVertex = new OBJData.VertexStruct();
-                if (data.vertices.Length > 0)
-                {
-                    var first = data.vertices[0];
-                    newVertex.Unk0 = first.Unk0;
-                    newVertex.Unk1 = first.Unk1;
-                    newVertex.Unk6 = first.Unk6;
-                    newVertex.Unk7 = first.Unk7;
-                }
-                else
-                {
-                    newVertex.Unk0 = 0;
-                    newVertex.Unk1 = 0;
-                    newVertex.Unk6 = 0;
-                    newVertex.Unk7 = 0;
-                }
-
-                newVertex.Unk2 = -1;
-                newVertex.Unk3 = -1;
-                newVertex.Unk4 = -1;
-                newVertex.Unk5 = -1;
-
-                int oldLength = data.vertices.Length;
-                Array.Resize(ref data.vertices, data.vertices.Length + 1);
-                data.vertices[data.vertices.Length - 1] = newVertex;
-                data.vertSize = data.vertices.Length;
-
-                RenderBoundingBox newBox = new RenderBoundingBox();
-                newBox.Init(new BoundingBox(new Vector3(-0.1f), new Vector3(0.1f)));
-                newBox.SetColour(System.Drawing.Color.Green);
-                newBox.SetTransform(Matrix4x4.CreateTranslation(newVertex.Position));
-
-                nav.AddVertex(newBox, newVertex);
-
-                TreeNode vertexNode = new TreeNode($"NAVNode: {newVertex.Unk7}");
-                vertexNode.Tag = newVertex;
-                vertexNode.Name = RefManager.GetNewRefID().ToString();
-                selectedNode.Nodes.Add(vertexNode);
-
-                data.GenerateConnections();
-                nav.RebuildAllConnections();
+                MessageBox.Show("No node selected.");
+                return;
             }
+
+            TreeNode navNode = selectedNode;
+            while (navNode != null && !(navNode.Tag is RenderNav))
+                navNode = navNode.Parent;
+
+            if (navNode?.Tag is not RenderNav nav)
+            {
+                MessageBox.Show("Cannot find parent navigation data (RenderNav). Select a node inside a NAV object.");
+                return;
+            }
+
+            OBJData data = nav.GetData();
+            if (data == null || data.vertices == null) return;
+
+            OBJData.VertexStruct newVertex = new OBJData.VertexStruct();
+
+            uint maxUnk7 = 0;
+            foreach (var v in data.vertices)
+                if (v.Unk7 > maxUnk7) maxUnk7 = v.Unk7;
+            newVertex.Unk7 = maxUnk7 + 1;
+
+            if (data.vertices.Length > 0)
+            {
+                var first = data.vertices[0];
+                newVertex.Unk0 = first.Unk0;
+                newVertex.Unk1 = first.Unk1;
+                newVertex.Unk6 = first.Unk6;
+            }
+            else
+            {
+                newVertex.Unk0 = 0;
+                newVertex.Unk1 = 0;
+                newVertex.Unk6 = 0;
+            }
+
+            if (selectedNode.Tag is OBJData.VertexStruct selectedVertex)
+            {
+                newVertex.Position = selectedVertex.Position + new Vector3(1, 1, 0);
+            }
+            else
+            {
+                Vector3 camPos = Graphics.Camera.Position;
+                newVertex.Position = camPos + new Vector3(0, 0, 2);
+            }
+
+            newVertex.Unk2 = -1;
+            newVertex.Unk3 = -1;
+            newVertex.Unk4 = -1;
+            newVertex.Unk5 = -1;
+
+            Array.Resize(ref data.vertices, data.vertices.Length + 1);
+            data.vertices[data.vertices.Length - 1] = newVertex;
+            data.vertSize = data.vertices.Length;
+
+            RenderBoundingBox newBox = new RenderBoundingBox();
+            newBox.Init(new BoundingBox(new Vector3(-0.1f), new Vector3(0.1f)));
+            newBox.SetColour(System.Drawing.Color.Green);
+            newBox.SetTransform(Matrix4x4.CreateTranslation(newVertex.Position));
+            nav.AddVertex(newBox, newVertex);
+
+            TreeNode vertexNode = new TreeNode($"NAVNode: {newVertex.Unk7}");
+            vertexNode.Tag = newVertex;
+            vertexNode.Name = RefManager.GetNewRefID().ToString();
+            selectedNode.Nodes.Add(vertexNode);
+            selectedNode.Expand();
+
+            data.GenerateConnections();
+            nav.RebuildAllConnections();
+            dSceneTree.SelectedNode = vertexNode;
+            TreeViewUpdateSelected();
+            dPropertyGrid.SetObject(newVertex);
         }
 
         private void SyncActorEntryWithFrame(ActorEntry actorEntry)
@@ -4827,7 +4807,7 @@ namespace Mafia2Tool
                 j++;
             }
 
-            List<OBJData.ConnectionStruct> validConnections = new List<OBJData.ConnectionStruct>();
+            List<OBJData.ConnectionStruct> newConnections = new List<OBJData.ConnectionStruct>();
             foreach (var conn in data.connections)
             {
                 int nodeID = (int)conn.NodeID;
@@ -4841,27 +4821,14 @@ namespace Mafia2Tool
                 OBJData.ConnectionStruct newConn = conn;
                 newConn.NodeID = (uint)oldToNewIndex[nodeID];
                 newConn.ConnectedNodeID = (uint)oldToNewIndex[connectedID];
-                validConnections.Add(newConn);
+                newConnections.Add(newConn);
             }
 
-            List<OBJData.ConnectionStruct> newConnectionsList = new List<OBJData.ConnectionStruct>();
-            int[] newUnk2 = new int[newVertices.Length];
-
-            for (int newIdx = 0; newIdx < newVertices.Length; newIdx++)
-            {
-                var outgoing = validConnections.Where(c => c.NodeID == newIdx).ToList();
-                newUnk2[newIdx] = newConnectionsList.Count;
-                newConnectionsList.AddRange(outgoing);
-            }
+            newConnections = newConnections.OrderBy(c => c.NodeID).ToList();
 
             data.vertices = newVertices;
-            data.connections = newConnectionsList.ToArray();
+            data.connections = newConnections.ToArray();
             data.vertSize = newVertices.Length;
-
-            for (int i = 0; i < newVertices.Length; i++)
-            {
-                newVertices[i].Unk2 = newUnk2[i];
-            }
 
             data.GenerateConnections();
 
@@ -6631,6 +6598,6 @@ namespace Mafia2Tool
             {
                 RefIDToActorEntry.Remove(key);
             }
-        }
+        } 
     }
 }
