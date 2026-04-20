@@ -111,6 +111,21 @@ namespace ResourceTypes.Navigation
         {
             ReadFromFile(reader);
         }
+        public void RebuildConnectionIndices()
+        {
+            for (int i = 0; i < vertices.Length; i++)
+                vertices[i].Unk2 = -1;
+
+           
+            for (int i = 0; i < connections.Length; i++)
+            {
+                uint nodeId = connections[i].NodeID;
+                if (nodeId < vertices.Length && vertices[nodeId].Unk2 == -1)
+                {
+                    vertices[nodeId].Unk2 = i + 1;
+                }
+            }
+        }
 
         public void ReadFromFile(BinaryReader reader)
         {
@@ -229,31 +244,36 @@ namespace ResourceTypes.Navigation
 
         public void GenerateConnections()
         {
-            for (int i = 0; i < vertSize; i++)
+            foreach (var v in vertices)
             {
-                VertexStruct vertex = vertices[i];
+                v.IncomingConnections.Clear();
+                v.OutgoingConnections.Clear();
+            }
 
-                int ConnectionOffset = vertex.Unk2 - 1;
-                if (ConnectionOffset >= 0 && ConnectionOffset < connections.Length)
+            var firstIndex = new Dictionary<uint, int>();
+            for (int i = 0; i < connections.Length; i++)
+            {
+                var c = connections[i];
+                if (!firstIndex.ContainsKey(c.NodeID))
+                    firstIndex[c.NodeID] = i;
+            }
+
+            for (int i = 0; i < vertices.Length; i++)
+            {
+                if (firstIndex.TryGetValue((uint)i, out int idx))
+                    vertices[i].Unk2 = idx + 1;
+                else
+                    vertices[i].Unk2 = -1;
+            }
+
+            foreach (var c in connections)
+            {
+                if (c.NodeID < vertices.Length && c.ConnectedNodeID < vertices.Length)
                 {
-                    bool bEndOfArray = false;
-                    ConnectionStruct CurConnection = connections[ConnectionOffset];
-                    while (CurConnection.NodeID == i && !bEndOfArray)
-                    {
-                        VertexStruct ConnectedVertex = vertices[CurConnection.ConnectedNodeID];
-                        vertex.OutgoingConnections.Add(ConnectedVertex);
-                        ConnectedVertex.IncomingConnections.Add(vertex);
-
-                        ConnectionOffset++;
-                        if (ConnectionOffset >= connections.Length)
-                        {
-                            bEndOfArray = true;
-                        }
-                        else
-                        {
-                            CurConnection = connections[ConnectionOffset];
-                        }
-                    }
+                    var src = vertices[c.NodeID];
+                    var dst = vertices[c.ConnectedNodeID];
+                    src.OutgoingConnections.Add(dst);
+                    dst.IncomingConnections.Add(src);
                 }
             }
         }

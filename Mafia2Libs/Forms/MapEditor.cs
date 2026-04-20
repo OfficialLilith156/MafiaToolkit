@@ -230,6 +230,72 @@ namespace Mafia2Tool
 
             UpdateNavMeshVisualization(targetOBJData, targetSet);
         }
+        private void DuplicateNavVertex(TreeNode originalNode)
+        {
+            var originalVertex = originalNode.Tag as OBJData.VertexStruct;
+            if (originalVertex == null) return;
+
+            TreeNode navNode = originalNode.Parent;
+            while (navNode != null && !(navNode.Tag is RenderNav))
+                navNode = navNode.Parent;
+            if (navNode?.Tag is not RenderNav renderNav)
+            {
+                MessageBox.Show("Cannot find parent navigation data.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            OBJData data = renderNav.GetData();
+            if (data == null || data.vertices == null) return;
+
+            OBJData.VertexStruct newVertex = new OBJData.VertexStruct
+            {
+                Unk7 = GetNextUnk7(data),
+                Position = originalVertex.Position + new Vector3(1f, 0f, 0f),
+                Unk0 = originalVertex.Unk0,
+                Unk1 = originalVertex.Unk1,
+                Unk2 = 1,
+                Unk3 = originalVertex.Unk3,
+                Unk4 = originalVertex.Unk4,
+                Unk5 = originalVertex.Unk5,
+                Unk6 = originalVertex.Unk6
+            };
+
+            Array.Resize(ref data.vertices, data.vertices.Length + 1);
+            data.vertices[data.vertices.Length - 1] = newVertex;
+            data.vertSize = data.vertices.Length;
+
+            RenderBoundingBox newBox = new RenderBoundingBox();
+            newBox.Init(new BoundingBox(new Vector3(-0.1f), new Vector3(0.1f)));
+            newBox.SetColour(System.Drawing.Color.Green);
+            newBox.SetTransform(Matrix4x4.CreateTranslation(newVertex.Position));
+            int newRefID = RefManager.GetNewRefID();
+            Graphics.InitObjectStack[newRefID] = newBox;
+            renderNav.AddVertex(newBox, newVertex);
+
+            TreeNode parentFolder = originalNode.Parent;
+            TreeNode vertexNode = new TreeNode($"NAVNode: {newVertex.Unk7}")
+            {
+                Tag = newVertex,
+                Name = newRefID.ToString()
+            };
+            parentFolder.Nodes.Add(vertexNode);
+            parentFolder.Expand();
+
+            data.GenerateConnections();
+            renderNav.RebuildAllConnections();
+
+            dSceneTree.SelectedNode = vertexNode;
+            TreeViewUpdateSelected();
+            dPropertyGrid.SetObject(newVertex);
+        }
+
+        private uint GetNextUnk7(OBJData data)
+        {
+            uint max = 0;
+            foreach (var v in data.vertices)
+                if (v.Unk7 > max) max = v.Unk7;
+            return max + 1;
+        }
         private void UpdateNavMeshVisualization(OBJData objData, UnkSet0 set)
         {
             foreach (TreeNode rootNode in OBJDataRoot.Nodes)
@@ -454,7 +520,75 @@ namespace Mafia2Tool
                 MessageBox.Show($"Error loading sound sectors: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+        private void Button_CalcConnectionDistances_Click(object sender, EventArgs e)
+        {
+            TreeNode selectedNode = dSceneTree.SelectedNode;
+            if (selectedNode == null)
+            {
+                MessageBox.Show("Select a NAV node (OBJData) first.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
 
+            OBJData objData = null;
+            TreeNode navNode = selectedNode;
+            while (navNode != null && objData == null)
+            {
+                if (navNode.Tag is RenderNav rn)
+                    objData = rn.GetData();
+                else if (navNode.Tag is OBJData data)
+                    objData = data;
+                else if (navNode.Tag is KynogonRuntimeMesh)
+                    objData = FindOBJDataFromMesh(navNode);
+                navNode = navNode.Parent;
+            }
+
+            if (objData == null || objData.vertices == null || objData.connections == null)
+            {
+                MessageBox.Show("No OBJData found with vertices and connections.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            int updated = 0;
+            for (int i = 0; i < objData.connections.Length; i++)
+            {
+                var conn = objData.connections[i];
+                uint fromIdx = conn.NodeID;
+                uint toIdx = conn.ConnectedNodeID;
+
+                if (fromIdx < objData.vertices.Length && toIdx < objData.vertices.Length)
+                {
+                    Vector3 fromPos = objData.vertices[fromIdx].Position;
+                    Vector3 toPos = objData.vertices[toIdx].Position;
+                    float distance = Vector3.Distance(fromPos, toPos);
+                    int rounded = (int)Math.Round(distance * 16.0f, MidpointRounding.AwayFromZero);
+                    if (rounded >= 0 && rounded <= ushort.MaxValue)
+                        conn.Flags = (ushort)rounded;
+                    else
+                        conn.Flags = 0;
+                    updated++;
+                }
+            }
+
+            if (selectedNode.Tag is RenderNav selectedNav)
+                selectedNav.RebuildAllConnections();
+            else
+                Graphics.Frame();
+
+            MessageBox.Show($"Updated {updated} connections with calculated distances.", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private OBJData FindOBJDataFromMesh(TreeNode node)
+        {
+            while (node != null)
+            {
+                if (node.Tag is RenderNav rn)
+                    return rn.GetData();
+                if (node.Tag is OBJData od)
+                    return od;
+                node = node.Parent;
+            }
+            return null;
+        }
         private void LoadAndVisualizeSoundSectors(string xmlFilePath)
         {
             foreach (var sector in loadedSoundSectors)
@@ -3799,18 +3933,7 @@ namespace Mafia2Tool
 
             if (newPoint is AIWorld_Type7 type7 && targetWorld != null)
             {
-                uint maxId = 0;
-                foreach (var point in targetWorld.AIPoints)
-                {
-                    if (point is AIWorld_Type7 t7 && t7.Unk3 > maxId)
-                        maxId = t7.Unk3;
-                    else if (point is AIWorld_Type1 t1)
-                    {
-                        foreach (var child in t1.AIPoints)
-                            if (child is AIWorld_Type7 ct7 && ct7.Unk3 > maxId)
-                                maxId = ct7.Unk3;
-                    }
-                }
+                uint maxId = GetMaxUnk3InWorld(targetWorld);
                 type7.Unk3 = maxId + 1;
             }
 
@@ -3821,7 +3944,22 @@ namespace Mafia2Tool
 
             targetWorld?.RequestPrimitiveBatchUpdate();
         }
-
+        private uint GetMaxUnk3InWorld(AIWorld world)
+        {
+            uint maxId = 0;
+            foreach (var point in world.AIPoints)
+            {
+                if (point is AIWorld_Type7 t7 && t7.Unk3 > maxId)
+                    maxId = t7.Unk3;
+                else if (point is AIWorld_Type1 t1)
+                {
+                    foreach (var child in t1.AIPoints)
+                        if (child is AIWorld_Type7 ct7 && ct7.Unk3 > maxId)
+                            maxId = ct7.Unk3;
+                }
+            }
+            return maxId;
+        }
         private void Button_AddType1Group_Click(object sender, EventArgs e)
         {
             if (dSceneTree != null)
@@ -4831,7 +4969,7 @@ namespace Mafia2Tool
             data.vertSize = newVertices.Length;
 
             data.GenerateConnections();
-
+            data.RebuildConnectionIndices();
             nav.RebuildAllConnections();
 
             node.Remove();
@@ -4920,6 +5058,10 @@ namespace Mafia2Tool
                     RenderModel model = RenderableFactory.BuildRenderModelFromFrame(mesh);
                     Graphics.InitObjectStack.Add(mesh.RefID, model);
                 }
+                else if (node.Tag is OBJData.VertexStruct vertex)
+                {
+                    DuplicateNavVertex(node);
+                }
                 else if (node.Tag.GetType() == typeof(FrameObjectTarget)) newEntry = new FrameObjectTarget((FrameObjectTarget)node.Tag);
                 else newEntry = new FrameObjectBase((FrameObjectBase)node.Tag);
                 // Try and add the numeric value to the end of the name.
@@ -4978,7 +5120,7 @@ namespace Mafia2Tool
                 TranslokatorNewInstance(node.Parent, instance);
             }
         }
-
+        
         private int CheckIfDuplicationContainsString(string Key)
         {
             int NewNumericValue = 0;

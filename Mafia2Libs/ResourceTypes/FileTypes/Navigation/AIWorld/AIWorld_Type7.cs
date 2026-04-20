@@ -32,9 +32,11 @@ namespace ResourceTypes.Navigation
             get => _direction;
             set
             {
-                _direction = value;
+                if (value.Length() > 0.0001f)
+                    _direction = Vector3.Normalize(value);
+                else
+                    _direction = Vector3.UnitZ;
                 NotifyUpdate();
-
             }
         }
         public Vector3 Unk2 { get; set; }
@@ -46,10 +48,11 @@ namespace ResourceTypes.Navigation
         [Category("BBox Test")]
         public Vector3 Minimum
         {
-            get => _minimum;
+            get => new Vector3(_minimum.X, _minimum.Z, _minimum.Y);
             set
             {
-                _minimum = value;
+                _minimum = new Vector3(value.X, value.Z, value.Y);
+                UpdateUnk2FromBBox();
                 NotifyUpdate();
             }
         }
@@ -57,10 +60,11 @@ namespace ResourceTypes.Navigation
         [Category("BBox Test")]
         public Vector3 Maximum
         {
-            get => _maximum;
+            get => new Vector3(_maximum.X, _maximum.Z, _maximum.Y);
             set
             {
-                _maximum = value;
+                _maximum = new Vector3(value.X, value.Z, value.Y);
+                UpdateUnk2FromBBox();
                 NotifyUpdate();
             }
         }
@@ -82,17 +86,12 @@ namespace ResourceTypes.Navigation
         private void UpdateUnk2FromBBox()
         {
             Vector3 halfSize = (Maximum - Minimum) * 0.5f;
-
             const float MIN_HALF = 0.01f;
             if (MathF.Abs(halfSize.X) < MIN_HALF) halfSize.X = MIN_HALF;
             if (MathF.Abs(halfSize.Y) < MIN_HALF) halfSize.Y = MIN_HALF;
             if (MathF.Abs(halfSize.Z) < MIN_HALF) halfSize.Z = MIN_HALF;
 
-            Unk2 = new Vector3(
-                halfSize.X,   // X → X
-                halfSize.Z,   // Z → Y
-                halfSize.Y    // Y → Z
-            );
+            Unk2 = new Vector3(halfSize.X, halfSize.Z, halfSize.Y);
         }
 
         private void UpdateBBoxFromUnk2()
@@ -113,13 +112,11 @@ namespace ResourceTypes.Navigation
         public override void Read(BinaryReader Reader)
         {
             base.Read(Reader);
-
             Unk0 = Reader.ReadUInt16();
             Position = Vector3Utils.ReadFromFile(Reader);
             Direction = Vector3Utils.ReadFromFile(Reader);
             Unk2 = Vector3Utils.ReadFromFile(Reader);
             Unk3 = Reader.ReadUInt32();
-
             UpdateBBoxFromUnk2();
         }
 
@@ -159,31 +156,40 @@ namespace ResourceTypes.Navigation
             if (!bIsVisible)
                 return;
 
-    
-            Vector3 min = Minimum;
-            Vector3 max = Maximum;
-            if (MathF.Abs(max.X - min.X) < 0.0001f) max.X = min.X + 0.01f;
-            if (MathF.Abs(max.Y - min.Y) < 0.0001f) max.Y = min.Y + 0.01f;
-            if (MathF.Abs(max.Z - min.Z) < 0.0001f) max.Z = min.Z + 0.01f;
+
+            Vector3 minWorld = new Vector3(_minimum.X, _minimum.Z, _minimum.Y);
+            Vector3 maxWorld = new Vector3(_maximum.X, _maximum.Z, _maximum.Y);
+
+            if (MathF.Abs(maxWorld.X - minWorld.X) < 0.0001f) maxWorld.X = minWorld.X + 0.01f;
+            if (MathF.Abs(maxWorld.Y - minWorld.Y) < 0.0001f) maxWorld.Y = minWorld.Y + 0.01f;
+            if (MathF.Abs(maxWorld.Z - minWorld.Z) < 0.0001f) maxWorld.Z = minWorld.Z + 0.01f;
 
             RenderBoundingBox navigationBox = new RenderBoundingBox();
             navigationBox.SetColour(System.Drawing.Color.Green);
+            BoundingBox BBox = new BoundingBox(minWorld, maxWorld);
 
-            BoundingBox BBox = new BoundingBox(min, max);
+            Vector3 dir = Direction;
+            if (dir.LengthSquared() < 0.0001f) dir = Vector3.UnitZ;
+            dir = Vector3.Normalize(dir);
+
+            Vector3 forward = Vector3.Normalize(dir);
+            Vector3 up = Vector3.UnitY;
+            Quaternion rotation = Quaternion.CreateFromRotationMatrix(
+                Matrix4x4.CreateLookAt(Vector3.Zero, forward, up)
+            );
 
             Matrix4x4 RotationMatrix = MatrixUtils.CreateFromDirection(Direction);
             RotationMatrix.Translation = Position;
 
             navigationBox.Init(BBox);
             navigationBox.SetTransform(RotationMatrix);
-
             BBoxBatcher.AddObject(RefID, navigationBox);
         }
 
         public override TreeNode PopulateTreeNode()
         {
             TreeNode node = new TreeNode();
-            node.Text = $"Obstacles (Unk0:{Unk0}, ID:{ID})";
+            node.Text = $"Obstacles (Unk3:{Unk3}, ID:{ID})";
             node.Name = RefID.ToString();
             node.Tag = this;
 
