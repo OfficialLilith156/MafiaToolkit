@@ -15,6 +15,8 @@ namespace Mafia2Tool.Forms
         {
             LabelToolkitName.Text = "Mafia Toolkit v " + ToolkitSettings.Version.ToString().Replace(",", ".");
             ThanksBox.Text = "" +
+                "- Official Lilith - Thanks for the new and improved versions of the Mafia Toolkit\r\n" +
+                "- BYTE - Thanks for improving the functionality\r\n" +
                 "- Oleg @ ZModeler 3\r\n" +
                 "- Rick 'Gibbed'\r\n" +
                 "- Fireboyd for developing UnluacNET\r\n" +

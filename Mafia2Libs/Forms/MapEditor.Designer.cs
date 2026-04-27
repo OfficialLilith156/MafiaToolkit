@@ -76,8 +76,6 @@ namespace Mafia2Tool
             ObjectPropertiesButton = new System.Windows.Forms.ToolStripMenuItem();
             ViewOptionProperties = new System.Windows.Forms.ToolStripMenuItem();
             toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
-            importXMLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            exportXmlToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             moveAIGroupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             rotateAIToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             addGroupType1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -90,6 +88,7 @@ namespace Mafia2Tool
             moveGroupNodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             addEdgesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            recalculateDistanceNodesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripDropDownButton5 = new System.Windows.Forms.ToolStripDropDownButton();
             removeSectorSoundToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             addSectorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -102,7 +101,6 @@ namespace Mafia2Tool
             dockPanel1 = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             FrameBrowser = new System.Windows.Forms.OpenFileDialog();
             SaveFileDialog = new System.Windows.Forms.SaveFileDialog();
-            recalculateDistanceNodesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             StatusStrip = new System.Windows.Forms.StatusStrip();
             StatusStrip.SuspendLayout();
             ToolbarStrip.SuspendLayout();
@@ -484,27 +482,13 @@ namespace Mafia2Tool
             // toolStripDropDownButton1
             // 
             toolStripDropDownButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { importXMLToolStripMenuItem, exportXmlToolStripMenuItem, moveAIGroupToolStripMenuItem, rotateAIToolStripMenuItem, addGroupType1ToolStripMenuItem, addType4ToolStripMenuItem, addType7ToolStripMenuItem, addType8ToolStripMenuItem, addType9ToolStripMenuItem, addType11ToolStripMenuItem });
+            toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { moveAIGroupToolStripMenuItem, rotateAIToolStripMenuItem, addGroupType1ToolStripMenuItem, addType4ToolStripMenuItem, addType7ToolStripMenuItem, addType8ToolStripMenuItem, addType9ToolStripMenuItem, addType11ToolStripMenuItem });
             toolStripDropDownButton1.Image = (System.Drawing.Image)resources.GetObject("toolStripDropDownButton1.Image");
             toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             toolStripDropDownButton1.Name = "toolStripDropDownButton1";
             toolStripDropDownButton1.Size = new System.Drawing.Size(124, 22);
             toolStripDropDownButton1.Text = "Navigation AIWorld";
             toolStripDropDownButton1.ToolTipText = "Navigation";
-            // 
-            // importXMLToolStripMenuItem
-            // 
-            importXMLToolStripMenuItem.Name = "importXMLToolStripMenuItem";
-            importXMLToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
-            importXMLToolStripMenuItem.Text = "Import XML";
-            importXMLToolStripMenuItem.Click += ImportAIWorldXMLButton_Click;
-            // 
-            // exportXmlToolStripMenuItem
-            // 
-            exportXmlToolStripMenuItem.Name = "exportXmlToolStripMenuItem";
-            exportXmlToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
-            exportXmlToolStripMenuItem.Text = "Export Xml";
-            exportXmlToolStripMenuItem.Click += ExportAIWorldXMLButton_Click;
             // 
             // moveAIGroupToolStripMenuItem
             // 
@@ -594,6 +578,13 @@ namespace Mafia2Tool
             addEdgesToolStripMenuItem.Text = "Add Edges";
             addEdgesToolStripMenuItem.Click += BtnAddEdgeBox_Click;
             // 
+            // recalculateDistanceNodesToolStripMenuItem
+            // 
+            recalculateDistanceNodesToolStripMenuItem.Name = "recalculateDistanceNodesToolStripMenuItem";
+            recalculateDistanceNodesToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+            recalculateDistanceNodesToolStripMenuItem.Text = "Recalculate Distance Nodes";
+            recalculateDistanceNodesToolStripMenuItem.Click += Button_CalcConnectionDistances_Click;
+            // 
             // toolStripDropDownButton5
             // 
             toolStripDropDownButton5.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
@@ -669,13 +660,6 @@ namespace Mafia2Tool
             // FrameBrowser
             // 
             FrameBrowser.Filter = "FrameResource|*.fr|Toolkit Frame Data|*.framedata";
-            // 
-            // recalculateDistanceNodesToolStripMenuItem
-            // 
-            recalculateDistanceNodesToolStripMenuItem.Name = "recalculateDistanceNodesToolStripMenuItem";
-            recalculateDistanceNodesToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
-            recalculateDistanceNodesToolStripMenuItem.Text = "Recalculate Distance Nodes";
-            recalculateDistanceNodesToolStripMenuItem.Click += Button_CalcConnectionDistances_Click;
             // 
             // MapEditor
             // 
@@ -755,8 +739,6 @@ namespace Mafia2Tool
         private System.Windows.Forms.ToolStripMenuItem saveAIWorldToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveAllItemDescToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveItemDescSelectedToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem importXMLToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem exportXmlToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem moveAIGroupToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem rotateAIToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveAnimalTraffciPathToolStripMenuItem;

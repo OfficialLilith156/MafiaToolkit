@@ -188,7 +188,7 @@ namespace ResourceTypes.Collisions
             public Vector3 Rotation { get; set; }
 
             public ulong Hash { get; set; }
-            public int Unk4 { get; set; }
+            public int IndexModel { get; set; }
             public byte Unk5 { get; set; }
 
             /// <summary>
@@ -245,7 +245,7 @@ namespace ResourceTypes.Collisions
             public Placement()
             {
                 Unk5 = 128;
-                Unk4 = -1;
+                IndexModel = -1;
                 Position = new Vector3(0, 0, 0);
                 Rotation = new Vector3(0);
             }
@@ -255,7 +255,7 @@ namespace ResourceTypes.Collisions
                 Position = other.Position;
                 Rotation = other.Rotation;
                 Hash = other.Hash;
-                Unk4 = other.Unk4;
+                IndexModel = other.IndexModel;
                 Unk5 = other.Unk5;
             }
 
@@ -264,7 +264,7 @@ namespace ResourceTypes.Collisions
                 Position = Vector3Utils.ReadFromFile(reader);
                 Rotation = Vector3Utils.ReadFromFile(reader);
                 Hash = reader.ReadUInt64();
-                Unk4 = reader.ReadInt32();
+                IndexModel = reader.ReadInt32();
                 Unk5 = reader.ReadByte();
             }
 
@@ -273,13 +273,13 @@ namespace ResourceTypes.Collisions
                 Position.WriteToFile(writer);
                 Rotation.WriteToFile(writer);
                 writer.Write(Hash);
-                writer.Write(Unk4);
+                writer.Write(IndexModel);
                 writer.Write(Unk5);
             }
 
             public override string ToString()
             {
-                return string.Format("{0}, {1}, {2}", Hash, Unk4, Unk5);
+                return string.Format("{0}, {1}, {2}", Hash, IndexModel, Unk5);
             }
         }
 

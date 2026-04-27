@@ -31,8 +31,8 @@
             System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("$GENERAL");
             System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("$SDS_OPTIONS");
             System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("$MATERIAL_LIBS");
-            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("$RENDER");
-            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("RenderSky");
+            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Map Editor Options");
+            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Render Texture");
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OptionsForm));
             treeView1 = new System.Windows.Forms.TreeView();
             splitContainer1 = new System.Windows.Forms.SplitContainer();
@@ -53,12 +53,12 @@
             treeNode2.Text = "$SDS_OPTIONS";
             treeNode3.Name = "$MATERIAL_LIBS";
             treeNode3.Text = "$MATERIAL_LIBS";
-            treeNode4.Name = "$RENDER";
-            treeNode4.Text = "$RENDER";
-            treeNode5.Name = "RenderSky";
-            treeNode5.Text = "RenderSky";
+            treeNode4.Name = "Map Editor Options";
+            treeNode4.Text = "Map Editor Options";
+            treeNode5.Name = "Render Texture";
+            treeNode5.Text = "Render Texture";
             treeView1.Nodes.AddRange(new System.Windows.Forms.TreeNode[] { treeNode1, treeNode2, treeNode3, treeNode4, treeNode5 });
-            treeView1.Size = new System.Drawing.Size(245, 357);
+            treeView1.Size = new System.Drawing.Size(297, 357);
             treeView1.TabIndex = 0;
             treeView1.NodeMouseClick += NodeMouseClick;
             // 
@@ -72,8 +72,8 @@
             // splitContainer1.Panel1
             // 
             splitContainer1.Panel1.Controls.Add(treeView1);
-            splitContainer1.Size = new System.Drawing.Size(746, 357);
-            splitContainer1.SplitterDistance = 245;
+            splitContainer1.Size = new System.Drawing.Size(906, 357);
+            splitContainer1.SplitterDistance = 297;
             splitContainer1.SplitterWidth = 5;
             splitContainer1.TabIndex = 1;
             // 
@@ -81,7 +81,7 @@
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(758, 369);
+            ClientSize = new System.Drawing.Size(918, 369);
             Controls.Add(splitContainer1);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");

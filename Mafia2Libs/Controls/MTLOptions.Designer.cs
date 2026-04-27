@@ -45,12 +45,11 @@
             groupMTL.Controls.Add(addLibraryButton);
             groupMTL.Controls.Add(MTLListBox);
             groupMTL.Controls.Add(MTLsToLoadText);
-            groupMTL.Dock = System.Windows.Forms.DockStyle.Fill;
             groupMTL.Location = new System.Drawing.Point(0, 0);
             groupMTL.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             groupMTL.Name = "groupMTL";
             groupMTL.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            groupMTL.Size = new System.Drawing.Size(517, 412);
+            groupMTL.Size = new System.Drawing.Size(617, 412);
             groupMTL.TabIndex = 0;
             groupMTL.TabStop = false;
             groupMTL.Text = "$MATERIAL_LIBS";
@@ -86,7 +85,7 @@
             MTLListBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             MTLListBox.Name = "MTLListBox";
             MTLListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            MTLListBox.Size = new System.Drawing.Size(479, 199);
+            MTLListBox.Size = new System.Drawing.Size(581, 199);
             MTLListBox.TabIndex = 1;
             // 
             // MTLsToLoadText
@@ -111,7 +110,7 @@
             Controls.Add(groupMTL);
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             Name = "MTLOptions";
-            Size = new System.Drawing.Size(517, 412);
+            Size = new System.Drawing.Size(617, 412);
             groupMTL.ResumeLayout(false);
             groupMTL.PerformLayout();
             ResumeLayout(false);

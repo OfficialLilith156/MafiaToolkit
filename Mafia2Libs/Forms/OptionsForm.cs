@@ -53,10 +53,10 @@ namespace Mafia2Tool
                     SwapOptionControls(new MTLOptions());
                     break;
                 case 3:
-                    SwapOptionControls(new RenderOptions());
+                    SwapOptionControls(new MapEditorOptions());
                     break;
                 case 4:
-                    SwapOptionControls(new RenderSky());
+                    SwapOptionControls(new RenderTexture());
                     break;
             }
         }

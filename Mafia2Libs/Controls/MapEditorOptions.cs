@@ -1,26 +1,26 @@
-﻿using System;
+﻿using Rendering.Core;
+using System;
+using System.IO;
 using System.Windows.Forms;
-using Utils.Language;
 using Utils.Settings;
+using Utils.Language;
 
 namespace Forms.OptionControls
 {
-    public partial class RenderOptions : UserControl
+    public partial class MapEditorOptions : UserControl
     {
-        public RenderOptions()
+        public MapEditorOptions()
         {
             InitializeComponent();
             Localise();
             LoadSettings();
         }
-
         private void Localise()
         {
-            RenderGroup.Text = Language.GetString("$RENDER_OPTIONS");
             ScreenFarLabel.Text = Language.GetString("$RENDER_SCREENFAR");
             ScreenNearLabel.Text = Language.GetString("$RENDER_SCREENEAR");
             RenderFieldOfView.Text = Language.GetString("$RENDER_FOV");
-            TexLabel.Text = Language.GetString("$TEXTURE_DIRECTORY");
+
             CameraSpeedLabel.Text = Language.GetString("$RENDER_CAMERASPEED");
             TexBrowser.Description = Language.GetString("$SELECT_TEX_FOLDER");
             ExperimentalBox.Text = Language.GetString("$ENABLE_EXPERIMENTAL");
@@ -29,23 +29,33 @@ namespace Forms.OptionControls
             Checkbox_EnableTranslokatorTint.Text = Language.GetString("$TOGGLE_TRANSLOKATOR_TINT");
             CheckBox_VSync.Text = Language.GetString("$VSync");
             UseMIPsBox.Text = Language.GetString("$USE_MIPS");
-        }
 
+        }
         private void LoadSettings()
         {
+            chkLoadFrameResource.Checked = ToolkitSettings.LoadFrameResource;
+            chkLoadCollisions.Checked = ToolkitSettings.LoadCollisions;
+            chkLoadActors.Checked = ToolkitSettings.LoadActors;
+            chkLoadTranslokator.Checked = ToolkitSettings.LoadTranslokator;
+            chkLoadAIWorld.Checked = ToolkitSettings.LoadAIWorld;
+            chkLoadOBJData.Checked = ToolkitSettings.LoadOBJData;
+            chkLoadRoads.Checked = ToolkitSettings.LoadRoads;
+            chkLoadATP.Checked = ToolkitSettings.LoadATP;
+            chkLoadItemDescs.Checked = ToolkitSettings.LoadItemDescs;
+            chkLoadHPD.Checked = ToolkitSettings.LoadHPD;
+            chkLoadSoundSectors.Checked = ToolkitSettings.LoadSoundSectors;
+
             ScreenFarUpDown.Value = Math.Min((decimal)ToolkitSettings.ScreenDepth, ScreenFarUpDown.Maximum);
             ScreenNearUpDown.Value = Math.Min((decimal)ToolkitSettings.ScreenNear, ScreenNearUpDown.Maximum);
             CameraSpeedUpDown.Value = Math.Min((decimal)ToolkitSettings.CameraSpeed, CameraSpeedUpDown.Maximum);
             FieldOfViewNumDown.Value = Math.Min(Math.Max(Convert.ToInt16(ToolkitSettings.FieldOfView), FieldOfViewNumDown.Minimum), FieldOfViewNumDown.Maximum);
-            TexDirectoryBox1.Text = ToolkitSettings.TexturePath1;
-            TexDirectoryBox2.Text = ToolkitSettings.TexturePath2;
-            TexDirectoryBox3.Text = ToolkitSettings.TexturePath3;
-            TexDirectoryBox4.Text = ToolkitSettings.TexturePath4;
+
             ExperimentalBox.Checked = ToolkitSettings.Experimental;
             Checkbox_EnableNavigation.Checked = ToolkitSettings.bNavigation;
             Checkbox_EnableTranslokatorTint.Checked = ToolkitSettings.bTranslokatorTint;
             UseMIPsBox.Checked = ToolkitSettings.UseMIPS;
             CheckBox_VSync.Checked = ToolkitSettings.VSync;
+
         }
 
         private void ScreenDepth_Changed(object sender, EventArgs e)
@@ -66,70 +76,71 @@ namespace Forms.OptionControls
             ToolkitSettings.WriteKey("CameraSpeed", "ModelViewer", ToolkitSettings.CameraSpeed.ToString());
         }
 
-        private void TexDirectoryBox1_TextChanged(object sender, EventArgs e)
+        private void chkLoadFrameResource_CheckedChanged(object sender, EventArgs e)
         {
-            ToolkitSettings.TexturePath1 = TexDirectoryBox1.Text;
-            ToolkitSettings.WriteKey("TexturePath1", "ModelViewer", ToolkitSettings.TexturePath1);
-        }
-        private void TexDirectoryBox2_TextChanged(object sender, EventArgs e)
-        {
-            ToolkitSettings.TexturePath2 = TexDirectoryBox2.Text;
-            ToolkitSettings.WriteKey("TexturePath2", "ModelViewer", ToolkitSettings.TexturePath2);
-        }
-        private void TexDirectoryBox3_TextChanged(object sender, EventArgs e)
-        {
-            ToolkitSettings.TexturePath3 = TexDirectoryBox3.Text;
-            ToolkitSettings.WriteKey("TexturePath3", "ModelViewer", ToolkitSettings.TexturePath3);
-        }
-        private void TexDirectoryBox4_TextChanged(object sender, EventArgs e)
-        {
-            ToolkitSettings.TexturePath4 = TexDirectoryBox4.Text;
-            ToolkitSettings.WriteKey("TexturePath4", "ModelViewer", ToolkitSettings.TexturePath4);
+            ToolkitSettings.LoadFrameResource = chkLoadFrameResource.Checked;
+            ToolkitSettings.WriteKey("LoadFrameResource", "LoadOptions", ToolkitSettings.LoadFrameResource.ToString());
         }
 
-        private void BrowseButton1_Click(object sender, EventArgs e)
+        private void chkLoadCollisions_CheckedChanged(object sender, EventArgs e)
         {
-            TexBrowser.SelectedPath = "";
-            if (TexBrowser.ShowDialog() == DialogResult.OK)
-            {
-                TexDirectoryBox1.Text = TexBrowser.SelectedPath;
-                TexDirectoryBox1_TextChanged(null, null);
-            }
-            else return;
+            ToolkitSettings.LoadCollisions = chkLoadCollisions.Checked;
+            ToolkitSettings.WriteKey("LoadCollisions", "LoadOptions", ToolkitSettings.LoadCollisions.ToString());
         }
 
-        private void BrowseButton2_Click(object sender, EventArgs e)
+        private void chkLoadActors_CheckedChanged(object sender, EventArgs e)
         {
-            TexBrowser.SelectedPath = "";
-            if (TexBrowser.ShowDialog() == DialogResult.OK)
-            {
-                TexDirectoryBox2.Text = TexBrowser.SelectedPath;
-                TexDirectoryBox2_TextChanged(null, null);
-            }
-            else return;
+            ToolkitSettings.LoadActors = chkLoadActors.Checked;
+            ToolkitSettings.WriteKey("LoadActors", "LoadOptions", ToolkitSettings.LoadActors.ToString());
         }
 
-        private void BrowseButton3_Click(object sender, EventArgs e)
+        private void chkLoadTranslokator_CheckedChanged(object sender, EventArgs e)
         {
-            TexBrowser.SelectedPath = "";
-            if (TexBrowser.ShowDialog() == DialogResult.OK)
-            {
-                TexDirectoryBox3.Text = TexBrowser.SelectedPath;
-                TexDirectoryBox3_TextChanged(null, null);
-            }
-            else return;
-        }
-        private void BrowseButton4_Click(object sender, EventArgs e)
-        {
-            TexBrowser.SelectedPath = "";
-            if (TexBrowser.ShowDialog() == DialogResult.OK)
-            {
-                TexDirectoryBox4.Text = TexBrowser.SelectedPath;
-                TexDirectoryBox4_TextChanged(null, null);
-            }
-            else return;
+            ToolkitSettings.LoadTranslokator = chkLoadTranslokator.Checked;
+            ToolkitSettings.WriteKey("LoadTranslokator", "LoadOptions", ToolkitSettings.LoadTranslokator.ToString());
         }
 
+        private void chkLoadAIWorld_CheckedChanged(object sender, EventArgs e)
+        {
+            ToolkitSettings.LoadAIWorld = chkLoadAIWorld.Checked;
+            ToolkitSettings.WriteKey("LoadAIWorld", "LoadOptions", ToolkitSettings.LoadAIWorld.ToString());
+        }
+
+        private void chkLoadOBJData_CheckedChanged(object sender, EventArgs e)
+        {
+            ToolkitSettings.LoadOBJData = chkLoadOBJData.Checked;
+            ToolkitSettings.WriteKey("LoadOBJData", "LoadOptions", ToolkitSettings.LoadOBJData.ToString());
+        }
+
+        private void chkLoadRoads_CheckedChanged(object sender, EventArgs e)
+        {
+            ToolkitSettings.LoadRoads = chkLoadRoads.Checked;
+            ToolkitSettings.WriteKey("LoadRoads", "LoadOptions", ToolkitSettings.LoadRoads.ToString());
+        }
+
+        private void chkLoadATP_CheckedChanged(object sender, EventArgs e)
+        {
+            ToolkitSettings.LoadATP = chkLoadATP.Checked;
+            ToolkitSettings.WriteKey("LoadATP", "LoadOptions", ToolkitSettings.LoadATP.ToString());
+        }
+
+        private void chkLoadItemDescs_CheckedChanged(object sender, EventArgs e)
+        {
+            ToolkitSettings.LoadItemDescs = chkLoadItemDescs.Checked;
+            ToolkitSettings.WriteKey("LoadItemDescs", "LoadOptions", ToolkitSettings.LoadItemDescs.ToString());
+        }
+
+        private void chkLoadHPD_CheckedChanged(object sender, EventArgs e)
+        {
+            ToolkitSettings.LoadHPD = chkLoadHPD.Checked;
+            ToolkitSettings.WriteKey("LoadHPD", "LoadOptions", ToolkitSettings.LoadHPD.ToString());
+        }
+
+        private void chkLoadSoundSectors_CheckedChanged(object sender, EventArgs e)
+        {
+            ToolkitSettings.LoadSoundSectors = chkLoadSoundSectors.Checked;
+            ToolkitSettings.WriteKey("LoadSoundSectors", "LoadOptions", ToolkitSettings.LoadSoundSectors.ToString());
+        }
         private void ExperimentalBox_CheckedChanged(object sender, EventArgs e)
         {
             ToolkitSettings.Experimental = ExperimentalBox.Checked;
@@ -165,6 +176,5 @@ namespace Forms.OptionControls
             ToolkitSettings.bTranslokatorTint = Checkbox_EnableTranslokatorTint.Checked;
             ToolkitSettings.WriteKey("EnableTranslokator", "ModelViewer", ToolkitSettings.bTranslokatorTint.ToString());
         }
-
     }
 }

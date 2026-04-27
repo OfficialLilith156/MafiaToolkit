@@ -9,7 +9,6 @@ using System.Windows.Forms;
 using Utils.Extensions;
 using Utils.Language;
 using Utils.Logging;
-using System.Collections.Generic;
 using static ResourceTypes.Cutscene.CutsceneLoader;
 using static ResourceTypes.Cutscene.CutsceneLoader.Cutscene;
 

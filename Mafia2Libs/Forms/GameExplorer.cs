@@ -1,18 +1,19 @@
 ﻿using Core.IO;
 using Mafia2Tool.Forms;
+using Microsoft.VisualBasic.FileIO;
 using System;
-using System.ComponentModel;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Numerics;
 using System.Windows.Forms;
 using Utils.Extensions;
 using Utils.Language;
 using Utils.Settings;
 using Vortice.Mathematics;
-using Microsoft.VisualBasic.FileIO;
 
 namespace Mafia2Tool
 {
@@ -189,7 +190,7 @@ namespace Mafia2Tool
             ListViewItem.ListViewSubItem[] subItems;
             ListViewItem item = null;
             if (!directory.Exists)
-            {               
+            {
                 string FolderPath = directory.FullName;
                 int Index = FolderPath.LastIndexOf('\\');
                 List<string> NewPath = new List<string>();
@@ -211,15 +212,16 @@ namespace Mafia2Tool
                 }
             }
             DirectoryBase directoryInfo = new DirectoryBase(directory);
-            foreach (DirectoryInfo dir in directory.GetDirectories())
+
+            var sortedDirs = directory.GetDirectories().OrderBy(d => d.Name, StringComparer.OrdinalIgnoreCase).ToArray();
+
+            foreach (DirectoryInfo dir in sortedDirs)
             {
                 DirectoryBase childInfo = new DirectoryBase(dir);
                 if (searchMode && !string.IsNullOrEmpty(filename))
                 {
                     if (!dir.Name.Contains(filename))
-                    {
                         continue;
-                    }
                 }
                 item = new ListViewItem(dir.Name, 0);
                 item.Tag = childInfo;
@@ -232,25 +234,24 @@ namespace Mafia2Tool
                 item.SubItems.AddRange(subItems);
                 fileListView.Items.Add(item);
             }
-            foreach (FileInfo info in directory.GetFiles())
+
+            var sortedFiles = directory.GetFiles().OrderBy(f => f.Name, StringComparer.OrdinalIgnoreCase).ToArray();
+
+            foreach (FileInfo info in sortedFiles)
             {
                 if (!imageBank.Images.ContainsKey(info.Extension))
                 {
                     var icon = Icon.ExtractAssociatedIcon(info.FullName);
                     if (icon != null)
-                    {
                         imageBank.Images.Add(info.Extension, icon);
-                    }
                 }
                 if (searchMode && !string.IsNullOrEmpty(filename))
                 {
                     if (!info.Name.Contains(filename))
-                    {
                         continue;
-                    }
                 }
                 var file = FileFactory.ConstructFromFileInfo(info);
-                if(file is FileFrameResource)
+                if (file is FileFrameResource)
                 {
                     CachedFrameResourceFile = file as FileFrameResource;
                     Button_OpenMapEditor.Enabled = true;
@@ -267,12 +268,13 @@ namespace Mafia2Tool
                 item.SubItems.AddRange(subItems);
                 fileListView.Items.Add(item);
             }
+
             infoText.Text = "Done loading directory.";
             currentDirectory = directory;
             string directoryPath = directory.FullName.Remove(0, directory.FullName.IndexOf(rootDirectory.Name)).TrimEnd('\\');
             FolderPath.Text = directoryPath;
             fileListView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
-            // We have to remove the AfterExpand event before we expand the node.
+
             folderView.AfterExpand -= FolderViewAfterExpand;
             TreeNode folderNode = folderView.Nodes.FindTreeNodeByFullPath(directoryPath);
             if (folderNode != null)
@@ -283,7 +285,6 @@ namespace Mafia2Tool
             }
             else
             {
-
                 MessageBox.Show("Failed to find directory in FolderView!", "Toolkit", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             folderView.AfterExpand += FolderViewAfterExpand;

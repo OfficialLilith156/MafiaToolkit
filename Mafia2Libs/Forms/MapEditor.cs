@@ -99,7 +99,8 @@ namespace Mafia2Tool
                 Worlds = new List<AIWorld>()
             };
 
-            sceneData.FrameResource.OnFrameRemoved += OnFrameRemoved;
+            if (sceneData.FrameResource != null)
+                sceneData.FrameResource.OnFrameRemoved += OnFrameRemoved;
 
             if (MaterialsManager.MaterialLibraries.Count == 0)
             {
@@ -178,117 +179,7 @@ namespace Mafia2Tool
             dSceneTree.ActorEntryNewTRObjectButton.Click += new EventHandler(ActorEntryNewTRObjectButton_Click);
             dSceneTree.TRRebuildObjectButton.Click += new EventHandler(TRRebuildObjectButton_Click);
         }
-        private void BtnAddEdgeBox_Click(object sender, EventArgs e)
-        {
-            TreeNode selectedNode = dSceneTree.SelectedNode;
-            if (selectedNode == null)
-            {
-                MessageBox.Show("Select a Set node (UnkSet0) or an existing EdgeBox first.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
-
-            UnkSet0 targetSet = null;
-            OBJData targetOBJData = null;
-            TreeNode setNode = null;
-
-            if (selectedNode.Tag is BoundingBox)
-            {
-                setNode = selectedNode.Parent;
-                targetSet = setNode.Tag as UnkSet0;
-                TreeNode navNode = setNode.Parent?.Parent;
-                if (navNode?.Tag is RenderNav renderNav)
-                    targetOBJData = renderNav.GetData();
-            }
-            else if (selectedNode.Tag is UnkSet0 set)
-            {
-                targetSet = set;
-                setNode = selectedNode;
-                TreeNode navNode = selectedNode.Parent?.Parent;
-                if (navNode?.Tag is RenderNav renderNav)
-                    targetOBJData = renderNav.GetData();
-            }
-
-            if (targetSet == null || targetOBJData == null)
-            {
-                MessageBox.Show("Cannot find parent navigation data.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            BoundingBox newBox = new BoundingBox(new Vector3(-1f), new Vector3(1f));
-            var boxesList = targetSet.EdgeBoxes?.ToList() ?? new List<BoundingBox>();
-            boxesList.Add(newBox);
-            targetSet.EdgeBoxes = boxesList.ToArray();
-            targetSet.NumEdges = targetSet.EdgeBoxes.Length;
-
-            int newIndex = targetSet.EdgeBoxes.Length - 1;
-            TreeNode newEdgeNode = new TreeNode($"EdgeBox {newIndex}: {newBox.Min} - {newBox.Max}");
-            newEdgeNode.Name = $"EDGEBOX_{Array.IndexOf(targetOBJData.runtimeMesh.Cells.SelectMany(c => c.Sets).ToArray(), targetSet)}_{newIndex}";
-            newEdgeNode.Tag = newBox;
-            setNode.Nodes.Add(newEdgeNode);
-            setNode.Expand();
-            dSceneTree.SelectedNode = newEdgeNode;
-
-            UpdateNavMeshVisualization(targetOBJData, targetSet);
-        }
-        private void DuplicateNavVertex(TreeNode originalNode)
-        {
-            var originalVertex = originalNode.Tag as OBJData.VertexStruct;
-            if (originalVertex == null) return;
-
-            TreeNode navNode = originalNode.Parent;
-            while (navNode != null && !(navNode.Tag is RenderNav))
-                navNode = navNode.Parent;
-            if (navNode?.Tag is not RenderNav renderNav)
-            {
-                MessageBox.Show("Cannot find parent navigation data.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            OBJData data = renderNav.GetData();
-            if (data == null || data.vertices == null) return;
-
-            OBJData.VertexStruct newVertex = new OBJData.VertexStruct
-            {
-                Unk7 = GetNextUnk7(data),
-                Position = originalVertex.Position + new Vector3(1f, 0f, 0f),
-                Unk0 = originalVertex.Unk0,
-                Unk1 = originalVertex.Unk1,
-                Unk2 = 1,
-                Unk3 = originalVertex.Unk3,
-                Unk4 = originalVertex.Unk4,
-                Unk5 = originalVertex.Unk5,
-                Unk6 = originalVertex.Unk6
-            };
-
-            Array.Resize(ref data.vertices, data.vertices.Length + 1);
-            data.vertices[data.vertices.Length - 1] = newVertex;
-            data.vertSize = data.vertices.Length;
-
-            RenderBoundingBox newBox = new RenderBoundingBox();
-            newBox.Init(new BoundingBox(new Vector3(-0.1f), new Vector3(0.1f)));
-            newBox.SetColour(System.Drawing.Color.Green);
-            newBox.SetTransform(Matrix4x4.CreateTranslation(newVertex.Position));
-            int newRefID = RefManager.GetNewRefID();
-            Graphics.InitObjectStack[newRefID] = newBox;
-            renderNav.AddVertex(newBox, newVertex);
-
-            TreeNode parentFolder = originalNode.Parent;
-            TreeNode vertexNode = new TreeNode($"NAVNode: {newVertex.Unk7}")
-            {
-                Tag = newVertex,
-                Name = newRefID.ToString()
-            };
-            parentFolder.Nodes.Add(vertexNode);
-            parentFolder.Expand();
-
-            data.GenerateConnections();
-            renderNav.RebuildAllConnections();
-
-            dSceneTree.SelectedNode = vertexNode;
-            TreeViewUpdateSelected();
-            dPropertyGrid.SetObject(newVertex);
-        }
-
+          
         private uint GetNextUnk7(OBJData data)
         {
             uint max = 0;
@@ -296,6 +187,7 @@ namespace Mafia2Tool
                 if (v.Unk7 > max) max = v.Unk7;
             return max + 1;
         }
+
         private void UpdateNavMeshVisualization(OBJData objData, UnkSet0 set)
         {
             foreach (TreeNode rootNode in OBJDataRoot.Nodes)
@@ -1269,6 +1161,7 @@ namespace Mafia2Tool
 
         public void PopulateList()
         {
+            if (SceneData.FrameResource == null) return;
             TreeNode tree = SceneData.FrameResource.BuildTree(SceneData.FrameNameTable);
             tree.Tag = SceneData.FrameResource.Header;
             frameResourceRoot = tree;
@@ -1437,20 +1330,6 @@ namespace Mafia2Tool
             Shutdown();
         }
 
-        private Vector3 MoveObjectWithMouse(float z, int sx, int sy)
-        {
-            Ray ray = Graphics.Camera.GetPickingRay(new Vector2(sx, sy), new Vector2(RenderPanel.Size.Width, RenderPanel.Size.Height));
-            Vector3 worldPosition = ray.Position + (ray.Direction * 1);
-            for (int i = 0; i < 99999; i++)
-            {
-                worldPosition = ray.Position + (ray.Direction * i);
-                if (worldPosition.Z - z < 10)
-                {
-                    break;
-                }
-            }
-            return worldPosition;
-        }
 
         public bool Frame()
         {
@@ -1527,7 +1406,6 @@ namespace Mafia2Tool
                 bboxKeyWasPressed = false;
             }
 
-            // Переключение режимов: R - поворот объектов, T - перемещение объектов
             bool rWasPressed = false;
             bool tWasPressed = false;
 
@@ -1536,19 +1414,16 @@ namespace Mafia2Tool
 
             if (rIsDown && !rWasPressed)
             {
-                bSelectMode = true; // Режим поворота объектов
-                Console.WriteLine("Режим: Поворот объектов (R)");
+                bSelectMode = true;
             }
             if (tIsDown && !tWasPressed)
             {
-                bSelectMode = false; // Режим перемещения объектов
-                Console.WriteLine("Режим: Перемещение объектов (T)");
+                bSelectMode = false;
             }
 
             rWasPressed = rIsDown;
             tWasPressed = tIsDown;
 
-            // Режим поворота: выбор оси вращения
             RotationAxis currentRotationAxis = RotationAxis.All;
             bool xWasPressed = false;
             bool yWasPressed = false;
@@ -1597,60 +1472,24 @@ namespace Mafia2Tool
                 }
                 else if (Input.IsButtonDown(MouseButtons.Left))
                 {
-                    // Handle gizmo manipulation
-                    if (Graphics.IsGizmoActive())
+                    if (!bSelectMode && Graphics.IsGizmoActive())
                     {
-                        // Continue gizmo manipulation during drag
                         Graphics.UpdateGizmoManipulation(mousePos.X, mousePos.Y, RenderPanel.Width, RenderPanel.Height);
                         SyncGizmoToSelectedObject();
                     }
                     else if (selectTimer <= 0.0f)
                     {
-                        // Check if clicking on gizmo first
-                        GizmoAxis clickedAxis = Graphics.PickGizmoAxis(mousePos.X, mousePos.Y, RenderPanel.Width, RenderPanel.Height);
-
-                        if (clickedAxis != GizmoAxis.None)
+                        if (bSelectMode)
                         {
-                            // Start gizmo manipulation
-                            Graphics.StartGizmoManipulation(clickedAxis, mousePos.X, mousePos.Y, RenderPanel.Width, RenderPanel.Height);
-                        }
-                        else if (bSelectMode)
-                        {
-                            // Normal object picking
                             Pick(mousePos.X, mousePos.Y);
                             selectTimer = 0.1f;
                         }
-                        else
+                        else 
                         {
-                            // Legacy: Move object with mouse (MoveObjectWithMouse mode)
-                            if (dSceneTree.SelectedNode != null)
+                            GizmoAxis clickedAxis = Graphics.PickGizmoAxis(mousePos.X, mousePos.Y, RenderPanel.Width, RenderPanel.Height);
+                            if (clickedAxis != GizmoAxis.None)
                             {
-                                var node = dSceneTree.SelectedNode;
-                                var tag = dSceneTree.SelectedNode.Tag;
-
-                                if (FrameResource.IsFrameType(tag))
-                                {
-                                    FrameObjectBase fObject = (tag as FrameObjectBase);
-                                    var translation = MoveObjectWithMouse(fObject.LocalTransform.Translation.Z, mousePos.X, mousePos.Y);
-                                    var local = fObject.LocalTransform;
-                                    translation.Z = local.Translation.Z;
-                                    fObject.LocalTransform = Matrix4x4Extensions.SetTranslation(local, translation);
-                                    TreeViewUpdateSelected();
-                                    ApplyChangesToRenderable(fObject);
-                                }
-                                else if (tag is Collision.Placement)
-                                {
-                                    Collision.Placement placement = (tag as Collision.Placement);
-                                    var translation = MoveObjectWithMouse(placement.Position.Z, mousePos.X, mousePos.Y);
-                                    var local = placement.Position;
-                                    translation.Z = local.Z;
-                                    placement.Position = translation;
-                                    TreeViewUpdateSelected();
-                                    IRenderer asset;
-                                    Graphics.Assets.TryGetValue(int.Parse(node.Name), out asset);
-                                    RenderInstance instance = (asset as RenderInstance);
-                                    instance.SetTransform(placement.Transform);
-                                }
+                                Graphics.StartGizmoManipulation(clickedAxis, mousePos.X, mousePos.Y, RenderPanel.Width, RenderPanel.Height);
                             }
                         }
                     }
@@ -1664,18 +1503,16 @@ namespace Mafia2Tool
                     }
                 }
 
-                // Перемещение выбранного объекта стрелками
                 if (dSceneTree.SelectedNode != null && dSceneTree.SelectedNode.Tag != null)
                 {
-                    // Alt = медленное перемещение, Shift = быстрое перемещение
                     float moveSpeed = 0.1f;
                     if (Input.IsKeyDown(Keys.LMenu) || Input.IsKeyDown(Keys.RMenu))
                     {
-                        moveSpeed = 0.01f; // Медленное перемещение с Alt
+                        moveSpeed = 0.01f;
                     }
                     else if (Input.IsKeyDown(Keys.LShiftKey) || Input.IsKeyDown(Keys.RShiftKey))
                     {
-                        moveSpeed = 1.0f; // Быстрое перемещение с Shift
+                        moveSpeed = 1.0f;
                     }
                     Vector3 moveDelta = Vector3.Zero;
 
@@ -1695,8 +1532,6 @@ namespace Mafia2Tool
                     {
                         moveDelta.X += moveSpeed;
                     }
-
-                    // Дополнительно: перемещение по Z с PageUp/PageDown
                     if (Input.IsKeyDown(Keys.PageUp))
                     {
                         moveDelta.Z += moveSpeed;
@@ -1706,7 +1541,6 @@ namespace Mafia2Tool
                         moveDelta.Z -= moveSpeed;
                     }
 
-                    // Применяем перемещение к выбранному объекту
                     if (moveDelta != Vector3.Zero)
                     {
                         var tag = dSceneTree.SelectedNode.Tag;
@@ -1735,12 +1569,10 @@ namespace Mafia2Tool
                         }
                     }
 
-                    // Поворот объекта в режиме поворота (R)
                     if (bSelectMode)
                     {
-                        float rotateSpeed = 0.05f; // Скорость вращения
+                        float rotateSpeed = 0.05f;
 
-                        // Применяем вращение к выбранному объекту
                         if (Input.IsKeyDown(Keys.Up) || Input.IsKeyDown(Keys.Down) ||
                             Input.IsKeyDown(Keys.Left) || Input.IsKeyDown(Keys.Right) ||
                             Input.IsKeyDown(Keys.PageUp) || Input.IsKeyDown(Keys.PageDown))
@@ -1752,11 +1584,9 @@ namespace Mafia2Tool
                                 FrameObjectBase fObject = (tag as FrameObjectBase);
                                 var transform = fObject.LocalTransform;
 
-                                // Вращение в зависимости от выбранной оси
                                 switch (currentRotationAxis)
                                 {
                                     case RotationAxis.X:
-                                        // Вращение только по оси X (стрелки Вверх/Вниш)
                                         if (Input.IsKeyDown(Keys.Up))
                                         {
                                             transform = Matrix4x4.CreateRotationX(rotateSpeed) * transform;
@@ -1765,7 +1595,6 @@ namespace Mafia2Tool
                                         {
                                             transform = Matrix4x4.CreateRotationX(-rotateSpeed) * transform;
                                         }
-                                        // Left/Right тоже вращают по X (альтернативное управление)
                                         if (Input.IsKeyDown(Keys.Left))
                                         {
                                             transform = Matrix4x4.CreateRotationX(-rotateSpeed) * transform;
@@ -1777,7 +1606,6 @@ namespace Mafia2Tool
                                         break;
 
                                     case RotationAxis.Y:
-                                        // Вращение только по оси Y (стрелки Влево/Вправо)
                                         if (Input.IsKeyDown(Keys.Left))
                                         {
                                             transform = Matrix4x4.CreateRotationY(rotateSpeed) * transform;
@@ -1786,7 +1614,6 @@ namespace Mafia2Tool
                                         {
                                             transform = Matrix4x4.CreateRotationY(-rotateSpeed) * transform;
                                         }
-                                        // Up/Down тоже вращают по Y (альтернативное управление)
                                         if (Input.IsKeyDown(Keys.Up))
                                         {
                                             transform = Matrix4x4.CreateRotationY(rotateSpeed) * transform;
@@ -1798,7 +1625,6 @@ namespace Mafia2Tool
                                         break;
 
                                     case RotationAxis.Z:
-                                        // Вращение только по оси Z (PageUp/PageDown)
                                         if (Input.IsKeyDown(Keys.PageUp))
                                         {
                                             transform = Matrix4x4.CreateRotationZ(rotateSpeed) * transform;
@@ -1807,7 +1633,6 @@ namespace Mafia2Tool
                                         {
                                             transform = Matrix4x4.CreateRotationZ(-rotateSpeed) * transform;
                                         }
-                                        // Стрелки тоже вращают по Z (альтернативное управление)
                                         if (Input.IsKeyDown(Keys.Up))
                                         {
                                             transform = Matrix4x4.CreateRotationZ(rotateSpeed) * transform;
@@ -1828,7 +1653,6 @@ namespace Mafia2Tool
 
                                     case RotationAxis.All:
                                     default:
-                                        // Свободное вращение по всем осям (оригинальное поведение)
                                         if (Input.IsKeyDown(Keys.Up))
                                         {
                                             transform = Matrix4x4.CreateRotationX(rotateSpeed) * transform;
@@ -1862,10 +1686,8 @@ namespace Mafia2Tool
                             }
                             else if (tag is Collision.Placement placement)
                             {
-                                // Для Placement преобразуем положение и ориентацию
                                 var transform = placement.Transform;
 
-                                // Аналогичная логика для Placement
                                 switch (currentRotationAxis)
                                 {
                                     case RotationAxis.X:
@@ -1975,17 +1797,18 @@ namespace Mafia2Tool
             return true;
         }
 
-        // Добавьте этот enum в начало класса (вне метода Frame)
         public enum RotationAxis
         {
-            All,  // Свободное вращение
-            X,    // Только по оси X
-            Y,    // Только по оси Y
-            Z     // Только по оси Z
+            All,  
+            X,    
+            Y,    
+            Z     
         }
 
         private void SanitizeBuffers()
         {
+            if (SceneData.VertexBufferPool == null || SceneData.IndexBufferPool == null)
+                return;
             #region vertex sanitize;
             //vertex pool check
             var bufferPools = new Dictionary<ulong, bool>();
@@ -2973,7 +2796,7 @@ namespace Mafia2Tool
                 }
                 dSceneTree.AddToTree(animalTrafficRoot);
             }
-            if (ToolkitSettings.LoadActors && SceneData.Actors.Length > 0 && ToolkitSettings.Experimental)
+            if (ToolkitSettings.LoadActors && SceneData.Actors != null && SceneData.Actors.Length > 0 && ToolkitSettings.Experimental)
             {
                 LoadActorFiles();
                 if (ToolkitSettings.LoadActors)
@@ -3381,25 +3204,31 @@ namespace Mafia2Tool
                         }
                     }
             }
-            for (int i = 0; i < SceneData.FrameNameTable.FrameData.Length; i++)
+            if (ToolkitSettings.LoadFrameResource && SceneData.FrameNameTable != null && SceneData.FrameResource != null)
             {
-                FrameNameTable.Data data = SceneData.FrameNameTable.FrameData[i];
-                if (data.FrameIndex != -1)
+                for (int i = 0; i < SceneData.FrameNameTable.FrameData.Length; i++)
                 {
-                    FrameObjectBase frame = (SceneData.FrameResource.FrameObjects.ElementAt(data.FrameIndex).Value as FrameObjectBase);
-                    if (frame != null)
+                    FrameNameTable.Data data = SceneData.FrameNameTable.FrameData[i];
+                    if (data.FrameIndex != -1)
                     {
-                        frame.FrameNameTableFlags = data.Flags;
-                        frame.IsOnFrameTable = true;
+                        FrameObjectBase frame = SceneData.FrameResource.FrameObjects.ElementAt(data.FrameIndex).Value as FrameObjectBase;
+                        if (frame != null)
+                        {
+                            frame.FrameNameTableFlags = data.Flags;
+                            frame.IsOnFrameTable = true;
+                        }
                     }
                 }
             }
-            foreach (var pair in SceneData.FrameResource.FrameObjects)
+            if (ToolkitSettings.LoadFrameResource && SceneData.FrameResource != null)
             {
-                FrameObjectBase frame = (pair.Value as FrameObjectBase);
-                if (assets.ContainsKey(frame.RefID))
+                foreach (var pair in SceneData.FrameResource.FrameObjects)
                 {
-                    assets[frame.RefID].SetTransform(frame.WorldTransform);
+                    FrameObjectBase frame = pair.Value as FrameObjectBase;
+                    if (assets.ContainsKey(frame.RefID))
+                    {
+                        assets[frame.RefID].SetTransform(frame.WorldTransform);
+                    }
                 }
             }
             Graphics.InitObjectStack = assets;
@@ -3469,7 +3298,7 @@ namespace Mafia2Tool
                 Graphics.BuildTranslokatorGrid(SceneData.Translokator);
             }
         }
-        
+
         private string GetCollisionTypeName(ResourceTypes.ItemDesc.CollisionTypes type)
         {
             switch (type)
@@ -5058,10 +4887,6 @@ namespace Mafia2Tool
                     RenderModel model = RenderableFactory.BuildRenderModelFromFrame(mesh);
                     Graphics.InitObjectStack.Add(mesh.RefID, model);
                 }
-                else if (node.Tag is OBJData.VertexStruct vertex)
-                {
-                    DuplicateNavVertex(node);
-                }
                 else if (node.Tag.GetType() == typeof(FrameObjectTarget)) newEntry = new FrameObjectTarget((FrameObjectTarget)node.Tag);
                 else newEntry = new FrameObjectBase((FrameObjectBase)node.Tag);
                 // Try and add the numeric value to the end of the name.
@@ -5120,7 +4945,7 @@ namespace Mafia2Tool
                 TranslokatorNewInstance(node.Parent, instance);
             }
         }
-        
+
         private int CheckIfDuplicationContainsString(string Key)
         {
             int NewNumericValue = 0;
@@ -5901,434 +5726,6 @@ namespace Mafia2Tool
             Clipboard.SetText(result);
         }
 
-        private void ImportAIWorldXMLButton_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                OpenFileDialog openDialog = new OpenFileDialog();
-                openDialog.Filter = "XML Files (*.xml)|*.xml|All Files (*.*)|*.*";
-                openDialog.Title = "Select AIWorld XML file to import";
-                if (openDialog.ShowDialog() == DialogResult.OK)
-                {
-                    Cursor.Current = Cursors.WaitCursor;
-                    TreeNode selectedNode = dSceneTree.SelectedNode;
-                    AIWorld targetWorld = null;
-                    if (selectedNode?.Tag is AIWorld world)
-                    {
-                        targetWorld = world;
-                    }
-                    else if (selectedNode?.Parent?.Tag is AIWorld parentWorld)
-                    {
-                        targetWorld = parentWorld;
-                    }
-                    else if (AIWorldRoot != null && AIWorldRoot.Nodes.Count > 0)
-                    {
-                        targetWorld = AIWorldRoot.Nodes[0].Tag as AIWorld;
-                    }
-                    if (targetWorld == null)
-                    {
-                        MessageBox.Show("Please select an AIWorld node to import into.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        return;
-                    }
-                    ImportAIWorldFromXML(openDialog.FileName, targetWorld);
-                    Cursor.Current = Cursors.Default;
-                    MessageBox.Show("AIWorld imported successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-            }
-            catch (Exception ex)
-            {
-                Cursor.Current = Cursors.Default;
-                MessageBox.Show($"Error importing AIWorld: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void ExportAIWorldXMLButton_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                TreeNode selectedNode = dSceneTree.SelectedNode;
-                AIWorld targetWorld = null;
-                if (selectedNode?.Tag is AIWorld world)
-                {
-                    targetWorld = world;
-                }
-                else if (selectedNode?.Parent?.Tag is AIWorld parentWorld)
-                {
-                    targetWorld = parentWorld;
-                }
-                if (targetWorld == null)
-                {
-                    MessageBox.Show("Please select an AIWorld node to export.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-                SaveFileDialog saveDialog = new SaveFileDialog();
-                saveDialog.Filter = "XML Files (*.xml)|*.xml|All Files (*.*)|*.*";
-                saveDialog.Title = "Save AIWorld as XML";
-                saveDialog.FileName = $"{targetWorld.PartName}_AIWorld.xml";
-                if (saveDialog.ShowDialog() == DialogResult.OK)
-                {
-                    Cursor.Current = Cursors.WaitCursor;
-                    ExportAIWorldToXML(targetWorld, saveDialog.FileName);
-                    Cursor.Current = Cursors.Default;
-                    MessageBox.Show($"AIWorld exported to {saveDialog.FileName}", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-            }
-            catch (Exception ex)
-            {
-                Cursor.Current = Cursors.Default;
-                MessageBox.Show($"Error exporting AIWorld: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void ImportAIWorldFromXML(string xmlFilePath, AIWorld targetWorld)
-        {
-            try
-            {
-                XmlDocument xmlDoc = new XmlDocument();
-                xmlDoc.Load(xmlFilePath);
-                targetWorld.AIPoints.Clear();
-                XmlNode worldNode = xmlDoc.SelectSingleNode("AIWorld");
-                if (worldNode != null)
-                {
-                    if (worldNode.SelectSingleNode("PartName") != null) targetWorld.PartName = worldNode.SelectSingleNode("PartName").InnerText;
-                    if (worldNode.SelectSingleNode("KynogonString") != null) targetWorld.KynogonString = worldNode.SelectSingleNode("KynogonString").InnerText;
-                    if (worldNode.SelectSingleNode("OriginStream") != null) targetWorld.OriginStream = worldNode.SelectSingleNode("OriginStream").InnerText;
-                    XmlNodeList aiPointNodes = worldNode.SelectNodes("AIPoints/AIPoint");
-                    foreach (XmlNode pointNode in aiPointNodes)
-                    {
-                        ushort typeID = ushort.Parse(pointNode.Attributes["TypeID"].Value);
-                        IType newPoint = AIWorld_Factory.ConstructByTypeID(targetWorld, typeID);
-                        if (newPoint != null)
-                        {
-                            switch (typeID)
-                            {
-                                case 1:
-                                    var type1 = newPoint as AIWorld_Type1;
-                                    if (type1 != null)
-                                    {
-                                        if (pointNode.SelectSingleNode("Unk01") != null) type1.Unk01 = byte.Parse(pointNode.SelectSingleNode("Unk01").InnerText);
-                                        XmlNodeList childPoints = pointNode.SelectNodes("ChildPoints/ChildPoint");
-                                        foreach (XmlNode childNode in childPoints)
-                                        {
-                                            ushort childTypeID = ushort.Parse(childNode.Attributes["TypeID"].Value);
-                                            IType childPoint = AIWorld_Factory.ConstructByTypeID(targetWorld, childTypeID);
-                                            if (childPoint != null)
-                                            {
-                                                LoadAIPointPropertiesByType(childPoint, childNode);
-                                                type1.AIPoints.Add(childPoint);
-                                            }
-                                        }
-                                    }
-                                    break;
-                                case 4:
-                                    var type4 = newPoint as AIWorld_Type4;
-                                    if (type4 != null)
-                                    {
-                                        LoadVector3Property(type4, "Position", pointNode);
-                                        LoadVector3Property(type4, "Rotation", pointNode);
-                                        LoadVector3Property(type4, "Direction", pointNode);
-                                        if (pointNode.SelectSingleNode("Unk0") != null) type4.Unk0 = byte.Parse(pointNode.SelectSingleNode("Unk0").InnerText);
-                                        if (pointNode.SelectSingleNode("ID") != null) type4.ID = uint.Parse(pointNode.SelectSingleNode("ID").InnerText);
-                                        if (pointNode.SelectSingleNode("LinkID_Left") != null) type4.LinkID_Left = uint.Parse(pointNode.SelectSingleNode("LinkID_Left").InnerText);
-                                        if (pointNode.SelectSingleNode("LinkID_Right") != null) type4.LinkID_Right = uint.Parse(pointNode.SelectSingleNode("LinkID_Right").InnerText);
-                                        if (pointNode.SelectSingleNode("Length") != null) type4.Length = float.Parse(pointNode.SelectSingleNode("Length").InnerText, CultureInfo.InvariantCulture);
-                                        if (pointNode.SelectSingleNode("Flags") != null) type4.Flags = byte.Parse(pointNode.SelectSingleNode("Flags").InnerText);
-                                        if (pointNode.SelectSingleNode("Unk7") != null) type4.Unk7 = byte.Parse(pointNode.SelectSingleNode("Unk7").InnerText);
-                                        if (pointNode.SelectSingleNode("Unk9") != null) type4.Unk9 = byte.Parse(pointNode.SelectSingleNode("Unk9").InnerText);
-
-                                        //XmlNode unk8Node = pointNode.SelectSingleNode("Unk8");
-                                        //if (unk8Node != null)
-                                        //{
-                                        //    XmlNodeList valueNodes = unk8Node.SelectNodes("Value");
-                                        //    type4.Unk8 = new uint[valueNodes.Count];
-                                        //    for (int i = 0; i < valueNodes.Count; i++)
-                                        //    {
-                                        //        type4.Unk8[i] = uint.Parse(valueNodes[i].InnerText);
-                                        //    }
-                                        //}
-                                    }
-                                    break;
-                                case 7:
-                                    var type7 = newPoint as AIWorld_Type7;
-                                    if (type7 != null)
-                                    {
-                                        LoadVector3Property(type7, "Position", pointNode);
-                                        LoadVector3Property(type7, "Direction", pointNode);
-                                        LoadVector3Property(type7, "Unk2", pointNode);
-                                        LoadVector3Property(type7, "Minimum", pointNode);
-                                        LoadVector3Property(type7, "Maximum", pointNode);
-                                        if (pointNode.SelectSingleNode("Unk0") != null) type7.Unk0 = ushort.Parse(pointNode.SelectSingleNode("Unk0").InnerText);
-                                        if (pointNode.SelectSingleNode("Unk3") != null) type7.Unk3 = uint.Parse(pointNode.SelectSingleNode("Unk3").InnerText);
-                                    }
-                                    break;
-                                case 8:
-                                    var type8 = newPoint as AIWorld_Type8;
-                                    if (type8 != null)
-                                    {
-                                        LoadType9Properties(type8, pointNode);
-                                        if (pointNode.SelectSingleNode("Unk6") != null) type8.Unk6 = uint.Parse(pointNode.SelectSingleNode("Unk6").InnerText);
-                                    }
-                                    break;
-                                case 9:
-                                    var type9 = newPoint as AIWorld_Type9;
-                                    if (type9 != null)
-                                    {
-                                        LoadType9Properties(type9, pointNode);
-                                    }
-                                    break;
-                                case 11:
-                                    var type11 = newPoint as AIWorld_Type11;
-                                    if (type11 != null)
-                                    {
-                                        LoadVector3Property(type11, "Unk1", pointNode);
-                                        LoadVector3Property(type11, "Unk2", pointNode);
-                                        LoadVector3Property(type11, "Unk3", pointNode);
-                                        if (pointNode.SelectSingleNode("Unk0") != null) type11.Unk0 = byte.Parse(pointNode.SelectSingleNode("Unk0").InnerText);
-                                        if (pointNode.SelectSingleNode("Unk4") != null) type11.Unk4 = uint.Parse(pointNode.SelectSingleNode("Unk4").InnerText);
-                                    }
-                                    break;
-
-                            }
-                            targetWorld.AIPoints.Add(newPoint);
-                        }
-                    }
-                }
-                UpdateAIWorldTreeNode(targetWorld);
-                targetWorld.RequestPrimitiveBatchUpdate();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Failed to import AIWorld from XML: {ex.Message}", ex);
-            }
-        }
-
-        private void LoadType9Properties(AIWorld_Type9 type9, XmlNode parentNode)
-        {
-            LoadVector3Property(type9, "Position", parentNode);
-            if (parentNode.SelectSingleNode("Unk0") != null) type9.Unk0 = byte.Parse(parentNode.SelectSingleNode("Unk0").InnerText);
-            if (parentNode.SelectSingleNode("Unk1") != null) type9.Unk1 = uint.Parse(parentNode.SelectSingleNode("Unk1").InnerText);
-            if (parentNode.SelectSingleNode("Unk3") != null) type9.Unk3 = float.Parse(parentNode.SelectSingleNode("Unk3").InnerText, CultureInfo.InvariantCulture);
-            if (parentNode.SelectSingleNode("Unk4") != null) type9.Unk4 = float.Parse(parentNode.SelectSingleNode("Unk4").InnerText, CultureInfo.InvariantCulture);
-            XmlNode unk5Node = parentNode.SelectSingleNode("Unk5");
-            if (unk5Node != null)
-            {
-                XmlNodeList valueNodes = unk5Node.SelectNodes("Value");
-                type9.Unk5 = new uint[valueNodes.Count];
-                for (int i = 0; i < valueNodes.Count; i++)
-                {
-                    type9.Unk5[i] = uint.Parse(valueNodes[i].InnerText);
-                }
-            }
-        }
-
-        private void LoadAIPointPropertiesByType(IType aiPoint, XmlNode parentNode)
-        {
-            if (aiPoint is AIWorld_Type4 type4)
-            {
-                LoadVector3Property(type4, "Direction", parentNode);
-                if (parentNode.SelectSingleNode("Flag") != null) type4.Flags = byte.Parse(parentNode.SelectSingleNode("Flag").InnerText);
-                if (parentNode.SelectSingleNode("ID") != null) type4.ID = uint.Parse(parentNode.SelectSingleNode("ID").InnerText);
-                if (parentNode.SelectSingleNode("Length") != null) type4.Length = float.Parse(parentNode.SelectSingleNode("Length").InnerText, CultureInfo.InvariantCulture);
-                if (parentNode.SelectSingleNode("LinkID_Left") != null) type4.LinkID_Left = uint.Parse(parentNode.SelectSingleNode("LinkID_Left").InnerText);
-                if (parentNode.SelectSingleNode("LinkID_Right") != null) type4.LinkID_Right = uint.Parse(parentNode.SelectSingleNode("LinkID_Right").InnerText);
-                LoadVector3Property(type4, "Position", parentNode);
-                LoadVector3Property(type4, "Rotation", parentNode);
-                if (parentNode.SelectSingleNode("Unk0") != null) type4.Unk0 = byte.Parse(parentNode.SelectSingleNode("Unk0").InnerText);
-                if (parentNode.SelectSingleNode("Unk7") != null) type4.Unk7 = byte.Parse(parentNode.SelectSingleNode("Unk7").InnerText);
-                //if (parentNode.SelectSingleNode("Unk0") != null) type4.Unk0 = byte.Parse(parentNode.SelectSingleNode("Unk0").InnerText);
-                if (parentNode.SelectSingleNode("Unk9") != null) type4.Unk9 = uint.Parse(parentNode.SelectSingleNode("Unk9").InnerText);
-            }
-            else if (aiPoint is AIWorld_Type7 type7)
-            {
-                LoadVector3Property(type7, "Position", parentNode);
-                LoadVector3Property(type7, "Direction", parentNode);
-                LoadVector3Property(type7, "Minimum", parentNode);
-                LoadVector3Property(type7, "Maximum", parentNode);
-                if (parentNode.SelectSingleNode("Unk0") != null) type7.Unk0 = ushort.Parse(parentNode.SelectSingleNode("Unk0").InnerText);
-            }
-            else if (aiPoint is AIWorld_Type9 type9)
-            {
-                LoadVector3Property(type9, "Position", parentNode);
-                if (parentNode.SelectSingleNode("Unk0") != null) type9.Unk0 = byte.Parse(parentNode.SelectSingleNode("Unk0").InnerText);
-                if (parentNode.SelectSingleNode("Unk1") != null) type9.Unk1 = uint.Parse(parentNode.SelectSingleNode("Unk1").InnerText);
-            }
-            else if (aiPoint is AIWorld_Type11 type11)
-            {
-                LoadVector3Property(type11, "Unk1", parentNode);
-                if (parentNode.SelectSingleNode("Unk0") != null) type11.Unk0 = byte.Parse(parentNode.SelectSingleNode("Unk0").InnerText);
-            }
-        }
-
-        private void ExportAIWorldToXML(AIWorld world, string xmlFilePath)
-        {
-            try
-            {
-                XmlDocument xmlDoc = new XmlDocument();
-                XmlDeclaration xmlDeclaration = xmlDoc.CreateXmlDeclaration("1.0", "UTF-8", null);
-                xmlDoc.AppendChild(xmlDeclaration);
-                XmlElement rootElement = xmlDoc.CreateElement("AIWorld");
-                xmlDoc.AppendChild(rootElement);
-                AddXmlElement(xmlDoc, rootElement, "PartName", world.PartName);
-                AddXmlElement(xmlDoc, rootElement, "KynogonString", world.KynogonString);
-                AddXmlElement(xmlDoc, rootElement, "OriginStream", world.OriginStream);
-                XmlElement aiPointsElement = xmlDoc.CreateElement("AIPoints");
-                rootElement.AppendChild(aiPointsElement);
-                foreach (IType aiPoint in world.AIPoints)
-                {
-                    XmlElement pointElement = xmlDoc.CreateElement("AIPoint");
-                    ushort typeID = AIWorld_Factory.GetIDByType(aiPoint);
-                    pointElement.SetAttribute("TypeID", typeID.ToString());
-                    switch (typeID)
-                    {
-                        case 1:
-                            var type1 = aiPoint as AIWorld_Type1;
-                            if (type1 != null)
-                            {
-                                AddXmlElement(xmlDoc, pointElement, "Unk01", type1.Unk01.ToString());
-                                if (type1.AIPoints.Count > 0)
-                                {
-                                    XmlElement childPointsElement = xmlDoc.CreateElement("ChildPoints");
-                                    pointElement.AppendChild(childPointsElement);
-                                    foreach (IType childPoint in type1.AIPoints)
-                                    {
-                                        ushort childTypeID = AIWorld_Factory.GetIDByType(childPoint);
-                                        XmlElement childElement = xmlDoc.CreateElement("ChildPoint");
-                                        childElement.SetAttribute("TypeID", childTypeID.ToString());
-                                        SaveAIPointPropertiesByType(childPoint, xmlDoc, childElement);
-                                        childPointsElement.AppendChild(childElement);
-                                    }
-                                }
-                            }
-                            break;
-                    }
-                    aiPointsElement.AppendChild(pointElement);
-                }
-                using (XmlTextWriter writer = new XmlTextWriter(xmlFilePath, Encoding.UTF8))
-                {
-                    writer.Formatting = Formatting.Indented;
-                    xmlDoc.Save(writer);
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Failed to export AIWorld to XML: {ex.Message}", ex);
-            }
-        }
-
-        private void AddXmlElement(XmlDocument xmlDoc, XmlElement parent, string name, string value)
-        {
-            if (!string.IsNullOrEmpty(value))
-            {
-                XmlElement element = xmlDoc.CreateElement(name);
-                element.InnerText = value;
-                parent.AppendChild(element);
-            }
-        }
-
-        private void AddVector3Element(XmlDocument xmlDoc, XmlElement parent, string name, Vector3 vector)
-        {
-            XmlElement vectorElement = xmlDoc.CreateElement(name);
-            AddXmlElement(xmlDoc, vectorElement, "X", vector.X.ToString(CultureInfo.InvariantCulture));
-            AddXmlElement(xmlDoc, vectorElement, "Y", vector.Y.ToString(CultureInfo.InvariantCulture));
-            AddXmlElement(xmlDoc, vectorElement, "Z", vector.Z.ToString(CultureInfo.InvariantCulture));
-            parent.AppendChild(vectorElement);
-        }
-
-        private void LoadVector3Property(object obj, string propertyName, XmlNode parentNode)
-        {
-            XmlNode vectorNode = parentNode.SelectSingleNode(propertyName);
-            if (vectorNode != null)
-            {
-                try
-                {
-                    float x = float.Parse(vectorNode.SelectSingleNode("X").InnerText, CultureInfo.InvariantCulture);
-                    float y = float.Parse(vectorNode.SelectSingleNode("Y").InnerText, CultureInfo.InvariantCulture);
-                    float z = float.Parse(vectorNode.SelectSingleNode("Z").InnerText, CultureInfo.InvariantCulture);
-                    var property = obj.GetType().GetProperty(propertyName);
-                    if (property != null && property.CanWrite)
-                    {
-                        property.SetValue(obj, new Vector3(x, y, z));
-                    }
-                }
-                catch { }
-            }
-        }
-
-        private void SaveAIPointPropertiesByType(IType aiPoint, XmlDocument xmlDoc, XmlElement parentElement)
-        {
-            ushort typeID = AIWorld_Factory.GetIDByType(aiPoint);
-            switch (typeID)
-            {
-                case 4:
-                    var type4 = aiPoint as AIWorld_Type4;
-                    if (type4 != null)
-                    {
-                        AddVector3Element(xmlDoc, parentElement, "Direction", type4.Direction);
-                        AddXmlElement(xmlDoc, parentElement, "Flag", type4.Flags.ToString());
-                        AddXmlElement(xmlDoc, parentElement, "ID", type4.ID.ToString());
-                        AddXmlElement(xmlDoc, parentElement, "Length", type4.Length.ToString());
-                        AddXmlElement(xmlDoc, parentElement, "LinkID_Left", type4.LinkID_Left.ToString());
-                        AddXmlElement(xmlDoc, parentElement, "LinkID_3", type4.LinkID_Right.ToString());
-                        AddVector3Element(xmlDoc, parentElement, "Position", type4.Position);
-                        AddVector3Element(xmlDoc, parentElement, "Rotation", type4.Rotation);
-                        AddXmlElement(xmlDoc, parentElement, "Unk0", type4.Unk0.ToString());
-                        AddXmlElement(xmlDoc, parentElement, "Unk7", type4.Unk7.ToString());
-                        //AddXmlElement(xmlDoc, parentElement, "Unk8", type4.Unk8.ToString());        //Value UInt32 нужно будет потом считать                                                              
-                        AddXmlElement(xmlDoc, parentElement, "Unk9", type4.Unk9.ToString());
-                    }
-                    break;
-                case 7:
-                    var type7 = aiPoint as AIWorld_Type7;
-                    if (type7 != null)
-                    {
-                        AddVector3Element(xmlDoc, parentElement, "Maximum", type7.Maximum);
-                        AddVector3Element(xmlDoc, parentElement, "Minimum", type7.Minimum);
-                        AddVector3Element(xmlDoc, parentElement, "Direction", type7.Direction);
-                        AddVector3Element(xmlDoc, parentElement, "Position", type7.Position);
-                        AddXmlElement(xmlDoc, parentElement, "Unk0", type7.Unk0.ToString());
-                        AddXmlElement(xmlDoc, parentElement, "Unk2", type7.Unk2.ToString());
-                        AddXmlElement(xmlDoc, parentElement, "Unk3", type7.Unk3.ToString());
-                    }
-                    break;
-                case 8:
-                    var type8 = aiPoint as AIWorld_Type8;
-                    if (type8 != null)
-                    {
-                        AddVector3Element(xmlDoc, parentElement, "Position", type8.Position);
-                        AddXmlElement(xmlDoc, parentElement, "Unk0", type8.Unk0.ToString());
-                        AddXmlElement(xmlDoc, parentElement, "Unk1", type8.Unk1.ToString());
-                        AddXmlElement(xmlDoc, parentElement, "Unk3", type8.Unk3.ToString());
-                        AddXmlElement(xmlDoc, parentElement, "Unk4", type8.Unk4.ToString());
-                        AddXmlElement(xmlDoc, parentElement, "Unk5", type8.Unk5.ToString());      //Value UInt32 нужно будет потом считать
-                        AddXmlElement(xmlDoc, parentElement, "Unk6", type8.Unk6.ToString());
-                    }
-                    break;
-                case 9:
-                    var type9 = aiPoint as AIWorld_Type9;
-                    if (type9 != null)
-                    {
-                        AddVector3Element(xmlDoc, parentElement, "Position", type9.Position);
-                        AddXmlElement(xmlDoc, parentElement, "Unk0", type9.Unk0.ToString());
-                        AddXmlElement(xmlDoc, parentElement, "Unk1", type9.Unk1.ToString());
-                        AddXmlElement(xmlDoc, parentElement, "Unk3", type9.Unk3.ToString());
-                        AddXmlElement(xmlDoc, parentElement, "Unk4", type9.Unk4.ToString());
-                        AddXmlElement(xmlDoc, parentElement, "Unk5", type9.Unk5.ToString());      //Value UInt32 нужно будет потом считать
-                    }
-                    break;
-                case 11:
-                    var type11 = aiPoint as AIWorld_Type11;
-                    if (type11 != null)
-                    {
-                        AddXmlElement(xmlDoc, parentElement, "Unk0", type11.Unk0.ToString());
-                        AddVector3Element(xmlDoc, parentElement, "Unk1", type11.Unk1);
-                        AddVector3Element(xmlDoc, parentElement, "Unk2", type11.Unk2);
-                        AddVector3Element(xmlDoc, parentElement, "Unk3", type11.Unk3);
-                        AddXmlElement(xmlDoc, parentElement, "Unk4", type11.Unk4.ToString());
-                    }
-                    break;
-            }
-        }
-
         private void UpdateAIWorldTreeNode(AIWorld world)
         {
             foreach (TreeNode rootNode in dSceneTree.TreeView.Nodes)
@@ -6740,6 +6137,6 @@ namespace Mafia2Tool
             {
                 RefIDToActorEntry.Remove(key);
             }
-        } 
+        }
     }
 }

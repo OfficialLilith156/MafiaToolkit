@@ -82,32 +82,27 @@ namespace Mafia2Tool
             sdsContent.ReadFromFile(new FileInfo(Path.Combine(ScenePath + "/SDSContent.xml")));
 
             //IndexBuffers
-            var paths = sdsContent.GetResourceFiles("IndexBufferPool", true);
-            foreach (var item in paths)
+            if (ToolkitSettings.LoadFrameResource)
             {
-                ibps.Add(BuildFileInfo(item));
-            }
+                var paths = sdsContent.GetResourceFiles("IndexBufferPool", true);
+                foreach (var item in paths)
+                    ibps.Add(BuildFileInfo(item));
 
-            //Vertex Buffers
-            paths = sdsContent.GetResourceFiles("VertexBufferPool", true);
-            foreach (var item in paths)
-            {
-                vbps.Add(BuildFileInfo(item));
+                paths = sdsContent.GetResourceFiles("VertexBufferPool", true);
+                foreach (var item in paths)
+                    vbps.Add(BuildFileInfo(item));
             }
 
             //Actors
-            if (!isBigEndian)
+            if (ToolkitSettings.LoadActors && !isBigEndian)
             {
-                paths = sdsContent.GetResourceFiles("Actors", true);
+                var paths = sdsContent.GetResourceFiles("Actors", true);
                 foreach (var item in paths)
                 {
                     try
                     {
                         if (File.Exists(item))
-                        {
-                            FileInfo NewFileInfo = new FileInfo(item);
-                            act.Add(new Actor(NewFileInfo));
-                        }
+                            act.Add(new Actor(new FileInfo(item)));
                     }
                     catch (Exception ex)
                     {
@@ -117,31 +112,29 @@ namespace Mafia2Tool
             }
 
             //FrameResource
-            if (sdsContent.HasResource("FrameResource"))
+            if (ToolkitSettings.LoadFrameResource && sdsContent.HasResource("FrameResource"))
             {
                 var name = sdsContent.GetResourceFiles("FrameResource", true)[0];
                 FrameResource = new FrameResource(name, this, isBigEndian);
             }
 
             //Item Desc
-            if (!isBigEndian)
+            if (ToolkitSettings.LoadItemDescs && !isBigEndian)
             {
-                paths = sdsContent.GetResourceFiles("ItemDesc", true);
+                var paths = sdsContent.GetResourceFiles("ItemDesc", true);
                 foreach (var item in paths)
-                {
                     ids.Add(new ItemDescLoader(item));
-                }
             }
 
             //FrameNameTable
-            if (sdsContent.HasResource("FrameNameTable"))
+            if (ToolkitSettings.LoadFrameResource && sdsContent.HasResource("FrameNameTable"))
             {
                 var name = sdsContent.GetResourceFiles("FrameNameTable", true)[0];
                 FrameNameTable = new FrameNameTable(name, isBigEndian);
             }
 
             //Collisions
-            if (!isBigEndian && sdsContent.HasResource("Collisions"))
+            if (ToolkitSettings.LoadCollisions && !isBigEndian && sdsContent.HasResource("Collisions"))
             {
                 var name = sdsContent.GetResourceFiles("Collisions", true)[0];
                 Collisions = new Collision(name);
@@ -149,7 +142,7 @@ namespace Mafia2Tool
 
             //~ENABLE THIS SECTION AT YOUR OWN RISK
             //AnimalTrafficPaths
-            if (!isBigEndian && sdsContent.HasResource("AnimalTrafficPaths"))
+            if (ToolkitSettings.LoadATP && !isBigEndian && sdsContent.HasResource("AnimalTrafficPaths"))
             {
                 var name = sdsContent.GetResourceFiles("AnimalTrafficPaths", true)[0];
                 try
@@ -164,7 +157,7 @@ namespace Mafia2Tool
             //~ENABLE THIS SECTION AT YOUR OWN RISK
 
 
-            if (!isBigEndian && sdsContent.HasResource("PREFAB"))
+            if (ToolkitSettings.LoadItemDescs && !isBigEndian && sdsContent.HasResource("PREFAB"))
             {
                 var name = sdsContent.GetResourceFiles("PREFAB", true)[0];
                 PrefabLoader loader = new PrefabLoader(new FileInfo(name));
@@ -174,9 +167,9 @@ namespace Mafia2Tool
 
             //RoadMap
 
-            if (!isBigEndian)
+            if (ToolkitSettings.LoadRoads && !isBigEndian)
             {
-                paths = sdsContent.GetResourceFiles("MemFile", true);
+                var paths = sdsContent.GetResourceFiles("MemFile", true);
                 foreach (var item in paths)
                 {
                     if (item.Contains("RoadMap") || item.Contains("roadmap"))
@@ -189,10 +182,10 @@ namespace Mafia2Tool
                     }
                 }
             }
- // DEBUG
+            // DEBUG
 
             //Translokator
-            if (!isBigEndian && sdsContent.HasResource("Translokator"))
+            if (ToolkitSettings.LoadTranslokator && !isBigEndian && sdsContent.HasResource("Translokator"))
             {
                 var name = sdsContent.GetResourceFiles("Translokator", true)[0];
                 Translokator = new TranslokatorLoader(new FileInfo(name));
@@ -201,32 +194,23 @@ namespace Mafia2Tool
             // Kynapse Navigation
             if (ToolkitSettings.bNavigation)
             {
-                // OBJ_DATA
-                if (!isBigEndian)
+                if (ToolkitSettings.LoadOBJData && !isBigEndian)
                 {
-                    paths = sdsContent.GetResourceFiles("NAV_OBJ_DATA", true);
+                    var paths = sdsContent.GetResourceFiles("NAV_OBJ_DATA", true);
                     foreach (var item in paths)
-                    {
                         obj.Add(new NAVData(new FileInfo(item)));
-                    }
-
                     OBJData = obj.ToArray();
                 }
 
-                // AI WORLD
-                if (!isBigEndian)
+                if (ToolkitSettings.LoadAIWorld && !isBigEndian)
                 {
-                    paths = sdsContent.GetResourceFiles("NAV_AIWORLD_DATA", true);
-                    foreach (var Item in paths)
-                    {
-                        aiw.Add(new NAVData(new FileInfo(Item)));
-                    }
-
+                    var paths = sdsContent.GetResourceFiles("NAV_AIWORLD_DATA", true);
+                    foreach (var item in paths)
+                        aiw.Add(new NAVData(new FileInfo(item)));
                     AIWorlds = aiw.ToArray();
                 }
 
-                // HPD DATA
-                if (!isBigEndian && sdsContent.HasResource("NAV_HPD_DATA"))
+                if (ToolkitSettings.LoadHPD && !isBigEndian && sdsContent.HasResource("NAV_HPD_DATA"))
                 {
                     var name = sdsContent.GetResourceFiles("NAV_HPD_DATA", true)[0];
                     var data = new NAVData(new FileInfo(name));
@@ -234,8 +218,8 @@ namespace Mafia2Tool
                 }
             }
 
-            IndexBufferPool = new IndexBufferManager(ibps, dirInfo, isBigEndian);
-            VertexBufferPool = new VertexBufferManager(vbps, dirInfo, isBigEndian);
+            IndexBufferPool = (ibps.Count > 0) ? new IndexBufferManager(ibps, dirInfo, isBigEndian) : new IndexBufferManager(new List<FileInfo>(), dirInfo, isBigEndian);
+            VertexBufferPool = (vbps.Count > 0) ? new VertexBufferManager(vbps, dirInfo, isBigEndian) : new VertexBufferManager(new List<FileInfo>(), dirInfo, isBigEndian);
             ItemDescs = ids.ToArray();
             Actors = act.ToArray();
         }
@@ -276,7 +260,7 @@ namespace Mafia2Tool
             AIWorlds = null;
             OBJData = null;
         }
-        
+
         //for foolfroofing, maybe the imported textures could be cached until save, then reset it, and if user doesn't save and exit, all cached textures would be deleted
         public void ImportTextures(List<string> textures, string ImportScenePath)
         {
