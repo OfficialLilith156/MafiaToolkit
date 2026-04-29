@@ -14,6 +14,7 @@ namespace Forms.OptionControls
             InitializeComponent();
             Localise();
             LoadSettings();
+            LoadLightingSettings();
         }
         private void Localise()
         {
@@ -55,8 +56,70 @@ namespace Forms.OptionControls
             Checkbox_EnableTranslokatorTint.Checked = ToolkitSettings.bTranslokatorTint;
             UseMIPsBox.Checked = ToolkitSettings.UseMIPS;
             CheckBox_VSync.Checked = ToolkitSettings.VSync;
+        }
+
+        private void LoadLightingSettings()
+        {
+            txtAmbient.Text = $"{ToolkitSettings.AmbientR} {ToolkitSettings.AmbientG} {ToolkitSettings.AmbientB} {ToolkitSettings.AmbientA}";
+            txtDiffuse.Text = $"{ToolkitSettings.DiffuseR} {ToolkitSettings.DiffuseG} {ToolkitSettings.DiffuseB} {ToolkitSettings.DiffuseA}";
+            txtSpecular.Text = $"{ToolkitSettings.SpecularR} {ToolkitSettings.SpecularG} {ToolkitSettings.SpecularB} {ToolkitSettings.SpecularA}";
+            txtDirection.Text = $"{ToolkitSettings.LightDirX} {ToolkitSettings.LightDirY} {ToolkitSettings.LightDirZ}";
+            txtPower.Text = ToolkitSettings.SpecularPower.ToString();
+        }
+
+        private void BtnApplyLighting_Click(object sender, EventArgs e)
+        {
+            ApplyLightingChanges();
+        }
+
+        private void ApplyLightingChanges()
+        {
+            float[] ambient = ParseFloats(txtAmbient.Text, 4);
+            if (ambient != null) { ToolkitSettings.AmbientR = ambient[0]; ToolkitSettings.AmbientG = ambient[1]; ToolkitSettings.AmbientB = ambient[2]; ToolkitSettings.AmbientA = ambient[3]; }
+
+            float[] diffuse = ParseFloats(txtDiffuse.Text, 4);
+            if (diffuse != null) { ToolkitSettings.DiffuseR = diffuse[0]; ToolkitSettings.DiffuseG = diffuse[1]; ToolkitSettings.DiffuseB = diffuse[2]; ToolkitSettings.DiffuseA = diffuse[3]; }
+
+            float[] specular = ParseFloats(txtSpecular.Text, 4);
+            if (specular != null) { ToolkitSettings.SpecularR = specular[0]; ToolkitSettings.SpecularG = specular[1]; ToolkitSettings.SpecularB = specular[2]; ToolkitSettings.SpecularA = specular[3]; }
+
+            float[] direction = ParseFloats(txtDirection.Text, 3);
+            if (direction != null)
+            {
+                ToolkitSettings.LightDirX = direction[0];
+                ToolkitSettings.LightDirY = direction[1];
+                ToolkitSettings.LightDirZ = direction[2];
+            }
+
+            float power;
+            if (float.TryParse(txtPower.Text, out power)) ToolkitSettings.SpecularPower = power;
+            SaveLightingToIni();
 
         }
+
+        private float[] ParseFloats(string text, int expectedCount)
+        {
+            string[] parts = text.Split(new char[] { ' ', ',', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+            if (parts.Length < expectedCount) return null;
+            float[] result = new float[expectedCount];
+            for (int i = 0; i < expectedCount; i++)
+                if (!float.TryParse(parts[i], out result[i])) return null;
+            return result;
+        }
+
+        private void SaveLightingToIni()
+        {
+            WriteKey("AmbientR", ToolkitSettings.AmbientR); WriteKey("AmbientG", ToolkitSettings.AmbientG);
+            WriteKey("AmbientB", ToolkitSettings.AmbientB); WriteKey("AmbientA", ToolkitSettings.AmbientA);
+            WriteKey("DiffuseR", ToolkitSettings.DiffuseR); WriteKey("DiffuseG", ToolkitSettings.DiffuseG);
+            WriteKey("DiffuseB", ToolkitSettings.DiffuseB); WriteKey("DiffuseA", ToolkitSettings.DiffuseA);
+            WriteKey("SpecularR", ToolkitSettings.SpecularR); WriteKey("SpecularG", ToolkitSettings.SpecularG);
+            WriteKey("SpecularB", ToolkitSettings.SpecularB); WriteKey("SpecularA", ToolkitSettings.SpecularA);
+            WriteKey("LightDirX", ToolkitSettings.LightDirX); WriteKey("LightDirY", ToolkitSettings.LightDirY);
+            WriteKey("LightDirZ", ToolkitSettings.LightDirZ); WriteKey("SpecularPower", ToolkitSettings.SpecularPower);
+        }
+
+        private void WriteKey(string key, float value) => ToolkitSettings.WriteKey(key, "Lighting", value.ToString());
 
         private void ScreenDepth_Changed(object sender, EventArgs e)
         {

@@ -40,7 +40,6 @@ using Utils.VorticeUtils;
 using Vortice.Mathematics;
 using WeifenLuo.WinFormsUI.Docking;
 using static ResourceTypes.Collisions.Collision;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 using Collision = ResourceTypes.Collisions.Collision;
 using Object = ResourceTypes.Translokator.Object;
 
@@ -140,9 +139,6 @@ namespace Mafia2Tool
             Button_ImportFrame.Text = Language.GetString("$IMPORT_FRAME");
             Button_ImportBundle.Text = Language.GetString("$IMPORT_BUNDLE");
             AddSceneFolderButton.Text = Language.GetString("$ADD_SCENE_FOLDER");
-            Button_TestConvert32.Text = Language.GetString("$TEST_CONVERT_32BIT");
-            Button_TestConvert16.Text = Language.GetString("$TEST_CONVERT_16BIT");
-            Button_DumpTexture.Text = Language.GetString("$DUMP_TEXTURES");
         }
 
         private void InitDockingControls()
@@ -180,14 +176,7 @@ namespace Mafia2Tool
             dSceneTree.TRRebuildObjectButton.Click += new EventHandler(TRRebuildObjectButton_Click);
         }
           
-        private uint GetNextUnk7(OBJData data)
-        {
-            uint max = 0;
-            foreach (var v in data.vertices)
-                if (v.Unk7 > max) max = v.Unk7;
-            return max + 1;
-        }
-
+       
         private void UpdateNavMeshVisualization(OBJData objData, UnkSet0 set)
         {
             foreach (TreeNode rootNode in OBJDataRoot.Nodes)
@@ -2435,15 +2424,6 @@ namespace Mafia2Tool
                 SceneData.UpdateResourceType();
                 Cursor.Current = Cursors.Default;
             }
-        }
-
-        private bool ParentIsEmpty(ParentInfo p)
-        {
-            if (p == null) return true;
-            bool indexEmpty = p.Index == -1;
-            bool refIdEmpty = p.RefID == -1;
-            bool refIdZero = p.RefID == 0;
-            return indexEmpty || refIdEmpty || refIdZero;
         }
 
         private IRenderer BuildRenderObjectFromFrame(FrameObjectBase fObject, Dictionary<int, IRenderer> assets)
@@ -5259,36 +5239,6 @@ namespace Mafia2Tool
             dPropertyGrid.SetObject(Graphics.WorldSettings);
         }
 
-        private void Button_TestConvert_Click(object sender, EventArgs e)
-        {
-            ConvertBuffer(1);
-        }
-
-        private void Button_TestConvert32_Click(object sender, EventArgs e)
-        {
-            ConvertBuffer(2);
-        }
-
-        private void ConvertBuffer(int format)
-        {
-            var frames = SceneData.FrameResource.FrameObjects;
-            var geoms = SceneData.FrameResource.FrameGeometries;
-            var mats = SceneData.FrameResource.FrameMaterials;
-            var indexbuffer = SceneData.IndexBufferPool.Buffers;
-            foreach (var geom in geoms)
-            {
-                foreach (var lod in geom.Value.LOD)
-                {
-                    lod.SplitInfo.IndexStride = (format == 1 ? 2 : 4);
-                }
-            }
-            foreach (var buffer in indexbuffer)
-            {
-                buffer.Value.SetFormat(format);
-            }
-            Save();
-        }
-
         private void ConvertFrameToRender(FrameObjectBase parent)
         {
             IRenderer asset = BuildRenderObjectFromFrame(parent, null);
@@ -5340,47 +5290,6 @@ namespace Mafia2Tool
                     ConvertNodeToFrame(parent);
                 }
             }
-        }
-
-        private void Button_DumpTexture_Click(object sender, EventArgs e)
-        {
-            List<string> AllTextures = new List<string>();
-            // Get header scene name
-            string HeaderSceneName = SceneData.FrameResource.Header.SceneName.String;
-            if (!string.IsNullOrEmpty(HeaderSceneName))
-            {
-                if (!AllTextures.Contains(HeaderSceneName))
-                {
-                    AllTextures.Add(HeaderSceneName);
-                }
-            }
-            // Iterate through FrameObjects
-            foreach (var Frame in SceneData.FrameResource.FrameObjects)
-            {
-                // We can only take textures from SingleMesh
-                var SingleMesh = (Frame.Value as FrameObjectSingleMesh);
-                if (SingleMesh != null)
-                {
-                    // Store OM texture
-                    if (!AllTextures.Contains(SingleMesh.OMTextureHash.String))
-                    {
-                        AllTextures.Add(SingleMesh.OMTextureHash.String);
-                    }
-                    // Collect textures from FrameMaterial object.
-                    List<string> CollectedTextures = SingleMesh.Material.CollectAllTextureNames();
-                    if (CollectedTextures != null)
-                    {
-                        foreach (var Texture in CollectedTextures)
-                        {
-                            if (!AllTextures.Contains(Texture))
-                            {
-                                AllTextures.Add(Texture);
-                            }
-                        }
-                    }
-                }
-            }
-            File.WriteAllLines("AllTextures.txt", AllTextures.ToArray());
         }
 
         private void UpdatePositionElement(Vector3 InPosition)

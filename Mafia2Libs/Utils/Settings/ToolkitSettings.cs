@@ -71,6 +71,13 @@ namespace Utils.Settings
         public static bool SkipGameSelector;
         public static int DefaultGame;
 
+        //Sky 
+        public static float AmbientR, AmbientG, AmbientB, AmbientA;
+        public static float DiffuseR, DiffuseG, DiffuseB, DiffuseA;
+        public static float LightDirX, LightDirY, LightDirZ;
+        public static float SpecularR, SpecularG, SpecularB, SpecularA;
+        public static float SpecularPower;
+
         // Update vars
         public static float CurrentVersion = 1.0f;
         public static readonly float Version = 2.48f;
@@ -83,6 +90,26 @@ namespace Utils.Settings
 
             ini = new IniFile();
             ElapsedTime = (int)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
+
+            AmbientR = float.Parse(ReadKey("AmbientR", "Lighting", "0.5"));
+            AmbientG = float.Parse(ReadKey("AmbientG", "Lighting", "0.5"));
+            AmbientB = float.Parse(ReadKey("AmbientB", "Lighting", "0.5"));
+            AmbientA = float.Parse(ReadKey("AmbientA", "Lighting", "1.0"));
+
+            DiffuseR = float.Parse(ReadKey("DiffuseR", "Lighting", "0.5"));
+            DiffuseG = float.Parse(ReadKey("DiffuseG", "Lighting", "0.5"));
+            DiffuseB = float.Parse(ReadKey("DiffuseB", "Lighting", "0.5"));
+            DiffuseA = float.Parse(ReadKey("DiffuseA", "Lighting", "1.0"));
+
+            LightDirX = float.Parse(ReadKey("LightDirX", "Lighting", "0.5"));
+            LightDirY = float.Parse(ReadKey("LightDirY", "Lighting", "0.5"));
+            LightDirZ = float.Parse(ReadKey("LightDirZ", "Lighting", "0.5"));
+
+            SpecularR = float.Parse(ReadKey("SpecularR", "Lighting", "1.0"));
+            SpecularG = float.Parse(ReadKey("SpecularG", "Lighting", "1.0"));
+            SpecularB = float.Parse(ReadKey("SpecularB", "Lighting", "1.0"));
+            SpecularA = float.Parse(ReadKey("SpecularA", "Lighting", "1.0"));
+            SpecularPower = float.Parse(ReadKey("SpecularPower", "Lighting", "255.0"));
 
             TexturePath1 = ReadKey("TexturePath1", "ModelViewer");
             TexturePath2 = ReadKey("TexturePath2", "ModelViewer");

@@ -1,5 +1,6 @@
 ﻿using Rendering.Graphics;
 using System.Numerics;
+using Utils.Settings;
 
 namespace Rendering.Core
 {
@@ -21,11 +22,11 @@ namespace Rendering.Core
 
         public void SetupLighting()
         {
-            Lighting.SetAmbientColor(0.5f, 0.5f, 0.5f, 1f);
-            Lighting.SetDiffuseColour(0.5f, 0.5f, 0.5f, 1f);
-            Lighting.Direction = new Vector3(-0.2f, -1f, -0.3f);
-            Lighting.SetSpecularColor(1.0f, 1.0f, 1.0f, 1.0f);
-            Lighting.SetSpecularPower(255.0f);
+            Lighting.SetAmbientColor(ToolkitSettings.AmbientR, ToolkitSettings.AmbientG, ToolkitSettings.AmbientB, ToolkitSettings.AmbientA);
+            Lighting.SetDiffuseColour(ToolkitSettings.DiffuseR, ToolkitSettings.DiffuseG, ToolkitSettings.DiffuseB, ToolkitSettings.DiffuseA);
+            Lighting.Direction = new Vector3(ToolkitSettings.LightDirX, ToolkitSettings.LightDirY, ToolkitSettings.LightDirZ);
+            Lighting.SetSpecularColor(ToolkitSettings.SpecularR, ToolkitSettings.SpecularG, ToolkitSettings.SpecularB, ToolkitSettings.SpecularA);
+            Lighting.SetSpecularPower(ToolkitSettings.SpecularPower);
         }
 
         public void Shutdown()

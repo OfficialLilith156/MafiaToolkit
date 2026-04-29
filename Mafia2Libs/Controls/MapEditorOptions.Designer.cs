@@ -29,6 +29,13 @@
         private void InitializeComponent()
         {
             MapEditorGroup = new System.Windows.Forms.GroupBox();
+            txtPower = new System.Windows.Forms.TextBox();
+            txtDirection = new System.Windows.Forms.TextBox();
+            txtSpecular = new System.Windows.Forms.TextBox();
+            txtDiffuse = new System.Windows.Forms.TextBox();
+            txtAmbient = new System.Windows.Forms.TextBox();
+            label4 = new System.Windows.Forms.Label();
+            button3 = new System.Windows.Forms.Button();
             label3 = new System.Windows.Forms.Label();
             button2 = new System.Windows.Forms.Button();
             label2 = new System.Windows.Forms.Label();
@@ -59,6 +66,12 @@
             chkLoadCollisions = new System.Windows.Forms.CheckBox();
             chkLoadFrameResource = new System.Windows.Forms.CheckBox();
             TexBrowser = new System.Windows.Forms.FolderBrowserDialog();
+            button4 = new System.Windows.Forms.Button();
+            label5 = new System.Windows.Forms.Label();
+            label6 = new System.Windows.Forms.Label();
+            label7 = new System.Windows.Forms.Label();
+            label8 = new System.Windows.Forms.Label();
+            label9 = new System.Windows.Forms.Label();
             MapEditorGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)FieldOfViewNumDown).BeginInit();
             ((System.ComponentModel.ISupportInitialize)CameraSpeedUpDown).BeginInit();
@@ -68,6 +81,19 @@
             // 
             // MapEditorGroup
             // 
+            MapEditorGroup.Controls.Add(label9);
+            MapEditorGroup.Controls.Add(label8);
+            MapEditorGroup.Controls.Add(label7);
+            MapEditorGroup.Controls.Add(label6);
+            MapEditorGroup.Controls.Add(label5);
+            MapEditorGroup.Controls.Add(button4);
+            MapEditorGroup.Controls.Add(txtPower);
+            MapEditorGroup.Controls.Add(txtDirection);
+            MapEditorGroup.Controls.Add(txtSpecular);
+            MapEditorGroup.Controls.Add(txtDiffuse);
+            MapEditorGroup.Controls.Add(txtAmbient);
+            MapEditorGroup.Controls.Add(label4);
+            MapEditorGroup.Controls.Add(button3);
             MapEditorGroup.Controls.Add(label3);
             MapEditorGroup.Controls.Add(button2);
             MapEditorGroup.Controls.Add(label2);
@@ -105,6 +131,60 @@
             MapEditorGroup.TabIndex = 2;
             MapEditorGroup.TabStop = false;
             MapEditorGroup.Text = "Map Editor Options";
+            // 
+            // txtPower
+            // 
+            txtPower.Location = new System.Drawing.Point(346, 319);
+            txtPower.Name = "txtPower";
+            txtPower.Size = new System.Drawing.Size(115, 23);
+            txtPower.TabIndex = 62;
+            // 
+            // txtDirection
+            // 
+            txtDirection.Location = new System.Drawing.Point(346, 290);
+            txtDirection.Name = "txtDirection";
+            txtDirection.Size = new System.Drawing.Size(115, 23);
+            txtDirection.TabIndex = 61;
+            // 
+            // txtSpecular
+            // 
+            txtSpecular.Location = new System.Drawing.Point(121, 348);
+            txtSpecular.Name = "txtSpecular";
+            txtSpecular.Size = new System.Drawing.Size(115, 23);
+            txtSpecular.TabIndex = 60;
+            // 
+            // txtDiffuse
+            // 
+            txtDiffuse.Location = new System.Drawing.Point(121, 319);
+            txtDiffuse.Name = "txtDiffuse";
+            txtDiffuse.Size = new System.Drawing.Size(115, 23);
+            txtDiffuse.TabIndex = 59;
+            // 
+            // txtAmbient
+            // 
+            txtAmbient.Location = new System.Drawing.Point(121, 290);
+            txtAmbient.Name = "txtAmbient";
+            txtAmbient.Size = new System.Drawing.Size(115, 23);
+            txtAmbient.TabIndex = 58;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new System.Drawing.Point(8, 265);
+            label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label4.Name = "label4";
+            label4.Size = new System.Drawing.Size(82, 15);
+            label4.TabIndex = 57;
+            label4.Text = "Light Settings:";
+            // 
+            // button3
+            // 
+            button3.Enabled = false;
+            button3.Location = new System.Drawing.Point(-38, 252);
+            button3.Name = "button3";
+            button3.Size = new System.Drawing.Size(677, 10);
+            button3.TabIndex = 56;
+            button3.UseVisualStyleBackColor = false;
             // 
             // label3
             // 
@@ -430,6 +510,66 @@
             // 
             TexBrowser.Description = "$SELECT_TEX_FOLDER";
             // 
+            // button4
+            // 
+            button4.Location = new System.Drawing.Point(386, 351);
+            button4.Name = "button4";
+            button4.Size = new System.Drawing.Size(75, 23);
+            button4.TabIndex = 63;
+            button4.Text = "Save";
+            button4.UseVisualStyleBackColor = true;
+            button4.Click += BtnApplyLighting_Click;
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Location = new System.Drawing.Point(8, 293);
+            label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label5.Name = "label5";
+            label5.Size = new System.Drawing.Size(106, 15);
+            label5.TabIndex = 64;
+            label5.Text = "Ambient (R,G,B,A):";
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Location = new System.Drawing.Point(8, 322);
+            label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label6.Name = "label6";
+            label6.Size = new System.Drawing.Size(97, 15);
+            label6.TabIndex = 65;
+            label6.Text = "Diffuse (R,G,B,A):";
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Location = new System.Drawing.Point(9, 351);
+            label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label7.Name = "label7";
+            label7.Size = new System.Drawing.Size(105, 15);
+            label7.TabIndex = 66;
+            label7.Text = "Specular (R,G,B,A):";
+            // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Location = new System.Drawing.Point(243, 293);
+            label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label8.Name = "label8";
+            label8.Size = new System.Drawing.Size(96, 15);
+            label8.TabIndex = 67;
+            label8.Text = "Direction (X,Y,Z):";
+            // 
+            // label9
+            // 
+            label9.AutoSize = true;
+            label9.Location = new System.Drawing.Point(243, 322);
+            label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label9.Name = "label9";
+            label9.Size = new System.Drawing.Size(43, 15);
+            label9.TabIndex = 68;
+            label9.Text = "Power:";
+            // 
             // MapEditorOptions
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -482,5 +622,18 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.TextBox txtAmbient;
+        private System.Windows.Forms.TextBox txtPower;
+        private System.Windows.Forms.TextBox txtDirection;
+        private System.Windows.Forms.TextBox txtSpecular;
+        private System.Windows.Forms.TextBox txtDiffuse;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Label label9;
     }
 }

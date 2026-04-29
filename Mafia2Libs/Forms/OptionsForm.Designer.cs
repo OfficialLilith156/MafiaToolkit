@@ -58,7 +58,7 @@
             treeNode5.Name = "Render Texture";
             treeNode5.Text = "Render Texture";
             treeView1.Nodes.AddRange(new System.Windows.Forms.TreeNode[] { treeNode1, treeNode2, treeNode3, treeNode4, treeNode5 });
-            treeView1.Size = new System.Drawing.Size(297, 357);
+            treeView1.Size = new System.Drawing.Size(297, 394);
             treeView1.TabIndex = 0;
             treeView1.NodeMouseClick += NodeMouseClick;
             // 
@@ -72,7 +72,7 @@
             // splitContainer1.Panel1
             // 
             splitContainer1.Panel1.Controls.Add(treeView1);
-            splitContainer1.Size = new System.Drawing.Size(906, 357);
+            splitContainer1.Size = new System.Drawing.Size(906, 394);
             splitContainer1.SplitterDistance = 297;
             splitContainer1.SplitterWidth = 5;
             splitContainer1.TabIndex = 1;
@@ -81,7 +81,7 @@
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(918, 369);
+            ClientSize = new System.Drawing.Size(918, 406);
             Controls.Add(splitContainer1);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");

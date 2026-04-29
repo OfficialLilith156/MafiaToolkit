@@ -68,9 +68,6 @@ namespace Mafia2Tool
             ToggleWireframeButton = new System.Windows.Forms.ToolStripMenuItem();
             ToggleCullingButton = new System.Windows.Forms.ToolStripMenuItem();
             EditLighting = new System.Windows.Forms.ToolStripMenuItem();
-            Button_TestConvert32 = new System.Windows.Forms.ToolStripMenuItem();
-            Button_TestConvert16 = new System.Windows.Forms.ToolStripMenuItem();
-            Button_DumpTexture = new System.Windows.Forms.ToolStripMenuItem();
             WindowButton = new System.Windows.Forms.ToolStripDropDownButton();
             SceneTreeButton = new System.Windows.Forms.ToolStripMenuItem();
             ObjectPropertiesButton = new System.Windows.Forms.ToolStripMenuItem();
@@ -385,21 +382,21 @@ namespace Mafia2Tool
             // ViewTopButton
             // 
             ViewTopButton.Name = "ViewTopButton";
-            ViewTopButton.Size = new System.Drawing.Size(117, 22);
+            ViewTopButton.Size = new System.Drawing.Size(180, 22);
             ViewTopButton.Text = "$TOP";
             ViewTopButton.Click += OnViewTopButtonClicked;
             // 
             // ViewFrontButton
             // 
             ViewFrontButton.Name = "ViewFrontButton";
-            ViewFrontButton.Size = new System.Drawing.Size(117, 22);
+            ViewFrontButton.Size = new System.Drawing.Size(180, 22);
             ViewFrontButton.Text = "$FRONT";
             ViewFrontButton.Click += OnViewFrontButtonClicked;
             // 
             // OptionsButton
             // 
             OptionsButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            OptionsButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { ToggleWireframeButton, ToggleCullingButton, EditLighting, Button_TestConvert32, Button_TestConvert16, Button_DumpTexture });
+            OptionsButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { ToggleWireframeButton, ToggleCullingButton, EditLighting });
             OptionsButton.Image = (System.Drawing.Image)resources.GetObject("OptionsButton.Image");
             OptionsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             OptionsButton.Name = "OptionsButton";
@@ -409,44 +406,23 @@ namespace Mafia2Tool
             // ToggleWireframeButton
             // 
             ToggleWireframeButton.Name = "ToggleWireframeButton";
-            ToggleWireframeButton.Size = new System.Drawing.Size(193, 22);
+            ToggleWireframeButton.Size = new System.Drawing.Size(192, 22);
             ToggleWireframeButton.Text = "$TOGGLE_WIREFRAME";
             ToggleWireframeButton.Click += FillModeButton_Click;
             // 
             // ToggleCullingButton
             // 
             ToggleCullingButton.Name = "ToggleCullingButton";
-            ToggleCullingButton.Size = new System.Drawing.Size(193, 22);
+            ToggleCullingButton.Size = new System.Drawing.Size(192, 22);
             ToggleCullingButton.Text = "$TOGGLE_CULLING";
             ToggleCullingButton.Click += CullModeButton_Click;
             // 
             // EditLighting
             // 
             EditLighting.Name = "EditLighting";
-            EditLighting.Size = new System.Drawing.Size(193, 22);
+            EditLighting.Size = new System.Drawing.Size(192, 22);
             EditLighting.Text = "$EDIT_LIGHTING";
             EditLighting.Click += EditLighting_Click;
-            // 
-            // Button_TestConvert32
-            // 
-            Button_TestConvert32.Name = "Button_TestConvert32";
-            Button_TestConvert32.Size = new System.Drawing.Size(193, 22);
-            Button_TestConvert32.Text = "$TEST_CONVERT_32BIT";
-            Button_TestConvert32.Click += Button_TestConvert32_Click;
-            // 
-            // Button_TestConvert16
-            // 
-            Button_TestConvert16.Name = "Button_TestConvert16";
-            Button_TestConvert16.Size = new System.Drawing.Size(193, 22);
-            Button_TestConvert16.Text = "$TEST_CONVERT_16BIT";
-            Button_TestConvert16.Click += Button_TestConvert_Click;
-            // 
-            // Button_DumpTexture
-            // 
-            Button_DumpTexture.Name = "Button_DumpTexture";
-            Button_DumpTexture.Size = new System.Drawing.Size(193, 22);
-            Button_DumpTexture.Text = "$DUMP_TEXTURES";
-            Button_DumpTexture.Click += Button_DumpTexture_Click;
             // 
             // WindowButton
             // 
@@ -575,8 +551,6 @@ namespace Mafia2Tool
             // 
             addEdgesToolStripMenuItem.Name = "addEdgesToolStripMenuItem";
             addEdgesToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
-            addEdgesToolStripMenuItem.Text = "Add Edges";
-            addEdgesToolStripMenuItem.Click += BtnAddEdgeBox_Click;
             // 
             // recalculateDistanceNodesToolStripMenuItem
             // 
@@ -710,12 +684,9 @@ namespace Mafia2Tool
         private System.Windows.Forms.ToolStripSplitButton CurrentModeButton;
         private WeifenLuo.WinFormsUI.Docking.DockPanel dockPanel1;
         private System.Windows.Forms.ToolStripMenuItem EditLighting;
-        private System.Windows.Forms.ToolStripMenuItem Button_TestConvert16;
-        private System.Windows.Forms.ToolStripMenuItem Button_TestConvert32;
         private System.Windows.Forms.ToolStripStatusLabel Label_MemoryUsage;
         private System.Windows.Forms.ToolStripMenuItem Button_ImportFrame;
         private System.Windows.Forms.OpenFileDialog FrameBrowser;
-        private System.Windows.Forms.ToolStripMenuItem Button_DumpTexture;
         private System.Windows.Forms.ToolStripMenuItem Button_ImportBundle;
         private System.Windows.Forms.SaveFileDialog SaveFileDialog;
         private System.Windows.Forms.OpenFileDialog AnimFileDialog;
