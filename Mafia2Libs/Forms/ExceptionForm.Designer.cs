@@ -30,86 +30,85 @@ namespace Toolkit.Forms
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ExceptionForm));
-            this.Label_ExceptionMsg = new System.Windows.Forms.Label();
-            this.RichTextBox_StackTrace = new System.Windows.Forms.RichTextBox();
-            this.Button_Continue = new System.Windows.Forms.Button();
-            this.Button_Quit = new System.Windows.Forms.Button();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            this.SuspendLayout();
+            Label_ExceptionMsg = new System.Windows.Forms.Label();
+            RichTextBox_StackTrace = new System.Windows.Forms.RichTextBox();
+            Button_Continue = new System.Windows.Forms.Button();
+            Button_Quit = new System.Windows.Forms.Button();
+            pictureBox1 = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            SuspendLayout();
             // 
             // Label_ExceptionMsg
             // 
-            this.Label_ExceptionMsg.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.Label_ExceptionMsg.Location = new System.Drawing.Point(51, 13);
-            this.Label_ExceptionMsg.Name = "Label_ExceptionMsg";
-            this.Label_ExceptionMsg.Size = new System.Drawing.Size(525, 53);
-            this.Label_ExceptionMsg.TabIndex = 0;
-            this.Label_ExceptionMsg.Text = resources.GetString("Label_ExceptionMsg.Text");
+            Label_ExceptionMsg.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            Label_ExceptionMsg.Location = new System.Drawing.Point(51, 13);
+            Label_ExceptionMsg.Name = "Label_ExceptionMsg";
+            Label_ExceptionMsg.Size = new System.Drawing.Size(525, 53);
+            Label_ExceptionMsg.TabIndex = 0;
+            Label_ExceptionMsg.Text = resources.GetString("Label_ExceptionMsg.Text");
             // 
             // RichTextBox_StackTrace
             // 
-            this.RichTextBox_StackTrace.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.RichTextBox_StackTrace.BackColor = System.Drawing.SystemColors.Window;
-            this.RichTextBox_StackTrace.Location = new System.Drawing.Point(13, 102);
-            this.RichTextBox_StackTrace.Name = "RichTextBox_StackTrace";
-            this.RichTextBox_StackTrace.ReadOnly = true;
-            this.RichTextBox_StackTrace.Size = new System.Drawing.Size(563, 352);
-            this.RichTextBox_StackTrace.TabIndex = 1;
-            this.RichTextBox_StackTrace.Text = "";
+            RichTextBox_StackTrace.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            RichTextBox_StackTrace.BackColor = System.Drawing.SystemColors.Window;
+            RichTextBox_StackTrace.Location = new System.Drawing.Point(13, 102);
+            RichTextBox_StackTrace.Name = "RichTextBox_StackTrace";
+            RichTextBox_StackTrace.ReadOnly = true;
+            RichTextBox_StackTrace.Size = new System.Drawing.Size(563, 352);
+            RichTextBox_StackTrace.TabIndex = 1;
+            RichTextBox_StackTrace.Text = "";
             // 
             // Button_Continue
             // 
-            this.Button_Continue.Location = new System.Drawing.Point(370, 71);
-            this.Button_Continue.Name = "Button_Continue";
-            this.Button_Continue.Size = new System.Drawing.Size(100, 25);
-            this.Button_Continue.TabIndex = 2;
-            this.Button_Continue.Text = "Continue";
-            this.Button_Continue.UseVisualStyleBackColor = true;
-            this.Button_Continue.Click += new System.EventHandler(this.Button_Continue_Click);
+            Button_Continue.Location = new System.Drawing.Point(370, 71);
+            Button_Continue.Name = "Button_Continue";
+            Button_Continue.Size = new System.Drawing.Size(100, 25);
+            Button_Continue.TabIndex = 2;
+            Button_Continue.Text = "Continue";
+            Button_Continue.UseVisualStyleBackColor = true;
+            Button_Continue.Click += Button_Continue_Click;
             // 
             // Button_Quit
             // 
-            this.Button_Quit.Location = new System.Drawing.Point(476, 71);
-            this.Button_Quit.Name = "Button_Quit";
-            this.Button_Quit.Size = new System.Drawing.Size(100, 25);
-            this.Button_Quit.TabIndex = 3;
-            this.Button_Quit.Text = "Quit";
-            this.Button_Quit.UseVisualStyleBackColor = true;
-            this.Button_Quit.Click += new System.EventHandler(this.Button_Quit_Click);
+            Button_Quit.Location = new System.Drawing.Point(476, 71);
+            Button_Quit.Name = "Button_Quit";
+            Button_Quit.Size = new System.Drawing.Size(100, 25);
+            Button_Quit.TabIndex = 3;
+            Button_Quit.Text = "Quit";
+            Button_Quit.UseVisualStyleBackColor = true;
+            Button_Quit.Click += Button_Quit_Click;
             // 
             // pictureBox1
             // 
-            this.pictureBox1.ErrorImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.ErrorImage")));
-            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.InitialImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.InitialImage")));
-            this.pictureBox1.Location = new System.Drawing.Point(13, 13);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(32, 32);
-            this.pictureBox1.TabIndex = 4;
-            this.pictureBox1.TabStop = false;
+            pictureBox1.ErrorImage = (System.Drawing.Image)resources.GetObject("pictureBox1.ErrorImage");
+            pictureBox1.Image = (System.Drawing.Image)resources.GetObject("pictureBox1.Image");
+            pictureBox1.InitialImage = (System.Drawing.Image)resources.GetObject("pictureBox1.InitialImage");
+            pictureBox1.Location = new System.Drawing.Point(13, 13);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new System.Drawing.Size(32, 32);
+            pictureBox1.TabIndex = 4;
+            pictureBox1.TabStop = false;
             // 
             // ExceptionForm
             // 
-            this.AcceptButton = this.Button_Continue;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.CancelButton = this.Button_Quit;
-            this.ClientSize = new System.Drawing.Size(588, 466);
-            this.Controls.Add(this.pictureBox1);
-            this.Controls.Add(this.Button_Quit);
-            this.Controls.Add(this.Button_Continue);
-            this.Controls.Add(this.RichTextBox_StackTrace);
-            this.Controls.Add(this.Label_ExceptionMsg);
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.Name = "ExceptionForm";
-            this.ShowIcon = false;
-            this.Text = "Unhandled Exception";
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            this.ResumeLayout(false);
+            AcceptButton = Button_Continue;
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            CancelButton = Button_Quit;
+            ClientSize = new System.Drawing.Size(588, 466);
+            Controls.Add(pictureBox1);
+            Controls.Add(Button_Quit);
+            Controls.Add(Button_Continue);
+            Controls.Add(RichTextBox_StackTrace);
+            Controls.Add(Label_ExceptionMsg);
+            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "ExceptionForm";
+            ShowIcon = false;
+            Text = "Unhandled Exception";
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            ResumeLayout(false);
 
         }
 

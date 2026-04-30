@@ -30,6 +30,7 @@ namespace Mafia2Tool.Forms
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MoveAIGroupForm));
             titleLabel = new Label();
             countLabel = new Label();
             offsetXControl = new NumericUpDown();
@@ -160,6 +161,7 @@ namespace Mafia2Tool.Forms
             Controls.Add(okButton);
             Controls.Add(cancelButton);
             FormBorderStyle = FormBorderStyle.FixedDialog;
+            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "MoveAIGroupForm";

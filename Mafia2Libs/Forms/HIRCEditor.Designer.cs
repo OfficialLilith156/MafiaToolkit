@@ -28,73 +28,69 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(HIRCEditor));
-            this.HircGrid = new System.Windows.Forms.PropertyGrid();
-            this.BnkContext = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.ContextExport = new System.Windows.Forms.ToolStripMenuItem();
-            this.ContextDelete = new System.Windows.Forms.ToolStripMenuItem();
-            this.TreeView_HIRC = new System.Windows.Forms.TreeView();
-            this.TreeView_HIRC.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.OnNodeSelectSelect);
-            this.BnkContext.SuspendLayout();
-            this.SuspendLayout();
+            HircGrid = new System.Windows.Forms.PropertyGrid();
+            BnkContext = new System.Windows.Forms.ContextMenuStrip(components);
+            ContextExport = new System.Windows.Forms.ToolStripMenuItem();
+            ContextDelete = new System.Windows.Forms.ToolStripMenuItem();
+            TreeView_HIRC = new System.Windows.Forms.TreeView();
+            BnkContext.SuspendLayout();
+            SuspendLayout();
             // 
             // HircGrid
             // 
-            this.HircGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.HircGrid.Location = new System.Drawing.Point(469, 32);
-            this.HircGrid.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.HircGrid.Name = "HircGrid";
-            this.HircGrid.PropertySort = System.Windows.Forms.PropertySort.Categorized;
-            this.HircGrid.Size = new System.Drawing.Size(450, 473);
-            this.HircGrid.TabIndex = 10;
-            this.HircGrid.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.WemGrid_OnPropertyValueChanged);
+            HircGrid.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            HircGrid.Location = new System.Drawing.Point(469, 32);
+            HircGrid.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            HircGrid.Name = "HircGrid";
+            HircGrid.PropertySort = System.Windows.Forms.PropertySort.Categorized;
+            HircGrid.Size = new System.Drawing.Size(450, 473);
+            HircGrid.TabIndex = 10;
+            HircGrid.PropertyValueChanged += WemGrid_OnPropertyValueChanged;
             // 
             // BnkContext
             // 
-            this.BnkContext.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ContextExport,
-            this.ContextDelete});
-            this.BnkContext.Name = "SDSContext";
-            this.BnkContext.Size = new System.Drawing.Size(159, 48);
+            BnkContext.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { ContextExport, ContextDelete });
+            BnkContext.Name = "SDSContext";
+            BnkContext.Size = new System.Drawing.Size(180, 48);
             // 
             // ContextExport
             // 
-            this.ContextExport.Name = "ContextExport";
-            this.ContextExport.Size = new System.Drawing.Size(158, 22);
-            this.ContextExport.Text = "$EXPORT_WEM";
+            ContextExport.Name = "ContextExport";
+            ContextExport.Size = new System.Drawing.Size(179, 22);
+            ContextExport.Text = "$EXPORT_WEM";
             // 
             // ContextDelete
             // 
-            this.ContextDelete.Name = "ContextDelete";
-            this.ContextDelete.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Delete)));
-            this.ContextDelete.Size = new System.Drawing.Size(158, 22);
-            this.ContextDelete.Text = "Delete";
+            ContextDelete.Name = "ContextDelete";
+            ContextDelete.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Delete;
+            ContextDelete.Size = new System.Drawing.Size(179, 22);
+            ContextDelete.Text = "Delete";
             // 
             // TreeView_HIRC
             // 
-            this.TreeView_HIRC.Location = new System.Drawing.Point(14, 32);
-            this.TreeView_HIRC.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.TreeView_HIRC.Name = "TreeView_HIRC";
-            this.TreeView_HIRC.Size = new System.Drawing.Size(429, 472);
-            this.TreeView_HIRC.TabIndex = 11;
+            TreeView_HIRC.Location = new System.Drawing.Point(14, 32);
+            TreeView_HIRC.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            TreeView_HIRC.Name = "TreeView_HIRC";
+            TreeView_HIRC.Size = new System.Drawing.Size(429, 472);
+            TreeView_HIRC.TabIndex = 11;
+            TreeView_HIRC.AfterSelect += OnNodeSelectSelect;
             // 
             // HIRCEditor
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(933, 519);
-            this.Controls.Add(this.TreeView_HIRC);
-            this.Controls.Add(this.HircGrid);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.Name = "HIRCEditor";
-            this.Text = "$HIRC_EDITOR_TITLE";
-            this.Load += new System.EventHandler(this.HIRCEditor_Load);
-            this.BnkContext.ResumeLayout(false);
-            this.ResumeLayout(false);
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(933, 519);
+            Controls.Add(TreeView_HIRC);
+            Controls.Add(HircGrid);
+            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Name = "HIRCEditor";
+            Text = "$HIRC_EDITOR_TITLE";
+            Load += HIRCEditor_Load;
+            BnkContext.ResumeLayout(false);
+            ResumeLayout(false);
 
         }
 

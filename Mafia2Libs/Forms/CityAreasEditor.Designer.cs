@@ -73,14 +73,14 @@ namespace Mafia2Tool.Forms
             // saveToolStripMenuItem
             // 
             saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            saveToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             saveToolStripMenuItem.Text = "Save";
             saveToolStripMenuItem.Click += SaveCurrentFile;
             // 
             // openToolStripMenuItem
             // 
             openToolStripMenuItem.Name = "openToolStripMenuItem";
-            openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            openToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             openToolStripMenuItem.Text = "Open";
             openToolStripMenuItem.Click += BtnOpen_Click;
             // 
@@ -202,6 +202,7 @@ namespace Mafia2Tool.Forms
             Controls.Add(rightPanel);
             Controls.Add(statusStrip);
             DoubleBuffered = true;
+            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
             Name = "CityAreasEditor";
             Text = "City Areas Editor";
             statusStrip.ResumeLayout(false);

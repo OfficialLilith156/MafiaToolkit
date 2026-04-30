@@ -336,6 +336,7 @@ namespace Forms.Docking
             ClientSize = new System.Drawing.Size(330, 519);
             Controls.Add(Tab_Explorer);
             HideOnClose = true;
+            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             MinimumSize = new System.Drawing.Size(301, 39);
             Name = "DockSceneTree";

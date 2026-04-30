@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DockPropertyGrid));
             QuickEditTab = new System.Windows.Forms.TabPage();
             button4 = new System.Windows.Forms.Button();
             label4 = new System.Windows.Forms.Label();
@@ -491,6 +492,7 @@
             Controls.Add(MainTabControl);
             DockAreas = WeifenLuo.WinFormsUI.Docking.DockAreas.Float | WeifenLuo.WinFormsUI.Docking.DockAreas.DockLeft | WeifenLuo.WinFormsUI.Docking.DockAreas.DockRight | WeifenLuo.WinFormsUI.Docking.DockAreas.DockTop | WeifenLuo.WinFormsUI.Docking.DockAreas.DockBottom;
             HideOnClose = true;
+            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             Name = "DockPropertyGrid";
             ShowHint = WeifenLuo.WinFormsUI.Docking.DockState.DockRight;

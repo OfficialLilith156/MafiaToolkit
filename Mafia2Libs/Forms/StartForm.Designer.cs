@@ -41,6 +41,7 @@
             ClientSize = new System.Drawing.Size(800, 450);
             DoubleBuffered = true;
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
             Name = "StartForm";
             ShowInTaskbar = false;
             StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

@@ -48,8 +48,8 @@ namespace Mafia2Tool
             versionComboBox = new ToolStripComboBox();
             searchBox = new ToolStripTextBox();
             toolStripSeparator1 = new ToolStripSeparator();
-            keyColumnComboBox = new ToolStripComboBox();
             toolStripLabdsasdel1 = new ToolStripLabel();
+            keyColumnComboBox = new ToolStripComboBox();
             toolStrip1.SuspendLayout();
             SuspendLayout();
             // 
@@ -166,17 +166,17 @@ namespace Mafia2Tool
             toolStripSeparator1.Name = "toolStripSeparator1";
             toolStripSeparator1.Size = new Size(6, 25);
             // 
-            // keyColumnComboBox
-            // 
-            keyColumnComboBox.Name = "keyColumnComboBox";
-            keyColumnComboBox.Size = new Size(121, 25);
-            keyColumnComboBox.SelectedIndexChanged += KeyColumnComboBox_SelectedIndexChanged;
-            // 
             // toolStripLabdsasdel1
             // 
             toolStripLabdsasdel1.Name = "toolStripLabdsasdel1";
             toolStripLabdsasdel1.Size = new Size(53, 22);
             toolStripLabdsasdel1.Text = "Column:";
+            // 
+            // keyColumnComboBox
+            // 
+            keyColumnComboBox.Name = "keyColumnComboBox";
+            keyColumnComboBox.Size = new Size(121, 25);
+            keyColumnComboBox.SelectedIndexChanged += KeyColumnComboBox_SelectedIndexChanged;
             // 
             // TableEditor
             // 
@@ -184,6 +184,7 @@ namespace Mafia2Tool
             Controls.Add(toolStrip1);
             Controls.Add(propertyGrid);
             Controls.Add(treeViewRows);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "TableEditor";
             Text = "Table Editor";
             FormClosing += TableEditor_Closing;

@@ -95,14 +95,14 @@ namespace Mafia2Tool.Forms
             // saveToolStripMenuItem
             // 
             saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            saveToolStripMenuItem.Size = new System.Drawing.Size(98, 22);
             saveToolStripMenuItem.Text = "Save";
             saveToolStripMenuItem.Click += btnSave_Click;
             // 
             // exitToolStripMenuItem
             // 
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            exitToolStripMenuItem.Size = new System.Drawing.Size(98, 22);
             exitToolStripMenuItem.Text = "Exit";
             exitToolStripMenuItem.Click += btnClose_Click;
             // 
@@ -144,6 +144,7 @@ namespace Mafia2Tool.Forms
             Controls.Add(btnAdd);
             Controls.Add(btnRemove);
             FormBorderStyle = FormBorderStyle.FixedDialog;
+            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "IFLEditorForm";

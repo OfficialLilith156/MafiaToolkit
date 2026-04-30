@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NewObjectForm));
             label = new System.Windows.Forms.Label();
             textBox1 = new System.Windows.Forms.TextBox();
             buttonContinue = new System.Windows.Forms.Button();
@@ -99,6 +100,7 @@
             Controls.Add(buttonContinue);
             Controls.Add(textBox1);
             Controls.Add(label);
+            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             MaximizeBox = false;
             MinimizeBox = false;

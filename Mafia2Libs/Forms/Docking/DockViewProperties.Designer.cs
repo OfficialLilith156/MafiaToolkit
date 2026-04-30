@@ -28,230 +28,203 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DockViewProperties));
-            this.EntryMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.PreviewButton = new System.Windows.Forms.ToolStripMenuItem();
-            this.DeleteButton = new System.Windows.Forms.ToolStripMenuItem();
-            this.DuplicateButton = new System.Windows.Forms.ToolStripMenuItem();
-            this.Export3DButton = new System.Windows.Forms.ToolStripMenuItem();
-            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-            this.Label_PickIntersection = new System.Windows.Forms.Label();
-            this.TextBox_PickWSLocation = new System.Windows.Forms.TextBox();
-            this.TextBox_WithOffset = new System.Windows.Forms.TextBox();
-            this.Label_IntersectionWithOffset = new System.Windows.Forms.Label();
-            this.Numeric_PosZ = new System.Windows.Forms.NumericUpDown();
-            this.Numeric_PosY = new System.Windows.Forms.NumericUpDown();
-            this.Numeric_PosX = new System.Windows.Forms.NumericUpDown();
-            this.Label_PosZ = new System.Windows.Forms.Label();
-            this.Label_PosY = new System.Windows.Forms.Label();
-            this.Label_PosX = new System.Windows.Forms.Label();
-            this.EntryMenuStrip.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.Numeric_PosZ)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.Numeric_PosY)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.Numeric_PosX)).BeginInit();
-            this.SuspendLayout();
+            EntryMenuStrip = new System.Windows.Forms.ContextMenuStrip(components);
+            PreviewButton = new System.Windows.Forms.ToolStripMenuItem();
+            DeleteButton = new System.Windows.Forms.ToolStripMenuItem();
+            DuplicateButton = new System.Windows.Forms.ToolStripMenuItem();
+            Export3DButton = new System.Windows.Forms.ToolStripMenuItem();
+            imageList1 = new System.Windows.Forms.ImageList(components);
+            Label_PickIntersection = new System.Windows.Forms.Label();
+            TextBox_PickWSLocation = new System.Windows.Forms.TextBox();
+            TextBox_WithOffset = new System.Windows.Forms.TextBox();
+            Label_IntersectionWithOffset = new System.Windows.Forms.Label();
+            Numeric_PosZ = new System.Windows.Forms.NumericUpDown();
+            Numeric_PosY = new System.Windows.Forms.NumericUpDown();
+            Numeric_PosX = new System.Windows.Forms.NumericUpDown();
+            Label_PosZ = new System.Windows.Forms.Label();
+            Label_PosY = new System.Windows.Forms.Label();
+            Label_PosX = new System.Windows.Forms.Label();
+            EntryMenuStrip.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)Numeric_PosZ).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)Numeric_PosY).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)Numeric_PosX).BeginInit();
+            SuspendLayout();
             // 
             // EntryMenuStrip
             // 
-            this.EntryMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.PreviewButton,
-            this.DeleteButton,
-            this.DuplicateButton,
-            this.Export3DButton});
-            this.EntryMenuStrip.Name = "EntryMenuStrip";
-            this.EntryMenuStrip.Size = new System.Drawing.Size(126, 92);
+            EntryMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { PreviewButton, DeleteButton, DuplicateButton, Export3DButton });
+            EntryMenuStrip.Name = "EntryMenuStrip";
+            EntryMenuStrip.Size = new System.Drawing.Size(126, 92);
             // 
             // PreviewButton
             // 
-            this.PreviewButton.Name = "PreviewButton";
-            this.PreviewButton.Size = new System.Drawing.Size(125, 22);
-            this.PreviewButton.Text = "Preview";
+            PreviewButton.Name = "PreviewButton";
+            PreviewButton.Size = new System.Drawing.Size(125, 22);
+            PreviewButton.Text = "Preview";
             // 
             // DeleteButton
             // 
-            this.DeleteButton.Name = "DeleteButton";
-            this.DeleteButton.Size = new System.Drawing.Size(125, 22);
-            this.DeleteButton.Text = "Delete";
+            DeleteButton.Name = "DeleteButton";
+            DeleteButton.Size = new System.Drawing.Size(125, 22);
+            DeleteButton.Text = "Delete";
             // 
             // DuplicateButton
             // 
-            this.DuplicateButton.Name = "DuplicateButton";
-            this.DuplicateButton.Size = new System.Drawing.Size(125, 22);
-            this.DuplicateButton.Text = "Duplicate";
+            DuplicateButton.Name = "DuplicateButton";
+            DuplicateButton.Size = new System.Drawing.Size(125, 22);
+            DuplicateButton.Text = "Duplicate";
             // 
             // Export3DButton
             // 
-            this.Export3DButton.Name = "Export3DButton";
-            this.Export3DButton.Size = new System.Drawing.Size(125, 22);
-            this.Export3DButton.Text = "Export 3D";
+            Export3DButton.Name = "Export3DButton";
+            Export3DButton.Size = new System.Drawing.Size(125, 22);
+            Export3DButton.Text = "Export 3D";
             // 
             // imageList1
             // 
-            this.imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
-            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
-            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageList1.Images.SetKeyName(0, "ActorFrame.png");
-            this.imageList1.Images.SetKeyName(1, "AreaFrame.png");
-            this.imageList1.Images.SetKeyName(2, "CameraFrame.png");
-            this.imageList1.Images.SetKeyName(3, "CollisionFrame.png");
-            this.imageList1.Images.SetKeyName(4, "CollisionObject.png");
-            this.imageList1.Images.SetKeyName(5, "LightFrame.png");
-            this.imageList1.Images.SetKeyName(6, "MeshFrame.png");
-            this.imageList1.Images.SetKeyName(7, "Placeholder.png");
-            this.imageList1.Images.SetKeyName(8, "SceneObject.png");
-            this.imageList1.Images.SetKeyName(9, "SkinnedFrame.png");
-            this.imageList1.Images.SetKeyName(10, "DummyFrame.png");
+            imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
+            imageList1.ImageStream = (System.Windows.Forms.ImageListStreamer)resources.GetObject("imageList1.ImageStream");
+            imageList1.TransparentColor = System.Drawing.Color.Transparent;
+            imageList1.Images.SetKeyName(0, "ActorFrame.png");
+            imageList1.Images.SetKeyName(1, "AreaFrame.png");
+            imageList1.Images.SetKeyName(2, "CameraFrame.png");
+            imageList1.Images.SetKeyName(3, "CollisionFrame.png");
+            imageList1.Images.SetKeyName(4, "CollisionObject.png");
+            imageList1.Images.SetKeyName(5, "LightFrame.png");
+            imageList1.Images.SetKeyName(6, "MeshFrame.png");
+            imageList1.Images.SetKeyName(7, "Placeholder.png");
+            imageList1.Images.SetKeyName(8, "SceneObject.png");
+            imageList1.Images.SetKeyName(9, "SkinnedFrame.png");
+            imageList1.Images.SetKeyName(10, "DummyFrame.png");
             // 
             // Label_PickIntersection
             // 
-            this.Label_PickIntersection.AutoSize = true;
-            this.Label_PickIntersection.Location = new System.Drawing.Point(10, 10);
-            this.Label_PickIntersection.Name = "Label_PickIntersection";
-            this.Label_PickIntersection.Size = new System.Drawing.Size(118, 15);
-            this.Label_PickIntersection.TabIndex = 1;
-            this.Label_PickIntersection.Text = "Last Pick Intersection";
+            Label_PickIntersection.AutoSize = true;
+            Label_PickIntersection.Location = new System.Drawing.Point(10, 10);
+            Label_PickIntersection.Name = "Label_PickIntersection";
+            Label_PickIntersection.Size = new System.Drawing.Size(118, 15);
+            Label_PickIntersection.TabIndex = 1;
+            Label_PickIntersection.Text = "Last Pick Intersection";
             // 
             // TextBox_PickWSLocation
             // 
-            this.TextBox_PickWSLocation.Location = new System.Drawing.Point(10, 28);
-            this.TextBox_PickWSLocation.Name = "TextBox_PickWSLocation";
-            this.TextBox_PickWSLocation.Size = new System.Drawing.Size(288, 23);
-            this.TextBox_PickWSLocation.TabIndex = 3;
+            TextBox_PickWSLocation.Location = new System.Drawing.Point(10, 28);
+            TextBox_PickWSLocation.Name = "TextBox_PickWSLocation";
+            TextBox_PickWSLocation.Size = new System.Drawing.Size(288, 23);
+            TextBox_PickWSLocation.TabIndex = 3;
             // 
             // TextBox_WithOffset
             // 
-            this.TextBox_WithOffset.Location = new System.Drawing.Point(9, 176);
-            this.TextBox_WithOffset.Name = "TextBox_WithOffset";
-            this.TextBox_WithOffset.Size = new System.Drawing.Size(288, 23);
-            this.TextBox_WithOffset.TabIndex = 7;
+            TextBox_WithOffset.Location = new System.Drawing.Point(9, 176);
+            TextBox_WithOffset.Name = "TextBox_WithOffset";
+            TextBox_WithOffset.Size = new System.Drawing.Size(288, 23);
+            TextBox_WithOffset.TabIndex = 7;
             // 
             // Label_IntersectionWithOffset
             // 
-            this.Label_IntersectionWithOffset.AutoSize = true;
-            this.Label_IntersectionWithOffset.Location = new System.Drawing.Point(9, 158);
-            this.Label_IntersectionWithOffset.Name = "Label_IntersectionWithOffset";
-            this.Label_IntersectionWithOffset.Size = new System.Drawing.Size(136, 15);
-            this.Label_IntersectionWithOffset.TabIndex = 6;
-            this.Label_IntersectionWithOffset.Text = "Intersection WITH Offset";
+            Label_IntersectionWithOffset.AutoSize = true;
+            Label_IntersectionWithOffset.Location = new System.Drawing.Point(9, 158);
+            Label_IntersectionWithOffset.Name = "Label_IntersectionWithOffset";
+            Label_IntersectionWithOffset.Size = new System.Drawing.Size(136, 15);
+            Label_IntersectionWithOffset.TabIndex = 6;
+            Label_IntersectionWithOffset.Text = "Intersection WITH Offset";
             // 
             // Numeric_PosZ
             // 
-            this.Numeric_PosZ.DecimalPlaces = 5;
-            this.Numeric_PosZ.Location = new System.Drawing.Point(81, 123);
-            this.Numeric_PosZ.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.Numeric_PosZ.Maximum = new decimal(new int[] {
-            999999999,
-            0,
-            0,
-            0});
-            this.Numeric_PosZ.Minimum = new decimal(new int[] {
-            999999999,
-            0,
-            0,
-            -2147483648});
-            this.Numeric_PosZ.Name = "Numeric_PosZ";
-            this.Numeric_PosZ.Size = new System.Drawing.Size(216, 23);
-            this.Numeric_PosZ.TabIndex = 26;
-            this.Numeric_PosZ.ValueChanged += new System.EventHandler(this.Numeric_OnValueChanged);
+            Numeric_PosZ.DecimalPlaces = 5;
+            Numeric_PosZ.Location = new System.Drawing.Point(81, 123);
+            Numeric_PosZ.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Numeric_PosZ.Maximum = new decimal(new int[] { 999999999, 0, 0, 0 });
+            Numeric_PosZ.Minimum = new decimal(new int[] { 999999999, 0, 0, int.MinValue });
+            Numeric_PosZ.Name = "Numeric_PosZ";
+            Numeric_PosZ.Size = new System.Drawing.Size(216, 23);
+            Numeric_PosZ.TabIndex = 26;
+            Numeric_PosZ.ValueChanged += Numeric_OnValueChanged;
             // 
             // Numeric_PosY
             // 
-            this.Numeric_PosY.DecimalPlaces = 5;
-            this.Numeric_PosY.Location = new System.Drawing.Point(81, 93);
-            this.Numeric_PosY.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.Numeric_PosY.Maximum = new decimal(new int[] {
-            999999999,
-            0,
-            0,
-            0});
-            this.Numeric_PosY.Minimum = new decimal(new int[] {
-            999999999,
-            0,
-            0,
-            -2147483648});
-            this.Numeric_PosY.Name = "Numeric_PosY";
-            this.Numeric_PosY.Size = new System.Drawing.Size(216, 23);
-            this.Numeric_PosY.TabIndex = 25;
-            this.Numeric_PosY.ValueChanged += new System.EventHandler(this.Numeric_OnValueChanged);
+            Numeric_PosY.DecimalPlaces = 5;
+            Numeric_PosY.Location = new System.Drawing.Point(81, 93);
+            Numeric_PosY.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Numeric_PosY.Maximum = new decimal(new int[] { 999999999, 0, 0, 0 });
+            Numeric_PosY.Minimum = new decimal(new int[] { 999999999, 0, 0, int.MinValue });
+            Numeric_PosY.Name = "Numeric_PosY";
+            Numeric_PosY.Size = new System.Drawing.Size(216, 23);
+            Numeric_PosY.TabIndex = 25;
+            Numeric_PosY.ValueChanged += Numeric_OnValueChanged;
             // 
             // Numeric_PosX
             // 
-            this.Numeric_PosX.DecimalPlaces = 5;
-            this.Numeric_PosX.Location = new System.Drawing.Point(81, 63);
-            this.Numeric_PosX.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.Numeric_PosX.Maximum = new decimal(new int[] {
-            999999999,
-            0,
-            0,
-            0});
-            this.Numeric_PosX.Minimum = new decimal(new int[] {
-            999999999,
-            0,
-            0,
-            -2147483648});
-            this.Numeric_PosX.Name = "Numeric_PosX";
-            this.Numeric_PosX.Size = new System.Drawing.Size(216, 23);
-            this.Numeric_PosX.TabIndex = 24;
-            this.Numeric_PosX.ValueChanged += new System.EventHandler(this.Numeric_OnValueChanged);
+            Numeric_PosX.DecimalPlaces = 5;
+            Numeric_PosX.Location = new System.Drawing.Point(81, 63);
+            Numeric_PosX.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Numeric_PosX.Maximum = new decimal(new int[] { 999999999, 0, 0, 0 });
+            Numeric_PosX.Minimum = new decimal(new int[] { 999999999, 0, 0, int.MinValue });
+            Numeric_PosX.Name = "Numeric_PosX";
+            Numeric_PosX.Size = new System.Drawing.Size(216, 23);
+            Numeric_PosX.TabIndex = 24;
+            Numeric_PosX.ValueChanged += Numeric_OnValueChanged;
             // 
             // Label_PosZ
             // 
-            this.Label_PosZ.AutoSize = true;
-            this.Label_PosZ.Location = new System.Drawing.Point(11, 125);
-            this.Label_PosZ.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.Label_PosZ.Name = "Label_PosZ";
-            this.Label_PosZ.Size = new System.Drawing.Size(49, 15);
-            this.Label_PosZ.TabIndex = 23;
-            this.Label_PosZ.Text = "Offset Z";
+            Label_PosZ.AutoSize = true;
+            Label_PosZ.Location = new System.Drawing.Point(11, 125);
+            Label_PosZ.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            Label_PosZ.Name = "Label_PosZ";
+            Label_PosZ.Size = new System.Drawing.Size(49, 15);
+            Label_PosZ.TabIndex = 23;
+            Label_PosZ.Text = "Offset Z";
             // 
             // Label_PosY
             // 
-            this.Label_PosY.AutoSize = true;
-            this.Label_PosY.Location = new System.Drawing.Point(11, 95);
-            this.Label_PosY.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.Label_PosY.Name = "Label_PosY";
-            this.Label_PosY.Size = new System.Drawing.Size(49, 15);
-            this.Label_PosY.TabIndex = 22;
-            this.Label_PosY.Text = "Offset Y";
+            Label_PosY.AutoSize = true;
+            Label_PosY.Location = new System.Drawing.Point(11, 95);
+            Label_PosY.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            Label_PosY.Name = "Label_PosY";
+            Label_PosY.Size = new System.Drawing.Size(49, 15);
+            Label_PosY.TabIndex = 22;
+            Label_PosY.Text = "Offset Y";
             // 
             // Label_PosX
             // 
-            this.Label_PosX.AutoSize = true;
-            this.Label_PosX.Location = new System.Drawing.Point(10, 65);
-            this.Label_PosX.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.Label_PosX.Name = "Label_PosX";
-            this.Label_PosX.Size = new System.Drawing.Size(49, 15);
-            this.Label_PosX.TabIndex = 21;
-            this.Label_PosX.Text = "Offset X";
+            Label_PosX.AutoSize = true;
+            Label_PosX.Location = new System.Drawing.Point(10, 65);
+            Label_PosX.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            Label_PosX.Name = "Label_PosX";
+            Label_PosX.Size = new System.Drawing.Size(49, 15);
+            Label_PosX.TabIndex = 21;
+            Label_PosX.Text = "Offset X";
             // 
             // DockViewProperties
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(310, 519);
-            this.Controls.Add(this.Numeric_PosZ);
-            this.Controls.Add(this.Numeric_PosY);
-            this.Controls.Add(this.Numeric_PosX);
-            this.Controls.Add(this.Label_PosZ);
-            this.Controls.Add(this.Label_PosY);
-            this.Controls.Add(this.Label_PosX);
-            this.Controls.Add(this.TextBox_WithOffset);
-            this.Controls.Add(this.Label_IntersectionWithOffset);
-            this.Controls.Add(this.TextBox_PickWSLocation);
-            this.Controls.Add(this.Label_PickIntersection);
-            this.HideOnClose = true;
-            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.Name = "DockViewProperties";
-            this.TabText = "View Properties";
-            this.Text = "Utilities";
-            this.Resize += new System.EventHandler(this.OnResize);
-            this.EntryMenuStrip.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.Numeric_PosZ)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.Numeric_PosY)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.Numeric_PosX)).EndInit();
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(310, 519);
+            Controls.Add(Numeric_PosZ);
+            Controls.Add(Numeric_PosY);
+            Controls.Add(Numeric_PosX);
+            Controls.Add(Label_PosZ);
+            Controls.Add(Label_PosY);
+            Controls.Add(Label_PosX);
+            Controls.Add(TextBox_WithOffset);
+            Controls.Add(Label_IntersectionWithOffset);
+            Controls.Add(TextBox_PickWSLocation);
+            Controls.Add(Label_PickIntersection);
+            HideOnClose = true;
+            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Name = "DockViewProperties";
+            TabText = "View Properties";
+            Text = "Utilities";
+            Resize += OnResize;
+            EntryMenuStrip.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)Numeric_PosZ).EndInit();
+            ((System.ComponentModel.ISupportInitialize)Numeric_PosY).EndInit();
+            ((System.ComponentModel.ISupportInitialize)Numeric_PosX).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
 
         }
 

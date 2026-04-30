@@ -31,6 +31,7 @@ namespace Mafia2Tool.Forms
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RotateAIGroupForm));
             titleLabel = new Label();
             countLabel = new Label();
             angleControl = new NumericUpDown();
@@ -207,6 +208,7 @@ namespace Mafia2Tool.Forms
             Controls.Add(okButton);
             Controls.Add(cancelButton);
             FormBorderStyle = FormBorderStyle.FixedDialog;
+            Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "RotateAIGroupForm";

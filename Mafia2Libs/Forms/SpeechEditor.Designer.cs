@@ -40,10 +40,10 @@
             Button_Edit = new System.Windows.Forms.ToolStripDropDownButton();
             Button_SaveToXML = new System.Windows.Forms.ToolStripMenuItem();
             Button_LoadFromXML = new System.Windows.Forms.ToolStripMenuItem();
-            FileSaveDialog_SelectXML = new System.Windows.Forms.SaveFileDialog();
-            SearchBox = new System.Windows.Forms.TextBox();
             addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            FileSaveDialog_SelectXML = new System.Windows.Forms.SaveFileDialog();
+            SearchBox = new System.Windows.Forms.TextBox();
             Tool_Strip.SuspendLayout();
             SuspendLayout();
             // 
@@ -141,17 +141,6 @@
             Button_LoadFromXML.Text = "$IMPORT_XML";
             Button_LoadFromXML.Click += OnLoadFromXMLClicked;
             // 
-            // FileSaveDialog_SelectXML
-            // 
-            FileSaveDialog_SelectXML.Filter = "XML File|*.xml";
-            // 
-            // SearchBox
-            // 
-            SearchBox.Location = new System.Drawing.Point(291, 5);
-            SearchBox.Name = "SearchBox";
-            SearchBox.Size = new System.Drawing.Size(152, 23);
-            SearchBox.TabIndex = 17;
-            // 
             // addToolStripMenuItem
             // 
             addToolStripMenuItem.Name = "addToolStripMenuItem";
@@ -165,6 +154,17 @@
             deleteToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
             deleteToolStripMenuItem.Text = "Delete";
             deleteToolStripMenuItem.Click += Button_Delete_Click;
+            // 
+            // FileSaveDialog_SelectXML
+            // 
+            FileSaveDialog_SelectXML.Filter = "XML File|*.xml";
+            // 
+            // SearchBox
+            // 
+            SearchBox.Location = new System.Drawing.Point(291, 5);
+            SearchBox.Name = "SearchBox";
+            SearchBox.Size = new System.Drawing.Size(152, 23);
+            SearchBox.TabIndex = 17;
             // 
             // SpeechEditor
             // 

@@ -52,6 +52,8 @@ namespace Mafia2Tool
             importAllLinesToolStripMenuItem = new ToolStripMenuItem();
             exportAllLinesToolStripMenuItem = new ToolStripMenuItem();
             removeAllLinesToolStripMenuItem = new ToolStripMenuItem();
+            importLineToolStripMenuItem = new ToolStripMenuItem();
+            exportLineToolStripMenuItem = new ToolStripMenuItem();
             toolStripDropDownButton2 = new ToolStripDropDownButton();
             addStreamGroupToolStripMenuItem = new ToolStripMenuItem();
             removeStreamGroupToolStripMenuItem = new ToolStripMenuItem();
@@ -66,8 +68,6 @@ namespace Mafia2Tool
             StreamBlocksPage = new TabPage();
             blockView = new Mafia2Tool.Controls.MTreeView();
             SearchBox = new TextBox();
-            importLineToolStripMenuItem = new ToolStripMenuItem();
-            exportLineToolStripMenuItem = new ToolStripMenuItem();
             LineContextStrip.SuspendLayout();
             ToolStrip.SuspendLayout();
             tabControl.SuspendLayout();
@@ -193,51 +193,65 @@ namespace Mafia2Tool
             // addBranchToolStripMenuItem
             // 
             addBranchToolStripMenuItem.Name = "addBranchToolStripMenuItem";
-            addBranchToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            addBranchToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
             addBranchToolStripMenuItem.Text = "Add Branch";
             addBranchToolStripMenuItem.Click += Button_CreateLineGroup_Click;
             // 
             // deleteBranchToolStripMenuItem
             // 
             deleteBranchToolStripMenuItem.Name = "deleteBranchToolStripMenuItem";
-            deleteBranchToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            deleteBranchToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
             deleteBranchToolStripMenuItem.Text = "Delete Branch";
             deleteBranchToolStripMenuItem.Click += DeleteBranchButtonPressed;
             // 
             // toolStripMenuItem2
             // 
             toolStripMenuItem2.Name = "toolStripMenuItem2";
-            toolStripMenuItem2.Size = new System.Drawing.Size(180, 22);
+            toolStripMenuItem2.Size = new System.Drawing.Size(164, 22);
             toolStripMenuItem2.Text = "Import Branch";
             toolStripMenuItem2.Click += ImportBranch;
             // 
             // exportBranchToolStripMenuItem
             // 
             exportBranchToolStripMenuItem.Name = "exportBranchToolStripMenuItem";
-            exportBranchToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            exportBranchToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
             exportBranchToolStripMenuItem.Text = "Export Branch";
             exportBranchToolStripMenuItem.Click += ExportBranch;
             // 
             // importAllLinesToolStripMenuItem
             // 
             importAllLinesToolStripMenuItem.Name = "importAllLinesToolStripMenuItem";
-            importAllLinesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            importAllLinesToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
             importAllLinesToolStripMenuItem.Text = "Import All Lines";
             importAllLinesToolStripMenuItem.Click += ImportAllStreamLines;
             // 
             // exportAllLinesToolStripMenuItem
             // 
             exportAllLinesToolStripMenuItem.Name = "exportAllLinesToolStripMenuItem";
-            exportAllLinesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            exportAllLinesToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
             exportAllLinesToolStripMenuItem.Text = "Export All Lines";
             exportAllLinesToolStripMenuItem.Click += ExportAllStreamLines;
             // 
             // removeAllLinesToolStripMenuItem
             // 
             removeAllLinesToolStripMenuItem.Name = "removeAllLinesToolStripMenuItem";
-            removeAllLinesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            removeAllLinesToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
             removeAllLinesToolStripMenuItem.Text = "Remove All Lines";
             removeAllLinesToolStripMenuItem.Click += DeleteAllStreamLines;
+            // 
+            // importLineToolStripMenuItem
+            // 
+            importLineToolStripMenuItem.Name = "importLineToolStripMenuItem";
+            importLineToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            importLineToolStripMenuItem.Text = "Import Line";
+            importLineToolStripMenuItem.Click += ImportLine;
+            // 
+            // exportLineToolStripMenuItem
+            // 
+            exportLineToolStripMenuItem.Name = "exportLineToolStripMenuItem";
+            exportLineToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            exportLineToolStripMenuItem.Text = "Export Line";
+            exportLineToolStripMenuItem.Click += ExportSelectedLine;
             // 
             // toolStripDropDownButton2
             // 
@@ -372,20 +386,6 @@ namespace Mafia2Tool
             SearchBox.Size = new System.Drawing.Size(282, 23);
             SearchBox.TabIndex = 28;
             SearchBox.KeyPress += OnKeyPressed;
-            // 
-            // importLineToolStripMenuItem
-            // 
-            importLineToolStripMenuItem.Name = "importLineToolStripMenuItem";
-            importLineToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            importLineToolStripMenuItem.Text = "Import Line";
-            importLineToolStripMenuItem.Click += ImportLine;
-            // 
-            // exportLineToolStripMenuItem
-            // 
-            exportLineToolStripMenuItem.Name = "exportLineToolStripMenuItem";
-            exportLineToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            exportLineToolStripMenuItem.Text = "Export Line";
-            exportLineToolStripMenuItem.Click += ExportSelectedLine;
             // 
             // StreamEditor
             // 

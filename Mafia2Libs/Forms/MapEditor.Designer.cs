@@ -382,14 +382,14 @@ namespace Mafia2Tool
             // ViewTopButton
             // 
             ViewTopButton.Name = "ViewTopButton";
-            ViewTopButton.Size = new System.Drawing.Size(180, 22);
+            ViewTopButton.Size = new System.Drawing.Size(117, 22);
             ViewTopButton.Text = "$TOP";
             ViewTopButton.Click += OnViewTopButtonClicked;
             // 
             // ViewFrontButton
             // 
             ViewFrontButton.Name = "ViewFrontButton";
-            ViewFrontButton.Size = new System.Drawing.Size(180, 22);
+            ViewFrontButton.Size = new System.Drawing.Size(117, 22);
             ViewFrontButton.Text = "$FRONT";
             ViewFrontButton.Click += OnViewFrontButtonClicked;
             // 

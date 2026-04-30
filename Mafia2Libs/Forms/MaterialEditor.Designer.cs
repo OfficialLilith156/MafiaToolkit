@@ -41,6 +41,7 @@
             Button_ExportSelected = new System.Windows.Forms.ToolStripMenuItem();
             Button_Debug = new System.Windows.Forms.ToolStripDropDownButton();
             Button_DumpTextures = new System.Windows.Forms.ToolStripMenuItem();
+            addMaterialsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             GirdView_Materials = new System.Windows.Forms.DataGridView();
             columnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             columnHash = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -59,7 +60,6 @@
             MergeButton = new System.Windows.Forms.Button();
             OverwriteListBox = new System.Windows.Forms.CheckedListBox();
             MTLSaveDialog = new System.Windows.Forms.SaveFileDialog();
-            addMaterialsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)GirdView_Materials).BeginInit();
             Panel_Main.SuspendLayout();
@@ -199,6 +199,13 @@
             Button_DumpTextures.Size = new System.Drawing.Size(210, 22);
             Button_DumpTextures.Text = "$DUMP_TEXTURE_NAMES";
             Button_DumpTextures.Click += Button_DumpTextures_Click;
+            // 
+            // addMaterialsToolStripMenuItem
+            // 
+            addMaterialsToolStripMenuItem.Name = "addMaterialsToolStripMenuItem";
+            addMaterialsToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            addMaterialsToolStripMenuItem.Text = "Add Materials";
+            addMaterialsToolStripMenuItem.Click += Button_AddMaterialsFromFolder_Click;
             // 
             // GirdView_Materials
             // 
@@ -390,13 +397,6 @@
             // MTLSaveDialog
             // 
             MTLSaveDialog.Filter = "Material Library|*.mtl";
-            // 
-            // addMaterialsToolStripMenuItem
-            // 
-            addMaterialsToolStripMenuItem.Name = "addMaterialsToolStripMenuItem";
-            addMaterialsToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
-            addMaterialsToolStripMenuItem.Text = "Add Materials";
-            addMaterialsToolStripMenuItem.Click += Button_AddMaterialsFromFolder_Click;
             // 
             // MaterialEditor
             // 

@@ -29,60 +29,62 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GameSelector));
-            this.FlowPanel_GamesList = new System.Windows.Forms.FlowLayoutPanel();
-            this.CheckBox_SelectAsDefault = new System.Windows.Forms.CheckBox();
-            this.Label_ToolkitVersion = new System.Windows.Forms.Label();
-            this.SuspendLayout();
+            FlowPanel_GamesList = new System.Windows.Forms.FlowLayoutPanel();
+            CheckBox_SelectAsDefault = new System.Windows.Forms.CheckBox();
+            Label_ToolkitVersion = new System.Windows.Forms.Label();
+            SuspendLayout();
             // 
             // FlowPanel_GamesList
             // 
-            this.FlowPanel_GamesList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.FlowPanel_GamesList.AutoScroll = true;
-            this.FlowPanel_GamesList.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.FlowPanel_GamesList.Location = new System.Drawing.Point(12, 31);
-            this.FlowPanel_GamesList.Name = "FlowPanel_GamesList";
-            this.FlowPanel_GamesList.Size = new System.Drawing.Size(776, 407);
-            this.FlowPanel_GamesList.TabIndex = 0;
-            this.FlowPanel_GamesList.WrapContents = false;
+            FlowPanel_GamesList.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            FlowPanel_GamesList.AutoScroll = true;
+            FlowPanel_GamesList.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            FlowPanel_GamesList.Location = new System.Drawing.Point(14, 36);
+            FlowPanel_GamesList.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            FlowPanel_GamesList.Name = "FlowPanel_GamesList";
+            FlowPanel_GamesList.Size = new System.Drawing.Size(905, 470);
+            FlowPanel_GamesList.TabIndex = 0;
+            FlowPanel_GamesList.WrapContents = false;
             // 
             // CheckBox_SelectAsDefault
             // 
-            this.CheckBox_SelectAsDefault.AutoSize = true;
-            this.CheckBox_SelectAsDefault.Location = new System.Drawing.Point(620, 12);
-            this.CheckBox_SelectAsDefault.Name = "CheckBox_SelectAsDefault";
-            this.CheckBox_SelectAsDefault.Size = new System.Drawing.Size(148, 17);
-            this.CheckBox_SelectAsDefault.TabIndex = 1;
-            this.CheckBox_SelectAsDefault.Text = "$SELECT_AS_DEFAULT";
-            this.CheckBox_SelectAsDefault.UseVisualStyleBackColor = true;
-            this.CheckBox_SelectAsDefault.CheckedChanged += new System.EventHandler(this.CheckBox_SelectAsDefault_OnChecked);
+            CheckBox_SelectAsDefault.AutoSize = true;
+            CheckBox_SelectAsDefault.Location = new System.Drawing.Point(723, 14);
+            CheckBox_SelectAsDefault.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            CheckBox_SelectAsDefault.Name = "CheckBox_SelectAsDefault";
+            CheckBox_SelectAsDefault.Size = new System.Drawing.Size(140, 19);
+            CheckBox_SelectAsDefault.TabIndex = 1;
+            CheckBox_SelectAsDefault.Text = "$SELECT_AS_DEFAULT";
+            CheckBox_SelectAsDefault.UseVisualStyleBackColor = true;
+            CheckBox_SelectAsDefault.CheckedChanged += CheckBox_SelectAsDefault_OnChecked;
             // 
             // Label_ToolkitVersion
             // 
-            this.Label_ToolkitVersion.AutoSize = true;
-            this.Label_ToolkitVersion.Location = new System.Drawing.Point(12, 13);
-            this.Label_ToolkitVersion.Name = "Label_ToolkitVersion";
-            this.Label_ToolkitVersion.Size = new System.Drawing.Size(107, 13);
-            this.Label_ToolkitVersion.TabIndex = 2;
-            this.Label_ToolkitVersion.Text = "TOOLKIT_VERSION";
+            Label_ToolkitVersion.AutoSize = true;
+            Label_ToolkitVersion.Location = new System.Drawing.Point(14, 15);
+            Label_ToolkitVersion.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            Label_ToolkitVersion.Name = "Label_ToolkitVersion";
+            Label_ToolkitVersion.Size = new System.Drawing.Size(104, 15);
+            Label_ToolkitVersion.TabIndex = 2;
+            Label_ToolkitVersion.Text = "TOOLKIT_VERSION";
             // 
             // GameSelector
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.Label_ToolkitVersion);
-            this.Controls.Add(this.CheckBox_SelectAsDefault);
-            this.Controls.Add(this.FlowPanel_GamesList);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.Name = "GameSelector";
-            this.Text = "GameSelector";
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(933, 519);
+            Controls.Add(Label_ToolkitVersion);
+            Controls.Add(CheckBox_SelectAsDefault);
+            Controls.Add(FlowPanel_GamesList);
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "GameSelector";
+            Text = "GameSelector";
+            ResumeLayout(false);
+            PerformLayout();
 
         }
 

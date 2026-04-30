@@ -333,6 +333,7 @@
             Controls.Add(txtFilePath);
             Controls.Add(label1);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "SizeNOVEditor";

@@ -88,6 +88,7 @@ namespace Mafia2Tool.Forms
             Controls.Add(PropertyGrid_Data);
             Controls.Add(toolStrip1);
             FormBorderStyle = FormBorderStyle.FixedDialog;
+            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "ItemDescEditor";

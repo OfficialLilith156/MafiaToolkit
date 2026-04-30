@@ -39,7 +39,7 @@
             AddItemButton = new System.Windows.Forms.ToolStripMenuItem();
             AddDefinitionButton = new System.Windows.Forms.ToolStripMenuItem();
             PropertyGrid_Cutscene = new System.Windows.Forms.PropertyGrid();
-            TreeView_Cutscene = new Controls.MTreeView();
+            TreeView_Cutscene = new Mafia2Tool.Controls.MTreeView();
             TreeViewContextMenu = new System.Windows.Forms.ContextMenuStrip(components);
             ContextMenu_Import = new System.Windows.Forms.ToolStripMenuItem();
             ContextMenu_Export = new System.Windows.Forms.ToolStripMenuItem();
@@ -106,14 +106,14 @@
             // 
             AddItemButton.Enabled = false;
             AddItemButton.Name = "AddItemButton";
-            AddItemButton.Size = new System.Drawing.Size(180, 22);
+            AddItemButton.Size = new System.Drawing.Size(171, 22);
             AddItemButton.Text = "$ADD_ITEM";
             // 
             // AddDefinitionButton
             // 
             AddDefinitionButton.Enabled = false;
             AddDefinitionButton.Name = "AddDefinitionButton";
-            AddDefinitionButton.Size = new System.Drawing.Size(180, 22);
+            AddDefinitionButton.Size = new System.Drawing.Size(171, 22);
             AddDefinitionButton.Text = "$ADD_DEFINITION";
             // 
             // PropertyGrid_Cutscene
@@ -142,7 +142,7 @@
             // 
             TreeViewContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { ContextMenu_Import, ContextMenu_Export, ContextMenu_Duplicate, ContextMenu_Delete });
             TreeViewContextMenu.Name = "TreeViewContextMenu";
-            TreeViewContextMenu.Size = new System.Drawing.Size(244, 114);
+            TreeViewContextMenu.Size = new System.Drawing.Size(244, 92);
             TreeViewContextMenu.Opening += TreeViewContextMenu_Opening;
             // 
             // ContextMenu_Import
@@ -181,6 +181,7 @@
             Controls.Add(Tool_Strip);
             Controls.Add(PropertyGrid_Cutscene);
             Controls.Add(TreeView_Cutscene);
+            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
             KeyPreview = true;
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             Name = "CutsceneEditor";

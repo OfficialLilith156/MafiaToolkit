@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MaterialBatchOptionsForm));
             TextSamplerStates = new System.Windows.Forms.TextBox();
             checkedFlags = new System.Windows.Forms.CheckedListBox();
             buttonOk = new System.Windows.Forms.Button();
@@ -144,7 +145,6 @@
             label5.Size = new System.Drawing.Size(34, 15);
             label5.TabIndex = 9;
             label5.Text = "Unk4";
-
             // 
             // label6
             // 
@@ -168,7 +168,6 @@
             numericUNK3.Name = "numericUNK3";
             numericUNK3.Size = new System.Drawing.Size(120, 23);
             numericUNK3.TabIndex = 13;
-
             // 
             // numericUNK4
             // 
@@ -176,7 +175,6 @@
             numericUNK4.Name = "numericUNK4";
             numericUNK4.Size = new System.Drawing.Size(120, 23);
             numericUNK4.TabIndex = 14;
-
             // 
             // numericUNK5
             // 
@@ -184,7 +182,6 @@
             numericUNK5.Name = "numericUNK5";
             numericUNK5.Size = new System.Drawing.Size(120, 23);
             numericUNK5.TabIndex = 15;
-
             // 
             // TextID
             // 
@@ -290,7 +287,6 @@
             numericShaderID.Name = "numericShaderID";
             numericShaderID.Size = new System.Drawing.Size(120, 23);
             numericShaderID.TabIndex = 28;
-
             // 
             // numericShaderHash
             // 
@@ -298,7 +294,6 @@
             numericShaderHash.Name = "numericShaderHash";
             numericShaderHash.Size = new System.Drawing.Size(120, 23);
             numericShaderHash.TabIndex = 29;
-
             // 
             // label14
             // 
@@ -308,7 +303,6 @@
             label14.Size = new System.Drawing.Size(70, 15);
             label14.TabIndex = 30;
             label14.Text = "ShaderHash";
-
             // 
             // MaterialBatchOptionsForm
             // 
@@ -344,9 +338,9 @@
             Controls.Add(buttonOk);
             Controls.Add(checkedFlags);
             Controls.Add(TextSamplerStates);
+            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
             Name = "MaterialBatchOptionsForm";
             Text = "MaterialBatchOptionsForm";
-
             ((System.ComponentModel.ISupportInitialize)numericUNK0).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUNK1).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUNK3).EndInit();

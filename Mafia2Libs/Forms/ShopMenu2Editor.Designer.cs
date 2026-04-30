@@ -49,8 +49,8 @@
             Button_Delete = new System.Windows.Forms.ToolStripMenuItem();
             Button_ExportXml = new System.Windows.Forms.ToolStripMenuItem();
             Button_ImportXml = new System.Windows.Forms.ToolStripMenuItem();
-            SearchBox = new System.Windows.Forms.TextBox();
             toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+            SearchBox = new System.Windows.Forms.TextBox();
             Context_Menu.SuspendLayout();
             ToolStrip_Main.SuspendLayout();
             SuspendLayout();
@@ -213,13 +213,6 @@
             Button_ImportXml.Text = "$IMPORT_XML";
             Button_ImportXml.Click += Button_ImportXml_OnClick;
             // 
-            // SearchBox
-            // 
-            SearchBox.Location = new System.Drawing.Point(291, 5);
-            SearchBox.Name = "SearchBox";
-            SearchBox.Size = new System.Drawing.Size(152, 23);
-            SearchBox.TabIndex = 17;
-            // 
             // toolStripButton1
             // 
             toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
@@ -229,6 +222,13 @@
             toolStripButton1.Size = new System.Drawing.Size(61, 22);
             toolStripButton1.Text = "Load Text";
             toolStripButton1.Click += Button_LoadTextDB_OnClick;
+            // 
+            // SearchBox
+            // 
+            SearchBox.Location = new System.Drawing.Point(291, 5);
+            SearchBox.Name = "SearchBox";
+            SearchBox.Size = new System.Drawing.Size(152, 23);
+            SearchBox.TabIndex = 17;
             // 
             // ShopMenu2Editor
             // 

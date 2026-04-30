@@ -226,6 +226,7 @@
     <Content Include="Localisations\sk_SK.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\Toolkit.ico" />
     <None Update="libs\M2FBX.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -305,9 +306,6 @@
     <Content Include="Shaders\LightVS.hlsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Update="Resources\Toolkit.ico">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">

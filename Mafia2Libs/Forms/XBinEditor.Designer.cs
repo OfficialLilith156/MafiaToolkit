@@ -29,133 +29,123 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(XBinEditor));
-            this.Grid_XBin = new System.Windows.Forms.PropertyGrid();
-            this.TreeView_XBin = new Mafia2Tool.Controls.MTreeView();
-            this.ToolStrip_Main = new System.Windows.Forms.ToolStrip();
-            this.Button_File = new System.Windows.Forms.ToolStripDropDownButton();
-            this.Button_Save = new System.Windows.Forms.ToolStripMenuItem();
-            this.Button_Reload = new System.Windows.Forms.ToolStripMenuItem();
-            this.Button_Exit = new System.Windows.Forms.ToolStripMenuItem();
-            this.Button_Tools = new System.Windows.Forms.ToolStripDropDownButton();
-            this.Button_Import = new System.Windows.Forms.ToolStripMenuItem();
-            this.Button_Export = new System.Windows.Forms.ToolStripMenuItem();
-            this.ToolStrip_Main.SuspendLayout();
-            this.SuspendLayout();
+            Grid_XBin = new System.Windows.Forms.PropertyGrid();
+            TreeView_XBin = new Mafia2Tool.Controls.MTreeView();
+            ToolStrip_Main = new System.Windows.Forms.ToolStrip();
+            Button_File = new System.Windows.Forms.ToolStripDropDownButton();
+            Button_Save = new System.Windows.Forms.ToolStripMenuItem();
+            Button_Reload = new System.Windows.Forms.ToolStripMenuItem();
+            Button_Exit = new System.Windows.Forms.ToolStripMenuItem();
+            Button_Tools = new System.Windows.Forms.ToolStripDropDownButton();
+            Button_Import = new System.Windows.Forms.ToolStripMenuItem();
+            Button_Export = new System.Windows.Forms.ToolStripMenuItem();
+            ToolStrip_Main.SuspendLayout();
+            SuspendLayout();
             // 
             // Grid_XBin
             // 
-            this.Grid_XBin.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.Grid_XBin.Location = new System.Drawing.Point(469, 32);
-            this.Grid_XBin.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.Grid_XBin.Name = "Grid_XBin";
-            this.Grid_XBin.PropertySort = System.Windows.Forms.PropertySort.Categorized;
-            this.Grid_XBin.Size = new System.Drawing.Size(450, 473);
-            this.Grid_XBin.TabIndex = 10;
-            this.Grid_XBin.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.OnPropertyValidChanged);
+            Grid_XBin.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            Grid_XBin.Location = new System.Drawing.Point(469, 32);
+            Grid_XBin.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Grid_XBin.Name = "Grid_XBin";
+            Grid_XBin.PropertySort = System.Windows.Forms.PropertySort.Categorized;
+            Grid_XBin.Size = new System.Drawing.Size(450, 473);
+            Grid_XBin.TabIndex = 10;
+            Grid_XBin.PropertyValueChanged += OnPropertyValidChanged;
             // 
             // TreeView_XBin
             // 
-            this.TreeView_XBin.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.TreeView_XBin.Location = new System.Drawing.Point(14, 32);
-            this.TreeView_XBin.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.TreeView_XBin.Name = "TreeView_XBin";
-            this.TreeView_XBin.Size = new System.Drawing.Size(429, 472);
-            this.TreeView_XBin.TabIndex = 11;
-            this.TreeView_XBin.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.OnNodeSelectSelect);
+            TreeView_XBin.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            TreeView_XBin.Location = new System.Drawing.Point(14, 32);
+            TreeView_XBin.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            TreeView_XBin.Name = "TreeView_XBin";
+            TreeView_XBin.Size = new System.Drawing.Size(429, 472);
+            TreeView_XBin.TabIndex = 11;
+            TreeView_XBin.AfterSelect += OnNodeSelectSelect;
             // 
             // ToolStrip_Main
             // 
-            this.ToolStrip_Main.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.Button_File,
-            this.Button_Tools});
-            this.ToolStrip_Main.Location = new System.Drawing.Point(0, 0);
-            this.ToolStrip_Main.Name = "ToolStrip_Main";
-            this.ToolStrip_Main.Size = new System.Drawing.Size(933, 25);
-            this.ToolStrip_Main.TabIndex = 15;
-            this.ToolStrip_Main.Text = "toolStrip1";
+            ToolStrip_Main.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { Button_File, Button_Tools });
+            ToolStrip_Main.Location = new System.Drawing.Point(0, 0);
+            ToolStrip_Main.Name = "ToolStrip_Main";
+            ToolStrip_Main.Size = new System.Drawing.Size(933, 25);
+            ToolStrip_Main.TabIndex = 15;
+            ToolStrip_Main.Text = "toolStrip1";
             // 
             // Button_File
             // 
-            this.Button_File.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.Button_File.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.Button_Save,
-            this.Button_Reload,
-            this.Button_Exit});
-            this.Button_File.Image = ((System.Drawing.Image)(resources.GetObject("Button_File.Image")));
-            this.Button_File.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.Button_File.Name = "Button_File";
-            this.Button_File.Size = new System.Drawing.Size(47, 22);
-            this.Button_File.Text = "$FILE";
+            Button_File.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            Button_File.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { Button_Save, Button_Reload, Button_Exit });
+            Button_File.Image = (System.Drawing.Image)resources.GetObject("Button_File.Image");
+            Button_File.ImageTransparentColor = System.Drawing.Color.Magenta;
+            Button_File.Name = "Button_File";
+            Button_File.Size = new System.Drawing.Size(47, 22);
+            Button_File.Text = "$FILE";
             // 
             // Button_Save
             // 
-            this.Button_Save.Name = "Button_Save";
-            this.Button_Save.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.Button_Save.Size = new System.Drawing.Size(165, 22);
-            this.Button_Save.Text = "$SAVE";
-            this.Button_Save.Click += new System.EventHandler(this.Button_Save_Click);
+            Button_Save.Name = "Button_Save";
+            Button_Save.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S;
+            Button_Save.Size = new System.Drawing.Size(165, 22);
+            Button_Save.Text = "$SAVE";
+            Button_Save.Click += Button_Save_Click;
             // 
             // Button_Reload
             // 
-            this.Button_Reload.Name = "Button_Reload";
-            this.Button_Reload.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
-            this.Button_Reload.Size = new System.Drawing.Size(165, 22);
-            this.Button_Reload.Text = "$RELOAD";
-            this.Button_Reload.Click += new System.EventHandler(this.Button_Reload_Click);
+            Button_Reload.Name = "Button_Reload";
+            Button_Reload.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R;
+            Button_Reload.Size = new System.Drawing.Size(165, 22);
+            Button_Reload.Text = "$RELOAD";
+            Button_Reload.Click += Button_Reload_Click;
             // 
             // Button_Exit
             // 
-            this.Button_Exit.Name = "Button_Exit";
-            this.Button_Exit.Size = new System.Drawing.Size(165, 22);
-            this.Button_Exit.Text = "$EXIT";
-            this.Button_Exit.Click += new System.EventHandler(this.Button_Exit_Click);
+            Button_Exit.Name = "Button_Exit";
+            Button_Exit.Size = new System.Drawing.Size(165, 22);
+            Button_Exit.Text = "$EXIT";
+            Button_Exit.Click += Button_Exit_Click;
             // 
             // Button_Tools
             // 
-            this.Button_Tools.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.Button_Tools.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.Button_Import,
-            this.Button_Export});
-            this.Button_Tools.Image = ((System.Drawing.Image)(resources.GetObject("Button_Tools.Image")));
-            this.Button_Tools.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.Button_Tools.Name = "Button_Tools";
-            this.Button_Tools.Size = new System.Drawing.Size(61, 22);
-            this.Button_Tools.Text = "$TOOLS";
+            Button_Tools.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            Button_Tools.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { Button_Import, Button_Export });
+            Button_Tools.Image = (System.Drawing.Image)resources.GetObject("Button_Tools.Image");
+            Button_Tools.ImageTransparentColor = System.Drawing.Color.Magenta;
+            Button_Tools.Name = "Button_Tools";
+            Button_Tools.Size = new System.Drawing.Size(61, 22);
+            Button_Tools.Text = "$TOOLS";
             // 
             // Button_Import
             // 
-            this.Button_Import.Name = "Button_Import";
-            this.Button_Import.Size = new System.Drawing.Size(180, 22);
-            this.Button_Import.Text = "$IMPORT_XBIN";
-            this.Button_Import.Click += new System.EventHandler(this.Button_Import_Click);
+            Button_Import.Name = "Button_Import";
+            Button_Import.Size = new System.Drawing.Size(153, 22);
+            Button_Import.Text = "$IMPORT_XBIN";
+            Button_Import.Click += Button_Import_Click;
             // 
             // Button_Export
             // 
-            this.Button_Export.Name = "Button_Export";
-            this.Button_Export.Size = new System.Drawing.Size(180, 22);
-            this.Button_Export.Text = "$EXPORT_XBIN";
-            this.Button_Export.Click += new System.EventHandler(this.Button_Export_Click);
+            Button_Export.Name = "Button_Export";
+            Button_Export.Size = new System.Drawing.Size(153, 22);
+            Button_Export.Text = "$EXPORT_XBIN";
+            Button_Export.Click += Button_Export_Click;
             // 
             // XBinEditor
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(933, 519);
-            this.Controls.Add(this.ToolStrip_Main);
-            this.Controls.Add(this.Grid_XBin);
-            this.Controls.Add(this.TreeView_XBin);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.Name = "XBinEditor";
-            this.Text = "$XBIN_EDITOR";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.XbinEditor_Closing);
-            this.ToolStrip_Main.ResumeLayout(false);
-            this.ToolStrip_Main.PerformLayout();
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(933, 519);
+            Controls.Add(ToolStrip_Main);
+            Controls.Add(Grid_XBin);
+            Controls.Add(TreeView_XBin);
+            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Name = "XBinEditor";
+            Text = "$XBIN_EDITOR";
+            FormClosing += XbinEditor_Closing;
+            ToolStrip_Main.ResumeLayout(false);
+            ToolStrip_Main.PerformLayout();
+            ResumeLayout(false);
+            PerformLayout();
 
         }
 

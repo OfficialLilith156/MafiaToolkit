@@ -32,11 +32,13 @@ namespace Mafia2Tool.Forms
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SoundTableEditor));
             statusStrip = new StatusStrip();
             statusLabel = new ToolStripStatusLabel();
             splitContainer = new SplitContainer();
             treeView = new TreeView();
+            treeContextMenu = new ContextMenuStrip(components);
             propertyGrid = new PropertyGrid();
             toolStrip1 = new ToolStrip();
             toolStripDropDownButton1 = new ToolStripDropDownButton();
@@ -72,14 +74,6 @@ namespace Mafia2Tool.Forms
             // splitContainer.Panel1
             // 
             splitContainer.Panel1.Controls.Add(treeView);
-            //
-            // ContextMenu
-            //
-            var treeContextMenu = new ContextMenuStrip();
-            var addMenuItem = new ToolStripMenuItem("Add", null, OnAddItem);
-            var deleteMenuItem = new ToolStripMenuItem("Delete", null, OnDeleteItem);
-            treeContextMenu.Items.AddRange(new ToolStripItem[] { addMenuItem, deleteMenuItem });
-            treeView.ContextMenuStrip = treeContextMenu;
             // 
             // splitContainer.Panel2
             // 
@@ -90,6 +84,7 @@ namespace Mafia2Tool.Forms
             // 
             // treeView
             // 
+            treeView.ContextMenuStrip = treeContextMenu;
             treeView.Dock = DockStyle.Fill;
             treeView.Font = new Font("Consolas", 9F, FontStyle.Regular, GraphicsUnit.Point);
             treeView.Location = new Point(0, 0);
@@ -98,6 +93,11 @@ namespace Mafia2Tool.Forms
             treeView.Size = new Size(775, 611);
             treeView.TabIndex = 0;
             treeView.AfterSelect += TreeView_AfterSelect;
+            // 
+            // treeContextMenu
+            // 
+            treeContextMenu.Name = "treeContextMenu";
+            treeContextMenu.Size = new Size(61, 4);
             // 
             // propertyGrid
             // 
@@ -130,7 +130,7 @@ namespace Mafia2Tool.Forms
             // saveToolStripMenuItem
             // 
             saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            saveToolStripMenuItem.Size = new Size(180, 22);
+            saveToolStripMenuItem.Size = new Size(98, 22);
             saveToolStripMenuItem.Text = "Save";
             saveToolStripMenuItem.Click += OnSaveStbl;
             // 
@@ -140,6 +140,7 @@ namespace Mafia2Tool.Forms
             Controls.Add(toolStrip1);
             Controls.Add(splitContainer);
             Controls.Add(statusStrip);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "SoundTableEditor";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Sound Table Editor";
@@ -167,5 +168,6 @@ namespace Mafia2Tool.Forms
         private MenuStrip menuStrip;
         private StatusStrip statusStrip;
         private ToolStripStatusLabel statusLabel;
+        private ContextMenuStrip treeContextMenu;
     }
 }

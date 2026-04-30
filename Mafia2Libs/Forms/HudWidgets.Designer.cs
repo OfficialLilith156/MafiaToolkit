@@ -70,7 +70,7 @@
             // btnSave
             // 
             btnSave.Name = "btnSave";
-            btnSave.Size = new System.Drawing.Size(180, 22);
+            btnSave.Size = new System.Drawing.Size(98, 22);
             btnSave.Text = "Save";
             btnSave.Click += BtnSave_Click;
             // 
@@ -87,14 +87,14 @@
             // loadTextureToolStripMenuItem
             // 
             loadTextureToolStripMenuItem.Name = "loadTextureToolStripMenuItem";
-            loadTextureToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            loadTextureToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             loadTextureToolStripMenuItem.Text = "Load Texture";
             loadTextureToolStripMenuItem.Click += BtnSelectFolder_Click;
             // 
             // btnShow
             // 
             btnShow.Name = "btnShow";
-            btnShow.Size = new System.Drawing.Size(180, 22);
+            btnShow.Size = new System.Drawing.Size(149, 22);
             btnShow.Text = "Show Widgets";
             btnShow.Click += BtnShow_Click;
             // 
@@ -105,6 +105,7 @@
             ClientSize = new System.Drawing.Size(861, 620);
             Controls.Add(toolStrip1);
             Controls.Add(tabControlTextures);
+            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
             Name = "HudWidgets";
             Text = "HUD Widget Viewer";
             toolStrip1.ResumeLayout(false);

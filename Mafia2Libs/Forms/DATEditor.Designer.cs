@@ -43,6 +43,8 @@ namespace Mafia2Tool.Forms
             toolStripDropDownButton1 = new ToolStripDropDownButton();
             saveToolStripMenuItem1 = new ToolStripMenuItem();
             exitToolStripMenuItem1 = new ToolStripMenuItem();
+            toolStripDropDownButton2 = new ToolStripDropDownButton();
+            deleteIDToolStripMenuItem = new ToolStripMenuItem();
             tbSearch = new ToolStripTextBox();
             btnSearch = new ToolStripButton();
             btnClearSearch = new ToolStripButton();
@@ -53,8 +55,6 @@ namespace Mafia2Tool.Forms
             labelAddText = new Label();
             tbAddText = new TextBox();
             btnAdd = new Button();
-            toolStripDropDownButton2 = new ToolStripDropDownButton();
-            deleteIDToolStripMenuItem = new ToolStripMenuItem();
             menuStrip.SuspendLayout();
             toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView).BeginInit();
@@ -86,19 +86,19 @@ namespace Mafia2Tool.Forms
             // openToolStripMenuItem
             // 
             openToolStripMenuItem.Name = "openToolStripMenuItem";
-            openToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            openToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             openToolStripMenuItem.Text = "Open";
             // 
             // saveToolStripMenuItem
             // 
             saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            saveToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            saveToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             saveToolStripMenuItem.Text = "Save";
             // 
             // exitToolStripMenuItem
             // 
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            exitToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            exitToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             exitToolStripMenuItem.Text = "Exit";
             // 
             // toolStrip
@@ -132,6 +132,23 @@ namespace Mafia2Tool.Forms
             exitToolStripMenuItem1.Size = new System.Drawing.Size(98, 22);
             exitToolStripMenuItem1.Text = "Exit";
             exitToolStripMenuItem1.Click += ExitToolStripMenuItem_Click;
+            // 
+            // toolStripDropDownButton2
+            // 
+            toolStripDropDownButton2.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripDropDownButton2.DropDownItems.AddRange(new ToolStripItem[] { deleteIDToolStripMenuItem });
+            toolStripDropDownButton2.Image = (System.Drawing.Image)resources.GetObject("toolStripDropDownButton2.Image");
+            toolStripDropDownButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
+            toolStripDropDownButton2.Name = "toolStripDropDownButton2";
+            toolStripDropDownButton2.Size = new System.Drawing.Size(40, 22);
+            toolStripDropDownButton2.Text = "Edit";
+            // 
+            // deleteIDToolStripMenuItem
+            // 
+            deleteIDToolStripMenuItem.Name = "deleteIDToolStripMenuItem";
+            deleteIDToolStripMenuItem.Size = new System.Drawing.Size(121, 22);
+            deleteIDToolStripMenuItem.Text = "Delete ID";
+            deleteIDToolStripMenuItem.Click += BtnDelete_Click;
             // 
             // tbSearch
             // 
@@ -219,29 +236,13 @@ namespace Mafia2Tool.Forms
             btnAdd.Text = "Add";
             btnAdd.Click += BtnAdd_Click;
             // 
-            // toolStripDropDownButton2
-            // 
-            toolStripDropDownButton2.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            toolStripDropDownButton2.DropDownItems.AddRange(new ToolStripItem[] { deleteIDToolStripMenuItem });
-            toolStripDropDownButton2.Image = (System.Drawing.Image)resources.GetObject("toolStripDropDownButton2.Image");
-            toolStripDropDownButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
-            toolStripDropDownButton2.Name = "toolStripDropDownButton2";
-            toolStripDropDownButton2.Size = new System.Drawing.Size(40, 22);
-            toolStripDropDownButton2.Text = "Edit";
-            // 
-            // deleteIDToolStripMenuItem
-            // 
-            deleteIDToolStripMenuItem.Name = "deleteIDToolStripMenuItem";
-            deleteIDToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            deleteIDToolStripMenuItem.Text = "Delete ID";
-            deleteIDToolStripMenuItem.Click += BtnDelete_Click;
-            // 
             // DATEditor
             // 
             ClientSize = new System.Drawing.Size(784, 561);
             Controls.Add(dataGridView);
             Controls.Add(groupBoxAdd);
             Controls.Add(toolStrip);
+            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
             MainMenuStrip = menuStrip;
             Name = "DATEditor";
             Text = "Mafia II Text Editor";

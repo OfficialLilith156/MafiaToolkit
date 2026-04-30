@@ -120,7 +120,7 @@
             // 
             Button_Import.Name = "Button_Import";
             Button_Import.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.A;
-            Button_Import.Size = new System.Drawing.Size(201, 22);
+            Button_Import.Size = new System.Drawing.Size(197, 22);
             Button_Import.Text = "$IMPORT";
             Button_Import.Click += Button_Import_Click;
             // 
@@ -136,7 +136,7 @@
             // 
             Button_Copy.Name = "Button_Copy";
             Button_Copy.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C;
-            Button_Copy.Size = new System.Drawing.Size(201, 22);
+            Button_Copy.Size = new System.Drawing.Size(197, 22);
             Button_Copy.Text = "$COPY";
             Button_Copy.Click += Button_Copy_Click;
             // 
@@ -144,7 +144,7 @@
             // 
             Button_Paste.Name = "Button_Paste";
             Button_Paste.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V;
-            Button_Paste.Size = new System.Drawing.Size(201, 22);
+            Button_Paste.Size = new System.Drawing.Size(197, 22);
             Button_Paste.Text = "$PASTE";
             Button_Paste.Click += Button_Paste_Click;
             // 
@@ -152,7 +152,7 @@
             // 
             Button_Delete.Name = "Button_Delete";
             Button_Delete.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Delete;
-            Button_Delete.Size = new System.Drawing.Size(201, 22);
+            Button_Delete.Size = new System.Drawing.Size(197, 22);
             Button_Delete.Text = "$DELETE";
             Button_Delete.Click += Button_Delete_Click;
             // 
