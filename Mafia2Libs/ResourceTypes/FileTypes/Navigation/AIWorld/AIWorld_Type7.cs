@@ -75,11 +75,11 @@ namespace ResourceTypes.Navigation
             Direction = new Vector3(0, 0, 1);
             bIsVisible = true;
 
-         
-            
+
+
             Unk2 = new Vector3(0.5f, 0.5f, 0.5f);
 
-      
+
             _minimum = new Vector3(-Unk2.X, -Unk2.Z, -Unk2.Y);
             _maximum = new Vector3(Unk2.X, Unk2.Z, Unk2.Y);
         }
@@ -128,7 +128,7 @@ namespace ResourceTypes.Navigation
             Position.WriteToFile(Writer);
             Direction.WriteToFile(Writer);
 
-         
+
             UpdateUnk2FromBBox();
 
             Unk2.WriteToFile(Writer);
@@ -156,9 +156,8 @@ namespace ResourceTypes.Navigation
             if (!bIsVisible)
                 return;
 
-
-            Vector3 minWorld = new Vector3(_minimum.X, _minimum.Z, _minimum.Y);
-            Vector3 maxWorld = new Vector3(_maximum.X, _maximum.Z, _maximum.Y);
+            Vector3 minWorld = new Vector3(_minimum.X, _minimum.Y, _minimum.Z);
+            Vector3 maxWorld = new Vector3(_maximum.X, _maximum.Y, _maximum.Z);
 
             if (MathF.Abs(maxWorld.X - minWorld.X) < 0.0001f) maxWorld.X = minWorld.X + 0.01f;
             if (MathF.Abs(maxWorld.Y - minWorld.Y) < 0.0001f) maxWorld.Y = minWorld.Y + 0.01f;
@@ -171,12 +170,6 @@ namespace ResourceTypes.Navigation
             Vector3 dir = Direction;
             if (dir.LengthSquared() < 0.0001f) dir = Vector3.UnitZ;
             dir = Vector3.Normalize(dir);
-
-            Vector3 forward = Vector3.Normalize(dir);
-            Vector3 up = Vector3.UnitY;
-            Quaternion rotation = Quaternion.CreateFromRotationMatrix(
-                Matrix4x4.CreateLookAt(Vector3.Zero, forward, up)
-            );
 
             Matrix4x4 RotationMatrix = MatrixUtils.CreateFromDirection(Direction);
             RotationMatrix.Translation = Position;

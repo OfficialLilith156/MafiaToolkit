@@ -2,15 +2,8 @@
 {
     partial class FramePropsEditor
     {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -20,12 +13,6 @@
             base.Dispose(disposing);
         }
 
-        #region Windows Form Designer generated code
-
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
@@ -60,6 +47,13 @@
             toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             Button_AddProperty = new System.Windows.Forms.ToolStripMenuItem();
             Button_DeleteProperty = new System.Windows.Forms.ToolStripMenuItem();
+            ToolStrip_Search = new System.Windows.Forms.ToolStrip();
+            SearchLabel = new System.Windows.Forms.ToolStripLabel();
+            SearchTextBox = new System.Windows.Forms.ToolStripTextBox();
+            SearchButton = new System.Windows.Forms.ToolStripButton();
+            SearchNextButton = new System.Windows.Forms.ToolStripButton();
+            SearchPrevButton = new System.Windows.Forms.ToolStripButton();
+            SearchCaseSensitive = new System.Windows.Forms.ToolStripButton();
             StatusStrip_Main = new System.Windows.Forms.StatusStrip();
             StatusLabel_EntryCount = new System.Windows.Forms.ToolStripStatusLabel();
             StatusLabel_PropertyCount = new System.Windows.Forms.ToolStripStatusLabel();
@@ -67,6 +61,7 @@
             SplitContainer_Main = new System.Windows.Forms.SplitContainer();
             ContextMenu_Tree.SuspendLayout();
             ToolStrip_Main.SuspendLayout();
+            ToolStrip_Search.SuspendLayout();
             StatusStrip_Main.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)SplitContainer_Main).BeginInit();
             SplitContainer_Main.Panel1.SuspendLayout();
@@ -81,7 +76,7 @@
             PropertyGrid_Main.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             PropertyGrid_Main.Name = "PropertyGrid_Main";
             PropertyGrid_Main.PropertySort = System.Windows.Forms.PropertySort.Categorized;
-            PropertyGrid_Main.Size = new System.Drawing.Size(450, 469);
+            PropertyGrid_Main.Size = new System.Drawing.Size(450, 442);
             PropertyGrid_Main.TabIndex = 10;
             PropertyGrid_Main.PropertyValueChanged += PropertyGrid_PropertyChanged;
             // 
@@ -93,7 +88,7 @@
             TreeView_Main.Location = new System.Drawing.Point(0, 0);
             TreeView_Main.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             TreeView_Main.Name = "TreeView_Main";
-            TreeView_Main.Size = new System.Drawing.Size(475, 469);
+            TreeView_Main.Size = new System.Drawing.Size(475, 442);
             TreeView_Main.TabIndex = 11;
             TreeView_Main.AfterSelect += OnNodeSelectSelect;
             TreeView_Main.NodeMouseDoubleClick += OnNodeDoubleClick;
@@ -297,6 +292,59 @@
             Button_DeleteProperty.Text = "$FRAMEPROPS_DELETE_PROPERTY";
             Button_DeleteProperty.Click += Button_DeleteProperty_OnClick;
             // 
+            // ToolStrip_Search
+            // 
+            ToolStrip_Search.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { SearchLabel, SearchTextBox, SearchButton, SearchNextButton, SearchPrevButton, SearchCaseSensitive });
+            ToolStrip_Search.Location = new System.Drawing.Point(0, 25);
+            ToolStrip_Search.Name = "ToolStrip_Search";
+            ToolStrip_Search.Size = new System.Drawing.Size(933, 25);
+            ToolStrip_Search.TabIndex = 18;
+            ToolStrip_Search.Text = "toolStrip2";
+            // 
+            // SearchLabel
+            // 
+            SearchLabel.Name = "SearchLabel";
+            SearchLabel.Size = new System.Drawing.Size(42, 22);
+            SearchLabel.Text = "Search";
+            // 
+            // SearchTextBox
+            // 
+            SearchTextBox.Name = "SearchTextBox";
+            SearchTextBox.Size = new System.Drawing.Size(200, 25);
+            SearchTextBox.ToolTipText = "Enter text to search (FrameName, PropertyName, Value)";
+            // 
+            // SearchButton
+            // 
+            SearchButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            SearchButton.Name = "SearchButton";
+            SearchButton.Size = new System.Drawing.Size(34, 22);
+            SearchButton.Text = "Find";
+            SearchButton.Click += SearchButton_Click;
+            // 
+            // SearchNextButton
+            // 
+            SearchNextButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            SearchNextButton.Name = "SearchNextButton";
+            SearchNextButton.Size = new System.Drawing.Size(36, 22);
+            SearchNextButton.Text = "Next";
+            SearchNextButton.Click += SearchNextButton_Click;
+            // 
+            // SearchPrevButton
+            // 
+            SearchPrevButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            SearchPrevButton.Name = "SearchPrevButton";
+            SearchPrevButton.Size = new System.Drawing.Size(34, 22);
+            SearchPrevButton.Text = "Prev";
+            SearchPrevButton.Click += SearchPrevButton_Click;
+            // 
+            // SearchCaseSensitive
+            // 
+            SearchCaseSensitive.CheckOnClick = true;
+            SearchCaseSensitive.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            SearchCaseSensitive.Name = "SearchCaseSensitive";
+            SearchCaseSensitive.Size = new System.Drawing.Size(85, 22);
+            SearchCaseSensitive.Text = "Case Sensitive";
+            // 
             // StatusStrip_Main
             // 
             StatusStrip_Main.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { StatusLabel_EntryCount, StatusLabel_PropertyCount, StatusLabel_Selection });
@@ -329,7 +377,7 @@
             // SplitContainer_Main
             // 
             SplitContainer_Main.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            SplitContainer_Main.Location = new System.Drawing.Point(4, 28);
+            SplitContainer_Main.Location = new System.Drawing.Point(4, 53);
             SplitContainer_Main.Name = "SplitContainer_Main";
             // 
             // SplitContainer_Main.Panel1
@@ -339,7 +387,7 @@
             // SplitContainer_Main.Panel2
             // 
             SplitContainer_Main.Panel2.Controls.Add(PropertyGrid_Main);
-            SplitContainer_Main.Size = new System.Drawing.Size(929, 469);
+            SplitContainer_Main.Size = new System.Drawing.Size(929, 442);
             SplitContainer_Main.SplitterDistance = 475;
             SplitContainer_Main.TabIndex = 17;
             // 
@@ -350,6 +398,7 @@
             ClientSize = new System.Drawing.Size(933, 519);
             Controls.Add(SplitContainer_Main);
             Controls.Add(StatusStrip_Main);
+            Controls.Add(ToolStrip_Search);
             Controls.Add(ToolStrip_Main);
             Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -359,6 +408,8 @@
             ContextMenu_Tree.ResumeLayout(false);
             ToolStrip_Main.ResumeLayout(false);
             ToolStrip_Main.PerformLayout();
+            ToolStrip_Search.ResumeLayout(false);
+            ToolStrip_Search.PerformLayout();
             StatusStrip_Main.ResumeLayout(false);
             StatusStrip_Main.PerformLayout();
             SplitContainer_Main.Panel1.ResumeLayout(false);
@@ -368,8 +419,6 @@
             ResumeLayout(false);
             PerformLayout();
         }
-
-        #endregion
 
         private System.Windows.Forms.PropertyGrid PropertyGrid_Main;
         private Controls.MTreeView TreeView_Main;
@@ -406,5 +455,12 @@
         private System.Windows.Forms.ToolStripMenuItem Context_DeleteValue;
         private System.Windows.Forms.ToolStripSeparator Context_Separator3;
         private System.Windows.Forms.ToolStripMenuItem Context_CopyHash;
+        private System.Windows.Forms.ToolStrip ToolStrip_Search;
+        private System.Windows.Forms.ToolStripLabel SearchLabel;
+        private System.Windows.Forms.ToolStripTextBox SearchTextBox;
+        private System.Windows.Forms.ToolStripButton SearchButton;
+        private System.Windows.Forms.ToolStripButton SearchNextButton;
+        private System.Windows.Forms.ToolStripButton SearchPrevButton;
+        private System.Windows.Forms.ToolStripButton SearchCaseSensitive;
     }
 }

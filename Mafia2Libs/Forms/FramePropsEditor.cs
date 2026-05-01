@@ -17,8 +17,10 @@ namespace Mafia2Tool
         private FramePropsFile propsData;
 
         private TreeNode RootNode;
-
         private bool bIsFileEdited;
+
+        private List<TreeNode> searchResults = new List<TreeNode>();
+        private int currentSearchIndex = -1;
 
         public FramePropsEditor(FileInfo file)
         {
@@ -57,13 +59,11 @@ namespace Mafia2Tool
                 propsData = new FramePropsFile(propsFile);
             }
 
-            // Root node shows file name
             string fileName = Path.GetFileName(propsFile.FullName);
             RootNode = new TreeNode($"FrameProps: {fileName}");
             RootNode.Tag = propsData;
             RootNode.NodeFont = new Font(TreeView_Main.Font, FontStyle.Bold);
 
-            // Add each frame entry
             for (int i = 0; i < propsData.Entries.Length; i++)
             {
                 FramePropsEntry entry = propsData.Entries[i];
@@ -83,15 +83,11 @@ namespace Mafia2Tool
             TreeNode entryNode = new TreeNode($"[{index}] {displayName}");
             entryNode.Tag = entry;
 
-            // Add property children
             for (int i = 0; i < entry.Properties.Length; i++)
             {
                 FrameProperty prop = entry.Properties[i];
-
-                // Split value by semicolons to get individual parts
                 string[] valueParts = prop.Value.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 
-                // Create property node with count of values
                 string propDisplayText = valueParts.Length > 1
                     ? $"[{i}] {prop.PropertyName} ({valueParts.Length} values)"
                     : $"[{i}] {prop.PropertyName} = {prop.Value}";
@@ -99,7 +95,6 @@ namespace Mafia2Tool
                 TreeNode propNode = new TreeNode(propDisplayText);
                 propNode.Tag = prop;
 
-                // If multiple values, add each as a child node
                 if (valueParts.Length > 1)
                 {
                     for (int j = 0; j < valueParts.Length; j++)
@@ -107,7 +102,6 @@ namespace Mafia2Tool
                         string trimmedValue = valueParts[j].Trim();
                         var valuePart = new PropertyValuePart(prop, j, trimmedValue);
 
-                        // Create display text based on whether it's a key-value pair
                         string nodeText = valuePart.IsKeyValue
                             ? $"[{j}] {valuePart.Key}: {valuePart.ParsedValue}"
                             : $"[{j}] {trimmedValue}";
@@ -124,10 +118,6 @@ namespace Mafia2Tool
             return entryNode;
         }
 
-        /// <summary>
-        /// Helper class to represent a single part of a multi-value property.
-        /// Parses key-value pairs like "MASS: 20" into separate Key and ParsedValue.
-        /// </summary>
         [TypeConverter(typeof(ExpandableObjectConverter))]
         private class PropertyValuePart
         {
@@ -177,7 +167,6 @@ namespace Mafia2Tool
 
             private void ParseKeyValue()
             {
-                // Check if this is a key-value pair (contains ":" but not at the start)
                 int colonIndex = rawValue.IndexOf(':');
                 if (colonIndex > 0 && colonIndex < rawValue.Length - 1)
                 {
@@ -195,22 +184,18 @@ namespace Mafia2Tool
 
             private void UpdateParentProperty()
             {
-                // Get all current values from parent
                 string[] parts = ParentProperty.Value.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 
-                // Rebuild raw value from Key and ParsedValue if it's a key-value pair
                 if (IsKeyValue && !string.IsNullOrEmpty(Key))
                 {
                     rawValue = $"{Key}: {ParsedValue}";
                 }
 
-                // Update the value at our index
                 if (Index < parts.Length)
                 {
                     parts[Index] = rawValue;
                 }
 
-                // Rebuild the parent value string
                 ParentProperty.Value = string.Join(";", parts);
             }
 
@@ -219,12 +204,9 @@ namespace Mafia2Tool
 
         private void RefreshTree()
         {
-            // Remember selected node path
             string selectedPath = GetNodePath(TreeView_Main.SelectedNode);
-
             BuildData(false);
 
-            // Try to restore selection
             if (!string.IsNullOrEmpty(selectedPath))
             {
                 TreeNode node = FindNodeByPath(selectedPath);
@@ -286,13 +268,8 @@ namespace Mafia2Tool
 
         private void Save()
         {
-            // Create backup
             File.Copy(propsFile.FullName, propsFile.FullName + "_old", true);
-
-            // Write the file
             propsData.WriteToFile(propsFile.FullName);
-
-            // Mark as not edited
             Text = Language.GetString("$FRAMEPROPS_EDITOR_TITLE");
             bIsFileEdited = false;
         }
@@ -302,9 +279,9 @@ namespace Mafia2Tool
             PropertyGrid_Main.SelectedObject = null;
             TreeView_Main.SelectedNode = null;
             BuildData(true);
-
             Text = Language.GetString("$FRAMEPROPS_EDITOR_TITLE");
             bIsFileEdited = false;
+            ClearSearch();
         }
 
         private void ExportXml()
@@ -341,14 +318,12 @@ namespace Mafia2Tool
 
         private void AddEntry()
         {
-            // Create new frame entry
             FramePropsEntry newEntry = new FramePropsEntry
             {
                 FrameNameHash = 0,
                 Properties = Array.Empty<FrameProperty>()
             };
 
-            // Add to array
             FramePropsEntry[] newEntries = new FramePropsEntry[propsData.Entries.Length + 1];
             Array.Copy(propsData.Entries, newEntries, propsData.Entries.Length);
             newEntries[^1] = newEntry;
@@ -387,14 +362,12 @@ namespace Mafia2Tool
         {
             FramePropsEntry targetEntry = null;
 
-            // Determine target entry from selection
             if (TreeView_Main.SelectedNode?.Tag is FramePropsEntry entry)
             {
                 targetEntry = entry;
             }
             else if (TreeView_Main.SelectedNode?.Tag is FrameProperty prop)
             {
-                // Find parent entry
                 if (TreeView_Main.SelectedNode.Parent?.Tag is FramePropsEntry parentEntry)
                 {
                     targetEntry = parentEntry;
@@ -403,14 +376,12 @@ namespace Mafia2Tool
 
             if (targetEntry != null)
             {
-                // Create new property
                 FrameProperty newProp = new FrameProperty
                 {
                     PropertyNameHash = 0,
                     Value = ""
                 };
 
-                // Add to array
                 FrameProperty[] newProps = new FrameProperty[targetEntry.Properties.Length + 1];
                 Array.Copy(targetEntry.Properties, newProps, targetEntry.Properties.Length);
                 newProps[^1] = newProp;
@@ -429,7 +400,6 @@ namespace Mafia2Tool
         {
             if (TreeView_Main.SelectedNode?.Tag is FrameProperty selectedProp)
             {
-                // Find parent entry
                 if (TreeView_Main.SelectedNode.Parent?.Tag is FramePropsEntry parentEntry)
                 {
                     int propIndex = Array.IndexOf(parentEntry.Properties, selectedProp);
@@ -469,7 +439,6 @@ namespace Mafia2Tool
 
             if (targetProp != null)
             {
-                // Add a new value to the property
                 if (string.IsNullOrEmpty(targetProp.Value))
                 {
                     targetProp.Value = "NewValue";
@@ -493,7 +462,6 @@ namespace Mafia2Tool
 
                 if (parts.Length > 1 && valuePart.Index < parts.Length)
                 {
-                    // Remove the value at the index
                     var newParts = parts.Where((_, i) => i != valuePart.Index).ToArray();
                     parentProp.Value = string.Join(";", newParts);
 
@@ -502,7 +470,6 @@ namespace Mafia2Tool
                 }
                 else if (parts.Length == 1)
                 {
-                    // Last value - clear the property value
                     parentProp.Value = "";
                     RefreshTree();
                     MarkAsEdited();
@@ -512,15 +479,12 @@ namespace Mafia2Tool
 
         private void OnNodeSelectSelect(object sender, TreeViewEventArgs e)
         {
-            // Show the selected object directly in the property grid
             PropertyGrid_Main.SelectedObject = e.Node.Tag;
 
-            // Enable/disable buttons based on selection
             Button_DeleteEntry.Enabled = e.Node.Tag is FramePropsEntry;
             Button_AddProperty.Enabled = e.Node.Tag is FramePropsEntry || e.Node.Tag is FrameProperty;
             Button_DeleteProperty.Enabled = e.Node.Tag is FrameProperty;
 
-            // Update status bar with selection info
             UpdateSelectionStatus(e.Node);
         }
 
@@ -553,7 +517,6 @@ namespace Mafia2Tool
 
         private void OnNodeDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            // Expand/collapse on double-click
             if (e.Node.Nodes.Count > 0)
             {
                 if (e.Node.IsExpanded)
@@ -565,7 +528,6 @@ namespace Mafia2Tool
 
         private void PropertyGrid_PropertyChanged(object sender, PropertyValueChangedEventArgs e)
         {
-            // Update TreeView node display
             if (TreeView_Main.SelectedNode != null)
             {
                 var tag = TreeView_Main.SelectedNode.Tag;
@@ -581,17 +543,13 @@ namespace Mafia2Tool
                 }
                 else if (tag is PropertyValuePart valuePart)
                 {
-                    // Update current node text
                     int valueIndex = TreeView_Main.SelectedNode.Index;
-
-                    // Rebuild display based on whether it's a key-value pair
                     string nodeText = valuePart.IsKeyValue
                         ? $"[{valueIndex}] {valuePart.Key}: {valuePart.ParsedValue}"
                         : $"[{valueIndex}] {valuePart.Value}";
 
                     TreeView_Main.SelectedNode.Text = nodeText;
 
-                    // Also update the parent property node display
                     var parentNode = TreeView_Main.SelectedNode.Parent;
                     if (parentNode?.Tag is FrameProperty parentProp)
                     {
@@ -612,16 +570,12 @@ namespace Mafia2Tool
         private void UpdatePropertyNode(TreeNode propNode, FrameProperty prop)
         {
             int index = propNode.Index;
-
-            // Split value by semicolons to get individual parts
             string[] valueParts = prop.Value.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 
-            // Update property node text
             propNode.Text = valueParts.Length > 1
                 ? $"[{index}] {prop.PropertyName} ({valueParts.Length} values)"
                 : $"[{index}] {prop.PropertyName} = {prop.Value}";
 
-            // Clear and rebuild child nodes if needed
             propNode.Nodes.Clear();
             if (valueParts.Length > 1)
             {
@@ -645,7 +599,6 @@ namespace Mafia2Tool
         {
             var node = TreeView_Main.SelectedNode;
 
-            // Enable/disable context menu items based on selection
             Context_DeleteEntry.Enabled = node?.Tag is FramePropsEntry;
             Context_AddProperty.Enabled = node?.Tag is FramePropsEntry || node?.Tag is FrameProperty;
             Context_DeleteProperty.Enabled = node?.Tag is FrameProperty;
@@ -705,6 +658,193 @@ namespace Mafia2Tool
                 Text = Language.GetString("$FRAMEPROPS_EDITOR_TITLE") + "*";
                 bIsFileEdited = true;
             }
+        }
+
+        private void ClearSearch()
+        {
+            searchResults.Clear();
+            currentSearchIndex = -1;
+        }
+
+        private bool NodeMatchesSearch(TreeNode node, string searchText, bool caseSensitive)
+        {
+            if (node.Tag == null) return false;
+
+            StringComparison comparison = caseSensitive ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
+
+            ulong? searchHash = TryParseHash(searchText);
+
+            if (node.Tag is FramePropsEntry entry)
+            {
+                if (searchHash.HasValue)
+                {
+                    if (entry.FrameNameHash == searchHash.Value)
+                        return true;
+                }
+                else
+                {
+                    if (entry.FrameName != null && entry.FrameName.IndexOf(searchText, comparison) >= 0)
+                        return true;
+                }
+            }
+            else if (node.Tag is FrameProperty prop)
+            {
+                if (searchHash.HasValue)
+                {
+                    if (prop.PropertyNameHash == searchHash.Value)
+                        return true;
+                }
+                else
+                {
+                    if (prop.PropertyName != null && prop.PropertyName.IndexOf(searchText, comparison) >= 0)
+                        return true;
+                    if (prop.Value != null && prop.Value.IndexOf(searchText, comparison) >= 0)
+                        return true;
+                }
+            }
+            else if (node.Tag is PropertyValuePart valuePart)
+            {
+                if (valuePart.IsKeyValue)
+                {
+                    if (valuePart.Key != null && valuePart.Key.IndexOf(searchText, comparison) >= 0)
+                        return true;
+                    if (valuePart.ParsedValue != null && valuePart.ParsedValue.IndexOf(searchText, comparison) >= 0)
+                        return true;
+                }
+                else
+                {
+                    if (valuePart.Value != null && valuePart.Value.IndexOf(searchText, comparison) >= 0)
+                        return true;
+                }
+            }
+
+            return false;
+        }
+        private ulong? TryParseHash(string text)
+        {
+            if (string.IsNullOrEmpty(text)) return null;
+
+            string trimmed = text.Trim();
+            if (trimmed.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
+                trimmed = trimmed.Substring(2);
+
+            if (ulong.TryParse(trimmed, System.Globalization.NumberStyles.HexNumber, null, out ulong hexValue))
+                return hexValue;
+
+            if (ulong.TryParse(trimmed, out ulong decValue))
+                return decValue;
+
+            return null;
+        }
+
+        private void CollectSearchResults(TreeNodeCollection nodes, string searchText, bool caseSensitive)
+        {
+            foreach (TreeNode node in nodes)
+            {
+                if (NodeMatchesSearch(node, searchText, caseSensitive))
+                {
+                    searchResults.Add(node);
+                }
+                if (node.Nodes.Count > 0)
+                {
+                    CollectSearchResults(node.Nodes, searchText, caseSensitive);
+                }
+            }
+        }
+
+        private void SelectSearchResult(int index)
+        {
+            if (index < 0 || index >= searchResults.Count) return;
+
+            TreeNode node = searchResults[index];
+            TreeView_Main.SelectedNode = node;
+            node.EnsureVisible();
+            node.BackColor = SystemColors.Highlight;
+            Timer resetColor = new Timer();
+            resetColor.Interval = 500;
+            resetColor.Tick += (s, e) => { node.BackColor = SystemColors.Window; resetColor.Stop(); };
+            resetColor.Start();
+
+            currentSearchIndex = index;
+            StatusLabel_Selection.Text = $"Found {index + 1} of {searchResults.Count}";
+        }
+
+        private void PerformSearch(bool reset = true)
+        {
+            string searchText = SearchTextBox.Text?.Trim();
+            if (string.IsNullOrEmpty(searchText))
+            {
+                MessageBox.Show("Please enter text to search.", "Search", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            if (reset)
+            {
+                ClearSearch();
+                bool caseSensitive = SearchCaseSensitive.Checked;
+                CollectSearchResults(TreeView_Main.Nodes, searchText, caseSensitive);
+            }
+
+            if (searchResults.Count == 0)
+            {
+                MessageBox.Show("No matching nodes found.", "Search", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                StatusLabel_Selection.Text = "No results found";
+                return;
+            }
+
+            if (reset)
+            {
+                SelectSearchResult(0);
+            }
+            else
+            {
+                int nextIndex = (currentSearchIndex + 1) % searchResults.Count;
+                SelectSearchResult(nextIndex);
+            }
+        }
+
+        private void FindPrevious()
+        {
+            if (searchResults.Count == 0)
+            {
+                PerformSearch(true);
+                return;
+            }
+
+            int prevIndex = currentSearchIndex - 1;
+            if (prevIndex < 0) prevIndex = searchResults.Count - 1;
+            SelectSearchResult(prevIndex);
+        }
+
+        private void SearchButton_Click(object sender, EventArgs e)
+        {
+            PerformSearch(true);
+        }
+
+        private void SearchNextButton_Click(object sender, EventArgs e)
+        {
+            if (searchResults.Count == 0)
+                PerformSearch(true);
+            else
+                PerformSearch(false);
+        }
+
+        private void SearchPrevButton_Click(object sender, EventArgs e)
+        {
+            FindPrevious();
+        }
+
+        protected override void OnShown(EventArgs e)
+        {
+            base.OnShown(e);
+            SearchTextBox.KeyPress += (s, args) =>
+            {
+                if (args.KeyChar == (char)Keys.Enter)
+                {
+                    PerformSearch(true);
+                    args.Handled = true;
+                }
+            };
         }
 
         private void Button_Save_OnClick(object sender, EventArgs e) => Save();
