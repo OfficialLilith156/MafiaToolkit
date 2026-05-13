@@ -230,6 +230,31 @@ namespace Mafia2Tool
             sdsContent.WriteToFile();
         }
 
+
+        public void SavePrefabs()
+        {
+            if (Prefabs == null || Prefabs.Prefabs.Length == 0)
+            {
+                return;
+            }
+
+            string prefabPath = null;
+            try
+            {
+                var existingFiles = sdsContent.GetResourceFiles("PREFAB", true);
+                if (existingFiles.Length > 0)
+                    prefabPath = existingFiles[0];
+                else
+                    prefabPath = Path.Combine(ScenePath, "Prefabs_0.prf");
+
+                Prefabs.WriteToFile(new FileInfo(prefabPath));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to save prefab file: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         public Actor CreateNewActor()
         {
             string DirectoryAndName = string.Format("{0}/Actors_{1}.act", ScenePath, Actors.Length);

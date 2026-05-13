@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
-using ResourceTypes.FrameResource;
+﻿using ResourceTypes.FrameResource;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Utils.StringHelpers;
+using System.Text;
 using Utils.Extensions;
+using Utils.StringHelpers;
 
 namespace ResourceTypes.FrameNameTable
 {
@@ -135,10 +136,15 @@ namespace ResourceTypes.FrameNameTable
         {
             for (int i = 0; i != frameData.Length; i++)
             {
-                frameData[i].Name = names[frameData[i].NamePos1];
+                if (names.TryGetValue(frameData[i].NamePos1, out string? name1))
+                    frameData[i].Name = name1;
+                else
+                    frameData[i].Name = $"<missing offset {frameData[i].NamePos1}>";
 
-                if (names.ContainsKey(frameData[i].Parent))
-                    frameData[i].ParentName = names[frameData[i].Parent];
+                if (names.TryGetValue(frameData[i].Parent, out string? parentName))
+                    frameData[i].ParentName = parentName;
+                else
+                    frameData[i].ParentName = $"<missing offset {frameData[i].Parent}>";
             }
         }
 
@@ -177,11 +183,11 @@ namespace ResourceTypes.FrameNameTable
         /// <param name="writer"></param>
         public void WriteToFile(BinaryWriter writer)
         {
-            writer.Write(bufferSize);
-            writer.Write(m_buffer.ToCharArray());
+            byte[] bytes = Encoding.UTF8.GetBytes(m_buffer);
+            writer.Write(bytes.Length);         
+            writer.Write(bytes);                
             writer.Write(dataSize);
-
-            for(int i = 0; i != frameData.Length; i++)
+            for (int i = 0; i != frameData.Length; i++)
                 frameData[i].WriteToFile(writer);
         }
 

@@ -16,6 +16,7 @@ using ResourceTypes.Materials;
 using ResourceTypes.ModelHelpers.ModelExporter;
 using ResourceTypes.Navigation;
 using ResourceTypes.Navigation.Traffic;
+using ResourceTypes.Prefab;
 using ResourceTypes.Translokator;
 using System;
 using System.Collections.Generic;
@@ -36,6 +37,7 @@ using Utils.Language;
 using Utils.Logging;
 using Utils.Models;
 using Utils.Settings;
+using Utils.Types;
 using Utils.VorticeUtils;
 using Vortice.Mathematics;
 using WeifenLuo.WinFormsUI.Docking;
@@ -1942,7 +1944,7 @@ namespace Mafia2Tool
                     }
                     SceneData.Collisions = collision;
                     SceneData.Collisions.WriteToFile();
-                }
+                }           
                 if (SceneData.Translokator != null && ToolkitSettings.Experimental)
                 {
                     TranslokatorLoader translokator = SceneData.Translokator;
@@ -2314,6 +2316,10 @@ namespace Mafia2Tool
                         FixActorDefintions(SceneData.Actors[i]);
                         SceneData.Actors[i].WriteToFile();
                     }
+                }
+                if (SceneData.Prefabs != null && ToolkitSettings.Experimental)
+                {
+                    SceneData.SavePrefabs();
                 }
                 Cursor.Current = Cursors.Default;
             }
@@ -4238,7 +4244,8 @@ namespace Mafia2Tool
                             SceneData.ImportTextures(new List<string>(allTextures), ImportedScene.ScenePath);
                         }
                     }
-
+                    ImportActorsForNode(importedRoot, ImportedScene, SceneData);
+                    ImportPrefabsForNode(importedRoot, ImportedScene, SceneData);
                     dSceneTree.AddToTree(importedRoot, frameResourceRoot);
                     ConvertNodeToFrame(importedRoot);
                 }
@@ -4266,6 +4273,126 @@ namespace Mafia2Tool
             {
                 CollectAllTexturesFromNode(child, sourceFrameResource, textureNames);
             }
+        }
+
+        private void ImportActorsForNode(TreeNode importedNode, SceneData sourceScene, SceneData targetScene)
+        {
+            if (importedNode?.Tag is FrameObjectFrame sourceFrame)
+            {
+                ActorEntry sourceEntry = FindActorEntryByFrame(sourceFrame, sourceScene);
+                if (sourceEntry != null)
+                {
+                    CopyActorEntryToCurrentScene(sourceEntry, sourceScene, targetScene, sourceFrame);
+
+                }
+            }
+            foreach (TreeNode child in importedNode.Nodes)
+                ImportActorsForNode(child, sourceScene, targetScene);
+        }
+
+        private ActorEntry FindActorEntryByFrame(FrameObjectFrame frame, SceneData scene)
+        {
+            if (scene.Actors == null) return null;
+
+            foreach (var actor in scene.Actors)
+            {
+                foreach (var entry in actor.Items)
+                {
+                    if (entry.FrameNameHash == frame.Name.Hash)
+                        return entry;
+                }
+            }
+            return null;
+        }
+
+
+        private void CopyActorEntryToCurrentScene(ActorEntry sourceEntry, SceneData sourceScene, SceneData targetScene, FrameObjectFrame targetFrame)
+        {
+            if (targetScene.Actors == null || targetScene.Actors.Length == 0)
+            {
+                targetScene.CreateNewActor();
+            }
+
+            Actor targetActor = targetScene.Actors[0];
+            ActorEntry newEntry = targetActor.CreateActorEntry((ActorTypes)sourceEntry.ActorTypeID, sourceEntry.EntityName);
+            newEntry.DefinitionName = sourceEntry.DefinitionName;
+            newEntry.FrameName = sourceEntry.FrameName;
+            newEntry.FrameNameHash = sourceEntry.FrameNameHash;
+            newEntry.Position = sourceEntry.Position;
+            newEntry.Rotation = sourceEntry.Rotation;
+            newEntry.Scale = sourceEntry.Scale;
+            newEntry.bActivateOnInit = sourceEntry.bActivateOnInit;
+
+            if (sourceEntry.Data != null)
+            {
+                ActorExtraData newExtraData = new ActorExtraData
+                {
+                    BufferType = sourceEntry.Data.BufferType
+                };
+
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    sourceEntry.Data.Data.WriteToFile(ms, false);
+                    ms.Position = 0;
+                    newExtraData.Data = ActorFactory.LoadExtraData(sourceEntry.Data.BufferType, ms, false);
+                }
+
+                targetActor.ExtraData.Add(newExtraData);
+                newEntry.DataID = (short)(targetActor.ExtraData.Count - 1);
+                newEntry.Data = newExtraData;
+            }
+
+            ActorDefinition newDefinition = targetActor.CreateActorDefinition(newEntry);
+            int frameIndex = targetScene.FrameResource.GetFrameIndex(targetFrame);
+            if (frameIndex != -1)
+                newDefinition.FrameIndex = (uint)frameIndex;
+
+            targetFrame.Item = newEntry;
+            targetFrame.ActorHash.Set(newEntry.DefinitionName);
+
+            if (!targetActor.Items.Contains(newEntry))
+                targetActor.Items.Add(newEntry);
+            if (!targetActor.Definitions.Contains(newDefinition))
+                targetActor.Definitions.Add(newDefinition);
+            
+            AddActorToTree(newEntry);
+        }
+
+        private void AddActorToTree(ActorEntry entry)
+        {
+            if (actorRoot == null)
+            {
+                actorRoot = new TreeNode("Actor Items") { Tag = "Folder" };
+                dSceneTree.AddToTree(actorRoot);
+            }
+
+            string typeString = "actorType_" + entry.ActorTypeName;
+            TreeNode[] existingGroups = actorRoot.Nodes.Find(typeString, false);
+            TreeNode groupNode;
+            if (existingGroups.Length == 0)
+            {
+                groupNode = new TreeNode(typeString) { Name = typeString, Text = entry.ActorTypeName };
+                actorRoot.Nodes.Add(groupNode);
+            }
+            else
+            {
+                groupNode = existingGroups[0];
+            }
+
+            TreeNode entryNode = new TreeNode(entry.EntityName) { Name = "actor_" + entry.EntityName, Tag = entry };
+            groupNode.Nodes.Add(entryNode);
+            groupNode.Expand();
+
+            Vector3 size = new Vector3(0.05f);
+            BoundingBox smallBox = new BoundingBox(entry.Position - size, entry.Position + size);
+            RenderBoundingBox renderSmallBox = new RenderBoundingBox();
+            renderSmallBox.Init(smallBox);
+            int refID = RefManager.GetNewRefID();
+            Graphics.InitObjectStack.Add(refID, renderSmallBox);
+            RefIDToActorEntry[refID] = entry;
+
+            TreeNode boxNode = new TreeNode($"{entry.ActorTypeName} Box") { Name = refID.ToString(), Tag = renderSmallBox };
+            entryNode.Nodes.Add(boxNode);
         }
 
         private TreeNode ImportFolderRecursive(TreeNode sourceFolderNode, FrameResource sourceFrameResource)
@@ -6046,6 +6173,86 @@ namespace Mafia2Tool
             {
                 RefIDToActorEntry.Remove(key);
             }
+        }
+
+        private void ImportPrefabsForNode(TreeNode importedNode, SceneData sourceScene, SceneData targetScene)
+        {
+
+            if (sourceScene.Prefabs == null)
+            {
+                return;
+            }
+
+            string sourcePrefabsList = "Source prefabs:\n";
+            foreach (var p in sourceScene.Prefabs.Prefabs)
+            {
+                sourcePrefabsList += $"Hash={p.Hash}, AssignedName='{p.AssignedName}', Type={p.PrefabType}\n";
+            }
+
+            HashSet<string> requiredPrefabNames = new HashSet<string>();
+            CollectPrefabNames(importedNode, sourceScene, requiredPrefabNames);
+
+            string requiredList = $"Found {requiredPrefabNames.Count} required prefab names:\n";
+            foreach (var name in requiredPrefabNames)
+                requiredList += $"  - '{name}'\n";
+
+            if (requiredPrefabNames.Count == 0)
+                return;
+
+            if (targetScene.Prefabs == null)
+            {
+                targetScene.Prefabs = new PrefabLoader(null);
+                targetScene.Prefabs.Prefabs = new PrefabLoader.PrefabStruct[0];
+            }
+
+            int addedCount = 0;
+            foreach (string prefabName in requiredPrefabNames)
+            {
+                var sourcePrefab = sourceScene.Prefabs.Prefabs.FirstOrDefault(p => p.AssignedName == prefabName);
+                if (sourcePrefab == null)
+                {
+                    ulong computedHash = ComputeStringHash(prefabName);
+                    sourcePrefab = sourceScene.Prefabs.Prefabs.FirstOrDefault(p => p.Hash == computedHash);
+                    if (sourcePrefab != null);
+                      
+                }
+
+                if (sourcePrefab != null)
+                {
+                    if (string.IsNullOrEmpty(sourcePrefab.AssignedName))
+                        sourcePrefab.AssignedName = prefabName;
+
+                    bool alreadyExists = targetScene.Prefabs.Prefabs.Any(p => p.Hash == sourcePrefab.Hash);
+                    if (!alreadyExists)
+                    {
+                        var list = targetScene.Prefabs.Prefabs.ToList();
+                        list.Add(sourcePrefab);
+                        targetScene.Prefabs.Prefabs = list.ToArray();
+                        addedCount++;
+                       
+                    }
+                }
+            }
+        }
+
+        private ulong ComputeStringHash(string str)
+        {
+            var tempHash = new HashName();
+            tempHash.Set(str);
+            return tempHash.Hash;
+        }
+
+        private void CollectPrefabNames(TreeNode node, SceneData sourceScene, HashSet<string> names)
+        {
+            if (node.Tag is FrameObjectFrame frame)
+            {
+                string actorHash = frame.ActorHash.String;
+                if (!string.IsNullOrEmpty(actorHash))
+                    names.Add(actorHash);
+            }
+
+            foreach (TreeNode child in node.Nodes)
+                CollectPrefabNames(child, sourceScene, names);
         }
     }
 }

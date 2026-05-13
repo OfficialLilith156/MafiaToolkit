@@ -100,7 +100,17 @@ namespace ResourceTypes.FrameResource
             frameSkeletonHierachies = new Dictionary<int, FrameSkeletonHierachy>();
             frameObjects = new Dictionary<int, object>();
         }
-
+        public int GetFrameIndex(FrameObjectBase frame)
+        {
+            int index = 0;
+            foreach (var kvp in FrameObjects)
+            {
+                if (kvp.Value == frame)
+                    return index;
+                index++;
+            }
+            return -1;
+        }
         public FrameResource(string file,SceneData sceneData, bool isBigEndian = false) : this()
         {
             SceneData = sceneData;

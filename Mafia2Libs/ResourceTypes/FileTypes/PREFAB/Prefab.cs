@@ -44,6 +44,11 @@ namespace ResourceTypes.Prefab
 
         public PrefabLoader(FileInfo file)
         {
+            if (file == null)
+            {
+                Prefabs = new PrefabStruct[0];
+                return;
+            }
             using (BinaryReader reader = new BinaryReader(File.Open(file.FullName, FileMode.Open)))
             {
                 ReadFromFile(reader);
