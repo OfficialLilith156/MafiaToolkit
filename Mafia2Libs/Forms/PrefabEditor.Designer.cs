@@ -48,6 +48,8 @@
             Button_Delete = new System.Windows.Forms.ToolStripMenuItem();
             Browser_ExportPRB = new System.Windows.Forms.SaveFileDialog();
             SearchBox = new System.Windows.Forms.TextBox();
+            copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             Context_Menu.SuspendLayout();
             ToolStrip_Main.SuspendLayout();
             SuspendLayout();
@@ -76,9 +78,9 @@
             // 
             // Context_Menu
             // 
-            Context_Menu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { Context_ImportXML, Context_ExportXML, Context_Delete });
+            Context_Menu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { Context_ImportXML, Context_ExportXML, Context_Delete, copyToolStripMenuItem, pasteToolStripMenuItem });
             Context_Menu.Name = "Context_Menu";
-            Context_Menu.Size = new System.Drawing.Size(191, 70);
+            Context_Menu.Size = new System.Drawing.Size(191, 136);
             Context_Menu.Opening += Context_Menu_OnOpening;
             // 
             // Context_ImportXML
@@ -196,6 +198,22 @@
             SearchBox.Size = new System.Drawing.Size(152, 23);
             SearchBox.TabIndex = 17;
             // 
+            // copyToolStripMenuItem
+            // 
+            copyToolStripMenuItem.Name = "copyToolStripMenuItem";
+            copyToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C;
+            copyToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            copyToolStripMenuItem.Text = "Copy";
+            copyToolStripMenuItem.Click += Context_Copy_Click;
+            // 
+            // pasteToolStripMenuItem
+            // 
+            pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
+            pasteToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V;
+            pasteToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            pasteToolStripMenuItem.Text = "Paste";
+            pasteToolStripMenuItem.Click += Context_Paste_Click;
+            // 
             // PrefabEditor
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -240,5 +258,7 @@
         private System.Windows.Forms.ToolStripMenuItem Context_ImportXML;
         private System.Windows.Forms.ToolStripMenuItem Context_ExportXML;
         private System.Windows.Forms.TextBox SearchBox;
+        private System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem pasteToolStripMenuItem;
     }
 }

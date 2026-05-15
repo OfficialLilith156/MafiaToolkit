@@ -17,17 +17,20 @@ namespace Core.IO
 
         public override bool Open()
         {
-            var files = parentDirectory.GetFilesFromDirectory<FileActor>();
-
-            List<string> definitions = new List<string>();
-            foreach(var file in files)
+            var definitions = new List<string>();
+            string directory = file.DirectoryName;
+            if (directory != null)
             {
-                definitions.AddRange(file.GetDefinitionList());
+                foreach (string actorPath in Directory.GetFiles(directory, "*.act"))
+                {
+                    var actorFileInfo = new FileInfo(actorPath);
+                    var actorFile = new FileActor(actorFileInfo);
+                    definitions.AddRange(actorFile.GetDefinitionList());
+                }
             }
 
             PrefabEditor editor = new PrefabEditor(file);
             editor.InitEditor(definitions);
-
             return true;
         }
     }

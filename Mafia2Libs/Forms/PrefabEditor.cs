@@ -107,6 +107,54 @@ namespace Mafia2Tool
             }
         }
 
+        private void Context_Copy_Click(object sender, EventArgs e)
+        {
+            TreeNode selectedNode = TreeView_Prefabs.SelectedNode;
+            if (selectedNode?.Tag is PrefabLoader.PrefabStruct prefab)
+            {
+                using (var ms = new MemoryStream())
+                using (var writer = new BinaryWriter(ms))
+                {
+                    writer.WriteString16(prefab.AssignedName);
+                    prefab.WriteToFile(writer, false);
+
+                    byte[] data = ms.ToArray();
+                    Clipboard.SetData("Mafia2Prefab", data);
+                }
+            }
+        }
+
+        private void Context_Paste_Click(object sender, EventArgs e)
+        {
+            if (!Clipboard.ContainsData("Mafia2Prefab"))
+                return;
+
+            byte[] data = Clipboard.GetData("Mafia2Prefab") as byte[];
+            if (data == null || data.Length == 0)
+                return;
+
+            using (var ms = new MemoryStream(data))
+            using (var reader = new BinaryReader(ms))
+            {
+                string assignedName = StringHelpers.ReadString16(reader);
+
+                var newPrefab = new PrefabLoader.PrefabStruct();
+                newPrefab.ReadFromFile(reader);
+                newPrefab.AssignedName = assignedName;
+
+                TreeNode node = new TreeNode
+                {
+                    Tag = newPrefab,
+                    Text = newPrefab.AssignedName,
+                    Name = newPrefab.AssignedName
+                };
+                TreeView_Prefabs.Nodes.Add(node);
+
+                Text = Language.GetString("PREFAB_EDITOR_TITLE") + "*";
+                bIsFileEdited = true;
+            }
+        }
+
         private void Delete()
         {
             TreeNode SelectedNode = TreeView_Prefabs.SelectedNode;
