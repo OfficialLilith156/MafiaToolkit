@@ -3817,7 +3817,11 @@ namespace Mafia2Tool
                                 definition.FrameIndex = (uint)frameIndexes[x];
                                 frame = nFrame;
                                 frame.Item = actor.Items[c];
-                                frame.LocalTransform = MatrixUtils.SetMatrix(actor.Items[c].Rotation, actor.Items[c].Scale, actor.Items[c].Position);
+
+                              
+                                Quaternion invRot = actor.Items[c].Rotation;
+                                Quaternion originalRot = new Quaternion(-invRot.X, -invRot.Y, -invRot.Z, invRot.W);
+                                frame.LocalTransform = MatrixUtils.SetMatrix(originalRot, actor.Items[c].Scale, actor.Items[c].Position);
                             }
                         }
                     }
@@ -4009,11 +4013,9 @@ namespace Mafia2Tool
 
             if (linkedFrame != null)
             {
-                linkedFrame.LocalTransform = MatrixUtils.SetMatrix(
-                    actorEntry.Rotation,
-                    actorEntry.Scale,
-                    actorEntry.Position
-                );
+                Quaternion rot = actorEntry.Rotation;
+                Quaternion originalRot = new Quaternion(-rot.X, -rot.Y, -rot.Z, rot.W);
+                linkedFrame.LocalTransform = MatrixUtils.SetMatrix(originalRot, actorEntry.Scale, actorEntry.Position);
                 ApplyChangesToRenderable(linkedFrame);
             }
         }
@@ -4058,6 +4060,7 @@ namespace Mafia2Tool
                 Matrix4x4.Decompose(frame.LocalTransform, out scale, out rotation, out position);
                 linkedActor.Position = position;
                 linkedActor.Rotation = rotation;
+                linkedActor.Rotation = new Quaternion(-rotation.X, -rotation.Y, -rotation.Z, rotation.W);
                 linkedActor.Scale = scale;
 
                 if (dSceneTree.SelectedNode?.Tag == linkedActor)

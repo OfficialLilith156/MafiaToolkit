@@ -2,13 +2,14 @@
 using Mafia2Tool.Forms;
 using ResourceTypes.FrameResource;
 using ResourceTypes.Materials;
-using System.Windows.Forms;
+using ResourceTypes.Translokator;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using ResourceTypes.Translokator;
+using System.Windows.Forms;
 using Utils.Language;
 using Utils.VorticeUtils;
+using Vortice.Mathematics;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace Forms.Docking
@@ -26,6 +27,7 @@ namespace Forms.Docking
         private decimal savedValueZ;
         private MaterialStruct? copiedMaterial = null;
         public bool IsEntryReady;
+        private Quaternion currentQuaternion;
 
         public event EventHandler<EventArgs> OnObjectUpdated;
 
@@ -221,6 +223,7 @@ namespace Forms.Docking
                 ScaleXNumeric.Value = Convert.ToDecimal(scale.X);
                 ScaleYNumeric.Value = Convert.ToDecimal(scale.Y);
                 ScaleZNumeric.Value = Convert.ToDecimal(scale.Z);
+                UpdateQuaternion();
             }
             else if (currentObject is ResourceTypes.Collisions.Collision.Placement)
             {
@@ -264,30 +267,68 @@ namespace Forms.Docking
                 PropertyGrid.Refresh();
             }
         }
+        private Quaternion GetQuaternionFromCurrentAngles()
+        {
+            float yaw = MathHelper.ToRadians((float)RotationXNumeric.Value);
+            float pitch = MathHelper.ToRadians((float)RotationYNumeric.Value); 
+            float roll = MathHelper.ToRadians((float)RotationZNumeric.Value);
+
+            float halfPitch = pitch * 0.5f;
+            float sinPitch = MathF.Sin(halfPitch);
+            float cosPitch = MathF.Cos(halfPitch);
+
+            float halfYaw = yaw * 0.5f;
+            float sinYaw = MathF.Sin(halfYaw);
+            float cosYaw = MathF.Cos(halfYaw);
+
+            float halfRoll = roll * 0.5f;
+            float sinRoll = MathF.Sin(halfRoll);
+            float cosRoll = MathF.Cos(halfRoll);
+
+            float qx = sinPitch * cosYaw * cosRoll + cosPitch * sinYaw * sinRoll;
+            float qy = cosPitch * sinYaw * cosRoll - sinPitch * cosYaw * sinRoll;
+            float qz = cosPitch * cosYaw * sinRoll + sinPitch * sinYaw * cosRoll;
+            float qw = cosPitch * cosYaw * cosRoll - sinPitch * sinYaw * sinRoll;
+
+            return new Quaternion(qx, qy, qz, qw);
+        }
 
         public void UpdateObject()
         {
             if (IsEntryReady && currentObject != null)
             {
-                Vector3 position = new Vector3(Convert.ToSingle(PositionXNumeric.Value), Convert.ToSingle(PositionYNumeric.Value), Convert.ToSingle(PositionZNumeric.Value));
-                Vector3 rotation = new Vector3(Convert.ToSingle(RotationXNumeric.Value), Convert.ToSingle(RotationYNumeric.Value), Convert.ToSingle(RotationZNumeric.Value));
-                Vector3 scale = new Vector3(Convert.ToSingle(ScaleXNumeric.Value), Convert.ToSingle(ScaleYNumeric.Value), Convert.ToSingle(ScaleZNumeric.Value));
+                Vector3 position = new Vector3(
+                    Convert.ToSingle(PositionXNumeric.Value),
+                    Convert.ToSingle(PositionYNumeric.Value),
+                    Convert.ToSingle(PositionZNumeric.Value));
+                Vector3 scale = new Vector3(
+                    Convert.ToSingle(ScaleXNumeric.Value),
+                    Convert.ToSingle(ScaleYNumeric.Value),
+                    Convert.ToSingle(ScaleZNumeric.Value));
 
                 if (FrameResource.IsFrameType(currentObject))
                 {
                     FrameObjectBase fObject = (currentObject as FrameObjectBase);
-                    fObject.LocalTransform = MatrixUtils.SetMatrix(rotation, scale, position);
+                    Quaternion quat = GetQuaternionFromCurrentAngles();
+                    fObject.LocalTransform = MatrixUtils.SetMatrix(quat, scale, position);
                 }
                 else if (currentObject is ResourceTypes.Collisions.Collision.Placement)
                 {
                     ResourceTypes.Collisions.Collision.Placement placement = (currentObject as ResourceTypes.Collisions.Collision.Placement);
                     placement.Position = position;
+                    Vector3 rotation = new Vector3(
+                        Convert.ToSingle(RotationXNumeric.Value),
+                        Convert.ToSingle(RotationYNumeric.Value),
+                        Convert.ToSingle(RotationZNumeric.Value));
                     placement.RotationDegrees = rotation;
                 }
                 else if (currentObject is Instance instance)
                 {
                     instance.Position = position;
-                    instance.Rotation = rotation;
+                    instance.Rotation = new Vector3(
+                        Convert.ToSingle(RotationXNumeric.Value),
+                        Convert.ToSingle(RotationYNumeric.Value),
+                        Convert.ToSingle(RotationZNumeric.Value));
                     instance.Scale = scale.X;
                 }
             }
@@ -450,68 +491,17 @@ namespace Forms.Docking
 
         private void UpdateQuaternion()
         {
-            double x = (double)RotationXNumeric.Value;
-            double y = (double)RotationYNumeric.Value;
-            double z = (double)RotationZNumeric.Value;
-
-            double angle = Math.Sqrt(x * x + y * y + z * z);
-            if (angle == 0)
-            {
-                textQuaternion.Text = "X:0 Y:0 Z:0 W:1";
-                return;
-            }
-
-            double axisX = x / angle;
-            double axisY = y / angle;
-            double axisZ = z / angle;
-
-            double angleRad = angle * Math.PI / 180.0;
-
-            double half = angleRad / 2.0;
-            double sinHalf = Math.Sin(half);
-
-            Quaternion q = new Quaternion(
-                (float)(axisX * sinHalf),
-                (float)(axisY * sinHalf),
-                (float)(axisZ * sinHalf),
-                (float)Math.Cos(half)
-            );
-
-            textQuaternion.Text = $"X:{q.X:F6} Y:{q.Y:F6} Z:{q.Z:F6} W:{q.W:F6}";
+            Quaternion quat = GetQuaternionFromCurrentAngles();
+            textQuaternion.Text = $"X:{quat.X:F6} Y:{quat.Y:F6} Z:{quat.Z:F6} W:{quat.W:F6}";
         }
 
         private void InvertZUpdateQuaternion()
         {
-            double x = (double)RotationXNumeric.Value;
-            double y = (double)RotationYNumeric.Value;
-            double z = (double)RotationZNumeric.Value;
-
-            double angle = Math.Sqrt(x * x + y * y + z * z);
-            if (angle == 0)
-            {
-                textInvertZQuaternion.Text = "X:0 Y:0 Z:0 W:1";
-                return;
-            }
-
-            double axisX = x / angle;
-            double axisY = y / angle;
-            double axisZ = z / angle;
-
-            double angleRad = angle * Math.PI / 180.0;
-
-            double half = angleRad / 2.0;
-            double sinHalf = Math.Sin(half);
-
-            Quaternion q = new Quaternion(
-                (float)(axisX * sinHalf),
-                (float)(axisY * sinHalf),
-                (float)(axisZ * sinHalf),
-                (float)Math.Cos(half)
-            );
-
-            q.Z = -q.Z;
-
-            textInvertZQuaternion.Text = $"X:{q.X:F6} Y:{q.Y:F6} Z:{q.Z:F6} W:{q.W:F6}";
+            Quaternion quat = GetQuaternionFromCurrentAngles();
+            quat.Z = -quat.Z;
+            quat.X = -quat.X;
+            quat.Y = -quat.Y;
+            textInvertZQuaternion.Text = $"X:{quat.X:F6} Y:{quat.Y:F6} Z:{quat.Z:F6} W:{quat.W:F6}";
         }
         private void ButtonQuatCopy_Click(object sender, EventArgs e)
         {
