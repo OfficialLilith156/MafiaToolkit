@@ -360,68 +360,84 @@ namespace Forms.Docking
             OnObjectUpdated(this, EventArgs.Empty);
         }
 
-        private void buttonCopy_Click(object sender, EventArgs e)
-        {
-            string copiedText = string.Format(
-                "X:{0:0.00000} Y:{1:0.00000} Z:{2:0.00000}",
-            PositionXNumeric.Value,
-            PositionYNumeric.Value,
-            PositionZNumeric.Value
-            );
-
-            Clipboard.SetText(copiedText);
-        }
+        
 
         private void buttonPaste_Click(object sender, EventArgs e)
         {
             try
             {
                 string clipboardText = Clipboard.GetText().Trim();
+                decimal? posX = null, posY = null, posZ = null;
+                decimal? rotX = null, rotY = null, rotZ = null;
 
-                decimal x, y, z;
-
-                if (clipboardText.Contains("X:") && clipboardText.Contains("Y:") && clipboardText.Contains("Z:"))
+                var fullRegex = new System.Text.RegularExpressions.Regex(
+                    @"PosX:(?<posX>[-+]?[0-9]*\.?[0-9]+)\s+PosY:(?<posY>[-+]?[0-9]*\.?[0-9]+)\s+PosZ:(?<posZ>[-+]?[0-9]*\.?[0-9]+)\s+RotX:(?<rotX>[-+]?[0-9]*\.?[0-9]+)\s+RotY:(?<rotY>[-+]?[0-9]*\.?[0-9]+)\s+RotZ:(?<rotZ>[-+]?[0-9]*\.?[0-9]+)"
+                );
+                var fullMatch = fullRegex.Match(clipboardText);
+                if (fullMatch.Success)
                 {
-                    var regex = new System.Text.RegularExpressions.Regex(
-                        @"X:(?<x>[-+]?[0-9]*\.?[0-9]+)\s+Y:(?<y>[-+]?[0-9]*\.?[0-9]+)\s+Z:(?<z>[-+]?[0-9]*\.?[0-9]+)"
-                    );
-
-                    var match = regex.Match(clipboardText);
-
-                    if (!match.Success)
-                    {
-                        //MessageBox.Show("Error");
-                        return;
-                    }
-
-                    x = decimal.Parse(match.Groups["x"].Value, System.Globalization.CultureInfo.InvariantCulture);
-                    y = decimal.Parse(match.Groups["y"].Value, System.Globalization.CultureInfo.InvariantCulture);
-                    z = decimal.Parse(match.Groups["z"].Value, System.Globalization.CultureInfo.InvariantCulture);
+                    posX = decimal.Parse(fullMatch.Groups["posX"].Value, System.Globalization.CultureInfo.InvariantCulture);
+                    posY = decimal.Parse(fullMatch.Groups["posY"].Value, System.Globalization.CultureInfo.InvariantCulture);
+                    posZ = decimal.Parse(fullMatch.Groups["posZ"].Value, System.Globalization.CultureInfo.InvariantCulture);
+                    rotX = decimal.Parse(fullMatch.Groups["rotX"].Value, System.Globalization.CultureInfo.InvariantCulture);
+                    rotY = decimal.Parse(fullMatch.Groups["rotY"].Value, System.Globalization.CultureInfo.InvariantCulture);
+                    rotZ = decimal.Parse(fullMatch.Groups["rotZ"].Value, System.Globalization.CultureInfo.InvariantCulture);
                 }
                 else
                 {
-                    string[] parts = clipboardText.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-
-                    if (parts.Length != 3)
+                    decimal x, y, z;
+                    if (clipboardText.Contains("X:") && clipboardText.Contains("Y:") && clipboardText.Contains("Z:"))
                     {
-                        //MessageBox.Show("Error");
-                        return;
+                        var oldRegex = new System.Text.RegularExpressions.Regex(
+                            @"X:(?<x>[-+]?[0-9]*\.?[0-9]+)\s+Y:(?<y>[-+]?[0-9]*\.?[0-9]+)\s+Z:(?<z>[-+]?[0-9]*\.?[0-9]+)"
+                        );
+                        var match = oldRegex.Match(clipboardText);
+                        if (!match.Success) return;
+                        x = decimal.Parse(match.Groups["x"].Value, System.Globalization.CultureInfo.InvariantCulture);
+                        y = decimal.Parse(match.Groups["y"].Value, System.Globalization.CultureInfo.InvariantCulture);
+                        z = decimal.Parse(match.Groups["z"].Value, System.Globalization.CultureInfo.InvariantCulture);
                     }
-
-                    x = decimal.Parse(parts[0], System.Globalization.CultureInfo.InvariantCulture);
-                    y = decimal.Parse(parts[1], System.Globalization.CultureInfo.InvariantCulture);
-                    z = decimal.Parse(parts[2], System.Globalization.CultureInfo.InvariantCulture);
+                    else
+                    {
+                        string[] parts = clipboardText.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        if (parts.Length != 3) return;
+                        x = decimal.Parse(parts[0], System.Globalization.CultureInfo.InvariantCulture);
+                        y = decimal.Parse(parts[1], System.Globalization.CultureInfo.InvariantCulture);
+                        z = decimal.Parse(parts[2], System.Globalization.CultureInfo.InvariantCulture);
+                    }
+                    posX = x; posY = y; posZ = z;
                 }
 
-                PositionXNumeric.Value = x;
-                PositionYNumeric.Value = y;
-                PositionZNumeric.Value = z;
+                if (posX.HasValue) PositionXNumeric.Value = posX.Value;
+                if (posY.HasValue) PositionYNumeric.Value = posY.Value;
+                if (posZ.HasValue) PositionZNumeric.Value = posZ.Value;
 
-                savedValueX = x;
-                savedValueY = y;
-                savedValueZ = z;
+                if (rotX.HasValue) RotationXNumeric.Value = rotX.Value;
+                if (rotY.HasValue) RotationYNumeric.Value = rotY.Value;
+                if (rotZ.HasValue) RotationZNumeric.Value = rotZ.Value;
+
+                if (posX.HasValue && posY.HasValue && posZ.HasValue)
+                {
+                    savedValueX = posX.Value;
+                    savedValueY = posY.Value;
+                    savedValueZ = posZ.Value;
+                }
             }
             catch { }
+        }
+
+        private void buttonCopy_Click(object sender, EventArgs e)
+        {
+            string copiedText = string.Format(
+                "PosX:{0:0.00000} PosY:{1:0.00000} PosZ:{2:0.00000} RotX:{3:0.00000} RotY:{4:0.00000} RotZ:{5:0.00000}",
+                PositionXNumeric.Value,
+                PositionYNumeric.Value,
+                PositionZNumeric.Value,
+                RotationXNumeric.Value,
+                RotationYNumeric.Value,
+                RotationZNumeric.Value
+            );
+            Clipboard.SetText(copiedText);
         }
         private void Rotation_ValueChanged(object sender, EventArgs e)
         {
