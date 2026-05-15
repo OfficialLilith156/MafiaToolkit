@@ -36,6 +36,8 @@
             Context_AddType = new System.Windows.Forms.ToolStripMenuItem();
             Context_AddMetaInfo = new System.Windows.Forms.ToolStripMenuItem();
             Context_DuplicateMetaInfo = new System.Windows.Forms.ToolStripMenuItem();
+            MoveUpButton = new System.Windows.Forms.ToolStripMenuItem();
+            MoveDownButton = new System.Windows.Forms.ToolStripMenuItem();
             Context_DuplicateMetaInfoItem = new System.Windows.Forms.ToolStripMenuItem();
             Context_Delete = new System.Windows.Forms.ToolStripMenuItem();
             ToolStrip_Main = new System.Windows.Forms.ToolStrip();
@@ -79,9 +81,9 @@
             // 
             // Context_Menu
             // 
-            Context_Menu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { Context_AddType, Context_AddMetaInfo, Context_DuplicateMetaInfo, Context_DuplicateMetaInfoItem, Context_Delete });
+            Context_Menu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { Context_AddType, Context_AddMetaInfo, Context_DuplicateMetaInfo, MoveUpButton, MoveDownButton, Context_DuplicateMetaInfoItem, Context_Delete });
             Context_Menu.Name = "SDSContext";
-            Context_Menu.Size = new System.Drawing.Size(191, 114);
+            Context_Menu.Size = new System.Drawing.Size(191, 158);
             Context_Menu.Opening += Context_Menu_OnOpening;
             // 
             // Context_AddType
@@ -104,6 +106,22 @@
             Context_DuplicateMetaInfo.Size = new System.Drawing.Size(190, 22);
             Context_DuplicateMetaInfo.Text = "$DUPE_METAINFO";
             Context_DuplicateMetaInfo.Click += Context_DupeMetaInfo_Clicked;
+            // 
+            // MoveUpButton
+            // 
+            MoveUpButton.Name = "MoveUpButton";
+            MoveUpButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Up;
+            MoveUpButton.Size = new System.Drawing.Size(190, 22);
+            MoveUpButton.Text = "Up";
+            MoveUpButton.Click += MoveUpButton_Click;
+            // 
+            // MoveDownButton
+            // 
+            MoveDownButton.Name = "MoveDownButton";
+            MoveDownButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Down;
+            MoveDownButton.Size = new System.Drawing.Size(190, 22);
+            MoveDownButton.Text = "Down";
+            MoveDownButton.Click += MoveDownButton_Click;
             // 
             // Context_DuplicateMetaInfoItem
             // 
@@ -275,5 +293,7 @@
         private System.Windows.Forms.ToolStripMenuItem Button_ImportXml;
         private System.Windows.Forms.TextBox SearchBox;
         private System.Windows.Forms.ToolStripButton toolStripButton1;
+        private System.Windows.Forms.ToolStripMenuItem MoveUpButton;
+        private System.Windows.Forms.ToolStripMenuItem MoveDownButton;
     }
 }

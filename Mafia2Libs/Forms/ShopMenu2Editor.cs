@@ -150,6 +150,92 @@ namespace Mafia2Tool
             MarkAsEdited();
         }
 
+        private void OnNodeSelectSelect(object sender, TreeViewEventArgs e)
+        {
+            PropertyGrid_ShopMenu2.SelectedObject = e.Node.Tag;
+            UpdateMoveButtonsState();
+        }
+
+        private void UpdateMoveButtonsState()
+        {
+            TreeNode selected = TreeView_ShopMenu2.SelectedNode;
+            if (selected == null || selected.Parent == null)
+            {
+                MoveUpButton.Enabled = false;
+                MoveDownButton.Enabled = false;
+                return;
+            }
+
+            int index = selected.Parent.Nodes.IndexOf(selected);
+            MoveUpButton.Enabled = index > 0;
+            MoveDownButton.Enabled = index < selected.Parent.Nodes.Count - 1;
+        }
+
+        private void MoveNode(int direction)
+        {
+            TreeNode selectedNode = TreeView_ShopMenu2.SelectedNode;
+            if (selectedNode == null || selectedNode.Parent == null) return;
+
+            TreeNode parentNode = selectedNode.Parent;
+            int index = parentNode.Nodes.IndexOf(selectedNode);
+            int newIndex = index + direction;
+            if (newIndex < 0 || newIndex >= parentNode.Nodes.Count) return;
+
+            object tag = selectedNode.Tag;
+
+            if (tag is ShopMenu2.Shop shop)
+            {
+                var list = new List<ShopMenu2.Shop>(menuData.Shops);
+                int listIndex = list.IndexOf(shop);
+                if (listIndex == -1) return;
+                int newListIndex = listIndex + direction;
+                if (newListIndex < 0 || newListIndex >= list.Count) return;
+                list.RemoveAt(listIndex);
+                list.Insert(newListIndex, shop);
+                menuData.Shops = list.ToArray();
+            }
+            else if (tag is ShopMenu2.ShopMenu shopMenu)
+            {
+                var list = new List<ShopMenu2.ShopMenu>(menuData.ShopItems);
+                int listIndex = list.IndexOf(shopMenu);
+                if (listIndex == -1) return;
+                int newListIndex = listIndex + direction;
+                if (newListIndex < 0 || newListIndex >= list.Count) return;
+                list.RemoveAt(listIndex);
+                list.Insert(newListIndex, shopMenu);
+                menuData.ShopItems = list.ToArray();
+            }
+            else if (tag is ShopMenu2.ItemConfig itemConfig)
+            {
+                TreeNode parentMenuNode = parentNode;
+                if (parentMenuNode.Tag is ShopMenu2.ShopMenu parentMenu)
+                {
+                    var list = new List<ShopMenu2.ItemConfig>(parentMenu.Items);
+                    int listIndex = list.IndexOf(itemConfig);
+                    if (listIndex == -1) return;
+                    int newListIndex = listIndex + direction;
+                    if (newListIndex < 0 || newListIndex >= list.Count) return;
+                    list.RemoveAt(listIndex);
+                    list.Insert(newListIndex, itemConfig);
+                    parentMenu.Items = list.ToArray();
+                }
+                else return;
+            }
+            else
+            {
+                return; 
+            }
+
+            parentNode.Nodes.RemoveAt(index);
+            parentNode.Nodes.Insert(newIndex, selectedNode);
+            TreeView_ShopMenu2.SelectedNode = selectedNode;
+            selectedNode.EnsureVisible();
+
+            MarkAsEdited();
+        }
+        private void MoveUpButton_Click(object sender, EventArgs e) => MoveNode(-1);
+        private void MoveDownButton_Click(object sender, EventArgs e) => MoveNode(1);
+
         private void AddMetaInfo()
         {
             // Create the new MetaInfo
@@ -210,10 +296,7 @@ namespace Mafia2Tool
             MarkAsEdited();
         }
 
-        private void OnNodeSelectSelect(object sender, TreeViewEventArgs e)
-        {
-            PropertyGrid_ShopMenu2.SelectedObject = e.Node.Tag;
-        }
+
 
         private void Grid_ShopMenu2_PropertyChanged(object sender, PropertyValueChangedEventArgs e)
         {
