@@ -164,7 +164,7 @@ namespace ResourceTypes.ModelHelpers.ModelExporter
             Tracks = tracks.Values.ToArray();
             Optimize();
         }
-        public void Optimize(float rotationTolerance = 0.001f, float positionTolerance = 0.001f)
+        public void Optimize(float rotationTolerance = 0.00001f, float positionTolerance = 0.00001f)
         {
             foreach (var track in Tracks)
             {
