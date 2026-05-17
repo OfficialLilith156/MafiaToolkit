@@ -576,7 +576,16 @@ namespace Mafia2Tool
         //'File' Button dropdown events.
         private void OpenMafiaIIClicked(object sender, EventArgs e) => InitExplorerSettings();
         private void ExitToolkitClicked(object sender, EventArgs e) => ExitProgram();
-        private void RunMafiaIIClicked(object sender, EventArgs e) => Process.Start(launcher.FullName);
+        private void RunMafiaIIClicked(object sender, EventArgs e)
+        {
+            var startInfo = new ProcessStartInfo
+            {
+                FileName = launcher.FullName,
+                WorkingDirectory = launcher.DirectoryName,
+                UseShellExecute = false
+            };
+            Process.Start(startInfo);
+        }
         private void SearchBarOnTextChanged(object sender, EventArgs e) => OpenDirectory(currentDirectory, true, SearchEntryText.Text);
 
         //FileListViewStrip events.
