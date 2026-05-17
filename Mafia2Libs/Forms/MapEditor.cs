@@ -2454,14 +2454,15 @@ namespace Mafia2Tool
             Dictionary<int, IRenderer> assets = new Dictionary<int, IRenderer>();
             if (ToolkitSettings.LoadFrameResource && SceneData.FrameResource != null && SceneData.FrameNameTable != null)
             {
-                foreach (FrameObjectBase FrameObject in SceneData.FrameResource.FrameObjects.Values)
+
+                foreach (FrameObjectBase frame in SceneData.FrameResource.FrameObjects.Values)
                 {
-                    IRenderer NewAsset = BuildRenderObjectFromFrame(FrameObject, assets);
-                    if (NewAsset != null)
-                    {
-                        assets.Add(FrameObject.RefID, NewAsset);
-                    }
+                    frame.ConstructRenderable();
+                    IRenderer renderer = frame.GetRenderItem();
+                    if (renderer != null)
+                        assets.Add(frame.RefID, renderer);
                 }
+                Graphics.InitObjectStack = assets;
             }
             if (ToolkitSettings.LoadRoads && SceneData.roadMap != null && ToolkitSettings.Experimental)
             {
@@ -2674,88 +2675,7 @@ namespace Mafia2Tool
                 dSceneTree.AddToTree(node);
                 collisionRoot.Collapse(false);
             }
-            if (ToolkitSettings.LoadItemDescs && SceneData.ItemDescs != null && SceneData.ItemDescs.Length > 0)
-            {
-                TreeNode itemDescRoot = new TreeNode("Item Descriptions");
-                itemDescRoot.Tag = "Folder";
-
-                for (int i = 0; i < SceneData.ItemDescs.Length; i++)
-                {
-                    var currentItem = SceneData.ItemDescs[i];
-                    TreeNode itemNode = new TreeNode($"ItemDesc [{i}] | FrameRef: {currentItem.FrameRef}");
-                    itemNode.Tag = currentItem;
-
-                    TreeNode infoNode = new TreeNode("Info") { Tag = "Folder" };
-                    infoNode.Nodes.Add($"Collision Type: {GetCollisionTypeName(currentItem.ColType)}");
-                    infoNode.Nodes.Add($"Collision Type: {currentItem.ColType}");
-                    infoNode.Nodes.Add($"Material: {currentItem.ColMaterial}");
-                    infoNode.Nodes.Add($"ID Hash: {currentItem.IdHash}");
-                    itemNode.Nodes.Add(infoNode);
-
-                    if (currentItem.Collisions != null && currentItem.Collisions.Length > 0)
-                    {
-                        TreeNode collisionsNode = new TreeNode("Collisions") { Tag = "Folder" };
-
-                        for (int colIndex = 0; colIndex < currentItem.Collisions.Length; colIndex++)
-                        {
-                            var col = currentItem.Collisions[colIndex];
-                            TreeNode collisionNode = new TreeNode($"Collision [{colIndex}]") { Tag = col };
-                            IRenderer render = null;
-                            int refID = RefManager.GetNewRefID();
-
-                            if (col is CollisionBox box) render = RenderableFactory.BuildBoundingBoxFromBox(box, currentItem.Matrix);
-                            else if (col is CollisionSphere sphere) render = RenderableFactory.BuildBoundingSphere(sphere, currentItem.Matrix);
-                            else if (col is CollisionCapsule capsule) render = RenderableFactory.BuildBoundingCapsule(capsule, currentItem.Matrix);
-                            else if (col is CollisionConvex convex)
-                            {
-                                var rsc = new RenderStaticCollision();
-                                rsc.SetTransform(currentItem.Matrix);
-                                rsc.ConvertCollisionToRender(convex);
-                                render = rsc;
-                            }
-                            if (render != null)
-                            {
-                                assets.Add(refID, render);
-                                collisionNode.Name = refID.ToString();
-                            }
-
-                            collisionNode.Nodes.Add($"Renderable: {render != null}");
-                            TreeNode detailsNode = new TreeNode("Collision Details");
-
-                            if (col is CollisionBox b)
-                            {
-                                detailsNode.Nodes.Add($"Extents (Half Size): {Vec3(b.Extents)}");
-                                detailsNode.Nodes.Add($"Size: {Vec3(b.Size)}");
-                            }
-                            else if (col is CollisionSphere s)
-                            {
-                                detailsNode.Nodes.Add($"Radius: {s.Radius:0.###}");
-                                detailsNode.Nodes.Add($"Diameter: {s.Diameter:0.###}");
-                            }
-                            else if (col is CollisionCapsule c)
-                            {
-                                detailsNode.Nodes.Add($"Radius: {c.Radius:0.###}");
-                                detailsNode.Nodes.Add($"Half Height: {c.HalfHeight:0.###}");
-                                detailsNode.Nodes.Add($"Height: {c.Height:0.###}");
-                                detailsNode.Nodes.Add($"Full Height: {c.FullHeight:0.###}");
-                            }
-                            else if (col is CollisionConvex cv)
-                            {
-                                detailsNode.Nodes.Add($"Vertices: {cv.Vertices.Count}");
-                                detailsNode.Nodes.Add($"Hull Center: {Vec3(cv.HullCenter)}");
-                                detailsNode.Nodes.Add($"BBox Min: {Vec3(cv.Min)}");
-                                detailsNode.Nodes.Add($"BBox Max: {Vec3(cv.Max)}");
-                                detailsNode.Nodes.Add($"BBox Size: {Vec3(cv.Size)}");
-                            }
-                            collisionNode.Nodes.Add(detailsNode);
-                            collisionsNode.Nodes.Add(collisionNode);
-                        }
-                        itemNode.Nodes.Add(collisionsNode);
-                    }
-                    itemDescRoot.Nodes.Add(itemNode);
-                }
-                dSceneTree.AddToTree(itemDescRoot);
-            }
+            
             if (ToolkitSettings.LoadATP && SceneData.ATLoader != null)
             {
                 animalTrafficRoot = new TreeNode("Animal Traffic Paths");
@@ -3478,6 +3398,19 @@ namespace Mafia2Tool
             {
                 dPropertyGrid.SetObject(colModel);
             }
+            else if (node.Tag is FrameObjectCollision colFrame && colFrame.ItemDesc != null)
+            {
+                var itemDesc = colFrame.ItemDesc;
+                if (itemDesc.Collisions != null && itemDesc.Collisions.Length > 0)
+                {
+                    dPropertyGrid.SetObject(itemDesc.Collisions[0]);
+                }
+                else
+                {
+                    dPropertyGrid.SetObject(itemDesc);
+                }
+                Graphics.SelectEntry(colFrame.RefID);
+            }
             else if (node.Tag is SpatialCell)
             {
                 SpatialGrid grid = (node.Parent.Tag as SpatialGrid);
@@ -3923,6 +3856,41 @@ namespace Mafia2Tool
                         asset.SetTransform(itemDesc.Matrix);
                         Graphics.SelectEntry(refID);
                     }
+                }
+                else if (selected.Tag is FrameObjectCollision colFrame && colFrame.ItemDesc != null)
+                {
+                    dPropertyGrid.UpdateObject();
+
+                    var collisionItemDesc = colFrame.ItemDesc;
+                    Vector3 scale = Vector3.One;
+                    var scaleProp = collisionItemDesc.GetType().GetProperty("Scale");
+                    if (scaleProp != null) scale = (Vector3)scaleProp.GetValue(collisionItemDesc);
+
+                    var posProp = collisionItemDesc.GetType().GetProperty("Position");
+                    var rotProp = collisionItemDesc.GetType().GetProperty("Rotation");
+                    if (posProp != null && rotProp != null)
+                    {
+                        Vector3 pos = (Vector3)posProp.GetValue(collisionItemDesc);
+                        Quaternion rot = (Quaternion)rotProp.GetValue(collisionItemDesc);
+                        collisionItemDesc.Matrix = Matrix4x4.CreateScale(scale) *
+                                                   Matrix4x4.CreateFromQuaternion(rot) *
+                                                   Matrix4x4.CreateTranslation(pos);
+                    }
+
+                    colFrame.ConstructRenderable();
+
+                    if (Graphics.Assets.TryGetValue(colFrame.RefID, out IRenderer oldRenderer))
+                    {
+                        oldRenderer?.Shutdown();
+                        Graphics.Assets[colFrame.RefID] = colFrame.GetRenderItem();
+                    }
+                    else
+                    {
+                        IRenderer newRenderer = colFrame.GetRenderItem();
+                        if (newRenderer != null)
+                            Graphics.Assets.Add(colFrame.RefID, newRenderer);
+                    }
+                    Graphics.SelectEntry(colFrame.RefID);
                 }
             }
         }
@@ -4666,6 +4634,29 @@ namespace Mafia2Tool
                 {
                     TreeNode selected = dSceneTree.SelectedNode;
                     selected.Text = (pGrid.SelectedObject as FrameHeaderScene).Name.ToString();
+                }
+            }
+            if (pGrid.SelectedObject is CollisionBox ||
+                pGrid.SelectedObject is CollisionSphere ||
+                pGrid.SelectedObject is CollisionCapsule ||
+                pGrid.SelectedObject is CollisionConvex)
+            {
+                TreeNode selectedNode = dSceneTree.SelectedNode;
+                if (selectedNode?.Tag is FrameObjectCollision colFrame)
+                {
+                    colFrame.ConstructRenderable();
+                    if (Graphics.Assets.TryGetValue(colFrame.RefID, out IRenderer oldRenderer))
+                    {
+                        oldRenderer?.Shutdown();
+                        Graphics.Assets[colFrame.RefID] = colFrame.GetRenderItem();
+                    }
+                    else
+                    {
+                        var newRenderer = colFrame.GetRenderItem();
+                        if (newRenderer != null)
+                            Graphics.Assets.Add(colFrame.RefID, newRenderer);
+                    }
+                    Graphics.SelectEntry(colFrame.RefID);
                 }
             }
             if (pGrid.SelectedObject is Instance instance && dSceneTree.SelectedNode.Parent.Tag is Object objGroup)

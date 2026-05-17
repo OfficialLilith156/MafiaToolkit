@@ -1,6 +1,11 @@
-﻿using Rendering.Graphics;
+﻿using Rendering.Core;
+using Rendering.Factories;
+using Rendering.Graphics;
 using ResourceTypes.ItemDesc;
+using System;
+using System.ComponentModel;
 using System.IO;
+using System.Numerics;
 using Utils.Extensions;
 
 namespace ResourceTypes.FrameResource
@@ -8,7 +13,7 @@ namespace ResourceTypes.FrameResource
     public class FrameObjectCollision : FrameObjectBase
     {
         private ulong _Hash;
-        private ItemDescLoader ItemDesc;
+        public ItemDescLoader ItemDesc;
 
         public ulong Hash {
             get { return _Hash; }
@@ -51,13 +56,41 @@ namespace ResourceTypes.FrameResource
         public override void ConstructRenderable()
         {
             GetUsedItemDesc();
+            if (ItemDesc == null) return;
 
-            // We don't want to use this code yet, it's from old-old stuff which needs to be looked at.
-            // TODO: Look at bringing this old feature back.
-            return;
-            //RenderStaticCollision CollisionMesh = RenderableFactory.BuildRenderItemDesc(Hash);
-            //RenderAdapter = new Rendering.Core.RenderableAdapter();
-            //RenderAdapter.InitAdaptor(CollisionMesh, this);
+            IRenderer collisionRenderer = BuildCollisionRendererFromItemDesc(ItemDesc);
+            if (collisionRenderer != null)
+            {
+                Matrix4x4 combined = WorldTransform * ItemDesc.Matrix;
+                collisionRenderer.SetTransform(combined);
+
+                if (RenderAdapter == null)
+                    RenderAdapter = new RenderableAdapter();
+                RenderAdapter.InitAdaptor(collisionRenderer, this);
+            }
+        }
+
+        private IRenderer BuildCollisionRendererFromItemDesc(ItemDescLoader item)
+        {
+            switch (item.ColType)
+            {
+                case CollisionTypes.Box:
+                    var box = item.Collisions[0] as CollisionBox;
+                    return RenderableFactory.BuildBoundingBoxFromBox(box, Matrix4x4.Identity);
+                case CollisionTypes.Sphere:
+                    var sphere = item.Collisions[0] as CollisionSphere;
+                    return RenderableFactory.BuildBoundingSphere(sphere, Matrix4x4.Identity);
+                case CollisionTypes.Capsule:
+                    var capsule = item.Collisions[0] as CollisionCapsule;
+                    return RenderableFactory.BuildBoundingCapsule(capsule, Matrix4x4.Identity);
+                case CollisionTypes.Convex:
+                    var convex = item.Collisions[0] as CollisionConvex;
+                    var renderCol = new RenderStaticCollision();
+                    renderCol.ConvertCollisionToRender(convex);
+                    return renderCol;
+                default:
+                    return null;
+            }
         }
 
         // TODO: Move this to a different location.
