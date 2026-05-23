@@ -2444,11 +2444,6 @@ namespace Mafia2Tool
             return null;
         }
 
-        private string Vec3(Vector3 v)
-        {
-            return $"({v.X:0.#####}, {v.Y:0.#####}, {v.Z:0.#####})";
-        }
-
         private void BuildRenderObjects()
         {
             Dictionary<int, IRenderer> assets = new Dictionary<int, IRenderer>();
@@ -3202,23 +3197,6 @@ namespace Mafia2Tool
                 translokatorRoot.Nodes.Add(gridNode);
                 dSceneTree.AddToTree(translokatorRoot);
                 Graphics.BuildTranslokatorGrid(SceneData.Translokator);
-            }
-        }
-
-        private string GetCollisionTypeName(ResourceTypes.ItemDesc.CollisionTypes type)
-        {
-            switch (type)
-            {
-                case ResourceTypes.ItemDesc.CollisionTypes.Box:
-                    return "Box (Cube)";
-                case ResourceTypes.ItemDesc.CollisionTypes.Sphere:
-                    return "Sphere";
-                case ResourceTypes.ItemDesc.CollisionTypes.Capsule:
-                    return "Capsule";
-                case ResourceTypes.ItemDesc.CollisionTypes.Convex:
-                    return "Convex Mesh";
-                default:
-                    return "Unknown";
             }
         }
 
