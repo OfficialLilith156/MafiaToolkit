@@ -76,6 +76,8 @@ namespace Core.IO
                     return new FileBin(info);
                 case "PRF":
                     return new FilePrefab(info);
+                case "EFF":
+                    return new FileEffects(info);
                 case "NHV":
                     return new FileNavigation_HPD(info);
                 case "NAV":
