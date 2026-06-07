@@ -88,6 +88,30 @@ namespace Mafia2Tool
         private bool redoKeyWasPressed = false;
         private bool bboxKeyWasPressed = false;
 
+
+        private Dictionary<int, (BoundingBox BBox, RenderRoad Road)> roadsList = new();
+
+        private void RegisterRoad(int refID, RenderRoad road, BoundingBox bbox)
+        {
+            roadsList[refID] = (bbox, road);
+        }
+
+        private int RaycastRoads(Ray ray)
+        {
+            float closestDist = float.MaxValue;
+            int closestID = -1;
+            foreach (var kvp in roadsList)
+            {
+                float? dist = kvp.Value.Road.Raycast(ray);
+                if (dist.HasValue && dist.Value < closestDist)
+                {
+                    closestDist = dist.Value;
+                    closestID = kvp.Key;
+                }
+            }
+            return closestID;
+        }
+
         public MapEditor(FileInfo info, SceneData sceneData)
         {
             SceneData = sceneData;
@@ -2478,6 +2502,7 @@ namespace Mafia2Tool
                     int generatedID = RefManager.GetNewRefID();
                     road.Init(RoadDef, RoadSpline);
                     assets.Add(generatedID, road);
+                    RegisterRoad(generatedID, road, road.BBox);
 
                     TreeNode child = new TreeNode(i.ToString());
                     child.Text = "Road ID: " + i;
@@ -4131,6 +4156,20 @@ namespace Mafia2Tool
 
                 dSceneTree.SelectedNode = node;
                 TreeViewUpdateSelected();
+            }
+            if (roadsList.Count > 0)
+            {
+                Ray ray = Graphics.Camera.GetPickingRay(new Vector2(sx, sy), new Vector2(RenderPanel.Width, RenderPanel.Height));
+                int roadRefID = RaycastRoads(ray);
+                if (roadRefID != -1)
+                {
+                    var nodes = dSceneTree.Find(roadRefID.ToString(), true);
+                    if (nodes.Length > 0)
+                    {
+                        dSceneTree.SelectedNode = nodes[0];
+                        TreeViewUpdateSelected();
+                    }
+                }
             }
         }
 

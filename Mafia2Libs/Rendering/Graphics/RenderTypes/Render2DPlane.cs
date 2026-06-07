@@ -9,8 +9,8 @@ namespace Rendering.Graphics
 {
     public class Render2DPlane : IRenderer
     {
-        private VertexLayouts.BasicLayout.Vertex[] Vertices;
-        private ushort[] Indices;
+        public VertexLayouts.BasicLayout.Vertex[] Vertices;
+        public ushort[] Indices;
         private Color colour;
 
         private Color originalColor;

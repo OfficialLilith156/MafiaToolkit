@@ -14,6 +14,11 @@ namespace Rendering.Graphics
         [TypeConverter(typeof(ExpandableObjectConverter))]
         public RenderLine Spline { get; set; }
         public BoundingBox BBox { get; set; }
+
+        private List<Triangle> worldTriangles = new List<Triangle>();
+
+        private struct Triangle { public Vector3 A, B, C; }
+
         Render2DPlane[] Planes;
 
         public RenderRoad()
@@ -77,6 +82,73 @@ namespace Rendering.Graphics
             Spline.SetUnselectedColour(System.Drawing.Color.White);
             Spline.Init(RoadSpline.Points.ToArray());
             BBox = BoundingBox.CreateFromPoints(RoadSpline.Points.ToArray());
+
+            BuildTriangles();
+        }
+
+        private void BuildTriangles()
+        {
+            worldTriangles.Clear();
+            foreach (var plane in Planes)
+            {
+                for (int i = 0; i < plane.Indices.Length; i += 3)
+                {
+                    int i1 = plane.Indices[i];
+                    int i2 = plane.Indices[i + 1];
+                    int i3 = plane.Indices[i + 2];
+
+                    Vector3 v1 = plane.Vertices[i1].Position;
+                    Vector3 v2 = plane.Vertices[i2].Position;
+                    Vector3 v3 = plane.Vertices[i3].Position;
+
+                    v1 = Vector3.Transform(v1, Transform);
+                    v2 = Vector3.Transform(v2, Transform);
+                    v3 = Vector3.Transform(v3, Transform);
+
+                    worldTriangles.Add(new Triangle { A = v1, B = v2, C = v3 });
+                }
+            }
+        }
+        public float? Raycast(Ray ray)
+        {
+            float? closest = null;
+            foreach (var tri in worldTriangles)
+            {
+                if (RayIntersectsTriangle(ray, tri.A, tri.B, tri.C, out float distance))
+                {
+                    if (!closest.HasValue || distance < closest.Value)
+                        closest = distance;
+                }
+            }
+            return closest;
+        }
+        private static bool RayIntersectsTriangle(Ray ray, Vector3 v0, Vector3 v1, Vector3 v2, out float distance)
+        {
+            distance = 0;
+            const float EPS = 1e-8f;
+
+            Vector3 edge1 = v1 - v0;
+            Vector3 edge2 = v2 - v0;
+            Vector3 h = Vector3.Cross(ray.Direction, edge2);
+            float a = Vector3.Dot(edge1, h);
+            if (a > -EPS && a < EPS) return false;
+
+            float f = 1.0f / a;
+            Vector3 s = ray.Position - v0;
+            float u = f * Vector3.Dot(s, h);
+            if (u < 0.0f || u > 1.0f) return false;
+
+            Vector3 q = Vector3.Cross(s, edge1);
+            float v = f * Vector3.Dot(ray.Direction, q);
+            if (v < 0.0f || u + v > 1.0f) return false;
+
+            float t = f * Vector3.Dot(edge2, q);
+            if (t > EPS)
+            {
+                distance = t;
+                return true;
+            }
+            return false;
         }
 
         public override void InitBuffers(ID3D11Device d3d, ID3D11DeviceContext context)
@@ -111,7 +183,8 @@ namespace Rendering.Graphics
 
         public override void SetTransform(Matrix4x4 matrix)
         {
-            this.Transform = matrix;
+            this.Transform = matrix; 
+            BuildTriangles();
         }
 
         public override void Shutdown()
