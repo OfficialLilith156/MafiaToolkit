@@ -84,7 +84,6 @@ namespace Mafia2Tool
             toolStripDropDownButton3 = new System.Windows.Forms.ToolStripDropDownButton();
             moveGroupNodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            addEdgesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             recalculateDistanceNodesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripDropDownButton5 = new System.Windows.Forms.ToolStripDropDownButton();
             removeSectorSoundToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -382,14 +381,14 @@ namespace Mafia2Tool
             // ViewTopButton
             // 
             ViewTopButton.Name = "ViewTopButton";
-            ViewTopButton.Size = new System.Drawing.Size(117, 22);
+            ViewTopButton.Size = new System.Drawing.Size(180, 22);
             ViewTopButton.Text = "$TOP";
             ViewTopButton.Click += OnViewTopButtonClicked;
             // 
             // ViewFrontButton
             // 
             ViewFrontButton.Name = "ViewFrontButton";
-            ViewFrontButton.Size = new System.Drawing.Size(117, 22);
+            ViewFrontButton.Size = new System.Drawing.Size(180, 22);
             ViewFrontButton.Text = "$FRONT";
             ViewFrontButton.Click += OnViewFrontButtonClicked;
             // 
@@ -525,7 +524,7 @@ namespace Mafia2Tool
             // toolStripDropDownButton3
             // 
             toolStripDropDownButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            toolStripDropDownButton3.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { moveGroupNodeToolStripMenuItem, addToolStripMenuItem, addEdgesToolStripMenuItem, recalculateDistanceNodesToolStripMenuItem });
+            toolStripDropDownButton3.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { moveGroupNodeToolStripMenuItem, addToolStripMenuItem, recalculateDistanceNodesToolStripMenuItem });
             toolStripDropDownButton3.Image = (System.Drawing.Image)resources.GetObject("toolStripDropDownButton3.Image");
             toolStripDropDownButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
             toolStripDropDownButton3.Name = "toolStripDropDownButton3";
@@ -547,11 +546,6 @@ namespace Mafia2Tool
             addToolStripMenuItem.Text = "Add Node";
             addToolStripMenuItem.Click += AddNavVertexButton_Click;
             // 
-            // addEdgesToolStripMenuItem
-            // 
-            addEdgesToolStripMenuItem.Name = "addEdgesToolStripMenuItem";
-            addEdgesToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
-            // 
             // recalculateDistanceNodesToolStripMenuItem
             // 
             recalculateDistanceNodesToolStripMenuItem.Name = "recalculateDistanceNodesToolStripMenuItem";
@@ -572,28 +566,28 @@ namespace Mafia2Tool
             // removeSectorSoundToolStripMenuItem
             // 
             removeSectorSoundToolStripMenuItem.Name = "removeSectorSoundToolStripMenuItem";
-            removeSectorSoundToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            removeSectorSoundToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             removeSectorSoundToolStripMenuItem.Text = "Load Sector Sound";
             removeSectorSoundToolStripMenuItem.Click += BtnLoadSoundSectors_Click;
             // 
             // addSectorToolStripMenuItem
             // 
             addSectorToolStripMenuItem.Name = "addSectorToolStripMenuItem";
-            addSectorToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            addSectorToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             addSectorToolStripMenuItem.Text = "Add Sector";
             addSectorToolStripMenuItem.Click += BtnAddSoundSector_Click;
             // 
             // addPortalToolStripMenuItem
             // 
             addPortalToolStripMenuItem.Name = "addPortalToolStripMenuItem";
-            addPortalToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            addPortalToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             addPortalToolStripMenuItem.Text = "Add Portal";
             addPortalToolStripMenuItem.Click += BtnAddSoundPortal_Click;
             // 
             // deleteItemToolStripMenuItem
             // 
             deleteItemToolStripMenuItem.Name = "deleteItemToolStripMenuItem";
-            deleteItemToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            deleteItemToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             deleteItemToolStripMenuItem.Text = "Delete Item";
             deleteItemToolStripMenuItem.Click += BtnDeleteSoundItem_Click;
             // 
@@ -721,7 +715,6 @@ namespace Mafia2Tool
         private System.Windows.Forms.ToolStripMenuItem addPortalToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteItemToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem addEdgesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem recalculateDistanceNodesToolStripMenuItem;
     }
 }

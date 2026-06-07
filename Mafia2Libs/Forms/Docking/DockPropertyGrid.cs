@@ -42,13 +42,6 @@ namespace Forms.Docking
             hasLoadedMaterials = false;
             currentMaterials = new Dictionary<TextureEntry, MaterialStruct>();
 
-            RotationXNumeric.ValueChanged += Rotation_ValueChanged;
-            RotationYNumeric.ValueChanged += Rotation_ValueChanged;
-            RotationZNumeric.ValueChanged += Rotation_ValueChanged;
-            RotationXNumeric.ValueChanged += InvertZRotation_ValueChanged;
-            RotationYNumeric.ValueChanged += InvertZRotation_ValueChanged;
-            RotationZNumeric.ValueChanged += InvertZRotation_ValueChanged;
-
             materialContextMenu = new ContextMenuStrip();
             var copyItem = new ToolStripMenuItem("Copy");
             var pasteItem = new ToolStripMenuItem("Paste");
@@ -223,7 +216,6 @@ namespace Forms.Docking
                 ScaleXNumeric.Value = Convert.ToDecimal(scale.X);
                 ScaleYNumeric.Value = Convert.ToDecimal(scale.Y);
                 ScaleZNumeric.Value = Convert.ToDecimal(scale.Z);
-                UpdateQuaternion();
             }
             else if (currentObject is ResourceTypes.Collisions.Collision.Placement)
             {
@@ -479,37 +471,6 @@ namespace Forms.Docking
                 RotationZNumeric.Value
             );
             Clipboard.SetText(copiedText);
-        }
-        private void Rotation_ValueChanged(object sender, EventArgs e)
-        {
-            UpdateQuaternion();
-        }
-        private void InvertZRotation_ValueChanged(object sender, EventArgs e)
-        {
-            InvertZUpdateQuaternion();
-        }
-
-        private void UpdateQuaternion()
-        {
-            Quaternion quat = GetQuaternionFromCurrentAngles();
-            textQuaternion.Text = $"X:{quat.X:F6} Y:{quat.Y:F6} Z:{quat.Z:F6} W:{quat.W:F6}";
-        }
-
-        private void InvertZUpdateQuaternion()
-        {
-            Quaternion quat = GetQuaternionFromCurrentAngles();
-            quat.Z = -quat.Z;
-            quat.X = -quat.X;
-            quat.Y = -quat.Y;
-            textInvertZQuaternion.Text = $"X:{quat.X:F6} Y:{quat.Y:F6} Z:{quat.Z:F6} W:{quat.W:F6}";
-        }
-        private void ButtonQuatCopy_Click(object sender, EventArgs e)
-        {
-            Clipboard.SetText(textQuaternion.Text);
-        }
-        private void ButtonQuatInvertZCopy_Click(object sender, EventArgs e)
-        {
-            Clipboard.SetText(textInvertZQuaternion.Text);
         }
     }
 }
