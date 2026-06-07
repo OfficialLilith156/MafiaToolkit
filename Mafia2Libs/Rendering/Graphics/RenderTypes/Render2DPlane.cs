@@ -13,6 +13,9 @@ namespace Rendering.Graphics
         private ushort[] Indices;
         private Color colour;
 
+        private Color originalColor;
+        private bool isSelected = false;
+
         public Render2DPlane()
         {
             DoRender = true;
@@ -21,8 +24,11 @@ namespace Rendering.Graphics
             colour = Color.White;
         }
 
-        public void Init(ILaneDefinition LaneDefinition, Vector3[] Points, float Width, float Offset, float zOffset, System.Drawing.Color InColour)
+        public void Init(ILaneDefinition LaneDefinition, Vector3[] Points, float Width, float Offset, float zOffset, Color InColour)
         {
+            originalColor = InColour;
+            colour = InColour;
+
             Vertices = new VertexLayouts.BasicLayout.Vertex[Points.Length * 2];
             int NumTris = 2 * (Points.Length - 1);
             Indices = new ushort[NumTris * 3];
@@ -143,12 +149,18 @@ namespace Rendering.Graphics
 
         public override void Select()
         {
-            //TODO
+            if (isSelected) return;
+            isSelected = true;
+            colour = Color.Red;
+            bIsUpdatedNeeded = true;
         }
 
         public override void Unselect()
         {
-            //TODO
+            if (!isSelected) return;
+            isSelected = false;
+            colour = originalColor;
+            bIsUpdatedNeeded = true;
         }
     }
 }

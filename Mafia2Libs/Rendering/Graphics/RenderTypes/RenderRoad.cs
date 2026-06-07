@@ -137,11 +137,15 @@ namespace Rendering.Graphics
         public override void Select()
         {
             Spline.Select();
+            foreach (var plane in Planes)
+                plane.Select();
         }
 
         public override void Unselect()
         {
             Spline.Unselect();
+            foreach (var plane in Planes)
+                plane.Unselect();
         }
     }
 }
