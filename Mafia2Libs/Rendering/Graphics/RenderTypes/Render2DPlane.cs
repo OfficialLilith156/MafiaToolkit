@@ -90,11 +90,11 @@ namespace Rendering.Graphics
             {
                 return;
             }
-            if (!camera.CheckBBoxFrustum(Transform, BoundingBox))
-                return;
+            //if (!camera.CheckBBoxFrustum(Transform, BoundingBox))
+            //    return;
 
-            if (!camera.CheckBBoxFrustum(Transform, BoundingBox))
-                return;
+            //if (!camera.CheckBBoxFrustum(Transform, BoundingBox))
+            //    return;
 
             VertexBufferView VertexBufferView = new VertexBufferView(vertexBuffer, Unsafe.SizeOf<VertexLayouts.BasicLayout.Vertex>(), 0);
             deviceContext.IASetVertexBuffers(0, VertexBufferView);
