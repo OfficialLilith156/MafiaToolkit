@@ -1,14 +1,16 @@
-﻿using Mafia2Tool;
+﻿using Gibbed.Squish;
+using Mafia2Tool;
+using Microsoft.Win32;
 using ResourceTypes.Actors;
+using ResourceTypes.Navigation.Traffic;
 using ResourceTypes.SoundTable;
 using System;
-using Microsoft.Win32;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using Utils.Settings;
 using static ResourceTypes.FrameNameTable.FrameNameTable;
-using Gibbed.Squish;
-using ResourceTypes.Navigation.Traffic;
 
 namespace Core.IO
 {
@@ -69,49 +71,114 @@ namespace Core.IO
 
         public override bool Open()
         {
-            // TODO: Make editor
+            DialogResult result = MessageBox.Show(
+                "What do you want to do?\n\nYes - Open in Map Editor\nNo - Export to XML\nCancel - Cancel",
+                "Roadmap Action",
+                MessageBoxButtons.YesNoCancel,
+                MessageBoxIcon.Question);
 
-            SaveFileDialog saveFile = new SaveFileDialog()
+            if (result == DialogResult.Yes)
             {
-                InitialDirectory = Path.GetDirectoryName(file.FullName),
-                FileName = Path.GetFileNameWithoutExtension(file.FullName),
-                Filter = "XML (*.xml)|*.xml"
-            };
+                SceneData sceneData = new SceneData();
+                sceneData.ScenePath = Path.GetDirectoryName(file.FullName);
 
-            if (saveFile.ShowDialog() == true)
-            {
-                ConvertToXML(GetNewRoadmap(), saveFile.FileName);
+                IRoadmap roadmap = GetNewRoadmap();
+                using (FileStream fstream = File.OpenRead(file.FullName))
+                {
+                    roadmap.Read(fstream);
+                }
+                sceneData.roadMap = roadmap;
+                sceneData.roadMapFilePath = file.FullName;
+
+                bool oldLoadFrame = ToolkitSettings.LoadFrameResource;
+                bool oldLoadCollisions = ToolkitSettings.LoadCollisions;
+                bool oldLoadActors = ToolkitSettings.LoadActors;
+                bool oldLoadOBJData = ToolkitSettings.LoadOBJData;
+                bool oldLoadAIWorld = ToolkitSettings.LoadAIWorld;
+                bool oldLoadATP = ToolkitSettings.LoadATP;
+                bool oldLoadTranslokator = ToolkitSettings.LoadTranslokator;
+
+                ToolkitSettings.LoadFrameResource = false;
+                ToolkitSettings.LoadCollisions = false;
+                ToolkitSettings.LoadActors = false;
+                ToolkitSettings.LoadOBJData = false;
+                ToolkitSettings.LoadAIWorld = false;
+                ToolkitSettings.LoadATP = false;
+                ToolkitSettings.LoadTranslokator = false;
+                ToolkitSettings.LoadRoads = true;
+
+                try
+                {
+                    MapEditor editor = new MapEditor(file, sceneData);
+                    editor.ShowDialog();
+                }
+                catch (ObjectDisposedException ex) when (ex.ObjectName == "MapEditor")
+                {}
+                finally
+                {
+                    ToolkitSettings.LoadFrameResource = oldLoadFrame;
+                    ToolkitSettings.LoadCollisions = oldLoadCollisions;
+                    ToolkitSettings.LoadActors = oldLoadActors;
+                    ToolkitSettings.LoadOBJData = oldLoadOBJData;
+                    ToolkitSettings.LoadAIWorld = oldLoadAIWorld;
+                    ToolkitSettings.LoadATP = oldLoadATP;
+                    ToolkitSettings.LoadTranslokator = oldLoadTranslokator;
+                }
+
+                return true;
             }
+            else if (result == DialogResult.No)
+            {
+                System.Windows.Forms.SaveFileDialog saveFile = new System.Windows.Forms.SaveFileDialog()
+                {
+                    InitialDirectory = Path.GetDirectoryName(file.FullName),
+                    FileName = Path.GetFileNameWithoutExtension(file.FullName),
+                    Filter = "XML (*.xml)|*.xml"
+                };
 
-            return true;
+                if (saveFile.ShowDialog() == DialogResult.OK)
+                {
+                    IRoadmap roadmap = GetNewRoadmap();
+                    using (FileStream fstream = File.OpenRead(file.FullName))
+                    {
+                        roadmap.Read(fstream);
+                    }
+                    ConvertToXML(roadmap, saveFile.FileName);
+                }
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public override void Save()
         {
-            OpenFileDialog openFile = new OpenFileDialog()
+            System.Windows.Forms.OpenFileDialog openFile = new System.Windows.Forms.OpenFileDialog()
             {
                 InitialDirectory = Path.GetDirectoryName(file.FullName),
                 FileName = Path.GetFileNameWithoutExtension(file.FullName),
                 Filter = "XML (*.xml)|*.xml"
             };
 
-            if (openFile.ShowDialog() == true)
+            if (openFile.ShowDialog() == DialogResult.OK)
             {
                 IRoadmap NewRoadmap = ConvertFromXml(GetNewRoadmapFactory(), openFile.FileName);
-                
+
                 // Update spline lengths (todo add this on roadmap probs)
-                foreach(IRoadSpline Spline in NewRoadmap.Splines)
+                foreach (IRoadSpline Spline in NewRoadmap.Splines)
                 {
                     Spline.CalculateLength();
                 }
 
-                foreach(ICostMapEntry CostEntry in NewRoadmap.CostMap)
+                foreach (ICostMapEntry CostEntry in NewRoadmap.CostMap)
                 {
                     // TODO: Make it work for crossroad/junctions, not been determined
-                    if(CostEntry.RoadGraphEdgeType == RoadGraphEdgeType.Road)
+                    if (CostEntry.RoadGraphEdgeType == RoadGraphEdgeType.Road)
                     {
                         IRoadDefinition Road = NewRoadmap.Roads[CostEntry.RoadGraphEdgeLink];
-                        if(Road != null && Road.RoadType == RoadType.Road) // Only for roads for now.
+                        if (Road != null && Road.RoadType == RoadType.Road) // Only for roads for now.
                         {
                             CostEntry.Cost = NewRoadmap.CalculateRoadCost(Road);
                         }
