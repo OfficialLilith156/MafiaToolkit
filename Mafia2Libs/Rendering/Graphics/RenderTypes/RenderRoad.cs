@@ -109,6 +109,12 @@ namespace Rendering.Graphics
                 }
             }
         }
+        public void UpdateFromDefinition(IRoadDefinition roadDef)
+        {
+            float t = roadDef.MaxSpawnedCars / 10f;
+            var color = new Vector4(t, 1 - t, 0, 1);
+        }
+
         public float? Raycast(Ray ray)
         {
             float? closest = null;

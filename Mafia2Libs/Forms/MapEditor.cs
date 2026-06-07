@@ -2042,6 +2042,22 @@ namespace Mafia2Tool
             }
         }
 
+        private void SaveButtonRoadMap_Click(object sender, EventArgs e)
+        {
+            Cursor.Current = Cursors.WaitCursor;
+            try
+            {
+                SceneData.SaveRoadMap();
+                MessageBox.Show("Road map saved successfully.", "Toolkit", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {}
+            finally
+            {
+                Cursor.Current = Cursors.Default;
+            }
+        }
+
         private void SaveSoundSectors()
         {
             if (string.IsNullOrEmpty(_soundSectorsFilePath))
@@ -2467,6 +2483,11 @@ namespace Mafia2Tool
             }
             return null;
         }
+        private class RoadNodeData
+        {
+            public IRoadDefinition RoadDef { get; set; }
+            public RenderRoad RenderRoad { get; set; }
+        }
 
         private void BuildRenderObjects()
         {
@@ -2504,10 +2525,11 @@ namespace Mafia2Tool
                     assets.Add(generatedID, road);
                     RegisterRoad(generatedID, road, road.BBox);
 
+                    var roadData = new RoadNodeData { RoadDef = RoadDef, RenderRoad = road };
                     TreeNode child = new TreeNode(i.ToString());
                     child.Text = "Road ID: " + i;
                     child.Name = generatedID.ToString();
-                    child.Tag = road;
+                    child.Tag = roadData;
                     node.Nodes.Add(child);
                 }
                 for (int i = 0; i < SceneData.roadMap.Crossroads.Count; i++)
@@ -3419,6 +3441,12 @@ namespace Mafia2Tool
                 SpatialGrid grid = (node.Parent.Tag as SpatialGrid);
                 grid.SetSelectedCell(node.Index);
             }
+            else if (node.Tag is RoadNodeData roadData)
+            {
+                Graphics.SelectEntry(int.Parse(node.Name));
+                dPropertyGrid.SetObject(roadData.RoadDef);
+                return;
+            }
             else if (node.Parent != null && node.Parent.Tag is RenderNav)
             {
                 if (node.Tag is OBJData.VertexStruct vertex)
@@ -3798,6 +3826,24 @@ namespace Mafia2Tool
                     FrameHeaderScene scene = (selected.Tag as FrameHeaderScene);
                     selected.Text = scene.ToString();
                 }
+                else if (selected.Tag is IRoadDefinition roadDef)
+                {
+                    dPropertyGrid.UpdateObject();
+
+                    var roadNodeData = FindRoadNodeData(selected);
+                    if (roadNodeData != null)
+                    {
+                        roadNodeData.RenderRoad.UpdateFromDefinition(roadDef);
+                    }
+
+                    int edgeIndex = Array.FindIndex(SceneData.roadMap.CostMap.ToArray(),
+                        entry => entry.RoadGraphEdgeType == RoadGraphEdgeType.Road &&
+                                 entry.RoadGraphEdgeLink == roadDef.RoadGraphEdgeIndex);
+                    if (edgeIndex != -1)
+                    {
+                        SceneData.roadMap.CostMap[edgeIndex].Cost = SceneData.roadMap.CalculateRoadCost(roadDef);
+                    }
+                }
                 else if (selected.Tag is Collision.Placement)
                 {
                     dPropertyGrid.UpdateObject();
@@ -3896,6 +3942,12 @@ namespace Mafia2Tool
                     Graphics.SelectEntry(colFrame.RefID);
                 }
             }
+        }
+        private RoadNodeData FindRoadNodeData(TreeNode node)
+        {
+            while (node != null && !(node.Tag is RoadNodeData))
+                node = node.Parent;
+            return node?.Tag as RoadNodeData;
         }
         private void AddNavVertexButton_Click(object sender, EventArgs e)
         {

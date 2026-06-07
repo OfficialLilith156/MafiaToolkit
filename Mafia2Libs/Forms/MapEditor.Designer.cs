@@ -56,6 +56,7 @@ namespace Mafia2Tool
             saveAnimalTraffciPathToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             saveAllnotSafeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             saveSoundSectorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            saveRoadMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             EditButton = new System.Windows.Forms.ToolStripDropDownButton();
             AddButton = new System.Windows.Forms.ToolStripMenuItem();
             Button_ImportFrame = new System.Windows.Forms.ToolStripMenuItem();
@@ -243,7 +244,7 @@ namespace Mafia2Tool
             // toolStripDropDownButton4
             // 
             toolStripDropDownButton4.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            toolStripDropDownButton4.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { saveSceneToolStripMenuItem, saveCollisionToolStripMenuItem, saveTranslocatorToolStripMenuItem, saveActorToolStripMenuItem, saveOBJDataToolStripMenuItem, saveAIWorldToolStripMenuItem, saveAllItemDescToolStripMenuItem, saveItemDescSelectedToolStripMenuItem, saveAnimalTraffciPathToolStripMenuItem, saveAllnotSafeToolStripMenuItem, saveSoundSectorToolStripMenuItem });
+            toolStripDropDownButton4.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { saveSceneToolStripMenuItem, saveCollisionToolStripMenuItem, saveTranslocatorToolStripMenuItem, saveActorToolStripMenuItem, saveOBJDataToolStripMenuItem, saveAIWorldToolStripMenuItem, saveAllItemDescToolStripMenuItem, saveItemDescSelectedToolStripMenuItem, saveAnimalTraffciPathToolStripMenuItem, saveAllnotSafeToolStripMenuItem, saveSoundSectorToolStripMenuItem, saveRoadMapToolStripMenuItem });
             toolStripDropDownButton4.Image = (System.Drawing.Image)resources.GetObject("toolStripDropDownButton4.Image");
             toolStripDropDownButton4.ImageTransparentColor = System.Drawing.Color.Magenta;
             toolStripDropDownButton4.Name = "toolStripDropDownButton4";
@@ -327,6 +328,13 @@ namespace Mafia2Tool
             saveSoundSectorToolStripMenuItem.Text = "Save SoundSector";
             saveSoundSectorToolStripMenuItem.Click += SaveButtonSoundSector_Click;
             // 
+            // saveRoadMapToolStripMenuItem
+            // 
+            saveRoadMapToolStripMenuItem.Name = "saveRoadMapToolStripMenuItem";
+            saveRoadMapToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
+            saveRoadMapToolStripMenuItem.Text = "Save Road Map";
+            saveRoadMapToolStripMenuItem.Click += SaveButtonRoadMap_Click;
+            // 
             // EditButton
             // 
             EditButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
@@ -381,14 +389,14 @@ namespace Mafia2Tool
             // ViewTopButton
             // 
             ViewTopButton.Name = "ViewTopButton";
-            ViewTopButton.Size = new System.Drawing.Size(180, 22);
+            ViewTopButton.Size = new System.Drawing.Size(117, 22);
             ViewTopButton.Text = "$TOP";
             ViewTopButton.Click += OnViewTopButtonClicked;
             // 
             // ViewFrontButton
             // 
             ViewFrontButton.Name = "ViewFrontButton";
-            ViewFrontButton.Size = new System.Drawing.Size(180, 22);
+            ViewFrontButton.Size = new System.Drawing.Size(117, 22);
             ViewFrontButton.Text = "$FRONT";
             ViewFrontButton.Click += OnViewFrontButtonClicked;
             // 
@@ -566,28 +574,28 @@ namespace Mafia2Tool
             // removeSectorSoundToolStripMenuItem
             // 
             removeSectorSoundToolStripMenuItem.Name = "removeSectorSoundToolStripMenuItem";
-            removeSectorSoundToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            removeSectorSoundToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
             removeSectorSoundToolStripMenuItem.Text = "Load Sector Sound";
             removeSectorSoundToolStripMenuItem.Click += BtnLoadSoundSectors_Click;
             // 
             // addSectorToolStripMenuItem
             // 
             addSectorToolStripMenuItem.Name = "addSectorToolStripMenuItem";
-            addSectorToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            addSectorToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
             addSectorToolStripMenuItem.Text = "Add Sector";
             addSectorToolStripMenuItem.Click += BtnAddSoundSector_Click;
             // 
             // addPortalToolStripMenuItem
             // 
             addPortalToolStripMenuItem.Name = "addPortalToolStripMenuItem";
-            addPortalToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            addPortalToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
             addPortalToolStripMenuItem.Text = "Add Portal";
             addPortalToolStripMenuItem.Click += BtnAddSoundPortal_Click;
             // 
             // deleteItemToolStripMenuItem
             // 
             deleteItemToolStripMenuItem.Name = "deleteItemToolStripMenuItem";
-            deleteItemToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            deleteItemToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
             deleteItemToolStripMenuItem.Text = "Delete Item";
             deleteItemToolStripMenuItem.Click += BtnDeleteSoundItem_Click;
             // 
@@ -716,5 +724,6 @@ namespace Mafia2Tool
         private System.Windows.Forms.ToolStripMenuItem deleteItemToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem recalculateDistanceNodesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveRoadMapToolStripMenuItem;
     }
 }

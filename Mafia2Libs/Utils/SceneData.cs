@@ -6,6 +6,7 @@ using System.IO;
 using System.Windows.Forms;
 using Utils.Settings;
 using Utils.Language;
+using Gibbed.IO;
 using ResourceTypes.BufferPools;
 using ResourceTypes.City;
 using ResourceTypes.ItemDesc;
@@ -39,6 +40,7 @@ namespace Mafia2Tool
         public CityAreas CityAreas;
         public CityShops CityShops;
         public IRoadmap roadMap;
+        public string roadMapFilePath;
         public AnimalTrafficLoader ATLoader;
         public NAVData[] AIWorlds;
         public NAVData[] OBJData;
@@ -178,6 +180,7 @@ namespace Mafia2Tool
                         {
                             roadMap = new RoadmapCe();
                             roadMap.Read(RoadmapStream);
+                            roadMapFilePath = item;
                         }
                     }
                 }
@@ -230,7 +233,33 @@ namespace Mafia2Tool
             sdsContent.WriteToFile();
         }
 
+        public void SaveRoadMap()
+        {
+            if (roadMap == null)
+            {
+                MessageBox.Show("No road map data loaded.", "Toolkit", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
+            if (string.IsNullOrEmpty(roadMapFilePath))
+            {
+                MessageBox.Show("Road map file path is unknown. Cannot save.", "Toolkit", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            try
+            {
+                using (FileStream fs = new FileStream(roadMapFilePath, FileMode.Create))
+                {
+                    roadMap.Write(fs, Endian.Little);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to save road map: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                throw;
+            }
+        }
         public void SavePrefabs()
         {
             if (Prefabs == null || Prefabs.Prefabs.Length == 0)
