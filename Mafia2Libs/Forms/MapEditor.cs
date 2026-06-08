@@ -4259,8 +4259,19 @@ namespace Mafia2Tool
 
         private void JumpButton_Click(object sender, EventArgs e)
         {
-            Graphics.Camera.Position = dSceneTree.JumpToHelper();
-            UpdatePositionElement(Graphics.Camera.Position);
+            TreeNode selectedNode = dSceneTree.SelectedNode;
+
+            if (selectedNode?.Tag is RenderJunction junction && junction.Data is ICrossroad crossroad)
+            {
+                Vector3 pivotPoint = crossroad.PivotPoint;
+                Graphics.Camera.Position = pivotPoint;
+                UpdatePositionElement(pivotPoint);
+            }
+            else
+            {
+                Graphics.Camera.Position = dSceneTree.JumpToHelper();
+                UpdatePositionElement(Graphics.Camera.Position);
+            }
         }
 
         private void ImportButton_Click(object sender, EventArgs e)
