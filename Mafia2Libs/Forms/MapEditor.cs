@@ -3447,6 +3447,12 @@ namespace Mafia2Tool
                 dPropertyGrid.SetObject(roadData.RoadDef);
                 return;
             }
+            else if (node.Tag is RenderJunction junction)
+            {
+                Graphics.SelectEntry(int.Parse(node.Name));
+                dPropertyGrid.SetObject(junction.Data); 
+                return;
+            }
             else if (node.Parent != null && node.Parent.Tag is RenderNav)
             {
                 if (node.Tag is OBJData.VertexStruct vertex)
@@ -3843,6 +3849,24 @@ namespace Mafia2Tool
                     {
                         SceneData.roadMap.CostMap[edgeIndex].Cost = SceneData.roadMap.CalculateRoadCost(roadDef);
                     }
+                }
+                else if (selected.Tag is ICrossroad crossroad)
+                {
+                    dPropertyGrid.UpdateObject();
+
+                    if (selected.Tag is RenderJunction junction)
+                    {
+                        junction.UpdateVertices();
+                    }
+                    else
+                    {
+                        TreeNode parent = selected.Parent;
+                        while (parent != null && !(parent.Tag is RenderJunction))
+                            parent = parent.Parent;
+                        if (parent?.Tag is RenderJunction parentJunction)
+                            parentJunction.UpdateVertices();
+                    }
+                    Graphics.SelectEntry(int.Parse(selected.Name));
                 }
                 else if (selected.Tag is Collision.Placement)
                 {

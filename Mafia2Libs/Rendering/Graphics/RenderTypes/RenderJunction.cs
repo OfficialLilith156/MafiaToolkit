@@ -18,6 +18,7 @@ namespace Rendering.Graphics
         }
 
         private ICrossroad OurData;
+        public ICrossroad Data => OurData;
         private PrimitiveBatch SplineBatch;
 
         private GraphicsClass OwnerGraphics;
