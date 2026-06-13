@@ -1,6 +1,4 @@
 ﻿using Gibbed.IO;
-using Mafia2Tool.Forms;
-
 using ResourceTypes.Navigation.Traffic;
 using System;
 using System.Collections.Generic;
@@ -9,7 +7,6 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Windows.Forms;
-using ZLibNet;
 
 namespace RoadmapEditor
 {
@@ -42,6 +39,7 @@ namespace RoadmapEditor
         private PointF _offset;
         private const float MaxSegmentLength = 7.0f;
         private Button _btnNewRoad, _btnDeleteRoad;
+        private Dictionary<IRoadSpline, RoadDrawData> _roadDrawCache = new Dictionary<IRoadSpline, RoadDrawData>();
 
         private enum FileFormat { Ce, De, Xml }
 
@@ -172,7 +170,83 @@ namespace RoadmapEditor
             };
         }
 
+        private class RoadDrawData
+        {
+            public List<List<Vector3[]>> LanePolygons;
+            public List<Color> LaneColors;
+        }
+        
+        private RoadDrawData BuildRoadGeometry(IRoadDefinition roadDef, IRoadSpline spline)
+        {
+            var data = new RoadDrawData
+            {
+                LanePolygons = new List<List<Vector3[]>>(),
+                LaneColors = new List<Color>()
+            };
+            if (spline.Points.Count < 2) return data;
 
+            float leftWidth = 0f;
+            for (int i = 0; i < roadDef.OppositeLanesCount && i < roadDef.Lanes.Count; i++)
+                leftWidth += roadDef.Lanes[i].Width;
+
+            float currentOffset = -leftWidth;
+            var points = spline.Points.ToList();
+
+            for (int laneIdx = 0; laneIdx < roadDef.Lanes.Count; laneIdx++)
+            {
+                var lane = roadDef.Lanes[laneIdx];
+                float leftEdge = currentOffset;
+                float rightEdge = currentOffset + lane.Width;
+
+                var segments = new List<Vector3[]>();
+                for (int i = 0; i < points.Count - 1; i++)
+                {
+                    Vector3 p1 = points[i];
+                    Vector3 p2 = points[i + 1];
+                    Vector3 dir = Vector3.Normalize(p2 - p1);
+                    Vector3 perp = new Vector3(-dir.Z, 0, dir.X);
+
+                    Vector3 topLeft = p1 + perp * leftEdge;
+                    Vector3 topRight = p1 + perp * rightEdge;
+                    Vector3 botLeft = p2 + perp * leftEdge;
+                    Vector3 botRight = p2 + perp * rightEdge;
+
+                    Vector3[] quad = new Vector3[] { topLeft, topRight, botRight, botLeft };
+                    segments.Add(quad);
+                }
+                data.LanePolygons.Add(segments);
+                data.LaneColors.Add(GetLaneColor(lane.LaneType));
+                currentOffset += lane.Width;
+            }
+            return data;
+        }
+
+        private Color GetLaneColor(LaneType type)
+        {
+            switch (type)
+            {
+                case LaneType.MainRoad: return Color.Chartreuse;
+                case LaneType.Byroad: return Color.Fuchsia;
+                case LaneType.ExclImpassable: return Color.DimGray;
+                case LaneType.EmptyRoad: return Color.Yellow;
+                case LaneType.Parking: return Color.CornflowerBlue;
+                default: return Color.White;
+            }
+        }
+        private void RebuildAllRoadDrawData()
+        {
+            _roadDrawCache.Clear();
+            if (_roadmap == null) return;
+            for (int i = 0; i < _roadmap.Splines.Count; i++)
+            {
+                var spline = _roadmap.Splines[i];
+                var road = _roadmap.Roads.FirstOrDefault(r => r.RoadSplineIndex == i);
+                if (road != null)
+                {
+                    _roadDrawCache[spline] = BuildRoadGeometry(road, spline);
+                }
+            }
+        }
 
         private void OpenFile(object sender, EventArgs e)
         {
@@ -223,6 +297,12 @@ namespace RoadmapEditor
                         break;
                 }
             }
+            for (int i = 0; i < _roadmap.Splines.Count && i < _roadmap.Roads.Count; i++)
+            {
+                _roadmap.Roads[i].RoadSplineIndex = (ushort)i;
+            }
+
+            RebuildAllRoadDrawData();
         }
 
         private void SaveFile(object sender, EventArgs e)
@@ -359,7 +439,6 @@ namespace RoadmapEditor
             _canvas.Invalidate();
         }
 
-
         private void ComputeAllBounds()
         {
             if (_roadmap == null || (_roadmap.Splines.Count == 0 && _roadmap.Crossroads.Count == 0))
@@ -428,61 +507,166 @@ namespace RoadmapEditor
             _offset = new PointF(screenCenterX - centerX * _scale, screenCenterZ - centerZ * _scale);
         }
 
-
-
         private void OnCanvasPaint(object sender, PaintEventArgs e)
         {
             if (_roadmap == null) return;
-
             var g = e.Graphics;
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
             DrawGrid(g);
 
+            bool isTopDown = (_viewMode == 0);
+
             foreach (var spline in _roadmap.Splines)
-                DrawSpline(g, spline, spline == _currentSpline && !_isJunctionMode, Color.LimeGreen, Color.Gray);
+            {
+                int idx = _roadmap.Splines.IndexOf(spline);
+                var roadDef = _roadmap.Roads.FirstOrDefault(r => r.RoadSplineIndex == idx);
+
+                if (isTopDown && roadDef != null && _roadDrawCache.TryGetValue(spline, out var drawData))
+                {
+                    DrawRoadLanes(g, drawData, false);
+                }
+                else if (roadDef != null)
+                {
+                    DrawLanesAsLines(g, spline, roadDef);
+                }
+                else
+                {
+                    float penWidth = GetScaledPenWidth(2f);
+                    using (Pen pen = new Pen(Color.Gray, penWidth))
+                        DrawSplineLines(g, spline, pen);
+                }
+            }
 
             foreach (var crossroad in _roadmap.Crossroads)
-            {
                 foreach (var junction in crossroad.Junctions)
                 {
-                    bool isActive = (_currentSpline == junction.Spline && _isJunctionMode);
-                    DrawSpline(g, junction.Spline, isActive, Color.Orange, Color.DarkOrange);
+                    using (Pen pen = new Pen(Color.DarkOrange, 1.5f))
+                        DrawSplineLines(g, junction.Spline, pen);
+                }
+
+            if (_currentSpline != null)
+            {
+                for (int i = 0; i < _currentSpline.Points.Count; i++)
+                {
+                    if (i == _selectedPointIndex) continue;
+                    var p = _currentSpline.Points[i];
+                    var screen = WorldToScreen(p);
+                    float radius = 4f;
+                    g.FillEllipse(Brushes.Red, screen.X - radius, screen.Y - radius, radius * 2, radius * 2);
+
+                    using (var font = new Font("Arial", 8))
+                    using (var brush = new SolidBrush(Color.LightBlue))
+                    {
+                        string idxStr = i.ToString();
+                        SizeF textSize = g.MeasureString(idxStr, font);
+                        g.DrawString(idxStr, font, brush,
+                            screen.X + radius + 2,
+                            screen.Y - textSize.Height / 2);
+                    }
+                }
+            }
+
+            if (_currentSpline != null && _selectedPointIndex >= 0)
+            {
+                var p = _currentSpline.Points[_selectedPointIndex];
+                var screen = WorldToScreen(p);
+                float radius = 6f;
+                g.FillEllipse(Brushes.Red, screen.X - radius, screen.Y - radius, radius * 2, radius * 2);
+
+                using (var font = new Font("Arial", 8))
+                using (var brush = new SolidBrush(Color.LightBlue))
+                {
+                    string idxStr = _selectedPointIndex.ToString();
+                    g.DrawString(idxStr, font, brush,
+                        screen.X + radius + 2,
+                        screen.Y - radius / 2);
                 }
             }
         }
-        private void DrawSpline(Graphics g, IRoadSpline spline, bool isActive, Color activeColor, Color inactiveColor)
+
+        private float GetScaledPenWidth(float baseWidth)
+        {
+            float scaled = baseWidth * _scale * 2f;
+            return Math.Clamp(scaled, 1f, 15f);
+        }
+
+        private void DrawSplineLines(Graphics g, IRoadSpline spline, Pen pen)
+        {
+            var points = spline.Points;
+            for (int i = 0; i < points.Count - 1; i++)
+            {
+                var p1 = WorldToScreen(points[i]);
+                var p2 = WorldToScreen(points[i + 1]);
+                g.DrawLine(pen, p1, p2);
+            }
+        }
+
+        private void DrawRoadLanes(Graphics g, RoadDrawData data, bool isSelected)
+        {
+            for (int i = 0; i < data.LanePolygons.Count; i++)
+            {
+                var color = data.LaneColors[i];
+                using (var brush = new SolidBrush(color))
+                {
+                    foreach (var quad in data.LanePolygons[i]) 
+                    {
+                        PointF[] screenQuad = quad.Select(v => WorldToScreen(v)).ToArray();
+                        g.FillPolygon(brush, screenQuad);
+                    }
+                }
+            }
+        }
+
+        private void DrawLanesAsLines(Graphics g, IRoadSpline spline, IRoadDefinition roadDef)
         {
             var points = spline.Points;
             if (points.Count < 2) return;
 
-            Color lineColor = isActive ? activeColor : inactiveColor;
-            using (var pen = new Pen(lineColor, 2))
+            float leftWidth = 0f;
+            for (int i = 0; i < roadDef.OppositeLanesCount && i < roadDef.Lanes.Count; i++)
+                leftWidth += roadDef.Lanes[i].Width;
+
+            float currentOffset = -leftWidth;
+            float lanePenWidth = GetScaledPenWidth(3f);
+
+            for (int laneIdx = 0; laneIdx < roadDef.Lanes.Count; laneIdx++)
+            {
+                var lane = roadDef.Lanes[laneIdx];
+                float laneOffset = currentOffset + lane.Width / 2f;
+                Color laneColor = GetLaneColor(lane.LaneType);
+
+                using (Pen pen = new Pen(laneColor, lanePenWidth))
+                {
+                    for (int i = 0; i < points.Count - 1; i++)
+                    {
+                        Vector3 p1 = points[i];
+                        Vector3 p2 = points[i + 1];
+
+                        Vector3 dir3D = p2 - p1;
+                        if (dir3D.Length() < 0.001f) continue;
+                        dir3D = Vector3.Normalize(dir3D);
+
+                        Vector3 perp3D = new Vector3(-dir3D.Z, 0, dir3D.X);
+                        Vector3 shifted1 = p1 + perp3D * laneOffset;
+                        Vector3 shifted2 = p2 + perp3D * laneOffset;
+
+                        PointF screen1 = WorldToScreen(shifted1);
+                        PointF screen2 = WorldToScreen(shifted2);
+
+                        g.DrawLine(pen, screen1, screen2);
+                    }
+                }
+                currentOffset += lane.Width;
+            }
+
+            float centerPenWidth = GetScaledPenWidth(1.5f);
+            using (Pen centerPen = new Pen(Color.White, centerPenWidth))
             {
                 for (int i = 0; i < points.Count - 1; i++)
                 {
-                    var p1 = WorldToScreen(points[i]);
-                    var p2 = WorldToScreen(points[i + 1]);
-                    g.DrawLine(pen, p1, p2);
-                }
-            }
-
-            if (isActive)
-            {
-                for (int i = 0; i < points.Count; i++)
-                {
-                    var screen = WorldToScreen(points[i]);
-                    var brush = (i == _selectedPointIndex) ? Brushes.Red : Brushes.Yellow;
-                    g.FillEllipse(brush, screen.X - 4, screen.Y - 4, 8, 8);
-                    g.DrawString(i.ToString(), SystemFonts.DefaultFont, Brushes.White, screen.X + 5, screen.Y - 8);
-                }
-            }
-            else
-            {
-                foreach (var p in points)
-                {
-                    var screen = WorldToScreen(p);
-                    using (var brush = new SolidBrush(Color.FromArgb(120, 120, 120)))
-                        g.FillEllipse(brush, screen.X - 2, screen.Y - 2, 4, 4);
+                    PointF screen1 = WorldToScreen(points[i]);
+                    PointF screen2 = WorldToScreen(points[i + 1]);
+                    g.DrawLine(centerPen, screen1, screen2);
                 }
             }
         }
@@ -1081,6 +1265,7 @@ namespace RoadmapEditor
         }
 
     }
+
     public class BufferedPanel : Panel
     {
         public BufferedPanel()
