@@ -221,11 +221,7 @@ namespace Core.IO
 
         private void ConvertToXML(IRoadmap Roadmap, string Filename)
         {
-            using (FileStream FStream = File.Open(file.FullName, FileMode.Open))
-            {
-                Roadmap.Read(FStream);
-            }
-
+           
             RoadmapXmlSerializer Serializer = new RoadmapXmlSerializer();
             Serializer.Serialize(Roadmap, Filename);
         }
