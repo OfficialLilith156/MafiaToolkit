@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using Utils.Settings;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Utils.Language;
@@ -17,6 +18,7 @@ namespace Toolkit.Forms
         {
             InitializeComponent();
             Localise();
+            this.Text = $"Unhandled Exception - Mafia Toolkit {ToolkitSettings.Version}";
         }
 
         private void Localise()
