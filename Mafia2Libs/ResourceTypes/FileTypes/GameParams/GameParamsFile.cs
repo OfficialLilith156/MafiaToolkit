@@ -31,17 +31,14 @@ namespace ResourceTypes.GameParams
         public const int TerminatorType = 8;
         public const int TypeIdBits = 4; // Calculated from game code
         public const int MaxRecursionDepth = 50; // Prevent stack overflow from malformed files
-
         [Category("Header")]
         public uint Flags { get; set; }
-
         [Category("Header")]
         public string Name { get; set; } = "";
-
         [Category("Data")]
         public List<GameParamEntry> Entries { get; set; } = new();
 
-        // Raw file data for round-trip preservation
+        private Dictionary<(int bytePos, int bitPos), byte[]> rawUnknownData = new();
         [PropertyIgnoreByReflector]
         [Browsable(false)]
         public byte[] RawFileData { get; set; } = Array.Empty<byte>();
@@ -68,7 +65,6 @@ namespace ResourceTypes.GameParams
         public void ReadFromFile(string fileName)
         {
             RawFileData = File.ReadAllBytes(fileName);
-
             using (MemoryStream ms = new(RawFileData))
             {
                 Read(ms);
@@ -81,13 +77,10 @@ namespace ResourceTypes.GameParams
             {
                 // File starts with 4-bit type header (type 5 = C_GameParams)
                 uint fileType = br.ReadBits(4);
-
                 // 32 bits: flags field
                 Flags = br.ReadBits(32);
-
                 // 32 bytes: name string (null-terminated)
                 Name = br.ReadString(32);
-
                 // Parse entries
                 ParseEntriesFromBitReader(br);
             }
@@ -101,24 +94,19 @@ namespace ResourceTypes.GameParams
             foundTypeId = 0;
             int maxScanBytes = 50000; // Scan up to 50KB for next valid entry (file is ~66KB)
             int startByte = br.CurrentBytePosition;
-
             for (int i = 0; i < maxScanBytes && br.CurrentBytePosition < br.TotalBytes - 40; i++)
             {
                 // Align to next byte boundary
                 br.RestorePosition((startByte + i, 0));
-
                 var savedPos = br.SavePosition();
-
                 // Try to read as a Container (type 5) or Array (type 6) - most top-level entries are these
                 int typeId = (int)br.ReadBits(TypeIdBits);
-
                 // Only look for Containers/Arrays - they're the main structural elements
                 if (typeId == 5 || typeId == 6)
                 {
                     // Try to read flags + name
                     uint flags = br.ReadBits(32);
                     string name = br.ReadString(32);
-
                     // Check if name looks valid:
                     // - Must be at least 3 chars (avoid false positives like "ew")
                     // - Must start with ASCII uppercase letter A-Z (game uses PascalCase)
@@ -137,7 +125,6 @@ namespace ResourceTypes.GameParams
                                 break;
                             }
                         }
-
                         if (validName)
                         {
                             // Found a valid-looking entry! Restore to just after typeId
@@ -148,7 +135,6 @@ namespace ResourceTypes.GameParams
                         }
                     }
                 }
-
                 // Also try other known types if they happen to have valid names
                 // This catches things like standalone Bool, Int, Float, String params at top level
                 else if (typeId >= 0 && typeId <= 4 || typeId == 7)
@@ -156,7 +142,6 @@ namespace ResourceTypes.GameParams
                     // Read flags + name (we already read typeId above)
                     uint flags = br.ReadBits(32);
                     string name = br.ReadString(32);
-
                     // Same validation as containers - ASCII only
                     if (name.Length >= 3 && name.Length <= 30 && name[0] >= 'A' && name[0] <= 'Z')
                     {
@@ -171,7 +156,6 @@ namespace ResourceTypes.GameParams
                                 break;
                             }
                         }
-
                         if (validName)
                         {
                             br.RestorePosition(savedPos);
@@ -181,27 +165,29 @@ namespace ResourceTypes.GameParams
                         }
                     }
                 }
-
                 // Not valid, restore and try next byte
                 br.RestorePosition(savedPos);
             }
-
             return false;
         }
 
         private void ParseEntriesFromBitReader(GameParamsBitReader br)
         {
             Entries.Clear();
+            rawUnknownData.Clear();
             int entryIndex = 0;
-
             while (!br.IsAtEnd)
             {
                 int posBeforeType = br.CurrentBytePosition;
                 int bitBeforeType = br.CurrentBitPosition;
-
-                // Read 4-bit type ID
+                if (rawUnknownData.ContainsKey((posBeforeType, bitBeforeType)))
+                {
+                   
+                    int chunkSizeInBits = rawUnknownData[(posBeforeType, bitBeforeType)].Length * 8;
+                    br.AdvanceBits(chunkSizeInBits); 
+                    continue;
+                }
                 int typeId = (int)br.ReadBits(TypeIdBits);
-
                 if (typeId == TerminatorType)
                 {
                     // Continue scanning for more data after terminator
@@ -215,32 +201,66 @@ namespace ResourceTypes.GameParams
                         break;
                     }
                 }
-
                 try
                 {
                     GameParamEntry entry = GameParamEntry.CreateForType(typeId);
                     entry.TypeId = typeId;
-
-                    // Try to read - if we hit padding/invalid data, try to scan forward
+                    var startPos = br.SavePosition();
                     if (!entry.TryRead(br))
                     {
-                        // Try to find next valid entry by scanning forward
-                        if (ScanForNextValidEntry(br, out int foundTypeId))
+                        br.RestorePosition(startPos);                  
+                        var startOfUnknownData = br.SavePosition(); 
+                        bool foundNextEntry = false;
+                        int nextEntryStartByte = br.CurrentBytePosition;
+                        int nextEntryStartBit = br.CurrentBitPosition;
+                        if (ScanForNextValidEntry(br, out int nextTypeId))
                         {
-                            // Read the found entry
-                            entry = GameParamEntry.CreateForType(foundTypeId);
-                            entry.TypeId = foundTypeId;
-                            if (entry.TryRead(br))
-                            {
-                                Entries.Add(entry);
-                                entryIndex++;
-                                continue;
-                            }
+                            foundNextEntry = true;
+                            var nextPos = br.SavePosition();
+                            nextEntryStartByte = nextPos.bytePos;
+                            nextEntryStartBit = nextPos.bitPos;
                         }
-
-                        break;
+                        int unknownDataStartByte = startOfUnknownData.bytePos;
+                        int unknownDataStartBit = startOfUnknownData.bitPos;
+                        int startByteIdx = startOfUnknownData.bytePos;
+                        int startBitIdx = startOfUnknownData.bitPos;
+                        int endByteIdx = br.IsAtEnd ? br.TotalBytes : nextEntryStartByte;
+                        int endBitIdx = br.IsAtEnd ? 0 : nextEntryStartBit;
+                        int bitsToRead = ((endByteIdx - startByteIdx - 1) * 8) + (8 - startBitIdx);
+                        if (!br.IsAtEnd && foundNextEntry)
+                        {
+                            bitsToRead = ((nextEntryStartByte - startByteIdx - 1) * 8) + (8 - startBitIdx) + nextEntryStartBit;
+                        }
+                        byte[] rawChunk = br.PeekRawBits(startByteIdx, startBitIdx, bitsToRead);
+                        if (rawChunk != null && rawChunk.Length > 0)
+                        {
+                            var unknownEntry = new GameParamUnknown9Entry(rawChunk);
+                            unknownEntry.TypeId = typeId;
+                            rawUnknownData[(startByteIdx, startBitIdx)] = rawChunk;
+                            entry = unknownEntry;
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Warning: Failed to determine length for unknown data at {startByteIdx}, {startBitIdx}. Skipping.");
+                            if (foundNextEntry)
+                            {
+                                br.RestorePosition((nextEntryStartByte, nextEntryStartBit));
+                            }
+                            continue;
+                        }
+                       
+                        if (entry is GameParamUnknown9Entry unknown9Entry)
+                        {
+                            Entries.Add(unknown9Entry);
+                            entryIndex++;
+                            continue;
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Error: Logic error, expected GameParamUnknown9Entry after parsing failure.");
+                            break;
+                        }
                     }
-
                     Entries.Add(entry);
                     entryIndex++;
                 }
@@ -254,14 +274,16 @@ namespace ResourceTypes.GameParams
 
         public void WriteToFile(FileInfo file)
         {
-            // Writing disabled - file format is read-only for now
-            throw new NotSupportedException("GameParams writing is not supported yet.");
+            using (FileStream fs = new FileStream(file.FullName, FileMode.Create, FileAccess.Write))
+            {
+                Write(fs);
+            }
+            RawFileData = File.ReadAllBytes(file.FullName);
         }
 
         public void WriteToFile(string fileName)
         {
-            // Writing disabled - file format is read-only for now
-            throw new NotSupportedException("GameParams writing is not supported yet.");
+            WriteToFile(new FileInfo(fileName));
         }
 
         public void Write(Stream s)
@@ -270,33 +292,79 @@ namespace ResourceTypes.GameParams
             {
                 // Write 4-bit file type header (type 5 = C_GameParams container)
                 bw.WriteBits(5, 4);
-
                 // Write C_GameParams header
                 bw.WriteBits(Flags, 32);
                 bw.WriteString(Name, 32);
-
                 // Write entries
                 foreach (var entry in Entries)
                 {
                     bw.WriteBits((uint)entry.TypeId, TypeIdBits);
                     entry.Write(bw);
                 }
-
                 // Write terminator
                 bw.WriteBits(TerminatorType, TypeIdBits);
+                bw.Flush();
             }
         }
 
         public void ConvertToXML(string filename)
         {
-            // XML export disabled - file format is read-only for now
-            throw new NotSupportedException("GameParams XML export is not supported yet.");
+            try
+            {
+                XDocument doc = new XDocument(new XDeclaration("1.0", "utf-8", null));
+                XElement root = new XElement("GameParams");
+
+                root.Add(new XAttribute("Flags", $"0x{Flags:X8}"));
+                root.Add(new XAttribute("Name", Name));
+
+                foreach (var entry in Entries)
+                {
+                    if (!(entry is GameParamUnknown9Entry))
+                    {
+                        root.Add(entry.ToXElement());
+                    }
+                }
+
+                doc.Add(root);
+                doc.Save(filename);
+                Console.WriteLine($"GameParams exported to XML: {filename}");
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Failed to export GameParams to XML: {ex.Message}", ex);
+            }
         }
 
         public void ConvertFromXML(string filename)
         {
-            // XML import disabled - file format is read-only for now
-            throw new NotSupportedException("GameParams XML import is not supported yet.");
+            try
+            {
+                XDocument doc = XDocument.Load(filename);
+                XElement root = doc.Element("GameParams");
+                if (root == null)
+                {
+                    throw new InvalidDataException("Root element 'GameParams' not found in XML file.");
+                }
+
+                Entries.Clear();
+                Flags = uint.Parse(root.Attribute("Flags").Value.Substring(2), System.Globalization.NumberStyles.HexNumber);
+                Name = root.Attribute("Name").Value;
+
+                foreach (XElement xEntry in root.Elements())
+                {
+                    var entry = GameParamEntry.FromXElement(xEntry);
+                    if (entry != null)
+                    {
+                        Entries.Add(entry);
+                    }
+                }
+
+                Console.WriteLine($"GameParams imported from XML: {filename}");
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Failed to import GameParams from XML: {ex.Message}", ex);
+            }
         }
     }
 
@@ -307,10 +375,8 @@ namespace ResourceTypes.GameParams
     {
         [Category("Entry")]
         public int TypeId { get; set; }
-
         [Category("Entry")]
         public uint EntryFlags { get; set; }
-
         [Category("Entry")]
         public string ParamName { get; set; } = "";
 
@@ -344,7 +410,10 @@ namespace ResourceTypes.GameParams
                 5 => new GameParamContainerEntry(),  // C_GameParams - Container
                 6 => new GameParamArrayEntry(),      // C_GameParamArray - Array container (same Parse as type 5)
                 7 => new GameParamBoolEntry(),       // BoolParam
-                9 => new GameParamUnknown9Entry(),   // Unknown type 9 - needs investigation
+                9 => new GameParamUnknown9Entry(),
+                12 => new GameParamUnknown9Entry(),  // Unknown type 9 - needs investigation
+                13 => new GameParamUnknown9Entry(),
+                15 => new GameParamUnknown9Entry(),
                 _ => throw new InvalidDataException($"Unknown GameParam type ID: {typeId}. This would cause bit alignment corruption.")
             };
         }
@@ -357,11 +426,9 @@ namespace ResourceTypes.GameParams
                 throw new InvalidDataException(
                     $"Maximum recursion depth ({GameParamsFile.MaxRecursionDepth}) exceeded while parsing '{ParamName}'. File may be malformed.");
             }
-
             // Base read: flags and name common to all types
             EntryFlags = br.ReadBits(32);
             ParamName = br.ReadString(32);
-
             // Validate name - if it contains non-printable chars, we have alignment issues
             // Allow digits at start (for indexed entries like "00", "01")
             foreach (char c in ParamName)
@@ -397,6 +464,38 @@ namespace ResourceTypes.GameParams
             bw.WriteString(ParamName, 32);
         }
 
+        public virtual XElement ToXElement()
+        {
+            throw new NotImplementedException("ToXElement must be implemented by derived classes.");
+        }
+
+        public static GameParamEntry FromXElement(XElement element)
+        {
+            string typeStr = element.Name.LocalName;
+            GameParamEntry entry = typeStr switch
+            {
+                "IntParam" => new GameParamIntEntry(),
+                "FloatParam" => new GameParamFloatEntry(),
+                "StringParam" => new GameParamStringEntry(),
+                "BoolParam" => new GameParamBoolEntry(),
+                "Container" => new GameParamContainerEntry(),
+                "Array" => new GameParamArrayEntry(),
+                _ => null
+            };
+
+            if (entry != null)
+            {
+                entry.ReadFromXElement(element);
+            }
+            return entry;
+        }
+
+        protected virtual void ReadFromXElement(XElement element)
+        {
+            EntryFlags = uint.Parse(element.Attribute("Flags")?.Value?.Substring(2) ?? "0", System.Globalization.NumberStyles.HexNumber);
+            ParamName = element.Attribute("Name")?.Value ?? "";
+        }
+
         public override string ToString()
         {
             return $"[Type {TypeId}] {ParamName}";
@@ -410,34 +509,27 @@ namespace ResourceTypes.GameParams
     {
         [Category("Value")]
         public int MinValue { get; set; }
-
         [Category("Value")]
         public int MaxValue { get; set; }
-
         [Category("Value")]
         public int CurrentValue { get; set; }
 
         public override void Read(GameParamsBitReader br, int depth = 0)
         {
             base.Read(br, depth);
-
             MinValue = (int)br.ReadBits(32);
             MaxValue = (int)br.ReadBits(32);
-
             // Calculate bits needed for range
             uint range = (uint)(MaxValue - MinValue);
             int bits = CalculateBitsForRange(range);
-
             CurrentValue = MinValue + (int)br.ReadBits(bits);
         }
 
         public override void Write(GameParamsBitWriter bw)
         {
             base.Write(bw);
-
             bw.WriteBits((uint)MinValue, 32);
             bw.WriteBits((uint)MaxValue, 32);
-
             uint range = (uint)(MaxValue - MinValue);
             int bits = CalculateBitsForRange(range);
             bw.WriteBits((uint)(CurrentValue - MinValue), bits);
@@ -455,6 +547,20 @@ namespace ResourceTypes.GameParams
             return bits;
         }
 
+        public override XElement ToXElement()
+        {
+            return new XElement("IntParam", new XAttribute("Flags", $"0x{EntryFlags:X8}"), new XAttribute("Name", ParamName), new XAttribute("MinValue", MinValue), new XAttribute("MaxValue", MaxValue), new XAttribute("Value", CurrentValue));
+        }
+
+        protected override void ReadFromXElement(XElement element)
+        {
+            base.ReadFromXElement(element);
+            TypeId = 1;
+            MinValue = int.Parse(element.Attribute("MinValue")?.Value ?? "0");
+            MaxValue = int.Parse(element.Attribute("MaxValue")?.Value ?? "0");
+            CurrentValue = int.Parse(element.Attribute("Value")?.Value ?? "0");
+        }
+
         public override string ToString()
         {
             return $"[Int] {ParamName} = {CurrentValue} ({MinValue}-{MaxValue})";
@@ -468,28 +574,22 @@ namespace ResourceTypes.GameParams
     {
         [Category("Value")]
         public float MinValue { get; set; }
-
         [Category("Value")]
         public float MaxValue { get; set; }
-
         [Category("Value")]
         public float Step { get; set; }
-
         [Category("Value")]
         public float CurrentValue { get; set; }
 
         public override void Read(GameParamsBitReader br, int depth = 0)
         {
             base.Read(br, depth);
-
             MinValue = br.ReadFloat();
             MaxValue = br.ReadFloat();
             Step = br.ReadFloat();
-
             // Calculate bits needed for normalized range
             // When min/max span entire float range or range is too large, store raw 32-bit float
             int bits = GetBitsForValue(out bool useRawFloat);
-
             if (useRawFloat)
             {
                 // Range too large - read as raw 32-bit float
@@ -505,13 +605,10 @@ namespace ResourceTypes.GameParams
         public override void Write(GameParamsBitWriter bw)
         {
             base.Write(bw);
-
             bw.WriteFloat(MinValue);
             bw.WriteFloat(MaxValue);
             bw.WriteFloat(Step);
-
             int bits = GetBitsForValue(out bool useRawFloat);
-
             if (useRawFloat)
             {
                 bw.WriteFloat(CurrentValue);
@@ -526,7 +623,6 @@ namespace ResourceTypes.GameParams
         private int GetBitsForValue(out bool useRawFloat)
         {
             useRawFloat = false;
-
             // Check for full float range or invalid step
             if (Step == 0 || float.IsNaN(Step) || float.IsInfinity(Step) ||
                 float.IsInfinity(MinValue) || float.IsInfinity(MaxValue) ||
@@ -535,14 +631,12 @@ namespace ResourceTypes.GameParams
                 useRawFloat = true;
                 return 32;
             }
-
             double range = (MaxValue - MinValue) / Step;
             if (range <= 0 || range > uint.MaxValue || double.IsNaN(range) || double.IsInfinity(range))
             {
                 useRawFloat = true;
                 return 32;
             }
-
             return CalculateBitsForRange((uint)range);
         }
 
@@ -556,6 +650,21 @@ namespace ResourceTypes.GameParams
                 if (bits > 32) break;
             }
             return bits;
+        }
+
+        public override XElement ToXElement()
+        {
+            return new XElement("FloatParam", new XAttribute("Flags", $"0x{EntryFlags:X8}"), new XAttribute("Name", ParamName), new XAttribute("MinValue", MinValue), new XAttribute("MaxValue", MaxValue), new XAttribute("Step", Step), new XAttribute("Value", CurrentValue));
+        }
+
+        protected override void ReadFromXElement(XElement element)
+        {
+            base.ReadFromXElement(element);
+            TypeId = 2;
+            MinValue = float.Parse(element.Attribute("MinValue")?.Value ?? "0");
+            MaxValue = float.Parse(element.Attribute("MaxValue")?.Value ?? "0");
+            Step = float.Parse(element.Attribute("Step")?.Value ?? "0");
+            CurrentValue = float.Parse(element.Attribute("Value")?.Value ?? "0");
         }
 
         public override string ToString()
@@ -572,17 +681,14 @@ namespace ResourceTypes.GameParams
     {
         [Category("Value")]
         public uint StringFlags { get; set; }
-
         [Category("Value")]
         public string Value { get; set; } = "";
 
         public override void Read(GameParamsBitReader br, int depth = 0)
         {
             base.Read(br, depth);
-
             // 32-bit unknown field (stored at offset 44 in game)
             StringFlags = br.ReadBits(32);
-
             // 255-byte null-terminated string
             Value = br.ReadString(255);
         }
@@ -590,9 +696,22 @@ namespace ResourceTypes.GameParams
         public override void Write(GameParamsBitWriter bw)
         {
             base.Write(bw);
-
             bw.WriteBits(StringFlags, 32);
             bw.WriteString(Value, 255);
+        }
+
+        public override XElement ToXElement()
+        {
+            return new XElement("StringParam",new XAttribute("Flags", $"0x{EntryFlags:X8}"), new XAttribute("Name", ParamName), new XAttribute("StringFlags", $"0x{StringFlags:X8}"), new XCData(Value)
+            );
+        }
+
+        protected override void ReadFromXElement(XElement element)
+        {
+            base.ReadFromXElement(element);
+            TypeId = 3;
+            StringFlags = uint.Parse(element.Attribute("StringFlags")?.Value?.Substring(2) ?? "0", System.Globalization.NumberStyles.HexNumber);
+            Value = element.Value;
         }
 
         public override string ToString()
@@ -621,6 +740,18 @@ namespace ResourceTypes.GameParams
             bw.WriteBits(Value ? 1u : 0u, 1);
         }
 
+        public override XElement ToXElement()
+        {
+            return new XElement("BoolParam", new XAttribute("Flags", $"0x{EntryFlags:X8}"), new XAttribute("Name", ParamName), new XAttribute("Value", Value));
+        }
+
+        protected override void ReadFromXElement(XElement element)
+        {
+            base.ReadFromXElement(element);
+            TypeId = 7;
+            Value = bool.Parse(element.Attribute("Value")?.Value ?? "False");
+        }
+
         public override string ToString()
         {
             return $"[Bool] {ParamName} = {Value}";
@@ -638,7 +769,6 @@ namespace ResourceTypes.GameParams
         public override void Read(GameParamsBitReader br, int depth = 0)
         {
             base.Read(br, depth);
-
             // Read child entries until terminator
             Children.Clear();
             int childIndex = 0;
@@ -646,19 +776,15 @@ namespace ResourceTypes.GameParams
             {
                 int posBeforeType = br.CurrentBytePosition;
                 int bitBeforeType = br.CurrentBitPosition;
-
                 int typeId = (int)br.ReadBits(GameParamsFile.TypeIdBits);
-
                 if (typeId == GameParamsFile.TerminatorType)
                 {
                     break;
                 }
-
                 try
                 {
-                    GameParamEntry child = CreateForType(typeId);
+                    GameParamEntry child = GameParamEntry.CreateForType(typeId);
                     child.TypeId = typeId;
-
                     // Try to read - if we hit invalid data (padding), treat as end of children
                     // Pass incremented depth to detect infinite recursion
                     if (!child.TryRead(br, depth + 1))
@@ -666,14 +792,13 @@ namespace ResourceTypes.GameParams
                         br.RestorePosition((posBeforeType, bitBeforeType)); // Restore to before typeId
                         break;
                     }
-
                     Children.Add(child);
                     childIndex++;
                 }
                 catch (Exception ex)
                 {
                     throw new InvalidDataException(
-                        $"Failed to parse child {childIndex} of '{ParamName}' (typeId={typeId}) at byte {posBeforeType}, bit {bitBeforeType}: {ex.Message}", ex);
+                        $"Failed to parse child {childIndex} of '{ParamName}' (typeId={typeId}) at byte {posBeforeType}, {ex.Message}", ex);
                 }
             }
         }
@@ -681,14 +806,42 @@ namespace ResourceTypes.GameParams
         public override void Write(GameParamsBitWriter bw)
         {
             base.Write(bw);
-
             foreach (var child in Children)
             {
                 bw.WriteBits((uint)child.TypeId, GameParamsFile.TypeIdBits);
                 child.Write(bw);
             }
-
             bw.WriteBits(GameParamsFile.TerminatorType, GameParamsFile.TypeIdBits);
+        }
+
+        public override XElement ToXElement()
+        {
+            XElement containerElement = new XElement("Container", new XAttribute("Flags", $"0x{EntryFlags:X8}"),new XAttribute("Name", ParamName));
+
+            foreach (var child in Children)
+            {
+                if (!(child is GameParamUnknown9Entry))
+                {
+                    containerElement.Add(child.ToXElement());
+                }
+            }
+
+            return containerElement;
+        }
+
+        protected override void ReadFromXElement(XElement element)
+        {
+            base.ReadFromXElement(element);
+            TypeId = 5;
+            Children.Clear();
+            foreach (XElement xChild in element.Elements())
+            {
+                var child = GameParamEntry.FromXElement(xChild);
+                if (child != null)
+                {
+                    Children.Add(child);
+                }
+            }
         }
 
         public override string ToString()
@@ -704,6 +857,12 @@ namespace ResourceTypes.GameParams
     /// </summary>
     public class GameParamArrayEntry : GameParamContainerEntry
     {
+        protected override void ReadFromXElement(XElement element)
+        {
+            base.ReadFromXElement(element);
+            TypeId = 6;
+        }
+
         public override string ToString()
         {
             return $"[Array] {ParamName} ({Children.Count} items)";
@@ -711,19 +870,43 @@ namespace ResourceTypes.GameParams
     }
 
     /// <summary>
-    /// Type 9: Unknown entry type - just reads base data for debugging
+    /// Type 9: Unknown entry type - stores raw data blob
     /// </summary>
     public class GameParamUnknown9Entry : GameParamEntry
     {
+        public GameParamUnknown9Entry() : base()
+        {
+            TypeId = 9;
+        }
+
+        public GameParamUnknown9Entry(byte[] rawData) : this()
+        {
+            RawEntryData = rawData ?? Array.Empty<byte>();
+        }
+
         public override void Read(GameParamsBitReader br, int depth = 0)
         {
-            // Just read base data (flags + name)
             base.Read(br, depth);
+        }
+
+        public override void Write(GameParamsBitWriter bw)
+        {
+            bw.WriteRawBytes(RawEntryData);
+        }
+
+        public override XElement ToXElement()
+        {
+            return null;
+        }
+
+        protected override void ReadFromXElement(XElement element)
+        {
+            throw new InvalidOperationException("Cannot import GameParamUnknown9Entry from XML.");
         }
 
         public override string ToString()
         {
-            return $"[Type9] {ParamName}";
+            return $"[Type9] {ParamName ?? "Unknown"} (Raw Data Length: {RawEntryData.Length})";
         }
     }
 
@@ -736,18 +919,75 @@ namespace ResourceTypes.GameParams
         private readonly byte[] data;
         private int bytePosition;
         private int bitPosition;
-
         public bool IsAtEnd => bytePosition >= data.Length;
         public int CurrentBytePosition => bytePosition;
         public int CurrentBitPosition => bitPosition;
         public int TotalBytes => data.Length;
-
         public (int bytePos, int bitPos) SavePosition() => (bytePosition, bitPosition);
-
         public void RestorePosition((int bytePos, int bitPos) pos)
         {
             bytePosition = pos.bytePos;
             bitPosition = pos.bitPos;
+        }
+
+        public void AdvanceBits(int numBits)
+        {
+            int bitsLeftInCurrentByte = 8 - bitPosition;
+            if (numBits < bitsLeftInCurrentByte)
+            {
+                bitPosition += numBits;
+                if (bitPosition >= 8)
+                {
+                    bitPosition = 0;
+                    bytePosition++;
+                }
+            }
+            else
+            {
+                int bytesToAdvance = numBits / 8;
+                int remainingBits = numBits % 8;
+                bytePosition += bytesToAdvance;
+                bitPosition += remainingBits;
+                if (bitPosition >= 8)
+                {
+                    bitPosition = 0;
+                    bytePosition++;
+                }
+            }
+            if (bytePosition >= data.Length)
+            {
+                bytePosition = data.Length;
+                bitPosition = 0;
+            }
+        }
+
+        public byte[] PeekRawBits(int startBytePos, int startBitPos, int numBitsToPeek)
+        {
+            if (startBytePos < 0 || startBytePos >= data.Length || numBitsToPeek <= 0)
+            {
+                return null;
+            }
+
+            int totalBitsNeeded = (data.Length - startBytePos) * 8 - startBitPos;
+            if (numBitsToPeek > totalBitsNeeded)
+            {
+                numBitsToPeek = totalBitsNeeded;
+            }
+            if (numBitsToPeek <= 0)
+            {
+                return Array.Empty<byte>();
+            }
+
+            int endByteIndex = startBytePos + (startBitPos + numBitsToPeek - 1) / 8;
+            if (endByteIndex >= data.Length)
+            {
+                endByteIndex = data.Length - 1;
+            }
+            int byteCount = endByteIndex - startBytePos + 1;
+            byte[] rawChunk = new byte[byteCount];
+            Array.Copy(data, startBytePos, rawChunk, 0, byteCount);
+            
+            return rawChunk;
         }
 
         public GameParamsBitReader(Stream s)
@@ -760,7 +1000,6 @@ namespace ResourceTypes.GameParams
             bytePosition = 0;
             bitPosition = 0;
         }
-
         public uint ReadBits(int count)
         {
             uint result = 0;
@@ -768,12 +1007,10 @@ namespace ResourceTypes.GameParams
             {
                 if (bytePosition >= data.Length)
                     break;
-
                 if ((data[bytePosition] & (1 << bitPosition)) != 0)
                 {
                     result |= (1u << i);
                 }
-
                 bitPosition++;
                 if (bitPosition >= 8)
                 {
@@ -783,19 +1020,16 @@ namespace ResourceTypes.GameParams
             }
             return result;
         }
-
         public byte ReadByte()
         {
             return (byte)ReadBits(8);
         }
-
         public float ReadFloat()
         {
             uint bits = ReadBits(32);
             byte[] bytes = BitConverter.GetBytes(bits);
             return BitConverter.ToSingle(bytes, 0);
         }
-
         /// <summary>
         /// Read a null-terminated string, consuming up to maxLength bytes.
         /// IMPORTANT: The game's GetString stops reading at null, not consuming remaining bytes!
@@ -811,12 +1045,10 @@ namespace ResourceTypes.GameParams
             }
             return sb.ToString();
         }
-
         public void Dispose()
         {
         }
     }
-
     /// <summary>
     /// BitStream writer for gameparams.bin format
     /// </summary>
@@ -826,12 +1058,10 @@ namespace ResourceTypes.GameParams
         private readonly List<byte> buffer = new();
         private byte currentByte;
         private int bitPosition;
-
         public GameParamsBitWriter(Stream s)
         {
             stream = s;
         }
-
         public void WriteBits(uint value, int count)
         {
             for (int i = 0; i < count; i++)
@@ -840,7 +1070,6 @@ namespace ResourceTypes.GameParams
                 {
                     currentByte |= (byte)(1 << bitPosition);
                 }
-
                 bitPosition++;
                 if (bitPosition >= 8)
                 {
@@ -850,10 +1079,22 @@ namespace ResourceTypes.GameParams
                 }
             }
         }
-
         public void WriteByte(byte value)
         {
             WriteBits(value, 8);
+        }
+
+        public void WriteRawBytes(byte[] rawData)
+        {
+
+            if (bitPosition > 0)
+            {
+                buffer.Add(currentByte);
+                currentByte = 0;
+                bitPosition = 0;
+            }
+
+            buffer.AddRange(rawData);
         }
 
         public void WriteFloat(float value)
@@ -862,7 +1103,6 @@ namespace ResourceTypes.GameParams
             uint bits = BitConverter.ToUInt32(bytes, 0);
             WriteBits(bits, 32);
         }
-
         /// <summary>
         /// Write a null-terminated string (matching game's GetString format).
         /// Writes string bytes + null terminator only, no padding.
@@ -877,7 +1117,6 @@ namespace ResourceTypes.GameParams
             }
             WriteByte(0); // Null terminator
         }
-
         public void Flush()
         {
             if (bitPosition > 0)
@@ -889,7 +1128,6 @@ namespace ResourceTypes.GameParams
             stream.Write(buffer.ToArray(), 0, buffer.Count);
             buffer.Clear();
         }
-
         public void Dispose()
         {
             Flush();

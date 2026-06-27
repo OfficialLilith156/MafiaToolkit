@@ -1,10 +1,10 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using ResourceTypes.GameParams;
 using Utils.Language;
 using Utils.Settings;
-
 namespace Mafia2Tool
 {
     public partial class GameParamsEditor : Form
@@ -32,20 +32,17 @@ namespace Mafia2Tool
             Button_Exit.Text = Language.GetString("$EXIT");
             Button_Tools.Text = Language.GetString("$TOOLS");
             Button_ExportXml.Text = Language.GetString("$EXPORT_XML");
-            Button_ImportXml.Text = Language.GetString("$IMPORT_XML");
-            
-            Button_Save.Enabled = false;
-            Button_ExportXml.Enabled = false;
-            Button_ImportXml.Enabled = false;
-            Button_Tools.Enabled = false;
-            PropertyGrid_Main.Enabled = false;
+            Button_ImportXml.Text = Language.GetString("$IMPORT_XML");         
+            Button_Save.Enabled = true;
+            Button_ExportXml.Enabled = true;
+            Button_ImportXml.Enabled = true;
+            Button_Tools.Enabled = true;
             PropertyGrid_Main.Enabled = false;
         }
 
         private void BuildData()
         {
             TreeView_Main.Nodes.Clear();
-
             try
             {
                 paramsData = new GameParamsFile(paramsFile);
@@ -56,29 +53,25 @@ namespace Mafia2Tool
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-
             // Root node shows file info
             string fileName = Path.GetFileName(paramsFile.FullName);
             TreeNode rootNode = new TreeNode($"GameParams: {fileName}");
             rootNode.Tag = paramsData;
-
             // Add header info
             TreeNode headerNode = new TreeNode($"Header: {paramsData.Name} (Flags: 0x{paramsData.Flags:X8})");
             headerNode.Tag = paramsData;
             rootNode.Nodes.Add(headerNode);
-
-            // Add entries
-            TreeNode entriesNode = new TreeNode($"Entries ({paramsData.Entries.Count})");
-            foreach (var entry in paramsData.Entries)
+           
+            TreeNode entriesNode = new TreeNode($"Entries ({paramsData.Entries.Count(e => !(e is GameParamUnknown9Entry))})");
+            foreach (var entry in paramsData.Entries.Where(e => !(e is GameParamUnknown9Entry)))
             {
                 TreeNode entryNode = CreateEntryNode(entry);
                 entriesNode.Nodes.Add(entryNode);
             }
             rootNode.Nodes.Add(entriesNode);
-
             TreeView_Main.Nodes.Add(rootNode);
             rootNode.Expand();
-            entriesNode.Expand();
+            entriesNode.Expand(); 
         }
 
         private TreeNode CreateEntryNode(GameParamEntry entry)
@@ -87,25 +80,30 @@ namespace Mafia2Tool
             TreeNode node = new TreeNode($"[{typeName}] {entry.ParamName}");
             node.Tag = entry;
 
-            // If it's a container, add children recursively
             if (entry is GameParamContainerEntry container)
             {
-                foreach (var child in container.Children)
+                foreach (var child in container.Children.Where(c => !(c is GameParamUnknown9Entry)))
                 {
                     node.Nodes.Add(CreateEntryNode(child));
                 }
             }
-
             return node;
         }
 
         private void Save()
         {
-            File.Copy(paramsFile.FullName, paramsFile.FullName + "_old", true);
-            paramsData.WriteToFile(paramsFile.FullName);
-
-            Text = Language.GetString("$GAMEPARAMS_EDITOR_TITLE");
-            bIsFileEdited = false;
+            try
+            {
+                File.Copy(paramsFile.FullName, paramsFile.FullName + "_old", true);
+                paramsData.WriteToFile(paramsFile.FullName);
+                Text = Language.GetString("$GAMEPARAMS_EDITOR_TITLE"); 
+                bIsFileEdited = false;
+                MessageBox.Show("File saved successfully!", "GameParams Editor", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error saving file: {ex.Message}", "GameParams Editor", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void Reload()
@@ -113,8 +111,7 @@ namespace Mafia2Tool
             PropertyGrid_Main.SelectedObject = null;
             TreeView_Main.SelectedNode = null;
             BuildData();
-
-            Text = Language.GetString("$GAMEPARAMS_EDITOR_TITLE");
+            Text = Language.GetString("$GAMEPARAMS_EDITOR_TITLE"); 
             bIsFileEdited = false;
         }
 
@@ -122,14 +119,19 @@ namespace Mafia2Tool
         {
             SaveFileDialog saveFile = new SaveFileDialog();
             saveFile.Filter = "XML|*.xml";
-            saveFile.FileName = Path.GetFileNameWithoutExtension(paramsFile.Name);
+            saveFile.FileName = Path.GetFileNameWithoutExtension(paramsFile.Name) + ".xml";
             saveFile.InitialDirectory = paramsFile.DirectoryName;
-
             if (saveFile.ShowDialog() == DialogResult.OK)
             {
-                paramsData.ConvertToXML(saveFile.FileName);
-                MessageBox.Show("Export successful!", "GameParams Editor",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                try
+                {
+                    paramsData.ConvertToXML(saveFile.FileName);
+                    MessageBox.Show($"Successfully exported to XML:\n{saveFile.FileName}", "GameParams Editor", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error exporting to XML: {ex.Message}", "GameParams Editor", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 
@@ -139,45 +141,55 @@ namespace Mafia2Tool
             openFile.Filter = "XML|*.xml";
             openFile.CheckFileExists = true;
             openFile.InitialDirectory = paramsFile.DirectoryName;
-
             if (openFile.ShowDialog() == DialogResult.OK)
             {
-                paramsData.ConvertFromXML(openFile.FileName);
-                BuildData();
-                MarkAsEdited();
+                try
+                {
+                    paramsData.ConvertFromXML(openFile.FileName);
+                    MessageBox.Show($"Successfully imported from XML:\n{openFile.FileName}\n\nNote: The editor view will now reload to reflect the changes.", "GameParams Editor", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    Reload();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error importing from XML: {ex.Message}", "GameParams Editor", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 
         private void OnNodeSelect(object sender, TreeViewEventArgs e)
         {
-            PropertyGrid_Main.SelectedObject = e.Node.Tag;
+
+            if (e.Node?.Tag is GameParamEntry entry && !(entry is GameParamUnknown9Entry))
+            {
+                PropertyGrid_Main.SelectedObject = e.Node.Tag;
+                PropertyGrid_Main.Enabled = true;
+            }
+            else
+            {
+                PropertyGrid_Main.SelectedObject = null;
+                PropertyGrid_Main.Enabled = false;
+            }
         }
 
         private void PropertyGrid_PropertyChanged(object sender, PropertyValueChangedEventArgs e)
         {
-            // Editing disabled - file is read-only for now
-            // MarkAsEdited();
-            // BuildData();
+            MarkAsEdited();
         }
 
         private void GameParamsEditor_Closing(object sender, FormClosingEventArgs e)
         {
-            //if (bIsFileEdited)
-            //{
-            //    System.Windows.MessageBoxResult saveChanges = System.Windows.MessageBox.Show(
-            //        Language.GetString("$SAVE_PROMPT"),
-            //        "Toolkit",
-            //        System.Windows.MessageBoxButton.YesNoCancel);
-
-            //    if (saveChanges == System.Windows.MessageBoxResult.Yes)
-            //    {
-            //        Save();
-            //    }
-            //    else if (saveChanges == System.Windows.MessageBoxResult.Cancel)
-            //    {
-            //        e.Cancel = true;
-            //    }
-            //}
+            if (bIsFileEdited)
+            {
+                DialogResult saveChanges = MessageBox.Show(Language.GetString("$SAVE_PROMPT"), "Toolkit", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question); 
+                if (saveChanges == DialogResult.Yes)
+                {
+                    Save();
+                }
+                else if (saveChanges == DialogResult.Cancel)
+                {
+                    e.Cancel = true;
+                }
+            }
         }
 
         private void MarkAsEdited()
