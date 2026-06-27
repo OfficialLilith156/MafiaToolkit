@@ -1,4 +1,5 @@
-﻿using ResourceTypes.Animation2;
+﻿using Mafia2Tool.Forms;
+using ResourceTypes.Animation2;
 using System;
 using System.IO;
 
@@ -12,9 +13,13 @@ namespace Core.IO
         }
 
         public override bool Open()
-        {
+        {         
             Animation2 anim = new(file.FullName);
-            //anim.WriteToFile(file.FullName + "_test");
+            using (var form = new AnimationNameEditorForm(file.FullName))
+            {
+                form.ShowDialog();
+            }
+
             return true;
         }
 
