@@ -25,30 +25,12 @@ namespace Mafia2Tool
         public FramePropsEditor(FileInfo file)
         {
             InitializeComponent();
-            Localise();
             propsFile = file;
             BuildData(true);
             Show();
             ToolkitSettings.UpdateRichPresence("Editing FrameProps File.");
         }
 
-        private void Localise()
-        {
-            Text = Language.GetString("$FRAMEPROPS_EDITOR_TITLE");
-            Button_File.Text = Language.GetString("$FILE");
-            Button_Save.Text = Language.GetString("$SAVE");
-            Button_Reload.Text = Language.GetString("$RELOAD");
-            Button_Exit.Text = Language.GetString("$EXIT");
-            Button_Tools.Text = Language.GetString("$TOOLS");
-            Button_ExportXml.Text = Language.GetString("$EXPORT_XML");
-            Button_ImportXml.Text = Language.GetString("$IMPORT_XML");
-            Button_ExpandAll.Text = Language.GetString("$EXPAND_ALL");
-            Button_CollapseAll.Text = Language.GetString("$COLLAPSE_ALL");
-            Button_AddEntry.Text = Language.GetString("$FRAMEPROPS_ADD_ENTRY");
-            Button_DeleteEntry.Text = Language.GetString("$FRAMEPROPS_DELETE_ENTRY");
-            Button_AddProperty.Text = Language.GetString("$FRAMEPROPS_ADD_PROPERTY");
-            Button_DeleteProperty.Text = Language.GetString("$FRAMEPROPS_DELETE_PROPERTY");
-        }
 
         private void BuildData(bool fromFile)
         {
@@ -270,7 +252,6 @@ namespace Mafia2Tool
         {
             File.Copy(propsFile.FullName, propsFile.FullName + "_old", true);
             propsData.WriteToFile(propsFile.FullName);
-            Text = Language.GetString("$FRAMEPROPS_EDITOR_TITLE");
             bIsFileEdited = false;
         }
 
@@ -279,7 +260,6 @@ namespace Mafia2Tool
             PropertyGrid_Main.SelectedObject = null;
             TreeView_Main.SelectedNode = null;
             BuildData(true);
-            Text = Language.GetString("$FRAMEPROPS_EDITOR_TITLE");
             bIsFileEdited = false;
             ClearSearch();
         }
@@ -655,7 +635,6 @@ namespace Mafia2Tool
         {
             if (!bIsFileEdited)
             {
-                Text = Language.GetString("$FRAMEPROPS_EDITOR_TITLE") + "*";
                 bIsFileEdited = true;
             }
         }

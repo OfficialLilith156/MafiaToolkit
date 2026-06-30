@@ -179,14 +179,14 @@
             Button_File.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { Button_Save, Button_Reload, Button_Exit });
             Button_File.ImageTransparentColor = System.Drawing.Color.Magenta;
             Button_File.Name = "Button_File";
-            Button_File.Size = new System.Drawing.Size(47, 22);
-            Button_File.Text = "$FILE";
+            Button_File.Size = new System.Drawing.Size(38, 22);
+            Button_File.Text = "File";
             // 
             // Button_Save
             // 
             Button_Save.Name = "Button_Save";
             Button_Save.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S;
-            Button_Save.Size = new System.Drawing.Size(165, 22);
+            Button_Save.Size = new System.Drawing.Size(180, 22);
             Button_Save.Text = "$SAVE";
             Button_Save.Click += Button_Save_OnClick;
             // 
@@ -194,14 +194,14 @@
             // 
             Button_Reload.Name = "Button_Reload";
             Button_Reload.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R;
-            Button_Reload.Size = new System.Drawing.Size(165, 22);
+            Button_Reload.Size = new System.Drawing.Size(180, 22);
             Button_Reload.Text = "$RELOAD";
             Button_Reload.Click += Button_Reload_OnClick;
             // 
             // Button_Exit
             // 
             Button_Exit.Name = "Button_Exit";
-            Button_Exit.Size = new System.Drawing.Size(165, 22);
+            Button_Exit.Size = new System.Drawing.Size(180, 22);
             Button_Exit.Text = "$EXIT";
             Button_Exit.Click += Button_Exit_OnClick;
             // 
@@ -211,53 +211,53 @@
             Button_Tools.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { Button_ExportXml, Button_ImportXml, toolStripSeparator1, Button_ExpandAll, Button_CollapseAll, toolStripSeparator2, Button_AddEntry, Button_DeleteEntry, toolStripSeparator3, Button_AddProperty, Button_DeleteProperty });
             Button_Tools.ImageTransparentColor = System.Drawing.Color.Magenta;
             Button_Tools.Name = "Button_Tools";
-            Button_Tools.Size = new System.Drawing.Size(61, 22);
-            Button_Tools.Text = "$TOOLS";
+            Button_Tools.Size = new System.Drawing.Size(47, 22);
+            Button_Tools.Text = "Tools";
             // 
             // Button_ExportXml
             // 
             Button_ExportXml.Name = "Button_ExportXml";
-            Button_ExportXml.Size = new System.Drawing.Size(329, 22);
-            Button_ExportXml.Text = "$EXPORT_XML";
+            Button_ExportXml.Size = new System.Drawing.Size(227, 22);
+            Button_ExportXml.Text = "Export XML";
             Button_ExportXml.Click += Button_ExportXml_OnClick;
             // 
             // Button_ImportXml
             // 
             Button_ImportXml.Name = "Button_ImportXml";
-            Button_ImportXml.Size = new System.Drawing.Size(329, 22);
-            Button_ImportXml.Text = "$IMPORT_XML";
+            Button_ImportXml.Size = new System.Drawing.Size(227, 22);
+            Button_ImportXml.Text = "Import XML";
             Button_ImportXml.Click += Button_ImportXml_OnClick;
             // 
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new System.Drawing.Size(326, 6);
+            toolStripSeparator1.Size = new System.Drawing.Size(224, 6);
             // 
             // Button_ExpandAll
             // 
             Button_ExpandAll.Name = "Button_ExpandAll";
-            Button_ExpandAll.Size = new System.Drawing.Size(329, 22);
-            Button_ExpandAll.Text = "$EXPAND_ALL";
+            Button_ExpandAll.Size = new System.Drawing.Size(227, 22);
+            Button_ExpandAll.Text = "Expand All";
             Button_ExpandAll.Click += Button_ExpandAll_OnClick;
             // 
             // Button_CollapseAll
             // 
             Button_CollapseAll.Name = "Button_CollapseAll";
-            Button_CollapseAll.Size = new System.Drawing.Size(329, 22);
-            Button_CollapseAll.Text = "$COLLAPSE_ALL";
+            Button_CollapseAll.Size = new System.Drawing.Size(227, 22);
+            Button_CollapseAll.Text = "Collapse All";
             Button_CollapseAll.Click += Button_CollapseAll_OnClick;
             // 
             // toolStripSeparator2
             // 
             toolStripSeparator2.Name = "toolStripSeparator2";
-            toolStripSeparator2.Size = new System.Drawing.Size(326, 6);
+            toolStripSeparator2.Size = new System.Drawing.Size(224, 6);
             // 
             // Button_AddEntry
             // 
             Button_AddEntry.Name = "Button_AddEntry";
             Button_AddEntry.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N;
-            Button_AddEntry.Size = new System.Drawing.Size(329, 22);
-            Button_AddEntry.Text = "$FRAMEPROPS_ADD_ENTRY";
+            Button_AddEntry.Size = new System.Drawing.Size(227, 22);
+            Button_AddEntry.Text = "Add Entry";
             Button_AddEntry.Click += Button_AddEntry_OnClick;
             // 
             // Button_DeleteEntry
@@ -265,22 +265,22 @@
             Button_DeleteEntry.Enabled = false;
             Button_DeleteEntry.Name = "Button_DeleteEntry";
             Button_DeleteEntry.ShortcutKeys = System.Windows.Forms.Keys.Delete;
-            Button_DeleteEntry.Size = new System.Drawing.Size(329, 22);
-            Button_DeleteEntry.Text = "$FRAMEPROPS_DELETE_ENTRY";
+            Button_DeleteEntry.Size = new System.Drawing.Size(227, 22);
+            Button_DeleteEntry.Text = "Delete Entry";
             Button_DeleteEntry.Click += Button_DeleteEntry_OnClick;
             // 
             // toolStripSeparator3
             // 
             toolStripSeparator3.Name = "toolStripSeparator3";
-            toolStripSeparator3.Size = new System.Drawing.Size(326, 6);
+            toolStripSeparator3.Size = new System.Drawing.Size(224, 6);
             // 
             // Button_AddProperty
             // 
             Button_AddProperty.Enabled = false;
             Button_AddProperty.Name = "Button_AddProperty";
             Button_AddProperty.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P;
-            Button_AddProperty.Size = new System.Drawing.Size(329, 22);
-            Button_AddProperty.Text = "$FRAMEPROPS_ADD_PROPERTY";
+            Button_AddProperty.Size = new System.Drawing.Size(227, 22);
+            Button_AddProperty.Text = "Add Property";
             Button_AddProperty.Click += Button_AddProperty_OnClick;
             // 
             // Button_DeleteProperty
@@ -288,8 +288,8 @@
             Button_DeleteProperty.Enabled = false;
             Button_DeleteProperty.Name = "Button_DeleteProperty";
             Button_DeleteProperty.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Delete;
-            Button_DeleteProperty.Size = new System.Drawing.Size(329, 22);
-            Button_DeleteProperty.Text = "$FRAMEPROPS_DELETE_PROPERTY";
+            Button_DeleteProperty.Size = new System.Drawing.Size(227, 22);
+            Button_DeleteProperty.Text = "Delete Property";
             Button_DeleteProperty.Click += Button_DeleteProperty_OnClick;
             // 
             // ToolStrip_Search
@@ -403,7 +403,7 @@
             Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             Name = "FramePropsEditor";
-            Text = "$FRAMEPROPS_EDITOR_TITLE";
+            Text = "Frame Props Editor";
             FormClosing += FramePropsEditor_Closing;
             ContextMenu_Tree.ResumeLayout(false);
             ToolStrip_Main.ResumeLayout(false);

@@ -326,17 +326,85 @@ namespace ResourceTypes.FrameProps
 
         public void ConvertToXML(string filename)
         {
-            XElement root = ReflectionHelpers.ConvertPropertyToXML(this);
+            var root = new XElement("FramePropsFile");
+            var entriesElement = new XElement("Entries");
+
+            foreach (var entry in Entries)
+            {
+                var entryElement = new XElement("Entry");
+                entryElement.Add(new XElement("FrameNameHash", entry.FrameNameHash));
+                entryElement.Add(new XElement("FrameName", entry.FrameName));
+
+                var propsElement = new XElement("Properties");
+                foreach (var prop in entry.Properties)
+                {
+                    var propElement = new XElement("Property");
+                    propElement.Add(new XElement("PropertyNameHash", prop.PropertyNameHash));
+                    propElement.Add(new XElement("PropertyName", prop.PropertyName));
+                    propElement.Add(new XElement("Value", prop.Value ?? ""));
+                    propsElement.Add(propElement);
+                }
+                entryElement.Add(propsElement);
+                entriesElement.Add(entryElement);
+            }
+
+            root.Add(entriesElement);
             root.Save(filename);
         }
 
         public void ConvertFromXML(string filename)
         {
-            XElement loadedDoc = XElement.Load(filename);
-            FramePropsFile fileContents = ReflectionHelpers.ConvertToPropertyFromXML<FramePropsFile>(loadedDoc);
+            var root = XElement.Load(filename);
+            var entriesElement = root.Element("Entries");
+            if (entriesElement == null)
+                throw new InvalidDataException("Missing 'Entries' element in XML.");
 
-            // Copy data from loaded XML
-            Entries = fileContents.Entries;
+            var newEntries = new List<FramePropsEntry>();
+
+            foreach (var entryElement in entriesElement.Elements("Entry"))
+            {
+                var entry = new FramePropsEntry();
+
+                var hashElement = entryElement.Element("FrameNameHash");
+                if (hashElement != null)
+                    entry.FrameNameHash = (ulong)hashElement;
+
+                var nameElement = entryElement.Element("FrameName");
+                if (nameElement != null && !string.IsNullOrEmpty(nameElement.Value))
+                    entry.FrameName = nameElement.Value;
+
+                var propsElement = entryElement.Element("Properties");
+                if (propsElement != null)
+                {
+                    var props = new List<FrameProperty>();
+                    foreach (var propElement in propsElement.Elements("Property"))
+                    {
+                        var prop = new FrameProperty();
+
+                        var propHashEl = propElement.Element("PropertyNameHash");
+                        if (propHashEl != null)
+                            prop.PropertyNameHash = (ulong)propHashEl;
+
+                        var propNameEl = propElement.Element("PropertyName");
+                        if (propNameEl != null && !string.IsNullOrEmpty(propNameEl.Value))
+                            prop.PropertyName = propNameEl.Value;
+
+                        var valueEl = propElement.Element("Value");
+                        prop.Value = valueEl?.Value ?? "";
+
+                        props.Add(prop);
+                    }
+                    entry.Properties = props.ToArray();
+                }
+                else
+                {
+                    entry.Properties = Array.Empty<FrameProperty>();
+                }
+
+                newEntries.Add(entry);
+            }
+
+            Entries = newEntries.ToArray();
         }
 
         /// <summary>
