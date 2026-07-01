@@ -1,7 +1,6 @@
 ﻿using Core.IO;
 using Mafia2Tool.Forms;
 using Microsoft.VisualBasic.FileIO;
-using RoadmapEditor;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -125,11 +124,6 @@ namespace Mafia2Tool
             InitTreeView();
         }
 
-        private void OpenRoadmapEditorButton_Click(object sender, EventArgs e)
-        {
-            var editorForm = new Form1();
-            editorForm.Show();
-        }
         private void InitTreeView()
         {
             infoText.Text = "Building folders..";

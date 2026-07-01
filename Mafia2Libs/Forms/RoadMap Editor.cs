@@ -35,7 +35,7 @@ namespace RoadmapEditor
         private Button _btnNewRoad, _btnDeleteRoad;
         private Dictionary<IRoadSpline, RoadDrawData> _roadDrawCache = new Dictionary<IRoadSpline, RoadDrawData>();
 
-        private enum FileFormat { Ce, De, Xml }
+        public enum FileFormat { Ce, De, Xml }
 
         public Form1()
         {
@@ -171,6 +171,15 @@ namespace RoadmapEditor
                     }
                 }
             }
+        }
+        public void LoadFile(string path, FileFormat format)
+        {
+            _currentFilePath = path;
+            _currentFormat = format;
+            LoadRoadmap(path, format);
+            RefreshSplineList();
+            UpdateAllBounds();
+            _canvas.Invalidate();
         }
 
         private void LoadRoadmap(string path, FileFormat format)

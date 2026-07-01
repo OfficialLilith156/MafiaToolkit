@@ -93,7 +93,6 @@ namespace Mafia2Tool
             packAllSDSToolStripMenuItem = new ToolStripMenuItem();
             dropdownAbout = new ToolStripDropDownButton();
             AboutButton = new ToolStripMenuItem();
-            toolStripButton1 = new ToolStripButton();
             bottomContainer = new ToolStripContainer();
             status = new StatusStrip();
             infoText = new ToolStripStatusLabel();
@@ -234,7 +233,7 @@ namespace Mafia2Tool
             fileListView.Location = new System.Drawing.Point(4, 35);
             fileListView.Margin = new Padding(4, 3, 4, 3);
             fileListView.Name = "fileListView";
-            fileListView.Size = new System.Drawing.Size(600, 391);
+            fileListView.Size = new System.Drawing.Size(599, 391);
             fileListView.SmallImageList = imageBank;
             fileListView.TabIndex = 0;
             fileListView.UseCompatibleStateImageBehavior = false;
@@ -437,7 +436,7 @@ namespace Mafia2Tool
             Toolstrip_ButtonContainer.ImageScalingSize = new System.Drawing.Size(18, 18);
             Toolstrip_ButtonContainer.Items.AddRange(new ToolStripItem[] { Button_Settings, Button_PackSDS, Button_UnpackSDS, Button_OpenMapEditor });
             Toolstrip_ButtonContainer.LayoutStyle = ToolStripLayoutStyle.Flow;
-            Toolstrip_ButtonContainer.Location = new System.Drawing.Point(0, 23);
+            Toolstrip_ButtonContainer.Location = new System.Drawing.Point(0, 22);
             Toolstrip_ButtonContainer.Name = "Toolstrip_ButtonContainer";
             Toolstrip_ButtonContainer.Padding = new Padding(0);
             Toolstrip_ButtonContainer.RenderMode = ToolStripRenderMode.System;
@@ -497,11 +496,11 @@ namespace Mafia2Tool
             // 
             // tools
             // 
-            tools.Items.AddRange(new ToolStripItem[] { dropdownFile, dropdownView, dropdownTools, dropdownAbout, toolStripButton1 });
+            tools.Items.AddRange(new ToolStripItem[] { dropdownFile, dropdownView, dropdownTools, dropdownAbout });
             tools.LayoutStyle = ToolStripLayoutStyle.Flow;
             tools.Location = new System.Drawing.Point(0, 0);
             tools.Name = "tools";
-            tools.Size = new System.Drawing.Size(933, 23);
+            tools.Size = new System.Drawing.Size(933, 22);
             tools.TabIndex = 1;
             tools.Text = "toolStrip1";
             // 
@@ -674,16 +673,6 @@ namespace Mafia2Tool
             AboutButton.Text = "$ABOUT";
             AboutButton.Click += OnCredits_Pressed;
             // 
-            // toolStripButton1
-            // 
-            toolStripButton1.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            toolStripButton1.Image = (System.Drawing.Image)resources.GetObject("toolStripButton1.Image");
-            toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            toolStripButton1.Name = "toolStripButton1";
-            toolStripButton1.Size = new System.Drawing.Size(23, 20);
-            toolStripButton1.Text = "toolStripButton1";
-            toolStripButton1.Click += OpenRoadmapEditorButton_Click;
-            // 
             // bottomContainer
             // 
             bottomContainer.BottomToolStripPanelVisible = false;
@@ -828,6 +817,5 @@ namespace Mafia2Tool
         private ToolStripMenuItem ContextFileImport;
         private ToolStripMenuItem ContextRemoveToCartFiles;
         private ToolStripMenuItem packAllSDSToolStripMenuItem;
-        private ToolStripButton toolStripButton1;
     }
 }

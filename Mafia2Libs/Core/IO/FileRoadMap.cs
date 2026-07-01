@@ -71,85 +71,128 @@ namespace Core.IO
 
         public override bool Open()
         {
-            DialogResult result = MessageBox.Show(
-                "What do you want to do?\n\nYes - Open in Map Editor\nNo - Export to XML\nCancel - Cancel",
-                "Roadmap Action",
-                MessageBoxButtons.YesNoCancel,
-                MessageBoxIcon.Question);
-
-            if (result == DialogResult.Yes)
+            using (var dialog = new Form())
             {
-                SceneData sceneData = new SceneData();
-                sceneData.ScenePath = Path.GetDirectoryName(file.FullName);
+                dialog.Text = "Roadmap Action";
+                dialog.Size = new System.Drawing.Size(400, 150);
+                dialog.StartPosition = FormStartPosition.CenterParent;
+                dialog.FormBorderStyle = FormBorderStyle.FixedDialog;
+                dialog.MaximizeBox = false;
+                dialog.MinimizeBox = false;
 
-                IRoadmap roadmap = GetNewRoadmap();
-                using (FileStream fstream = File.OpenRead(file.FullName))
+                Label label = new Label()
                 {
-                    roadmap.Read(fstream);
-                }
-                sceneData.roadMap = roadmap;
-                sceneData.roadMapFilePath = file.FullName;
-
-                bool oldLoadFrame = ToolkitSettings.LoadFrameResource;
-                bool oldLoadCollisions = ToolkitSettings.LoadCollisions;
-                bool oldLoadActors = ToolkitSettings.LoadActors;
-                bool oldLoadOBJData = ToolkitSettings.LoadOBJData;
-                bool oldLoadAIWorld = ToolkitSettings.LoadAIWorld;
-                bool oldLoadATP = ToolkitSettings.LoadATP;
-                bool oldLoadTranslokator = ToolkitSettings.LoadTranslokator;
-
-                ToolkitSettings.LoadFrameResource = false;
-                ToolkitSettings.LoadCollisions = false;
-                ToolkitSettings.LoadActors = false;
-                ToolkitSettings.LoadOBJData = false;
-                ToolkitSettings.LoadAIWorld = false;
-                ToolkitSettings.LoadATP = false;
-                ToolkitSettings.LoadTranslokator = false;
-                ToolkitSettings.LoadRoads = true;
-
-                try
-                {
-                    MapEditor editor = new MapEditor(file, sceneData);
-                    editor.ShowDialog();
-                }
-                catch (ObjectDisposedException ex) when (ex.ObjectName == "MapEditor")
-                {}
-                finally
-                {
-                    ToolkitSettings.LoadFrameResource = oldLoadFrame;
-                    ToolkitSettings.LoadCollisions = oldLoadCollisions;
-                    ToolkitSettings.LoadActors = oldLoadActors;
-                    ToolkitSettings.LoadOBJData = oldLoadOBJData;
-                    ToolkitSettings.LoadAIWorld = oldLoadAIWorld;
-                    ToolkitSettings.LoadATP = oldLoadATP;
-                    ToolkitSettings.LoadTranslokator = oldLoadTranslokator;
-                }
-
-                return true;
-            }
-            else if (result == DialogResult.No)
-            {
-                System.Windows.Forms.SaveFileDialog saveFile = new System.Windows.Forms.SaveFileDialog()
-                {
-                    InitialDirectory = Path.GetDirectoryName(file.FullName),
-                    FileName = Path.GetFileNameWithoutExtension(file.FullName),
-                    Filter = "XML (*.xml)|*.xml"
+                    Text = "What do you want to do with this roadmap?",
+                    Location = new System.Drawing.Point(20, 20),
+                    AutoSize = true
                 };
+                dialog.Controls.Add(label);
 
-                if (saveFile.ShowDialog() == DialogResult.OK)
+                Button btnMapEditor = new Button() { Text = "Map Editor", Location = new System.Drawing.Point(20, 60), Width = 100 };
+                Button btnXmlExport = new Button() { Text = "Export to XML", Location = new System.Drawing.Point(130, 60), Width = 100 };
+                Button btnRoadmapEditor = new Button() { Text = "Roadmap Editor", Location = new System.Drawing.Point(240, 60), Width = 100 };
+
+                DialogResult result = DialogResult.None;
+                btnMapEditor.Click += (s, e) => { result = DialogResult.Yes; dialog.Close(); };
+                btnXmlExport.Click += (s, e) => { result = DialogResult.No; dialog.Close(); };
+                btnRoadmapEditor.Click += (s, e) => { result = DialogResult.Retry; dialog.Close(); };
+
+                dialog.Controls.Add(btnMapEditor);
+                dialog.Controls.Add(btnXmlExport);
+                dialog.Controls.Add(btnRoadmapEditor);
+
+                dialog.ShowDialog();
+
+                if (result == DialogResult.Yes)
                 {
+                    SceneData sceneData = new SceneData();
+                    sceneData.ScenePath = Path.GetDirectoryName(file.FullName);
+
                     IRoadmap roadmap = GetNewRoadmap();
                     using (FileStream fstream = File.OpenRead(file.FullName))
                     {
                         roadmap.Read(fstream);
                     }
-                    ConvertToXML(roadmap, saveFile.FileName);
+                    sceneData.roadMap = roadmap;
+                    sceneData.roadMapFilePath = file.FullName;
+
+                    bool oldLoadFrame = ToolkitSettings.LoadFrameResource;
+                    bool oldLoadCollisions = ToolkitSettings.LoadCollisions;
+                    bool oldLoadActors = ToolkitSettings.LoadActors;
+                    bool oldLoadOBJData = ToolkitSettings.LoadOBJData;
+                    bool oldLoadAIWorld = ToolkitSettings.LoadAIWorld;
+                    bool oldLoadATP = ToolkitSettings.LoadATP;
+                    bool oldLoadTranslokator = ToolkitSettings.LoadTranslokator;
+
+                    ToolkitSettings.LoadFrameResource = false;
+                    ToolkitSettings.LoadCollisions = false;
+                    ToolkitSettings.LoadActors = false;
+                    ToolkitSettings.LoadOBJData = false;
+                    ToolkitSettings.LoadAIWorld = false;
+                    ToolkitSettings.LoadATP = false;
+                    ToolkitSettings.LoadTranslokator = false;
+                    ToolkitSettings.LoadRoads = true;
+
+                    try
+                    {
+                        MapEditor editor = new MapEditor(file, sceneData);
+                        editor.ShowDialog();
+                    }
+                    catch (ObjectDisposedException) { }
+                    finally
+                    {
+                        ToolkitSettings.LoadFrameResource = oldLoadFrame;
+                        ToolkitSettings.LoadCollisions = oldLoadCollisions;
+                        ToolkitSettings.LoadActors = oldLoadActors;
+                        ToolkitSettings.LoadOBJData = oldLoadOBJData;
+                        ToolkitSettings.LoadAIWorld = oldLoadAIWorld;
+                        ToolkitSettings.LoadATP = oldLoadATP;
+                        ToolkitSettings.LoadTranslokator = oldLoadTranslokator;
+                    }
+                    return true;
                 }
-                return true;
-            }
-            else
-            {
-                return false;
+                else if (result == DialogResult.No)
+                {
+                    System.Windows.Forms.SaveFileDialog saveFile = new System.Windows.Forms.SaveFileDialog()
+                    {
+                        InitialDirectory = Path.GetDirectoryName(file.FullName),
+                        FileName = Path.GetFileNameWithoutExtension(file.FullName),
+                        Filter = "XML (*.xml)|*.xml"
+                    };
+
+                    if (saveFile.ShowDialog() == DialogResult.OK)
+                    {
+                        IRoadmap roadmap = GetNewRoadmap();
+                        using (FileStream fstream = File.OpenRead(file.FullName))
+                        {
+                            roadmap.Read(fstream);
+                        }
+                        ConvertToXML(roadmap, saveFile.FileName);
+                    }
+                    return true;
+                }
+                else if (result == DialogResult.Retry)
+                {
+                    try
+                    {
+                        string ext = Path.GetExtension(file.FullName).ToLower();
+                        var format = RoadmapEditor.Form1.FileFormat.Xml; 
+                        if (ext == ".gsd") format = RoadmapEditor.Form1.FileFormat.Ce;
+                        else if (ext == ".game") format = RoadmapEditor.Form1.FileFormat.De;
+                        var editorForm = new RoadmapEditor.Form1();
+                        editorForm.LoadFile(file.FullName, format);
+                        editorForm.ShowDialog();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error opening in Roadmap Editor: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
         }
 
