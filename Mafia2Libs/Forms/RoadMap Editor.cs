@@ -16,12 +16,6 @@ namespace RoadmapEditor
         private IRoadmapFactory _factory;
         private FileFormat _currentFormat;
         private string _currentFilePath;
-        private ListBox _listSplines;
-        private Panel _canvas;
-        private TextBox _txtX, _txtZ, _txtY;
-        private Label _lblSelectedPoint;
-        private Button _btnSave, _btnAddPoint, _btnDeletePoint;
-        private RadioButton _rbCe, _rbDe, _rbXml;
         private int _viewMode = 0;
         private IRoadSpline _currentSpline;
         private object _currentSplineContainer;
@@ -45,60 +39,22 @@ namespace RoadmapEditor
 
         public Form1()
         {
+            InitializeComponent();
             SetupUI();
         }
 
         private void SetupUI()
         {
-            this.Text = "Roadmap Spline Editor";
-            this.Size = new Size(1200, 800);
+            comboBox1.SelectedIndexChanged += (s, e) =>
+            {
+                _viewMode = comboBox1.SelectedIndex;
+                _canvas.Invalidate();
+            }; 
 
-            var menu = new MenuStrip();
-            var fileMenu = new ToolStripMenuItem("File");
-            var openItem = new ToolStripMenuItem("Open...");
-            openItem.Click += OpenFile;
-            var saveItem = new ToolStripMenuItem("Save");
-            saveItem.Click += SaveFile;
-            var saveAsItem = new ToolStripMenuItem("Save As...");
-            saveAsItem.Click += SaveAsFile;
-            fileMenu.DropDownItems.Add(openItem);
-            fileMenu.DropDownItems.Add(saveItem);
-            fileMenu.DropDownItems.Add(saveAsItem);
-            menu.Items.Add(fileMenu);
-            this.MainMenuStrip = menu;
-            this.Controls.Add(menu);
-
-            var formatPanel = new Panel { Dock = DockStyle.Top, Height = 35 };
-            _rbCe = new RadioButton { Text = "CryEngine (Ce)", Location = new Point(10, 5), Checked = true };
-            _rbDe = new RadioButton { Text = "De (Legacy)", Location = new Point(130, 5) };
-            _rbXml = new RadioButton { Text = "XML", Location = new Point(250, 5) };
-            formatPanel.Controls.Add(_rbCe);
-            formatPanel.Controls.Add(_rbDe);
-            formatPanel.Controls.Add(_rbXml);
-            var lblView = new Label { Text = "View:", Location = new Point(360, 5), AutoSize = true };
-            var cbView = new ComboBox { Location = new Point(400, 3), Width = 120, DropDownStyle = ComboBoxStyle.DropDownList };
-            cbView.Items.AddRange(new object[] { "Top-Down (XZ)", "Side (XY)", "Front (ZY)" });
-            cbView.SelectedIndex = 0;
-            formatPanel.Controls.Add(lblView);
-            formatPanel.Controls.Add(cbView);
-
-            this.Controls.Add(formatPanel);
-
-            var split = new SplitContainer { Dock = DockStyle.Fill };
-            this.Controls.Add(split);
-
-            _listSplines = new ListBox { Dock = DockStyle.Fill };
-            split.Panel1.Controls.Add(_listSplines);
-            _listSplines.SelectedIndexChanged += OnSplineSelected;
-
-            var propPanel = new Panel { Dock = DockStyle.Bottom, Height = 150 };
-            _lblSelectedPoint = new Label { Text = "Selected point: none", Dock = DockStyle.Top, Height = 30 };
-            var lblX = new Label { Text = "X:", Location = new Point(5, 35), AutoSize = true };
-            _txtX = new TextBox { Location = new Point(30, 32), Width = 80 };
-            var lblZ = new Label { Text = "Z:", Location = new Point(120, 35), AutoSize = true };
-            _txtZ = new TextBox { Location = new Point(145, 32), Width = 80 };
-            var lblY = new Label { Text = "Y:", Location = new Point(235, 35), AutoSize = true };
-            _txtY = new TextBox { Location = new Point(260, 32), Width = 80 };
+            checkBox1.CheckedChanged += (s, e) =>
+            {
+                _limitDistance = checkBox1.Checked;
+            };
 
             _txtX.LostFocus += (s, e) => ApplyPointCoordinates();
             _txtZ.LostFocus += (s, e) => ApplyPointCoordinates();
@@ -106,68 +62,11 @@ namespace RoadmapEditor
             _txtX.KeyDown += (s, e) => { if (e.KeyCode == Keys.Enter) ApplyPointCoordinates(); };
             _txtZ.KeyDown += (s, e) => { if (e.KeyCode == Keys.Enter) ApplyPointCoordinates(); };
             _txtY.KeyDown += (s, e) => { if (e.KeyCode == Keys.Enter) ApplyPointCoordinates(); };
-
-            _btnAddPoint = new Button { Text = "Add Point", Location = new Point(5, 70), Width = 100 };
-            _btnDeletePoint = new Button { Text = "Delete Point", Location = new Point(110, 70), Width = 100 };
-            _btnAddPoint.Click += OnAddPoint;
-            _btnDeletePoint.Click += OnDeletePoint;
-
-            propPanel.Controls.Add(_lblSelectedPoint);
-            propPanel.Controls.Add(lblX);
-            propPanel.Controls.Add(_txtX);
-            propPanel.Controls.Add(lblZ);
-            propPanel.Controls.Add(_txtZ);
-            propPanel.Controls.Add(lblY);
-            propPanel.Controls.Add(_txtY);
-            propPanel.Controls.Add(_btnAddPoint);
-            propPanel.Controls.Add(_btnDeletePoint);
-
-            _btnNewRoad = new Button { Text = "New Road", Location = new Point(220, 70), Width = 100 };
-            _btnDeleteRoad = new Button { Text = "Delete Road", Location = new Point(330, 70), Width = 100 };
-            _btnNewRoad.Click += OnNewRoad;
-            _btnDeleteRoad.Click += OnDeleteRoad;
-
-            propPanel.Controls.Add(_btnNewRoad);
-            propPanel.Controls.Add(_btnDeleteRoad);
-
-            split.Panel1.Controls.Add(propPanel);
-
-            cbView.SelectedIndexChanged += (s, ev) => {
-                _viewMode = cbView.SelectedIndex;
-                _canvas.Invalidate();
-            };
-
-            var chkLimit = new CheckBox
-            {
-                Text = "Limit distance (max 7)",
-                Location = new Point(530, 5),
-                AutoSize = true,
-                Checked = true
-            };
-            chkLimit.CheckedChanged += (s, ev) => { _limitDistance = chkLimit.Checked; };
-            formatPanel.Controls.Add(chkLimit);
-
-            _canvas = new BufferedPanel { Dock = DockStyle.Fill, BackColor = Color.FromArgb(30, 30, 30) };
-            _canvas.Paint += OnCanvasPaint;
-
             _canvas.MouseDown += OnCanvasMouseDown;
             _canvas.MouseMove += OnCanvasMouseMove;
             _canvas.MouseUp += OnCanvasMouseUp;
             _canvas.MouseWheel += OnCanvasMouseWheel;
             _canvas.Resize += (s, e) => { if (_roadmap != null) UpdateAllBounds(); };
-            split.Panel2.Controls.Add(_canvas);
-
-
-
-            this.Load += (sender, e) =>
-            {
-                split.Panel1MinSize = 200;
-                split.Panel2MinSize = 400;
-                int desiredLeftWidth = 300;
-                if (desiredLeftWidth >= split.Panel1MinSize &&
-                    desiredLeftWidth <= split.Width - split.Panel2MinSize)
-                    split.SplitterDistance = desiredLeftWidth;
-            };
         }
 
         private class RoadDrawData
@@ -175,7 +74,7 @@ namespace RoadmapEditor
             public List<List<Vector3[]>> LanePolygons;
             public List<Color> LaneColors;
         }
-        
+
         private RoadDrawData BuildRoadGeometry(IRoadDefinition roadDef, IRoadSpline spline)
         {
             var data = new RoadDrawData
@@ -608,7 +507,7 @@ namespace RoadmapEditor
                 var color = data.LaneColors[i];
                 using (var brush = new SolidBrush(color))
                 {
-                    foreach (var quad in data.LanePolygons[i]) 
+                    foreach (var quad in data.LanePolygons[i])
                     {
                         PointF[] screenQuad = quad.Select(v => WorldToScreen(v)).ToArray();
                         g.FillPolygon(brush, screenQuad);
@@ -747,7 +646,7 @@ namespace RoadmapEditor
             switch (_viewMode)
             {
                 case 0:
-                    worldY_or_Z = (mouseScreen.Y - _offset.Y) / _scale; 
+                    worldY_or_Z = (mouseScreen.Y - _offset.Y) / _scale;
                     break;
                 case 1:
                     worldY_or_Z = -(mouseScreen.Y - _offset.Y) / _scale;
@@ -858,7 +757,7 @@ namespace RoadmapEditor
                         _selectedPointIndex = hitIndex;
                         _dragStart = new PointF(e.X, e.Y);
                         _dragStartWorld = new Vector2(_currentSpline.Points[hitIndex].X, _currentSpline.Points[hitIndex].Z);
-                        _isDraggingPoint = false; 
+                        _isDraggingPoint = false;
                         UpdateSelectedPointDisplay();
                         _canvas.Invalidate();
                         return;
@@ -1264,14 +1163,13 @@ namespace RoadmapEditor
             _currentFilePath = null;
         }
 
-    }
-
-    public class BufferedPanel : Panel
-    {
-        public BufferedPanel()
+        public class BufferedPanel : Panel
         {
-            DoubleBuffered = true;
-            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer, true);
+            public BufferedPanel()
+            {
+                DoubleBuffered = true;
+                SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer, true);
+            }
         }
     }
 }
