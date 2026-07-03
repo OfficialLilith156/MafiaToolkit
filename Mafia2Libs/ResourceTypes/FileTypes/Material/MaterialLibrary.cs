@@ -1,10 +1,13 @@
-﻿using System.IO;
+﻿using Mafia2Tool.XBOX;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Windows;
 using Utils.Logging;
 using Utils.Settings;
-using System.Diagnostics;
-using System.Windows;
 
 namespace ResourceTypes.Materials
 {
@@ -35,19 +38,50 @@ namespace ResourceTypes.Materials
             version = InVersion;
         }
 
-        public void ReadMatFile(string name)
+        public void ReadMatFile(string name, bool forceBigEndian = false)
         {
             materials = new Dictionary<ulong, IMaterial>();
             this.name = name;
 
-            using (BinaryReader reader = new BinaryReader(File.Open(name, FileMode.Open)))
+            using (FileStream fs = File.Open(name, FileMode.Open))
             {
-                string header = new string(reader.ReadChars(4));
-                version = (VersionsEnumerator)reader.ReadInt32();
+
+                byte[] buffer = new byte[4];
+                fs.Read(buffer, 0, 4);
+                string header = System.Text.Encoding.ASCII.GetString(buffer);
+
+                fs.Read(buffer, 0, 4);
+                int versionLittle = BitConverter.ToInt32(buffer, 0);
+                int versionBig = IPAddress.NetworkToHostOrder(BitConverter.ToInt32(buffer, 0));
+
+                bool isBigEndian = false;
+                int versionValue = 0;
+
+                if (versionLittle == 57 || versionLittle == 58 || versionLittle == 63)
+                {
+                    versionValue = versionLittle;
+                    isBigEndian = false;
+                }
+                else if (versionBig == 57 || versionBig == 58 || versionBig == 63)
+                {
+                    versionValue = versionBig;
+                    isBigEndian = true;
+                }
+                else
+                {
+                    throw new InvalidDataException("Unknown MTL version or unsupported Endianness.");
+                }
+
+                fs.Position = 8; 
+                BinaryReader reader = isBigEndian
+                    ? new BigEndianBinaryReader(fs)
+                    : new BinaryReader(fs);
+
                 int numMats = reader.ReadInt32();
                 unk2 = reader.ReadInt32();
+                version = (VersionsEnumerator)versionValue;
 
-                for (int i = 0; i != numMats; i++)
+                for (int i = 0; i < numMats; i++)
                 {
                     IMaterial mat = MaterialFactory.ReadMaterialFromFile(reader, version);
                     materials.Add(mat.MaterialName.Hash, mat);
