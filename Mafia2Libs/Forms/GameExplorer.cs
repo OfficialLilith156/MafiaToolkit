@@ -123,6 +123,56 @@ namespace Mafia2Tool
             }
             InitTreeView();
         }
+        private void Button_ConvertAllDds_Click(object sender, EventArgs e)
+        {
+            DialogResult recursive = MessageBox.Show("Convert DDS files only in the current folder? Click No to recursively process all subfolders.", "Convert all DDS files", MessageBoxButtons.YesNoCancel);
+            if (recursive == DialogResult.Cancel) return;
+
+            bool recurse = (recursive == DialogResult.No);
+            int converted = 0, skipped = 0;
+
+            DirectoryInfo dir = currentDirectory;
+            infoText.Text = "Searching for DDS files...";
+            Application.DoEvents();
+
+            var files = dir.GetFiles("*.dds", recurse ? System.IO.SearchOption.AllDirectories : System.IO.SearchOption.TopDirectoryOnly);
+            infoText.Text = $"Found {files.Length} DDS files. Conversion...";
+            Application.DoEvents();
+
+            foreach (var file in files)
+            {
+                try
+                {
+                    bool isXbox;
+                    using (var fs = new FileStream(file.FullName, FileMode.Open, FileAccess.Read))
+                    {
+                        byte[] buffer = new byte[8];
+                        fs.Read(buffer, 0, 8);
+                        uint dwSize = BitConverter.ToUInt32(buffer, 4);
+                        isXbox = (dwSize == 0x7C000000);
+                    }
+
+                    if (isXbox)
+                    {
+                        XboxDdsToPc.Convert(file.FullName, file.FullName);
+                        converted++;
+                        infoText.Text = $"Converted: {file.Name} ({converted}/{files.Length})";
+                        Application.DoEvents();
+                    }
+                    else
+                    {
+                        skipped++;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Conversion error {file.Name}: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+
+            infoText.Text = $"Done. Converted: {converted}, skipped (already PC): {skipped}";
+            OpenDirectory(currentDirectory);
+        }
 
         private void InitTreeView()
         {

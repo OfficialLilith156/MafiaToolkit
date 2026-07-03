@@ -93,9 +93,11 @@ namespace Mafia2Tool
             packAllSDSToolStripMenuItem = new ToolStripMenuItem();
             dropdownAbout = new ToolStripDropDownButton();
             AboutButton = new ToolStripMenuItem();
+            toolStripDropDownButton1 = new ToolStripDropDownButton();
             bottomContainer = new ToolStripContainer();
             status = new StatusStrip();
             infoText = new ToolStripStatusLabel();
+            convertXBOXDDSForPCToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)mainContainer).BeginInit();
             mainContainer.Panel1.SuspendLayout();
             mainContainer.Panel2.SuspendLayout();
@@ -233,7 +235,7 @@ namespace Mafia2Tool
             fileListView.Location = new System.Drawing.Point(4, 35);
             fileListView.Margin = new Padding(4, 3, 4, 3);
             fileListView.Name = "fileListView";
-            fileListView.Size = new System.Drawing.Size(599, 391);
+            fileListView.Size = new System.Drawing.Size(596, 391);
             fileListView.SmallImageList = imageBank;
             fileListView.TabIndex = 0;
             fileListView.UseCompatibleStateImageBehavior = false;
@@ -496,7 +498,7 @@ namespace Mafia2Tool
             // 
             // tools
             // 
-            tools.Items.AddRange(new ToolStripItem[] { dropdownFile, dropdownView, dropdownTools, dropdownAbout });
+            tools.Items.AddRange(new ToolStripItem[] { dropdownFile, dropdownView, dropdownTools, dropdownAbout, toolStripDropDownButton1 });
             tools.LayoutStyle = ToolStripLayoutStyle.Flow;
             tools.Location = new System.Drawing.Point(0, 0);
             tools.Name = "tools";
@@ -673,6 +675,16 @@ namespace Mafia2Tool
             AboutButton.Text = "$ABOUT";
             AboutButton.Click += OnCredits_Pressed;
             // 
+            // toolStripDropDownButton1
+            // 
+            toolStripDropDownButton1.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripDropDownButton1.DropDownItems.AddRange(new ToolStripItem[] { convertXBOXDDSForPCToolStripMenuItem });
+            toolStripDropDownButton1.Image = (System.Drawing.Image)resources.GetObject("toolStripDropDownButton1.Image");
+            toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            toolStripDropDownButton1.Name = "toolStripDropDownButton1";
+            toolStripDropDownButton1.Size = new System.Drawing.Size(77, 19);
+            toolStripDropDownButton1.Text = "Xbox Tools";
+            // 
             // bottomContainer
             // 
             bottomContainer.BottomToolStripPanelVisible = false;
@@ -708,6 +720,13 @@ namespace Mafia2Tool
             // 
             infoText.Name = "infoText";
             infoText.Size = new System.Drawing.Size(0, 25);
+            // 
+            // convertXBOXDDSForPCToolStripMenuItem
+            // 
+            convertXBOXDDSForPCToolStripMenuItem.Name = "convertXBOXDDSForPCToolStripMenuItem";
+            convertXBOXDDSForPCToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            convertXBOXDDSForPCToolStripMenuItem.Text = "Convert XBOX DDS for PC";
+            convertXBOXDDSForPCToolStripMenuItem.Click += Button_ConvertAllDds_Click;
             // 
             // GameExplorer
             // 
@@ -817,5 +836,7 @@ namespace Mafia2Tool
         private ToolStripMenuItem ContextFileImport;
         private ToolStripMenuItem ContextRemoveToCartFiles;
         private ToolStripMenuItem packAllSDSToolStripMenuItem;
+        private ToolStripDropDownButton toolStripDropDownButton1;
+        private ToolStripMenuItem convertXBOXDDSForPCToolStripMenuItem;
     }
 }
