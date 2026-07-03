@@ -1,10 +1,11 @@
 ﻿using Gibbed.Illusion.FileFormats.Hashing;
-using System.ComponentModel;
 using System;
+using System.ComponentModel;
 using System.IO;
 using System.Numerics;
 using Utils.StringHelpers;
 using Utils.VorticeUtils;
+using XBOX;
 
 namespace ResourceTypes.Actors
 {
@@ -112,12 +113,12 @@ namespace ResourceTypes.Actors
             definitionName = "";
         }
 
-        public ActorEntry(BinaryReader reader)
+        public ActorEntry(EndianBinaryReader reader)
         {
             ReadFromFile(reader);
         }
 
-        public void ReadFromFile(BinaryReader reader)
+        public void ReadFromFile(EndianBinaryReader reader)
         {
             size = reader.ReadInt32();
             actorTypeName = readString(reader);
@@ -149,7 +150,7 @@ namespace ResourceTypes.Actors
             return size;
         }
 
-        public void WriteToFile(BinaryWriter writer)
+        public void WriteToFile(EndianBinaryWriter writer)
         {
             long pos = writer.BaseStream.Position;
             writer.Write(0);
@@ -173,7 +174,7 @@ namespace ResourceTypes.Actors
             writer.BaseStream.Position = pos2;
         }
 
-        private string readString(BinaryReader reader)
+        private string readString(EndianBinaryReader reader)
         {
             byte length = reader.ReadByte();
             string text = StringHelpers.ReadStringBuffer(reader, length - 2);
@@ -181,7 +182,7 @@ namespace ResourceTypes.Actors
             return text;
         }
 
-        private void writeString(string text, BinaryWriter writer)
+        private void writeString(string text, EndianBinaryWriter writer)
         {
             writer.Write((byte)(text.Length + 2));
             writer.Write(text.ToCharArray());

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.IO;
+using XBOX;
 
 namespace ResourceTypes.Actors
 {
@@ -38,7 +39,7 @@ namespace ResourceTypes.Actors
             name = "NewDefintion";
         }
 
-        public ActorDefinition(BinaryReader reader)
+        public ActorDefinition(EndianBinaryReader reader)
         {
             frameNameHash = 0;
             unk01 = 0;
@@ -48,7 +49,7 @@ namespace ResourceTypes.Actors
             ReadFromFile(reader);
         }
 
-        public void ReadFromFile(BinaryReader reader)
+        public void ReadFromFile(EndianBinaryReader reader)
         {
             frameNameHash = reader.ReadUInt64();
             unk01 = reader.ReadUInt16();
@@ -57,7 +58,7 @@ namespace ResourceTypes.Actors
             name = "";
         }
 
-        public void WriteToFile(BinaryWriter writer)
+        public void WriteToFile(EndianBinaryWriter writer)
         {
             writer.Write(frameNameHash);
             writer.Write(unk01);

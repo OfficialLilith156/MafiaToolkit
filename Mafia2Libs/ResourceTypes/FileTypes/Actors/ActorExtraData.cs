@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using XBOX;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using Utils.Logging;
@@ -27,7 +28,7 @@ namespace ResourceTypes.Actors
 
         }
 
-        public ActorExtraData(BinaryReader reader)
+        public ActorExtraData(EndianBinaryReader reader)
         {
             buffer = null;
             data = null;
@@ -35,7 +36,7 @@ namespace ResourceTypes.Actors
             ReadFromFile(reader);
         }
 
-        public void ReadFromFile(BinaryReader reader)
+        public void ReadFromFile(EndianBinaryReader reader)
         {
             buffer = null;
             data = null;
@@ -53,9 +54,9 @@ namespace ResourceTypes.Actors
 
             buffer = (data == null ? buffer : null);
         }
-        public void WriteToFile(BinaryWriter writer)
+        public void WriteToFile(EndianBinaryWriter writer)
         {
-            bool isBigEndian = false;
+            bool isBigEndian = writer.IsBigEndian;
             writer.Write((int)bufferType);
 
             if (buffer != null)
@@ -89,6 +90,16 @@ namespace ResourceTypes.Actors
                     data.WriteToFile(stream, false);
                     return stream.ToArray();
                 }
+            }
+        }
+        public void ReadFromFile(EndianBinaryReader reader, bool isBigEndian)
+        {
+            bufferType = (ActorTypes)reader.ReadInt32();
+            uint bufferLength = reader.ReadUInt32();
+            buffer = reader.ReadBytes((int)bufferLength);
+            using (MemoryStream stream = new MemoryStream(buffer))
+            {
+                data = ActorFactory.LoadExtraData(bufferType, stream, isBigEndian);
             }
         }
 

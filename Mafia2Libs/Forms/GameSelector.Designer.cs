@@ -38,18 +38,16 @@
             // 
             FlowPanel_GamesList.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             FlowPanel_GamesList.AutoScroll = true;
-            FlowPanel_GamesList.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             FlowPanel_GamesList.Location = new System.Drawing.Point(14, 36);
             FlowPanel_GamesList.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             FlowPanel_GamesList.Name = "FlowPanel_GamesList";
-            FlowPanel_GamesList.Size = new System.Drawing.Size(905, 470);
+            FlowPanel_GamesList.Size = new System.Drawing.Size(785, 698);
             FlowPanel_GamesList.TabIndex = 0;
-            FlowPanel_GamesList.WrapContents = false;
             // 
             // CheckBox_SelectAsDefault
             // 
             CheckBox_SelectAsDefault.AutoSize = true;
-            CheckBox_SelectAsDefault.Location = new System.Drawing.Point(723, 14);
+            CheckBox_SelectAsDefault.Location = new System.Drawing.Point(586, 11);
             CheckBox_SelectAsDefault.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             CheckBox_SelectAsDefault.Name = "CheckBox_SelectAsDefault";
             CheckBox_SelectAsDefault.Size = new System.Drawing.Size(140, 19);
@@ -72,7 +70,7 @@
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(933, 519);
+            ClientSize = new System.Drawing.Size(815, 747);
             Controls.Add(Label_ToolkitVersion);
             Controls.Add(CheckBox_SelectAsDefault);
             Controls.Add(FlowPanel_GamesList);
