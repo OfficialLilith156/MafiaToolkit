@@ -96,7 +96,7 @@ namespace Mafia2Tool
             }
 
             //Actors
-            if (ToolkitSettings.LoadActors && !isBigEndian)
+            if (ToolkitSettings.LoadActors)
             {
                 var paths = sdsContent.GetResourceFiles("Actors", true);
                 foreach (var item in paths)
@@ -136,7 +136,7 @@ namespace Mafia2Tool
             }
 
             //Collisions
-            if (ToolkitSettings.LoadCollisions && !isBigEndian && sdsContent.HasResource("Collisions"))
+            if (ToolkitSettings.LoadCollisions  && sdsContent.HasResource("Collisions"))
             {
                 var name = sdsContent.GetResourceFiles("Collisions", true)[0];
                 Collisions = new Collision(name);

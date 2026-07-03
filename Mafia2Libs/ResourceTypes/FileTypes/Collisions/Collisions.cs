@@ -1,6 +1,9 @@
-﻿using ResourceTypes.Collisions;
+﻿using Gibbed.IO;
+using ResourceTypes.Collisions;
+using ResourceTypes.Collisions.PhysX;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -8,7 +11,6 @@ using System.Numerics;
 using Utils.Helpers;
 using Utils.Logging;
 using Utils.VorticeUtils;
-using System.ComponentModel;
 using Vortice.Mathematics;
 
 namespace ResourceTypes.Collisions
@@ -42,30 +44,38 @@ namespace ResourceTypes.Collisions
 
         public void ReadFromFile(BinaryReader reader)
         {
-            if (reader.ReadInt32() != Version)
-            {
-                throw new Exception("Unknown collision version");
-            }
+            int version = reader.ReadInt32();
+            if (version != Version) throw new Exception("Unknown collision version");
 
-            Platform = reader.ReadUInt32();
-            if (Platform > 2)
+            uint platformRaw = reader.ReadUInt32();
+            uint platform = platformRaw;
+            bool isBigEndian = false;
+            if (platformRaw > 2)
             {
-                throw new Exception($"Unknown platform {Platform}");
+                platform = BitConverter.ToUInt32(BitConverter.GetBytes(platformRaw).Reverse().ToArray(), 0);
+                isBigEndian = true;
             }
+            Platform = platform;
+            if (Platform > 2) throw new Exception($"Unknown platform {Platform}");
 
-            int numPlacements = reader.ReadInt32();
+            int numPlacements = (int)ReadUInt32(reader, isBigEndian);
             Placements = new List<Placement>(numPlacements);
             for (int i = 0; i < numPlacements; i++)
-                Placements.Add(new Placement(reader));
+                Placements.Add(new Placement(reader, isBigEndian));
 
-            int numModels = reader.ReadInt32();
-
+            int numModels = (int)ReadUInt32(reader, isBigEndian);
             Models = new SortedDictionary<ulong, CollisionModel>();
             for (int i = 0; i < numModels; i++)
             {
-                CollisionModel model = new CollisionModel(reader);
+                CollisionModel model = new CollisionModel(reader, isBigEndian);
                 Models.Add(model.Hash, model);
             }
+        }
+        private static uint ReadUInt32(BinaryReader reader, bool bigEndian)
+        {
+            uint val = reader.ReadUInt32();
+            if (bigEndian) val = val.Swap();
+            return val;
         }
 
         public void WriteToFile()
@@ -237,9 +247,9 @@ namespace ResourceTypes.Collisions
             }
 
 
-            public Placement(BinaryReader reader)
+            public Placement(BinaryReader reader, bool bigEndian)
             {
-                ReadFromFile(reader);
+                ReadFromFile(reader, bigEndian);
             }
 
             public Placement()
@@ -259,14 +269,33 @@ namespace ResourceTypes.Collisions
                 Unk5 = other.Unk5;
             }
 
-            public void ReadFromFile(BinaryReader reader)
+            public void ReadFromFile(BinaryReader reader, bool bigEndian)
             {
-                Position = Vector3Utils.ReadFromFile(reader);
-                Rotation = Vector3Utils.ReadFromFile(reader);
-                Hash = reader.ReadUInt64();
-                IndexModel = reader.ReadInt32();
+                Position = new Vector3(
+                    ReadFloat(reader, bigEndian),
+                    ReadFloat(reader, bigEndian),
+                    ReadFloat(reader, bigEndian)
+                );
+                Rotation = new Vector3(
+                    ReadFloat(reader, bigEndian),
+                    ReadFloat(reader, bigEndian),
+                    ReadFloat(reader, bigEndian)
+                );
+                Hash = ReadUInt64(reader, bigEndian);
+                IndexModel = (int)ReadUInt32(reader, bigEndian);
                 Unk5 = reader.ReadByte();
             }
+            private static float ReadFloat(BinaryReader reader, bool bigEndian)
+            {
+                return SerializationUtils.ReadFloat(reader, bigEndian);
+            }
+            private static ulong ReadUInt64(BinaryReader reader, bool bigEndian)
+            {
+                ulong val = reader.ReadUInt64();
+                if (bigEndian) val = val.Swap();
+                return val;
+            }
+
 
             public void WriteToFile(BinaryWriter writer)
             {
@@ -296,9 +325,9 @@ namespace ResourceTypes.Collisions
             [Description("Material sections of this collision model. Click '...' to edit.")]
             public List<Section> Sections { get; set; }
 
-            public CollisionModel(BinaryReader reader)
+            public CollisionModel(BinaryReader reader, bool bigEndian)
             {
-                ReadFromFile(reader);
+                ReadFromFile(reader, bigEndian);
             }
 
             public CollisionModel()
@@ -308,22 +337,26 @@ namespace ResourceTypes.Collisions
                 Sections = new List<Section>();
             }
 
-            public void ReadFromFile(BinaryReader reader)
+            public void ReadFromFile(BinaryReader reader, bool bigEndian)
             {
-                Hash = reader.ReadUInt64();
-
-                int dataSize = reader.ReadInt32();
+                Hash = ReadUInt64(reader, bigEndian);
+                int dataSize = (int)ReadUInt32(reader, bigEndian);
                 Mesh = new TriangleMesh();
                 Mesh.Load(reader);
-
-                int numSections = reader.ReadInt32();
+                int numSections = (int)ReadUInt32(reader, bigEndian);
                 Sections = new List<Section>();
                 for (int i = 0; i < numSections; i++)
                 {
-                    Section sec = new Section(reader);
+                    Section sec = new Section(reader, bigEndian);
                     sec.ParentModel = this;
                     Sections.Add(sec);
                 }
+            }
+            private static ulong ReadUInt64(BinaryReader reader, bool bigEndian)
+            {
+                ulong val = reader.ReadUInt64();
+                if (bigEndian) val = val.Swap();
+                return val;
             }
 
             public void WriteToFile(BinaryWriter writer)
@@ -397,12 +430,12 @@ namespace ResourceTypes.Collisions
             {
             }
 
-            public Section(BinaryReader reader)
+            public Section(BinaryReader reader, bool bigEndian)
             {
-                Start = reader.ReadInt32();
-                NumEdges = reader.ReadInt32();
-                Material = reader.ReadInt32();
-                Unk2 = reader.ReadInt32();
+                Start = (int)ReadUInt32(reader, bigEndian);
+                NumEdges = (int)ReadUInt32(reader, bigEndian);
+                Material = (int)ReadUInt32(reader, bigEndian);
+                Unk2 = (int)ReadUInt32(reader, bigEndian);
             }
 
             public void WriteToFile(BinaryWriter writer)
