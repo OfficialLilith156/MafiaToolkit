@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using Utils.Logging;
 using Utils.StringHelpers;
-using XBOX;
+using XBOX.ActorFile;
 
 namespace ResourceTypes.Actors
 {
@@ -255,7 +255,7 @@ namespace ResourceTypes.Actors
                 }
                 else
                 {
-                    // const2 == 0 или другое
+                    // const2 == 0
                     int bytesToSkip = size - unk14;
                     //if (bytesToSkip < 0)
                     //    throw new Exception($"Negative bytesToSkip: {bytesToSkip}, size={size}, unk14={unk14}");

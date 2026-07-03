@@ -6,7 +6,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Mafia2Tool.XBOX
+namespace Mafia2Tool.XBOX.MaterialFile
 {
     public class BigEndianBinaryReader : BinaryReader
     {

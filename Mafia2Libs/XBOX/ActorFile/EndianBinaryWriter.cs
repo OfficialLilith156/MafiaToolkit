@@ -2,7 +2,7 @@
 using System.IO;
 
 
-namespace XBOX
+namespace XBOX.ActorFile
 {
     public class EndianBinaryWriter : BinaryWriter
     {

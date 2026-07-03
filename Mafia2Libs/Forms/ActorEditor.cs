@@ -3,7 +3,7 @@ using ResourceTypes.Actors;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using XBOX;
+using XBOX.ActorFile;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;

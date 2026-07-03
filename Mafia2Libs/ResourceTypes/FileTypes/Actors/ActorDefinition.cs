@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 using System.IO;
-using XBOX;
+using XBOX.ActorFile;
 
 namespace ResourceTypes.Actors
 {

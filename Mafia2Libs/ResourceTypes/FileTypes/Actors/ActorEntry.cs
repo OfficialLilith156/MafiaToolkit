@@ -5,7 +5,7 @@ using System.IO;
 using System.Numerics;
 using Utils.StringHelpers;
 using Utils.VorticeUtils;
-using XBOX;
+using XBOX.ActorFile;
 
 namespace ResourceTypes.Actors
 {
