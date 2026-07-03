@@ -295,8 +295,18 @@ namespace Mafia2Tool
                 newEntry.DataID = (short)(actors.ExtraData.Count - 1);
                 newEntry.Data = newData;
             }
-            TreeNode node = new TreeNode(newEntry.EntityName) { Tag = newEntry };
 
+            ActorDefinition existingDef = actors.Definitions.FirstOrDefault(d => d.FrameNameHash == newEntry.FrameNameHash);
+            if (existingDef != null)
+            {
+                newEntry.DefinitionName = existingDef.Name;
+            }
+            else
+            {
+                actors.CreateActorDefinition(newEntry);
+            }
+
+            TreeNode node = new TreeNode(newEntry.EntityName) { Tag = newEntry };
             if (newEntry.Data != null)
             {
                 TreeNode child = new TreeNode("Extra Data") { Tag = newEntry.Data };
