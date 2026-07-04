@@ -57,7 +57,8 @@ namespace Mafia2Tool
         private void BuildData()
         {
             actors = new Actor(actorFile);
-            
+            platformComboBox.SelectedIndex = actors.IsBigEndian ? 1 : 0;
+
             definitions = new TreeNode("Definitions");
             items = new TreeNode("Entities");
             for (int i = 0; i != actors.Definitions.Count; i++)
@@ -98,27 +99,15 @@ namespace Mafia2Tool
 
         private void Save()
         {
-            string message = "Select a format: Yes - PC, No - XBOX";
-            string caption = "Preservation of the actor";
-            MessageBoxButtons buttons = MessageBoxButtons.YesNoCancel;
-            DialogResult result = MessageBox.Show(message, caption, buttons, MessageBoxIcon.Question);
-            bool? targetBigEndian = null;
-            if (result == DialogResult.Yes)
-                targetBigEndian = false;
-            else if (result == DialogResult.No)
-                targetBigEndian = true;
-            else
-                return;
+            bool? targetBigEndian = platformComboBox.SelectedIndex == 1;
             File.Copy(actorFile.FullName, actorFile.FullName + "_old", true);
             actors.WriteToFile(actorFile.FullName, targetBigEndian);
-
-            Text = Language.GetString("$ACTOR_EDITOR_TITLE");
             bIsFileEdited = false;
-            UpdateTitle(true);
+            UpdateTitle(false);
         }
         private void UpdateTitle(bool edited)
         {
-            string platform = actors != null ? (actors.IsBigEndian ? "Xbox" : "PC") : "Unknown";
+            string platform = platformComboBox?.SelectedItem?.ToString() ?? "Unknown";
             Text = $"{Language.GetString("$ACTOR_EDITOR_TITLE")} - {platform}{(edited ? "*" : "")}";
         }
 
@@ -126,6 +115,7 @@ namespace Mafia2Tool
         {
             ActorTreeView.Nodes.Clear();
             BuildData();
+            platformComboBox.SelectedIndex = actors.IsBigEndian ? 1 : 0;
             UpdateTitle(true);
             ActorGrid.SelectedObject = null;
             ActorTreeView.SelectedNode = null;
