@@ -7,6 +7,7 @@ namespace Core.IO
 {
     public class FileFrameResource : FileBase
     {
+        public bool IsBigEndian { get; private set; }
         public SceneData SceneData = new SceneData();
         private bool bForceBigEndian;
 
@@ -22,15 +23,16 @@ namespace Core.IO
 
             if (!TryDetectEndianness(file.FullName, out bool isBigEndian))
             {
-                MessageBox.Show("Could not determine the byte order. The file may be corrupted..", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Could not determine the byte order. The file may be corrupted.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
 
+            IsBigEndian = isBigEndian;
             SceneData = new SceneData();
             SceneData.ScenePath = file.DirectoryName;
             SceneData.BuildData(isBigEndian);
 
-            MapEditor d3dForm = new MapEditor(file, SceneData);
+            MapEditor d3dForm = new MapEditor(file, SceneData, isBigEndian);
             d3dForm.Dispose();
             return true;
         }
@@ -38,36 +40,39 @@ namespace Core.IO
         private static bool TryDetectEndianness(string filePath, out bool isBigEndian)
         {
             isBigEndian = false;
-            byte[] buffer = new byte[4 * 7 + 4];
+            byte[] buffer = new byte[1 + 7 * 4];
             using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
             {
-                fs.Read(buffer, 0, buffer.Length);
+                int read = fs.Read(buffer, 0, buffer.Length);
+                if (read < buffer.Length) return false;
             }
 
-            int ReadInt32LE(byte[] buf, int offset) => BitConverter.ToInt32(buf, offset);
-            int ReadInt32BE(byte[] buf, int offset)
+            int numFolderNames_LE = BitConverter.ToInt32(buffer, 1);
+            int numGeometries_LE = BitConverter.ToInt32(buffer, 5);
+            int numMaterialResources_LE = BitConverter.ToInt32(buffer, 9);
+            int numBlendInfos_LE = BitConverter.ToInt32(buffer, 13);
+            int numSkeletons_LE = BitConverter.ToInt32(buffer, 17);
+            int numSkelHierachies_LE = BitConverter.ToInt32(buffer, 21);
+            int numObjects_LE = BitConverter.ToInt32(buffer, 25);
+
+            int numFolderNames_BE = BitConverter.ToInt32(buffer, 1);
+            int numGeometries_BE = BitConverter.ToInt32(buffer, 5);
+            int numMaterialResources_BE = BitConverter.ToInt32(buffer, 9);
+            int numBlendInfos_BE = BitConverter.ToInt32(buffer, 13);
+            int numSkeletons_BE = BitConverter.ToInt32(buffer, 17);
+            int numSkelHierachies_BE = BitConverter.ToInt32(buffer, 21);
+            int numObjects_BE = BitConverter.ToInt32(buffer, 25);
+
+            if (BitConverter.IsLittleEndian)
             {
-                int value = BitConverter.ToInt32(buf, offset);
-                if (BitConverter.IsLittleEndian)
-                    return System.Net.IPAddress.NetworkToHostOrder(value);
-                return value;
+                numFolderNames_BE = System.Net.IPAddress.NetworkToHostOrder(numFolderNames_BE);
+                numGeometries_BE = System.Net.IPAddress.NetworkToHostOrder(numGeometries_BE);
+                numMaterialResources_BE = System.Net.IPAddress.NetworkToHostOrder(numMaterialResources_BE);
+                numBlendInfos_BE = System.Net.IPAddress.NetworkToHostOrder(numBlendInfos_BE);
+                numSkeletons_BE = System.Net.IPAddress.NetworkToHostOrder(numSkeletons_BE);
+                numSkelHierachies_BE = System.Net.IPAddress.NetworkToHostOrder(numSkelHierachies_BE);
+                numObjects_BE = System.Net.IPAddress.NetworkToHostOrder(numObjects_BE);
             }
-
-            int numFolderNames_LE = ReadInt32LE(buffer, 1); 
-            int numGeometries_LE = ReadInt32LE(buffer, 5);
-            int numMaterialResources_LE = ReadInt32LE(buffer, 9);
-            int numBlendInfos_LE = ReadInt32LE(buffer, 13);
-            int numSkeletons_LE = ReadInt32LE(buffer, 17);
-            int numSkelHierachies_LE = ReadInt32LE(buffer, 21);
-            int numObjects_LE = ReadInt32LE(buffer, 25);
-
-            int numFolderNames_BE = ReadInt32BE(buffer, 1);
-            int numGeometries_BE = ReadInt32BE(buffer, 5);
-            int numMaterialResources_BE = ReadInt32BE(buffer, 9);
-            int numBlendInfos_BE = ReadInt32BE(buffer, 13);
-            int numSkeletons_BE = ReadInt32BE(buffer, 17);
-            int numSkelHierachies_BE = ReadInt32BE(buffer, 21);
-            int numObjects_BE = ReadInt32BE(buffer, 25);
 
             bool IsReasonable(int value) => value >= 0 && value < 100000;
 

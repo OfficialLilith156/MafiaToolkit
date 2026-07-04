@@ -82,7 +82,7 @@ namespace Mafia2Tool
         private bool bHideChildren = false;
         private Dictionary<int, ActorEntry> RefIDToActorEntry = new Dictionary<int, ActorEntry>();
         private Dictionary<string, int> NamesAndDuplicationStore;
-
+        private bool isBigEndian;
         // Undo/Redo key state tracking
         private bool undoKeyWasPressed = false;
         private bool redoKeyWasPressed = false;
@@ -112,8 +112,9 @@ namespace Mafia2Tool
             return closestID;
         }
 
-        public MapEditor(FileInfo info, SceneData sceneData)
+        public MapEditor(FileInfo info, SceneData sceneData, bool isBigEndian = false)
         {
+            this.isBigEndian = isBigEndian;
             SceneData = sceneData;
             TextureLoader.ScenePath = SceneData.ScenePath;
             InitializeComponent();
@@ -138,9 +139,12 @@ namespace Mafia2Tool
             NamesAndDuplicationStore = new Dictionary<string, int>();
             CameraSpeedTool.Value = (decimal)ToolkitSettings.CameraSpeed;
             KeyPreview = true;
-            Text += " -" + info.Directory.Name;
+            string endianInfo = isBigEndian ? " (Xbox Big Endian)" : " (PC Little Endian)";
+            Text += " -" + info.Directory.Name + endianInfo;
             SwitchMode(true);
             StartD3DPanel();
+
+            
         }
 
         private void Localise()
