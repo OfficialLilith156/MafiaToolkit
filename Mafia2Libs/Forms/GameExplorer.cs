@@ -565,7 +565,6 @@ namespace Mafia2Tool
                 }
                 else if(Tag is FileFrameResource)
                 {
-                    ContextForceBigEndian.Visible = true;
                 }
                 else if(Tag is FileBase)
                 {

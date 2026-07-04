@@ -127,10 +127,6 @@ namespace Mafia2Tool
             if (sceneData.FrameResource != null)
                 sceneData.FrameResource.OnFrameRemoved += OnFrameRemoved;
 
-            if (MaterialsManager.MaterialLibraries.Count == 0)
-            {
-                MessageBox.Show("No material libraries have loaded, make sure they are set up correctly in the options window!", "Warning!", MessageBoxButtons.OK);
-            }
 
             ToolkitSettings.UpdateRichPresence(string.Format("Editing '{0}'", info.Directory.Name));
             fileLocation = info;

@@ -76,7 +76,7 @@ namespace Mafia2Tool
 
             if (isBigEndian)
             {
-                MessageBox.Show("Detected 'Big Endian' formats. This will severely effect functionality!", "Toolkit", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Detected 'Xbox Version' formats. This will severely effect functionality!", "Toolkit", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
 
             DirectoryInfo dirInfo = new DirectoryInfo(ScenePath);
