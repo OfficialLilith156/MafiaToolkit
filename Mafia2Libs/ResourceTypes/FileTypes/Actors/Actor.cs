@@ -328,8 +328,6 @@ namespace ResourceTypes.Actors
         public void WriteToFile(EndianBinaryWriter writer)
         {
             Dictionary<int, int> sanitizedIDs = new Dictionary<int, int>();
-
-            // Cutscenes to save at the end of the file.
             List<ActorEntry> cutsceneEntries = new List<ActorEntry>();
 
             Sanitize();
@@ -345,41 +343,61 @@ namespace ResourceTypes.Actors
 
             long instancePos = writer.BaseStream.Position;
             writer.Write(0);
-            writer.Write(const6);
-            writer.Write(const2);
-            writer.Write(const16);
-            writer.Write(int.MinValue); //size
-            writer.Write(int.MinValue); //unk12
 
-            int instanceOffset = ((extraData.Count * sizeof(int)) + 8);
-            writer.Write(0);
-
-            //could do it so we seek to offset and save each one, but that would decrease performance. 
-            for (int i = 0; i < extraData.Count; i++)
+            if (writer.IsBigEndian)
             {
-                writer.Write(instanceOffset);
-                instanceOffset += (extraData[i].Data != null ? extraData[i].Data.GetSize() : extraData[i].GetDataInBytes().Length) + 8;
+                writer.Write(const2);
+                writer.Write(const6);
+            }
+            else
+            {
+                writer.Write(const6);
+                writer.Write(const2);
             }
 
-            for(int i = 0; i < extraData.Count; i++)
+            writer.Write(const16);
+
+            writer.Write(0); 
+            writer.Write(0); 
+            writer.Write(0); 
+
+            int N = extraData.Count;
+            int unk14Value = 4 * N + 8;
+            writer.Write(unk14Value);
+
+            long arrayStartPos = writer.BaseStream.Position;
+
+            if (N > 0)
+            {
+                int firstOffset = (int)(arrayStartPos - instancePos) + 4 * (N - 1);
+                int currentOffset = firstOffset;
+                for (int i = 0; i < N - 1; i++)
+                {
+                    writer.Write(currentOffset);
+                    int dataSize = extraData[i].Data != null ? extraData[i].Data.GetSize() : extraData[i].GetDataInBytes().Length;
+                    currentOffset += 8 + dataSize;
+                }
+            }
+
+            for (int i = 0; i < N; i++)
             {
                 extraData[i].WriteToFile(writer);
             }
 
-            int itemOffset = instanceOffset + (items.Count * sizeof(int)) + 16;
+            int itemCount = items.Count;
             long itemPos = writer.BaseStream.Position;
-            writer.Write(items.Count);
-            for(int i = 0; i < items.Count; i++)
+            writer.Write(itemCount);
+
+            int itemOffset = (int)(writer.BaseStream.Position - instancePos) + 4 + itemCount * 4;
+            for (int i = 0; i < itemCount; i++)
             {
                 writer.Write(itemOffset);
                 itemOffset += items[i].CalculateSize();
             }
 
-            for (int i = 0; i < items.Count; i++)
+            for (int i = 0; i < itemCount; i++)
             {
                 items[i].WriteToFile(writer);
-
-                // We need to store cutscenes so we can save them for later.
                 ActorTypes actorType = (ActorTypes)items[i].ActorTypeID;
                 if (actorType == ActorTypes.C_Cutscene)
                 {
@@ -387,53 +405,47 @@ namespace ResourceTypes.Actors
                 }
             }
 
-            // Now we try and save the cutscene data which is stored at the bottom of the file.
             long cutsceneEntryOffset = writer.BaseStream.Position;
             long[] cutsceneOffsets = new long[cutsceneEntries.Count];
             writer.Write(cutsceneEntries.Count);
-
-            // TODO: Maybe consider doing one loop rather than two.
             for (int i = 0; i < cutsceneEntries.Count; i++)
             {
-                ActorEntry cutscene = cutsceneEntries[i];
-
-                // Save our 'TEMP' offset; this stored the ptr to the string.
                 cutsceneOffsets[i] = writer.BaseStream.Position;
                 writer.Write(-1);
             }
-
             for (int i = 0; i < cutsceneEntries.Count; i++)
             {
                 ActorEntry cutscene = cutsceneEntries[i];
-
-                // Now we save the cutscene entity name and save the new offset;
                 uint nameOffset = (uint)writer.BaseStream.Position;
                 StringHelpers.WriteString(writer, cutscene.EntityName);
                 writer.Write((ushort)0);
-
                 long completeOffset = writer.BaseStream.Position;
-
-                // Update our new offset and then return to our original offset;
                 writer.BaseStream.Seek(cutsceneOffsets[i], SeekOrigin.Begin);
                 uint newOffset = (uint)(nameOffset - (instancePos + 4));
                 writer.Write(newOffset);
-
                 writer.BaseStream.Seek(completeOffset, SeekOrigin.Begin);
             }
 
-            //for that unknown value.
-            long endPos = cutsceneEntryOffset - instancePos-4;
-            long instanceLength = writer.BaseStream.Position - instancePos-4;
+            long endPos = cutsceneEntryOffset - instancePos - 4;
+            long instanceLength = writer.BaseStream.Position - instancePos - 4;
             long unk = writer.BaseStream.Position - itemPos;
             long size = instanceLength - unk;
 
             writer.BaseStream.Seek(instancePos, SeekOrigin.Begin);
-            writer.Write((int)(instanceLength));
-            writer.Write(const6);
-            writer.Write(const2);
+            writer.Write((int)instanceLength); // filesize
+            if (writer.IsBigEndian)
+            {
+                writer.Write(const2);
+                writer.Write(const6);
+            }
+            else
+            {
+                writer.Write(const6);
+                writer.Write(const2);
+            }
             writer.Write(const16);
-            writer.Write((int)size); //size
-            writer.Write((int)(endPos)); //unk12
+            writer.Write((int)size);
+            writer.Write((int)endPos);
         }
 
         public static bool RequiresExtraData(ActorTypes InActorType)
