@@ -304,6 +304,14 @@ namespace ResourceTypes.Actors
                 throw;
             }
         }
+        public void WriteToFile(string filename, bool? targetBigEndian = null)
+        {
+            bool useBigEndian = targetBigEndian ?? _isBigEndian;
+            using (var writer = new EndianBinaryWriter(File.Open(filename, FileMode.Create), useBigEndian))
+            {
+                WriteToFile(writer);
+            }
+        }
 
         public void WriteToFile()
         {

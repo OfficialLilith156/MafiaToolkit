@@ -93,23 +93,40 @@ namespace Mafia2Tool
             }
             ActorTreeView.Nodes.Add(definitions);
             ActorTreeView.Nodes.Add(items);
+            UpdateTitle(false);
         }
 
         private void Save()
         {
+            string message = "Select a format: Yes - PC, No - XBOX";
+            string caption = "Preservation of the actor";
+            MessageBoxButtons buttons = MessageBoxButtons.YesNoCancel;
+            DialogResult result = MessageBox.Show(message, caption, buttons, MessageBoxIcon.Question);
+            bool? targetBigEndian = null;
+            if (result == DialogResult.Yes)
+                targetBigEndian = false;
+            else if (result == DialogResult.No)
+                targetBigEndian = true;
+            else
+                return;
             File.Copy(actorFile.FullName, actorFile.FullName + "_old", true);
-            using (EndianBinaryWriter writer = new EndianBinaryWriter(File.Open(actorFile.FullName, FileMode.Create), actors.IsBigEndian))
-            {
-                actors.WriteToFile(writer);
-            }
+            actors.WriteToFile(actorFile.FullName, targetBigEndian);
+
             Text = Language.GetString("$ACTOR_EDITOR_TITLE");
             bIsFileEdited = false;
+            UpdateTitle(true);
+        }
+        private void UpdateTitle(bool edited)
+        {
+            string platform = actors != null ? (actors.IsBigEndian ? "Xbox" : "PC") : "Unknown";
+            Text = $"{Language.GetString("$ACTOR_EDITOR_TITLE")} - {platform}{(edited ? "*" : "")}";
         }
 
         private void Reload()
         {
             ActorTreeView.Nodes.Clear();
             BuildData();
+            UpdateTitle(true);
             ActorGrid.SelectedObject = null;
             ActorTreeView.SelectedNode = null;
             Text = Language.GetString("$ACTOR_EDITOR_TITLE");
@@ -177,6 +194,7 @@ namespace Mafia2Tool
                     ExtraDataTarget.Data = clonedData as IActorExtraDataInterface;
                     ActorGrid.SelectedObject = SelectedNode.Tag;
                     Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
+                    UpdateTitle(true);
                     bIsFileEdited = true;
                 }
                 else
@@ -208,6 +226,7 @@ namespace Mafia2Tool
             {
                 ActorTreeView.Nodes.Remove(ActorTreeView.SelectedNode);
                 Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
+                UpdateTitle(true);
                 bIsFileEdited = true;
             }
         }
@@ -244,6 +263,7 @@ namespace Mafia2Tool
                 items.Nodes.Add(node);
             }
             Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
+            UpdateTitle(true);
             bIsFileEdited = true;
             objectForm.Dispose();
         }
@@ -315,6 +335,7 @@ namespace Mafia2Tool
             items.Nodes.Add(node);
             ActorTreeView.SelectedNode = node;
             Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
+            UpdateTitle(true);
             bIsFileEdited = true;
         }
 
@@ -336,6 +357,7 @@ namespace Mafia2Tool
                     }
                 }
                 Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
+                UpdateTitle(true);
                 bIsFileEdited = true;
             }
         }
@@ -361,6 +383,7 @@ namespace Mafia2Tool
         {
             if (e.ChangedItem.Label == "Name" || e.ChangedItem.Label == "EntityName") ActorTreeView.SelectedNode.Text = e.ChangedItem.Value.ToString();
             Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
+            UpdateTitle(true);
             bIsFileEdited = true;
             ActorGrid.Refresh();
         }
@@ -383,7 +406,12 @@ namespace Mafia2Tool
 
         private void ContextDelete_Click(object sender, System.EventArgs e) => Delete();
         private void SaveButton_OnClick(object sender, System.EventArgs e) => Save();
-        private void ReloadButton_OnClick(object sender, System.EventArgs e) => Reload();
+        private void ReloadButton_OnClick(object sender, System.EventArgs e)
+        { 
+            Reload();
+            UpdateTitle(true);
+        }
+        
         private void ExitButton_OnClick(object sender, System.EventArgs e) => Close();
         private void ContextCopy_Click(object sender, System.EventArgs e) => Copy();
         private void ContextPaste_Click(object sender, System.EventArgs e) => Paste();
@@ -438,6 +466,7 @@ namespace Mafia2Tool
                 actors.Items.AddRange(newItems);
 
                 Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
+                UpdateTitle(true);
                 bIsFileEdited = true;
                 return;
             }
@@ -458,6 +487,7 @@ namespace Mafia2Tool
                 ReorderItemsFromTree();
 
                 Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
+                UpdateTitle(true);
                 bIsFileEdited = true;
             }
         }
@@ -503,6 +533,7 @@ namespace Mafia2Tool
                 actors.Items.AddRange(newItems);
 
                 Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
+                UpdateTitle(true);
                 bIsFileEdited = true;
                 return;
             }
@@ -522,6 +553,7 @@ namespace Mafia2Tool
                 ReorderItemsFromTree();
 
                 Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
+                UpdateTitle(true);
                 bIsFileEdited = true;
             }
         }
@@ -710,6 +742,7 @@ namespace Mafia2Tool
             ActorTreeView.SelectedNode = node;
             ActorTreeView.Focus();
             Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
+            UpdateTitle(true);
             bIsFileEdited = true;
         }
 
