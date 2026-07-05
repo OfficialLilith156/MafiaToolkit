@@ -52,7 +52,6 @@
             pasteEntityBranchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             SearchBox = new System.Windows.Forms.TextBox();
             ActorTreeView = new Mafia2Tool.Controls.MTreeView();
-            platformComboBox = new System.Windows.Forms.ToolStripComboBox();
             ActorContext.SuspendLayout();
             toolStrip1.SuspendLayout();
             SuspendLayout();
@@ -127,7 +126,7 @@
             // 
             // toolStrip1
             // 
-            toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { FileButton, EditButton, toolStripDropDownButton1, platformComboBox });
+            toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { FileButton, EditButton, toolStripDropDownButton1 });
             toolStrip1.Location = new System.Drawing.Point(0, 0);
             toolStrip1.Name = "toolStrip1";
             toolStrip1.Size = new System.Drawing.Size(933, 25);
@@ -148,7 +147,7 @@
             // 
             SaveButton.Name = "SaveButton";
             SaveButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S;
-            SaveButton.Size = new System.Drawing.Size(165, 22);
+            SaveButton.Size = new System.Drawing.Size(180, 22);
             SaveButton.Text = "$SAVE";
             SaveButton.Click += SaveButton_OnClick;
             // 
@@ -156,14 +155,14 @@
             // 
             ReloadButton.Name = "ReloadButton";
             ReloadButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R;
-            ReloadButton.Size = new System.Drawing.Size(165, 22);
+            ReloadButton.Size = new System.Drawing.Size(180, 22);
             ReloadButton.Text = "$RELOAD";
             ReloadButton.Click += ReloadButton_OnClick;
             // 
             // ExitButton
             // 
             ExitButton.Name = "ExitButton";
-            ExitButton.Size = new System.Drawing.Size(165, 22);
+            ExitButton.Size = new System.Drawing.Size(180, 22);
             ExitButton.Text = "$EXIT";
             ExitButton.Click += ExitButton_OnClick;
             // 
@@ -243,12 +242,6 @@
             ActorTreeView.AfterSelect += OnNodeSelectSelect;
             ActorTreeView.KeyUp += SearchBox_KeyDown;
             // 
-            // platformComboBox
-            // 
-            platformComboBox.Items.AddRange(new object[] { "PC", "Xbox" });
-            platformComboBox.Name = "platformComboBox";
-            platformComboBox.Size = new System.Drawing.Size(121, 25);
-            // 
             // ActorEditor
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -294,6 +287,5 @@
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
         private System.Windows.Forms.ToolStripMenuItem copyEntityBranchToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem pasteEntityBranchToolStripMenuItem;
-        private System.Windows.Forms.ToolStripComboBox platformComboBox;
     }
 }

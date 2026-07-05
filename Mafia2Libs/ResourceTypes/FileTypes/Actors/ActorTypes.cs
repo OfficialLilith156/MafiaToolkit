@@ -15,7 +15,7 @@ using static ResourceTypes.Actors.ActorLight;
 
 namespace ResourceTypes.Actors
 {
-    
+
     public interface IActorExtraDataInterface
     {
         void ReadFromFile(MemoryStream stream, bool isBigEndian);
@@ -207,23 +207,28 @@ namespace ResourceTypes.Actors
         private float sizeY;
         private float sizeZ;
 
-        public int TestPrimitive {
+        public int TestPrimitive
+        {
             get { return testPrimitive; }
             set { testPrimitive = value; }
         }
-        public float Range {
+        public float Range
+        {
             get { return range; }
             set { range = value; }
         }
-        public float SizeX {
+        public float SizeX
+        {
             get { return sizeX; }
             set { sizeX = value; }
         }
-        public float SizeY {
+        public float SizeY
+        {
             get { return sizeY; }
             set { sizeY = value; }
         }
-        public float SizeZ {
+        public float SizeZ
+        {
             get { return sizeZ; }
             set { sizeZ = value; }
         }
@@ -716,76 +721,76 @@ namespace ResourceTypes.Actors
 
         public class UnkFloats1
         {
-            public float Cone { get; set; }        
-            public float Light_on_player { get; set; }  
-            public float Intensity { get; set; }    
-            public float Narrowing { get; set; }    
-            public float Unk4 { get; set; }  
-            public float Brightness { get; set; }   
-            public float Blur { get; set; }        
+            public float Cone { get; set; }
+            public float Light_on_player { get; set; }
+            public float Intensity { get; set; }
+            public float Narrowing { get; set; }
+            public float Unk4 { get; set; }
+            public float Brightness { get; set; }
+            public float Blur { get; set; }
         }
 
         public class UnkFloats2
         {
-            public float Red { get; set; }    
-            public float Green { get; set; }  
-            public float Blue { get; set; }   
-            public float Unk4 { get; set; }   
-            public float Shadow { get; set; }   
+            public float Red { get; set; }
+            public float Green { get; set; }
+            public float Blue { get; set; }
+            public float Unk4 { get; set; }
+            public float Shadow { get; set; }
         }
 
         public class UnkFloats3
         {
-            public float Unk1 { get; set; }      
-            public float Influence { get; set; } 
-            public float Shadow { get; set; }     
+            public float Unk1 { get; set; }
+            public float Influence { get; set; }
+            public float Shadow { get; set; }
             public float Normal_Map { get; set; }
-            public float Unk5 { get; set; }   
-            public float Unk6 { get; set; }   
-            public float Unk7 { get; set; }   
-            public float Unk8 { get; set; }   
-            public float Unk9 { get; set; }   
-            public float Unk10 { get; set; }   
-            public float Unk11 { get; set; }   
-            public float Unk12 { get; set; }   
-            public float Unk13 { get; set; }   
-            public float Unk14 { get; set; }   
-            public float Unk15 { get; set; }   
-            public float Unk16 { get; set; }   
-            public float Unk17 { get; set; }   
+            public float Unk5 { get; set; }
+            public float Unk6 { get; set; }
+            public float Unk7 { get; set; }
+            public float Unk8 { get; set; }
+            public float Unk9 { get; set; }
+            public float Unk10 { get; set; }
+            public float Unk11 { get; set; }
+            public float Unk12 { get; set; }
+            public float Unk13 { get; set; }
+            public float Unk14 { get; set; }
+            public float Unk15 { get; set; }
+            public float Unk16 { get; set; }
+            public float Unk17 { get; set; }
         }
 
         public class UnkFloats4
         {
-            public float Unk1 { get; set; } 
-            public float Unk2 { get; set; } 
-            public float Unk3 { get; set; } 
-            public float Unk4 { get; set; } 
-            public float Unk5 { get; set; } 
+            public float Unk1 { get; set; }
+            public float Unk2 { get; set; }
+            public float Unk3 { get; set; }
+            public float Unk4 { get; set; }
+            public float Unk5 { get; set; }
         }
 
         public class UnkFloats5
         {
-            public float Unk1 { get; set; }  
-            public float Unk2 { get; set; }  
-            public float Unk3 { get; set; }  
-            public float Unk4 { get; set; }  
-            public float Unk5 { get; set; }  
-            public float Unk6 { get; set; }  
-            public float Unk7 { get; set; }  
-            public float Unk8 { get; set; }  
-            public float Unk9 { get; set; }  
-            public float Unk10 { get; set; } 
-            public float Unk11 { get; set; } 
-            public float Unk12 { get; set; } 
-            public float Unk13 { get; set; } 
-            public float Unk14 { get; set; } 
-            public float Unk15 { get; set; } 
-            public float Unk16 { get; set; } 
-            public float Unk17 { get; set; } 
-            public float Unk18 { get; set; } 
-            public float Unk19 { get; set; } 
-            public float Unk20 { get; set; } 
+            public float Unk1 { get; set; }
+            public float Unk2 { get; set; }
+            public float Unk3 { get; set; }
+            public float Unk4 { get; set; }
+            public float Unk5 { get; set; }
+            public float Unk6 { get; set; }
+            public float Unk7 { get; set; }
+            public float Unk8 { get; set; }
+            public float Unk9 { get; set; }
+            public float Unk10 { get; set; }
+            public float Unk11 { get; set; }
+            public float Unk12 { get; set; }
+            public float Unk13 { get; set; }
+            public float Unk14 { get; set; }
+            public float Unk15 { get; set; }
+            public float Unk16 { get; set; }
+            public float Unk17 { get; set; }
+            public float Unk18 { get; set; }
+            public float Unk19 { get; set; }
+            public float Unk20 { get; set; }
         }
 
         public int Unk01
@@ -1449,137 +1454,165 @@ namespace ResourceTypes.Actors
         float outerVolume;
 
         [Editor(typeof(FlagEnumUIEditor), typeof(System.Drawing.Design.UITypeEditor))]
-        public ActorSoundEntityBehaviourFlags BehaviourFlags {
+        public ActorSoundEntityBehaviourFlags BehaviourFlags
+        {
             get { return behFlags; }
             set { behFlags = value; }
         }
-        public int AudioType {
+        public int AudioType
+        {
             get { return audioType; }
             set { audioType = value; }
         }
-        public int BehaviourType {
+        public int BehaviourType
+        {
             get { return behaviourType; }
             set { behaviourType = value; }
         }
-        public float Volume {
+        public float Volume
+        {
             get { return volume; }
             set { volume = value; }
         }
-        public float Pitch {
+        public float Pitch
+        {
             get { return pitch; }
             set { pitch = value; }
         }
-        public string File {
+        public string File
+        {
             get { return file; }
             set { file = value; }
         }
         [Category("BehaviourType 20"), Description("These are only saved if \"BehaviourType\" is set to 20.")]
-        public float RandomGroupPauseMax {
+        public float RandomGroupPauseMax
+        {
             get { return randomGroupPauseMax; }
             set { randomGroupPauseMax = value; }
         }
         [Category("BehaviourType 20"), Description("These are only saved if \"BehaviourType\" is set to 20.")]
-        public float RandomGroupPauseMin {
+        public float RandomGroupPauseMin
+        {
             get { return randomGroupPauseMin; }
             set { randomGroupPauseMin = value; }
         }
         [Category("BehaviourType 20"), Description("These are only saved if \"BehaviourType\" is set to 20.")]
-        public float RandomPauseMin {
+        public float RandomPauseMin
+        {
             get { return randomPauseMin; }
             set { randomPauseMin = value; }
         }
         [Category("BehaviourType 20"), Description("These are only saved if \"BehaviourType\" is set to 20.")]
-        public float RandomPauseMax {
+        public float RandomPauseMax
+        {
             get { return randomPauseMax; }
             set { randomPauseMax = value; }
         }
         [Category("BehaviourType 20"), Description("These are only saved if \"BehaviourType\" is set to 20.")]
-        public int RandomGroupSoundsMax {
+        public int RandomGroupSoundsMax
+        {
             get { return randomGroupSoundsMax; }
             set { randomGroupSoundsMax = value; }
         }
         [Category("BehaviourType 20"), Description("These are only saved if \"BehaviourType\" is set to 20.")]
-        public int RandomGroupSoundsMin {
+        public int RandomGroupSoundsMin
+        {
             get { return randomGroupSoundsMin; }
             set { randomGroupSoundsMin = value; }
         }
         [Category("BehaviourType 20"), Description("These are only saved if \"BehaviourType\" is set to 20.")]
-        public float RandomVolumeMin {
+        public float RandomVolumeMin
+        {
             get { return randomVolumeMin; }
             set { randomVolumeMin = value; }
         }
         [Category("BehaviourType 20"), Description("These are only saved if \"BehaviourType\" is set to 20.")]
-        public float RandomVolumeMax {
+        public float RandomVolumeMax
+        {
             get { return randomVolumeMax; }
             set { randomVolumeMax = value; }
         }
         [Category("BehaviourType 20"), Description("These are only saved if \"BehaviourType\" is set to 20.")]
-        public float RandomPitchMin {
+        public float RandomPitchMin
+        {
             get { return randomPitchMin; }
             set { randomPitchMin = value; }
         }
         [Category("BehaviourType 20"), Description("These are only saved if \"BehaviourType\" is set to 20.")]
-        public float RandomPitchMax {
+        public float RandomPitchMax
+        {
             get { return randomPitchMax; }
             set { randomPitchMax = value; }
         }
         [Category("BehaviourType 20"), Description("These are only saved if \"BehaviourType\" is set to 20.")]
-        public float RandomPosRangeX {
+        public float RandomPosRangeX
+        {
             get { return randomPosRangeX; }
             set { randomPosRangeX = value; }
         }
         [Category("BehaviourType 20"), Description("These are only saved if \"BehaviourType\" is set to 20.")]
-        public float RandomPosRangeY {
+        public float RandomPosRangeY
+        {
             get { return randomPosRangeY; }
             set { randomPosRangeY = value; }
         }
         [Category("BehaviourType 20"), Description("These are only saved if \"BehaviourType\" is set to 20.")]
-        public float RandomPosRangeZ {
+        public float RandomPosRangeZ
+        {
             get { return randomPosRangeZ; }
             set { randomPosRangeZ = value; }
         }
 
         [Editor(typeof(FlagEnumUIEditor), typeof(System.Drawing.Design.UITypeEditor))]
-        public ActorSoundEntityPlayType PlayFlags {
+        public ActorSoundEntityPlayType PlayFlags
+        {
             get { return playFlags; }
             set { playFlags = value; }
         }
-        public string[] RandomWaves {
+        public string[] RandomWaves
+        {
             get { return randomWaves; }
             set { randomWaves = value; }
         }
         [Category("AudioType"), Description("These are only saved if \"AudioType\" is 15 or above.")]
-        public float Near {
+        public float Near
+        {
             get { return near; }
             set { near = value; }
         }
         [Category("AudioType"), Description("These are only saved if \"AudioType\" is 15 or above.")]
-        public float Far {
+        public float Far
+        {
             get { return far; }
             set { far = value; }
         }
         [Category("AudioType"), Description("These are only saved if \"AudioType\" is 15 or above.")]
-        public int MonoDistance {
+        public int MonoDistance
+        {
             get { return monoDistance; }
             set { monoDistance = value; }
         }
         [Category("AudioType"), Description("These are only saved if \"AudioType\" is 20 or above.")]
-        public int CurveID {
+        public int CurveID
+        {
             get { return curveID; }
             set { curveID = value; }
         }
         [Category("AudioType"), Description("These are only saved if \"AudioType\" is 30 or above.")]
-        public float InnerAngle {
+        public float InnerAngle
+        {
             get { return innerAngle; }
             set { innerAngle = value; }
         }
         [Category("AudioType"), Description("These are only saved if \"AudioType\" is 30 or above.")]
-        public float OuterAngle {
+        public float OuterAngle
+        {
             get { return outerAngle; }
             set { outerAngle = value; }
         }
         [Category("AudioType"), Description("These are only saved if \"AudioType\" is  30 or above.")]
-        public float OuterVolume {
+        public float OuterVolume
+        {
             get { return outerVolume; }
             set { outerVolume = value; }
         }
@@ -1767,7 +1800,8 @@ namespace ResourceTypes.Actors
     {
         float length;
 
-        public float Length {
+        public float Length
+        {
             get { return length; }
             set { length = value; }
         }
@@ -1792,7 +1826,8 @@ namespace ResourceTypes.Actors
     {
         int unk0;
 
-        public int Unk0 {
+        public int Unk0
+        {
             get { return unk0; }
             set { unk0 = value; }
         }
@@ -1846,15 +1881,18 @@ namespace ResourceTypes.Actors
             int textID;
             int sentTestAction;
 
-            public string ScriptEvent {
+            public string ScriptEvent
+            {
                 get { return scriptEvent; }
                 set { scriptEvent = value; }
             }
-            public int TextID {
+            public int TextID
+            {
                 get { return textID; }
                 set { textID = value; }
             }
-            public int SentTestAction {
+            public int SentTestAction
+            {
                 get { return sentTestAction; }
                 set { sentTestAction = value; }
             }
@@ -1871,19 +1909,23 @@ namespace ResourceTypes.Actors
             int ammo;
             int ammoAUX;
 
-            public int TableID {
+            public int TableID
+            {
                 get { return tableID; }
                 set { tableID = value; }
             }
-            public int TextID {
+            public int TextID
+            {
                 get { return textID; }
                 set { textID = value; }
             }
-            public int Ammo {
+            public int Ammo
+            {
                 get { return ammo; }
                 set { ammo = value; }
             }
-            public int AmmoAUX {
+            public int AmmoAUX
+            {
                 get { return ammoAUX; }
                 set { ammoAUX = value; }
             }
@@ -1899,43 +1941,52 @@ namespace ResourceTypes.Actors
         Vector3 unk1;
         Vector3 unk2;
 
-        public ActorItemFlags Flags {
+        public ActorItemFlags Flags
+        {
             get { return flags; }
             set { flags = value; }
         }
-        public int Type {
+        public int Type
+        {
             get { return type; }
             set { type = value; }
         }
-        public float RespawnTime {
+        public float RespawnTime
+        {
             get { return respawnTime; }
             set { respawnTime = value; }
         }
-        public int TestPrimitive {
+        public int TestPrimitive
+        {
             get { return testPrimitive; }
             set { testPrimitive = value; }
         }
-        public float Range {
+        public float Range
+        {
             get { return range; }
             set { range = value; }
         }
         [TypeConverter(typeof(ExpandableObjectConverter))]
-        public ItemScript ScriptEvent {
+        public ItemScript ScriptEvent
+        {
             get { return scriptEvent; }
             set { scriptEvent = value; }
         }
         [TypeConverter(typeof(ExpandableObjectConverter))]
-        public Type0 Type0Data {
+        public Type0 Type0Data
+        {
             get { return type0Data; }
             set { type0Data = value; }
         }
         [TypeConverter(typeof(Vector3Converter))]
-        public Vector3 Unk1 {
+        public Vector3 Unk1
+        {
             get { return unk1; }
             set { unk1 = value; }
         }
         [TypeConverter(typeof(Vector3Converter))]
-        public Vector3 Unk2 {
+        public Vector3 Unk2
+        {
             get { return unk2; }
             set { unk2 = value; }
         }
@@ -1989,7 +2040,7 @@ namespace ResourceTypes.Actors
                     break;
                 default:
                     throw new Exception();
-                   break;
+                    break;
             }
 
             testPrimitive = reader.ReadInt32(isBigEndian);
@@ -2048,7 +2099,8 @@ namespace ResourceTypes.Actors
     {
         int pinupNum;
 
-        public int PinupNum {
+        public int PinupNum
+        {
             get { return pinupNum; }
             set { pinupNum = value; }
         }
@@ -2088,7 +2140,8 @@ namespace ResourceTypes.Actors
             unk01 = 0;
         }
 
-        public int Unk01 {
+        public int Unk01
+        {
             get { return unk01; }
             set { unk01 = value; }
         }
@@ -2117,23 +2170,28 @@ namespace ResourceTypes.Actors
         private float loopDelay;
         private float loopDelayRnd;
 
-        public uint ParticleUID {
+        public uint ParticleUID
+        {
             get { return particleUID; }
             set { particleUID = value; }
         }
-        public bool Optimalize {
+        public bool Optimalize
+        {
             get { return optimalize; }
             set { optimalize = value; }
         }
-        public bool Loop {
+        public bool Loop
+        {
             get { return loop; }
             set { loop = value; }
         }
-        public float LoopDelay {
+        public float LoopDelay
+        {
             get { return loopDelay; }
             set { loopDelay = value; }
         }
-        public float LoopDelayRnd {
+        public float LoopDelayRnd
+        {
             get { return loopDelayRnd; }
             set { loopDelayRnd = value; }
         }
@@ -2295,11 +2353,13 @@ namespace ResourceTypes.Actors
         string scriptName;
         int unk01;
 
-        public string ScriptName {
+        public string ScriptName
+        {
             get { return scriptName; }
             set { scriptName = value; }
         }
-        public int Unk01 {
+        public int Unk01
+        {
             get { return unk01; }
             set { unk01 = value; }
         }
@@ -2515,8 +2575,8 @@ namespace ResourceTypes.Actors
 
     public class ActorBlocker : IActorExtraDataInterface
     {
-        public bool BlockVehicle { get; set; } 
-        public bool BlockPlayer { get; set; } 
+        public bool BlockVehicle { get; set; }
+        public bool BlockPlayer { get; set; }
         public bool BlockHuman { get; set; }
         public Vector3 BBox { get; set; }
 
@@ -2928,7 +2988,7 @@ namespace ResourceTypes.Actors
         public ActorFramesController() : base()
         {
             Entries = new FramesControllerEntry[NUM_ENTRIES];
-            for(ulong i = 0; i < NUM_ENTRIES; i++)
+            for (ulong i = 0; i < NUM_ENTRIES; i++)
             {
                 Entries[i] = new FramesControllerEntry();
             }
@@ -3138,7 +3198,7 @@ namespace ResourceTypes.Actors
             {
                 SoundWave = string.Empty;
                 FadePoints = new FadePoint[MAX_FADE_POINTS];
-                for(int i = 0; i < MAX_FADE_POINTS; i++)
+                for (int i = 0; i < MAX_FADE_POINTS; i++)
                 {
                     FadePoints[i] = new FadePoint();
                 }
@@ -3190,7 +3250,7 @@ namespace ResourceTypes.Actors
 
             public override string ToString()
             {
-                string ActualSoundWave = (SoundWave == string.Empty ? "[UNSET]" :  SoundWave);
+                string ActualSoundWave = (SoundWave == string.Empty ? "[UNSET]" : SoundWave);
                 return string.Format("Type: {0} Sound: {1}", SoundType, ActualSoundWave);
             }
         }
@@ -3217,7 +3277,7 @@ namespace ResourceTypes.Actors
             Unk0 = InStream.ReadInt32(bIsBigEndian);
             Flags = (ActorSoundMixerFlags)InStream.ReadInt32(bIsBigEndian);
 
-            for(int i = 0; i < MAX_MIXERS; i++)
+            for (int i = 0; i < MAX_MIXERS; i++)
             {
                 Mixers[i] = new Mixer();
                 Mixers[i].Read(InStream, bIsBigEndian);
@@ -3229,7 +3289,7 @@ namespace ResourceTypes.Actors
             InStream.Write(Unk0, bIsBigEndian);
             InStream.Write((int)Flags, bIsBigEndian);
 
-            for(int i = 0; i < MAX_MIXERS; i++)
+            for (int i = 0; i < MAX_MIXERS; i++)
             {
                 Mixers[i].Write(InStream, bIsBigEndian);
             }

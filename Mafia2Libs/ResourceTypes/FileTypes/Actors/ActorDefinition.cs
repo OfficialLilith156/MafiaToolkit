@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.IO;
+using XBOX;
 using XBOX.ActorFile;
 
 namespace ResourceTypes.Actors
@@ -12,20 +13,24 @@ namespace ResourceTypes.Actors
         uint frameIndex; //links to FrameResource
         string name;
 
-        public ulong FrameNameHash {
+        public ulong FrameNameHash
+        {
             get { return frameNameHash; }
             set { frameNameHash = value; }
         }
-        public uint FrameIndex {
+        public uint FrameIndex
+        {
             get { return frameIndex; }
             set { frameIndex = value; }
         }
         [Browsable(false)]
-        public ushort NamePos {
+        public ushort NamePos
+        {
             get { return namePos; }
             set { namePos = value; }
         }
-        public string Name {
+        public string Name
+        {
             get { return name; }
             set { name = value; }
         }

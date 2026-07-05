@@ -1,8 +1,9 @@
-﻿using XBOX.ActorFile;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using Utils.Logging;
+using XBOX;
+using XBOX.ActorFile;
 
 namespace ResourceTypes.Actors
 {
@@ -12,13 +13,15 @@ namespace ResourceTypes.Actors
         IActorExtraDataInterface data;
         byte[] buffer;
 
-        public ActorTypes BufferType {
+        public ActorTypes BufferType
+        {
             get { return bufferType; }
             set { bufferType = value; }
         }
 
         [TypeConverter(typeof(ExpandableObjectConverter))]
-        public IActorExtraDataInterface Data {
+        public IActorExtraDataInterface Data
+        {
             get { return data; }
             set { data = value; }
         }
@@ -105,7 +108,10 @@ namespace ResourceTypes.Actors
 
         public override string ToString()
         {
-            return bufferType.ToString();
+            if (buffer != null)
+                return string.Format("{0}, {1}", bufferType, buffer.Length);
+            else
+                return string.Format("{0}", bufferType);
         }
     }
 }

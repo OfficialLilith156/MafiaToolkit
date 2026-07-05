@@ -1,7 +1,6 @@
 ﻿using Gibbed.Illusion.FileFormats.Hashing;
 using System;
 using System.IO;
-using System.Windows.Forms;
 
 namespace ResourceTypes.Actors
 {
@@ -9,7 +8,7 @@ namespace ResourceTypes.Actors
     {
         public static IActorExtraDataInterface CreateExtraData(ActorTypes type)
         {
-            switch(type)
+            switch (type)
             {
                 case ActorTypes.Human:
                     return new ActorHuman();
@@ -93,7 +92,7 @@ namespace ResourceTypes.Actors
         {
             IActorExtraDataInterface NewExtraData = null;
 
-            switch(type)
+            switch (type)
             {
                 case ActorEDSTypes.C_Car:
                     NewExtraData = new ActorCar();
@@ -121,22 +120,16 @@ namespace ResourceTypes.Actors
 
         public static IActorExtraDataInterface LoadExtraData(ActorTypes type, MemoryStream stream, bool isBigEndian)
         {
-            try
+            IActorExtraDataInterface NewExtraData = CreateExtraData(type);
+            if (NewExtraData == null)
             {
-                IActorExtraDataInterface NewExtraData = CreateExtraData(type);
-                if (NewExtraData == null)
-                {
-                    MessageBox.Show("Cannot read type: " + type);
-                    return null;
-                }
-                NewExtraData.ReadFromFile(stream, isBigEndian);
-                return NewExtraData;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error loading extra data for type {type}: {ex.Message}");
+                Console.WriteLine("Cannot read type: " + type);
                 return null;
             }
+
+            NewExtraData.ReadFromFile(stream, isBigEndian);
+
+            return NewExtraData;
         }
 
         public static ActorEntry CreateActorItem(ActorTypes type, string name)

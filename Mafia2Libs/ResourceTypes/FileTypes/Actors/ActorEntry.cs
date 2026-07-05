@@ -5,12 +5,13 @@ using System.IO;
 using System.Numerics;
 using Utils.StringHelpers;
 using Utils.VorticeUtils;
+using XBOX;
 using XBOX.ActorFile;
 
 namespace ResourceTypes.Actors
 {
     [TypeConverter(typeof(ExpandableObjectConverter))]
-    public class ActorEntry 
+    public class ActorEntry
     {
         int size; //item size in bytes;
         string actorTypeName; //actor type (string)
@@ -29,74 +30,92 @@ namespace ResourceTypes.Actors
         short dataID;
         ActorExtraData data;
 
-        public int Size {
+        public int Size
+        {
             get { return size; }
         }
-        public string EntityName {
+        public string EntityName
+        {
             get { return entityName; }
-            set { 
+            set
+            {
                 entityName = value;
                 entityHash = FNV64.Hash(value);
             }
         }
-        public string ActorTypeName {
+        public string ActorTypeName
+        {
             get { return actorTypeName; }
             set { actorTypeName = value; }
         }
-        public string UnkString {
+        public string UnkString
+        {
             get { return unkString; }
             set { unkString = value; }
         }
-        public string Unk2String {
+        public string Unk2String
+        {
             get { return unk2String; }
             set { unk2String = value; }
         }
-        public string DefinitionName {
+        public string DefinitionName
+        {
             get { return definitionName; }
             set { definitionName = value; }
         }
-        public string FrameName {
+        public string FrameName
+        {
             get { return frameName; }
-            set { 
+            set
+            {
                 frameName = value;
                 frameNameHash = FNV64.Hash(value);
             }
         }
-        public int ActorTypeID {
+        public int ActorTypeID
+        {
             get { return actortypeID; }
             set { actortypeID = value; }
         }
-        public ulong EntityHash {
+        public ulong EntityHash
+        {
             get { return entityHash; }
             set { entityHash = value; }
         }
-        public ulong FrameNameHash {
+        public ulong FrameNameHash
+        {
             get { return frameNameHash; }
             set { frameNameHash = value; }
         }
-        public Vector3 Position {
+        public Vector3 Position
+        {
             get { return position; }
             set { position = value; }
         }
-        public Quaternion Rotation {
+        public Quaternion Rotation
+        {
             get { return rotation; }
             set { rotation = value; }
         }
-        public Vector3 Scale {
+        public Vector3 Scale
+        {
             get { return scale; }
             set { scale = value; }
         }
-        public bool bActivateOnInit {
+        public bool bActivateOnInit
+        {
             get { return ActivateOnInit; }
             set { ActivateOnInit = value; }
         }
-        public short DataID {
+        public short DataID
+        {
             get { return dataID; }
             set { dataID = value; }
         }
 
         [TypeConverter(typeof(ExpandableObjectConverter))]
-        public ActorExtraData Data {
+        public ActorExtraData Data
+        {
             get { return data; }
             set { data = value; }
         }
