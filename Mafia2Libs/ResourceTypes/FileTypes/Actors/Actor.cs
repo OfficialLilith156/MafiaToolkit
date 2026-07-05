@@ -46,25 +46,7 @@ namespace ResourceTypes.Actors
             set { extraData = value; }
         }
 
-        public Actor(FileInfo InFileInfo)
-        {
-            fileName = InFileInfo.FullName;
-            definitions = new List<ActorDefinition>();
-            items = new List<ActorEntry>();
-            extraData = new List<ActorExtraData>();
-
-            using (var fs = File.OpenRead(InFileInfo.FullName))
-            {
-                byte[] header = new byte[4];
-                fs.Read(header, 0, 4);
-                _isBigEndian = (header[0] == 0x00);
-            }
-
-            using (var reader = new EndianBinaryReader(File.OpenRead(InFileInfo.FullName), _isBigEndian))
-            {
-                ReadFromFile(reader);
-            }
-        }
+        
 
         public Actor() : base()
         {
@@ -82,13 +64,43 @@ namespace ResourceTypes.Actors
             const6 = 6;
         }
 
-        public Actor(FileInfo InFileInfo, bool isBigEndian)
+        public Actor(FileInfo InFileInfo)
         {
-            _isBigEndian = isBigEndian;
             fileName = InFileInfo.FullName;
+            definitions = new List<ActorDefinition>();
+            items = new List<ActorEntry>();
+            extraData = new List<ActorExtraData>();
+
+            using (var fs = File.OpenRead(InFileInfo.FullName))
+            {
+                byte[] header = new byte[4];
+                fs.Read(header, 0, 4);
+                int littlePool = BitConverter.ToInt32(header, 0);
+                Array.Reverse(header);
+                int bigPool = BitConverter.ToInt32(header, 0);
+
+                if (littlePool > 0 && littlePool < fs.Length)
+                    _isBigEndian = false;
+                else if (bigPool > 0 && bigPool < fs.Length)
+                    _isBigEndian = true;
+                else
+                    _isBigEndian = false;
+            }
+
             using (var reader = new EndianBinaryReader(File.OpenRead(InFileInfo.FullName), _isBigEndian))
             {
-                ReadFromFile(reader);
+                try
+                {
+                    ReadFromFile(reader);
+                }
+                catch
+                {
+                    reader.BaseStream.Position = 4;
+                    definitions.Clear();
+                    items.Clear();
+                    extraData.Clear();
+                    ReadFromFileNoPool(reader);
+                }
             }
         }
 
@@ -195,118 +207,132 @@ namespace ResourceTypes.Actors
 
         public void ReadFromFile(EndianBinaryReader reader)
         {
-            try
+            int poolLength = reader.ReadInt32();
+            pool = new string(reader.ReadChars(poolLength));
+
+            int hashesLength = reader.ReadInt32();
+            definitions = new List<ActorDefinition>();
+
+            for (int i = 0; i < hashesLength; i++)
             {
-                long startPos = reader.BaseStream.Position;
-                long fileLen = reader.BaseStream.Length;
-                // MessageBox.Show($"Start: pos={startPos}, len={fileLen}", "Debug");
-
-                int poolLength = reader.ReadInt32();
-                // if (poolLength > reader.BaseStream.Length - 4)
-                //throw new Exception($"poolLength={poolLength} exceeds file length, file may be corrupted or wrong format.");
-                // MessageBox.Show($"poolLength={poolLength}, pos={reader.BaseStream.Position}", "Debug");
-                pool = new string(reader.ReadChars(poolLength));
-
-
-
-                int hashesLength = reader.ReadInt32();
-                // MessageBox.Show($"hashesLength={hashesLength}, pos={reader.BaseStream.Position}", "Debug");
-                definitions = new List<ActorDefinition>();
-
-                for (int i = 0; i < hashesLength; i++)
-                {
-                    var definition = new ActorDefinition();
-                    definition.ReadFromFile(reader);
-                    int pos = definition.NamePos;
-                    definition.Name = pool.Substring(pos, pool.IndexOf('\0', pos) - pos);
-                    definitions.Add(definition);
-                }
-
-                long actorDataOffset = reader.BaseStream.Position + 4;
-
-                filesize = reader.ReadInt32();
-                if (_isBigEndian)
-                {
-                    const2 = reader.ReadInt16();
-                    const6 = reader.ReadInt16();
-                }
-                else
-                {
-                    const6 = reader.ReadInt16();
-                    const2 = reader.ReadInt16();
-                }
-                const16 = reader.ReadInt32();
-                size = reader.ReadInt32();
-                unk12 = reader.ReadInt32();
-                unk13 = reader.ReadInt32();
-                unk14 = reader.ReadInt32();
-
-                // MessageBox.Show($"filesize={filesize}, const2={const2}, const6={const6}, const16={const16}, size={size}, unk12={unk12}, unk13={unk13}, unk14={unk14}, pos={reader.BaseStream.Position}", "Debug");
-
-                if (const2 == 2)
-                {
-                    int count = (unk14 - 8) / 4;
-                    //MessageBox.Show($"const2=2, count={count}, seek={unk14 - 12}, pos={reader.BaseStream.Position}", "Debug");
-                    reader.BaseStream.Seek(unk14 - 12, SeekOrigin.Current);
-                    extraData = new List<ActorExtraData>();
-                    for (int i = 0; i < count; i++)
-                    {
-                        var extra = new ActorExtraData();
-                        extra.ReadFromFile(reader, _isBigEndian);
-                        extraData.Add(extra);
-                    }
-                    //MessageBox.Show($"After extraData, pos={reader.BaseStream.Position}", "Debug");
-                }
-                else
-                {
-                    // const2 == 0
-                    int bytesToSkip = size - unk14;
-                    //if (bytesToSkip < 0)
-                    //    throw new Exception($"Negative bytesToSkip: {bytesToSkip}, size={size}, unk14={unk14}");
-                    //MessageBox.Show($"const2!=2, skip {bytesToSkip} bytes, pos={reader.BaseStream.Position}", "Debug");
-                    unk02 = reader.ReadBytes(bytesToSkip);
-                    //MessageBox.Show($"After skip, pos={reader.BaseStream.Position}", "Debug");
-                }
-
-                int itemCount = reader.ReadInt32();
-                //MessageBox.Show($"itemCount={itemCount}, pos={reader.BaseStream.Position}", "Debug");
-                reader.BaseStream.Seek(itemCount * 4, SeekOrigin.Current);
-
-                items = new List<ActorEntry>();
-                for (int i = 0; i < itemCount; i++)
-                {
-                    var entry = new ActorEntry();
-                    entry.ReadFromFile(reader);
-                    if (entry.DataID != -1)
-                        entry.Data = ExtraData[entry.DataID];
-                    items.Add(entry);
-                }
-
-                int numCutscenes = reader.ReadInt32();
-                if (numCutscenes > 0)
-                {
-                    long endPosition = 0;
-                    for (int i = 0; i < numCutscenes; i++)
-                    {
-                        uint offset = reader.ReadUInt32();
-                        long currentPosition = reader.BaseStream.Position;
-                        reader.BaseStream.Seek(actorDataOffset + offset, SeekOrigin.Begin);
-                        string cutsceneName = StringHelpers.ReadString(reader);
-                        ushort cutscene_unk01 = reader.ReadUInt16();
-                        endPosition = reader.BaseStream.Position;
-                        reader.BaseStream.Seek(currentPosition, SeekOrigin.Begin);
-                    }
-                    reader.BaseStream.Position = endPosition;
-                }
-
-                ToolkitAssert.Ensure(reader.BaseStream.Position == reader.BaseStream.Length, "Not at end.");
-                //MessageBox.Show($"Success! Final pos={reader.BaseStream.Position}", "Debug");
+                var definition = new ActorDefinition();
+                definition.ReadFromFile(reader);
+                int pos = definition.NamePos;
+                definition.Name = pool.Substring(pos, pool.IndexOf('\0', pos) - pos);
+                definitions.Add(definition);
             }
-            catch (Exception ex)
+
+            long actorDataOffset = reader.BaseStream.Position + 4;
+
+            filesize = reader.ReadInt32();
+            if (_isBigEndian)
             {
-                //MessageBox.Show($"ERROR: {ex.Message}\nPosition: {reader.BaseStream.Position}\nLength: {reader.BaseStream.Length}", "Error");
-                throw;
+                const2 = reader.ReadInt16();
+                const6 = reader.ReadInt16();
             }
+            else
+            {
+                const6 = reader.ReadInt16();
+                const2 = reader.ReadInt16();
+            }
+            const16 = reader.ReadInt32();
+            size = reader.ReadInt32();
+            unk12 = reader.ReadInt32();
+            unk13 = reader.ReadInt32();
+            unk14 = reader.ReadInt32();
+
+            if (const2 == 2)
+            {
+                int count = (unk14 - 8) / 4;
+                reader.BaseStream.Seek(unk14 - 12, SeekOrigin.Current);
+                extraData = new List<ActorExtraData>();
+                for (int i = 0; i < count; i++)
+                {
+                    var extra = new ActorExtraData();
+                    extra.ReadFromFile(reader, _isBigEndian);
+                    extraData.Add(extra);
+                }
+            }
+            else
+            {
+                int bytesToSkip = size - unk14;
+                unk02 = reader.ReadBytes(bytesToSkip);
+            }
+
+            int itemCount = reader.ReadInt32();
+            reader.BaseStream.Seek(itemCount * 4, SeekOrigin.Current);
+
+            items = new List<ActorEntry>();
+            for (int i = 0; i < itemCount; i++)
+            {
+                var entry = new ActorEntry();
+                entry.ReadFromFile(reader);
+                if (entry.DataID != -1)
+                    entry.Data = ExtraData[entry.DataID];
+                items.Add(entry);
+            }
+
+            int numCutscenes = reader.ReadInt32();
+            if (numCutscenes > 0)
+            {
+                long endPosition = 0;
+                for (int i = 0; i < numCutscenes; i++)
+                {
+                    uint offset = reader.ReadUInt32();
+                    long currentPosition = reader.BaseStream.Position;
+                    reader.BaseStream.Seek(actorDataOffset + offset, SeekOrigin.Begin);
+                    string cutsceneName = StringHelpers.ReadString(reader);
+                    ushort cutscene_unk01 = reader.ReadUInt16();
+                    endPosition = reader.BaseStream.Position;
+                    reader.BaseStream.Seek(currentPosition, SeekOrigin.Begin);
+                }
+                reader.BaseStream.Position = endPosition;
+            }
+
+            ToolkitAssert.Ensure(reader.BaseStream.Position == reader.BaseStream.Length, "Not at end.");
+        }
+        private void ReadFromFileNoPool(EndianBinaryReader reader)
+        {
+            filesize = reader.ReadInt32();
+            const6 = reader.ReadInt16();
+            const2 = reader.ReadInt16();
+            const16 = reader.ReadInt32();
+            size = reader.ReadInt32();
+            unk12 = reader.ReadInt32();
+            unk13 = reader.ReadInt32();
+            unk14 = reader.ReadInt32();
+
+            if (const2 == 2)
+            {
+                int count = (unk14 - 8) / 4;
+                reader.BaseStream.Seek(unk14 - 12, SeekOrigin.Current);
+                extraData = new List<ActorExtraData>();
+                for (int i = 0; i < count; i++)
+                {
+                    var extra = new ActorExtraData();
+                    extra.ReadFromFile(reader, _isBigEndian);
+                    extraData.Add(extra);
+                }
+            }
+            else
+            {
+                int bytesToSkip = size - unk14;
+                unk02 = reader.ReadBytes(bytesToSkip);
+            }
+
+            int itemCount = reader.ReadInt32();
+            reader.BaseStream.Seek(itemCount * 4, SeekOrigin.Current);
+
+            items = new List<ActorEntry>();
+            for (int i = 0; i < itemCount; i++)
+            {
+                var entry = new ActorEntry();
+                entry.ReadFromFile(reader);
+                if (entry.DataID != -1)
+                    entry.Data = ExtraData[entry.DataID];
+                items.Add(entry);
+            }
+            int numCutscenes = reader.ReadInt32();
         }
 
         public void WriteToFile()
