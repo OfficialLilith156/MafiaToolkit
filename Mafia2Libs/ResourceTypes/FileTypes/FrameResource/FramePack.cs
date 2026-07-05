@@ -1,8 +1,10 @@
 ﻿using ResourceTypes.BufferPools;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using Utils.Extensions;
+using Utils.Models;
 
 namespace ResourceTypes.FrameResource
 {
@@ -14,7 +16,7 @@ namespace ResourceTypes.FrameResource
         // Used for both
         private Dictionary<ulong, List<int>> ModelAttachments;
         private FrameResource OwningResource;
-
+        private bool isBigEndian;
         // Used for loading
         private Dictionary<int, FrameObjectBase> OldRefIDLookupTable;
 
@@ -27,9 +29,10 @@ namespace ResourceTypes.FrameResource
         private Dictionary<int, FrameMaterial> FrameMaterials;
         private Dictionary<int, FrameGeometry> FrameGeometries;
 
-        public FramePack(FrameResource OwningResource)
+        public FramePack(FrameResource OwningResource, bool isBigEndian = false)
         {
             this.OwningResource = OwningResource;
+            this.isBigEndian = isBigEndian;
         }
 
         private void SaveFrame(FrameObjectBase frame, BinaryWriter writer)
@@ -107,8 +110,8 @@ namespace ResourceTypes.FrameResource
                 {
                     using (var stream = new MemoryStream())
                     {//todo: next two lines and their duplicates need to be rewritten to not use scenedata
-                        OwningResource.SceneData.IndexBufferPool.GetBuffer(lod.IndexBufferRef.Hash).WriteToFile(stream, false);
-                        OwningResource.SceneData.VertexBufferPool.GetBuffer(lod.VertexBufferRef.Hash).WriteToFile(stream, false);
+                        OwningResource.SceneData.IndexBufferPool.GetBuffer(lod.IndexBufferRef.Hash).WriteToFile(stream, isBigEndian);
+                        OwningResource.SceneData.VertexBufferPool.GetBuffer(lod.VertexBufferRef.Hash).WriteToFile(stream, isBigEndian);
                         writer.Write(stream.ToArray());
                     }
                 }
@@ -130,8 +133,8 @@ namespace ResourceTypes.FrameResource
                 {
                     using (var stream = new MemoryStream())
                     {
-                        OwningResource.SceneData.IndexBufferPool.GetBuffer(lod.IndexBufferRef.Hash).WriteToFile(stream, false);
-                        OwningResource.SceneData.VertexBufferPool.GetBuffer(lod.VertexBufferRef.Hash).WriteToFile(stream, false);
+                        OwningResource.SceneData.IndexBufferPool.GetBuffer(lod.IndexBufferRef.Hash).WriteToFile(stream, isBigEndian);
+                        OwningResource.SceneData.VertexBufferPool.GetBuffer(lod.VertexBufferRef.Hash).WriteToFile(stream, isBigEndian);
                         writer.Write(stream.ToArray());
                     }
                 }
@@ -200,9 +203,9 @@ namespace ResourceTypes.FrameResource
                 // We have to do it for all LODs too; if any more than 1.
                 foreach (var lod in geometry.LOD)
                 {
-                    IndexBuffer indexBuffer = new IndexBuffer(stream, false);
-                    VertexBuffer vertexBuffer = new VertexBuffer(stream, false);
-
+                    IndexBuffer indexBuffer = new IndexBuffer(stream, isBigEndian);
+                    VertexBuffer vertexBuffer = new VertexBuffer(stream, isBigEndian);
+                    
                     OwningResource.SceneData.IndexBufferPool.TryAddBuffer(indexBuffer);
                     OwningResource.SceneData.VertexBufferPool.TryAddBuffer(vertexBuffer);
                 }
@@ -235,7 +238,7 @@ namespace ResourceTypes.FrameResource
 
             return parent;
         }
-
+       
         public void WriteToFile(string ExportName, FrameObjectBase Frame)
         {
             File.WriteAllBytes(ExportName, WriteToStream(Frame));

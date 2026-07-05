@@ -433,19 +433,15 @@ namespace ResourceTypes.FrameResource
                 (pair.Value as FrameObjectBase).SetWorldTransform();
             }
         }
-        
+
         //name is either name of the imported frame or name of .framedata that will be red
-        public TreeNode ReadFramesFromImport(string name, byte[] fromFR = null)
+        public TreeNode ReadFramesFromImport(string name, byte[] fromFR = null, bool isBigEndian = false)
         {
-            FramePack Packet = new FramePack(this);
+            FramePack Packet = new FramePack(this, isBigEndian);
             if (fromFR == null)
-            {
-                Packet.ReadFramesFromFile(name);//file
-            }
+                Packet.ReadFramesFromFile(name);
             else
-            {
-                Packet.ReadFramesFromFile(fromFR);//stream
-            }
+                Packet.ReadFramesFromFile(fromFR);
             Packet.PushPacketIntoFrameResource();
             return BuildFromFrames(null, Packet.RootFrame);
         }

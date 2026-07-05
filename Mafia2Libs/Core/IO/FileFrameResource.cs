@@ -37,7 +37,7 @@ namespace Core.IO
             return true;
         }
 
-        private static bool TryDetectEndianness(string filePath, out bool isBigEndian)
+        public static bool TryDetectEndianness(string filePath, out bool isBigEndian)
         {
             isBigEndian = false;
             byte[] buffer = new byte[1 + 7 * 4];

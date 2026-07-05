@@ -1,4 +1,5 @@
-﻿using Forms.Docking;
+﻿using Core.IO;
+using Forms.Docking;
 using Forms.EditorControls;
 using Mafia2Tool.Forms;
 using Microsoft.VisualBasic;
@@ -1183,11 +1184,11 @@ namespace Mafia2Tool
             dSceneTree.AddToTree(tree);
         }
 
-        public void PopulateImportedData(string ImportedFilename)
+        public void PopulateImportedData(string ImportedFilename, bool isBigEndian = false)
         {
             ImportedScene = new SceneData();
             ImportedScene.ScenePath = Path.GetDirectoryName(ImportedFilename);
-            ImportedScene.BuildData(false);
+            ImportedScene.BuildData(isBigEndian);
             InitImportTree();
         }
 
@@ -5501,19 +5502,30 @@ namespace Mafia2Tool
 
         private void Button_ImportFrame_OnClicked(object sender, EventArgs e)
         {
-            if (FrameBrowser.ShowDialog() == DialogResult.OK)
+            if (FrameBrowser.ShowDialog() != DialogResult.OK) return;
+
+            string filename = FrameBrowser.FileName;
+            bool isBigEndian;
+            if (!FileFrameResource.TryDetectEndianness(filename, out isBigEndian))
             {
-                string Filename = FrameBrowser.FileName;
-                if (FrameBrowser.FilterIndex.Equals(1))
-                {
-                    PopulateImportedData(Filename);
-                }
-                else
-                {
-                    TreeNode parent = SceneData.FrameResource.ReadFramesFromImport(Filename);
-                    dSceneTree.AddToTree(parent, frameResourceRoot);
-                    ConvertNodeToFrame(parent);
-                }
+                DialogResult result = MessageBox.Show("Failed to automatically detect byte order.\nImport as Big Endian (Xbox)?", "Endianness Selection", MessageBoxButtons.YesNo,MessageBoxIcon.Question);
+                isBigEndian = (result == DialogResult.Yes);
+            }
+
+            if (FrameBrowser.FilterIndex == 1) 
+            {
+                isBigEndian = false;
+                PopulateImportedData(filename, isBigEndian);
+            }
+            else
+            {
+                var tempScene = new SceneData();
+                tempScene.ScenePath = Path.GetDirectoryName(filename);
+                VertexTranslator.IsBigEndian = isBigEndian;
+                var importedFr = new FrameResource(filename, tempScene, isBigEndian);
+                TreeNode parent = importedFr.BuildTree(this.SceneData.FrameNameTable);
+                dSceneTree.AddToTree(parent, frameResourceRoot);
+                ConvertNodeToFrame(parent);
             }
         }
 
