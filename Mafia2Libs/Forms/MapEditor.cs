@@ -5512,9 +5512,8 @@ namespace Mafia2Tool
                 isBigEndian = (result == DialogResult.Yes);
             }
 
-            if (FrameBrowser.FilterIndex == 1) 
+            if (FrameBrowser.FilterIndex == 1)
             {
-                isBigEndian = false;
                 PopulateImportedData(filename, isBigEndian);
             }
             else
