@@ -109,7 +109,7 @@ namespace ResourceTypes.Actors
         public override string ToString()
         {
             if (buffer != null)
-                return string.Format("{0}, {1}", bufferType, buffer.Length);
+                return string.Format("{0}, {1}", bufferType);
             else
                 return string.Format("{0}", bufferType);
         }

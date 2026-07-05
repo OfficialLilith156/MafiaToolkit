@@ -24,6 +24,7 @@ namespace Mafia2Tool
         private TreeNode items;
         private static ActorExtraData globalClipboard;
         private bool bIsFileEdited = false;
+        private string baseTitle;
 
         public ActorEditor(FileInfo file)
         {
@@ -31,6 +32,7 @@ namespace Mafia2Tool
             Localise();
             actorFile = file;
             BuildData();
+            UpdateTitle(false);
             Show();
             ToolkitSettings.UpdateRichPresence("Using the Actor editor.");
             SearchBox.KeyDown += SearchBox_KeyDown;
@@ -94,6 +96,12 @@ namespace Mafia2Tool
             ActorTreeView.Nodes.Add(definitions);
             ActorTreeView.Nodes.Add(items);
         }
+        private void UpdateTitle(bool edited)
+        {
+            string platform = actors?.IsBigEndian == true ? "Xbox" : "PC";
+            string fileName = actorFile?.Name ?? "No Name";
+            Text = $"{baseTitle} {platform} - {fileName}{(edited ? "*" : "")}";
+        }
 
         private void Save()
         {
@@ -102,7 +110,7 @@ namespace Mafia2Tool
             {
                 actors.WriteToFile(writer);
             }
-            Text = Language.GetString("$ACTOR_EDITOR_TITLE");
+            UpdateTitle(true);
             bIsFileEdited = false;
         }
 
@@ -112,7 +120,7 @@ namespace Mafia2Tool
             BuildData();
             ActorGrid.SelectedObject = null;
             ActorTreeView.SelectedNode = null;
-            Text = Language.GetString("$ACTOR_EDITOR_TITLE");
+            UpdateTitle(true);
             bIsFileEdited = false;
         }
 
@@ -176,7 +184,7 @@ namespace Mafia2Tool
                 {
                     ExtraDataTarget.Data = clonedData as IActorExtraDataInterface;
                     ActorGrid.SelectedObject = SelectedNode.Tag;
-                    Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
+                    UpdateTitle(true);
                     bIsFileEdited = true;
                 }
                 else
@@ -207,7 +215,7 @@ namespace Mafia2Tool
             if (isDeleted)
             {
                 ActorTreeView.Nodes.Remove(ActorTreeView.SelectedNode);
-                Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
+                UpdateTitle(true);
                 bIsFileEdited = true;
             }
         }
@@ -243,7 +251,7 @@ namespace Mafia2Tool
                 }
                 items.Nodes.Add(node);
             }
-            Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
+            UpdateTitle(true);
             bIsFileEdited = true;
             objectForm.Dispose();
         }
@@ -304,7 +312,7 @@ namespace Mafia2Tool
             }
             items.Nodes.Add(node);
             ActorTreeView.SelectedNode = node;
-            Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
+            UpdateTitle(true);
             bIsFileEdited = true;
         }
 
@@ -325,7 +333,7 @@ namespace Mafia2Tool
                         definitions.Nodes.Add(node);
                     }
                 }
-                Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
+                UpdateTitle(true);
                 bIsFileEdited = true;
             }
         }
@@ -350,7 +358,7 @@ namespace Mafia2Tool
         private void ActorGrid_OnPropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
             if (e.ChangedItem.Label == "Name" || e.ChangedItem.Label == "EntityName") ActorTreeView.SelectedNode.Text = e.ChangedItem.Value.ToString();
-            Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
+            UpdateTitle(true);
             bIsFileEdited = true;
             ActorGrid.Refresh();
         }
@@ -427,7 +435,7 @@ namespace Mafia2Tool
                 actors.Items.Clear();
                 actors.Items.AddRange(newItems);
 
-                Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
+                UpdateTitle(true);
                 bIsFileEdited = true;
                 return;
             }
@@ -447,7 +455,7 @@ namespace Mafia2Tool
 
                 ReorderItemsFromTree();
 
-                Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
+                UpdateTitle(true);
                 bIsFileEdited = true;
             }
         }
@@ -492,7 +500,7 @@ namespace Mafia2Tool
                 actors.Items.Clear();
                 actors.Items.AddRange(newItems);
 
-                Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
+                UpdateTitle(true);
                 bIsFileEdited = true;
                 return;
             }
@@ -511,7 +519,7 @@ namespace Mafia2Tool
 
                 ReorderItemsFromTree();
 
-                Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
+                UpdateTitle(true);
                 bIsFileEdited = true;
             }
         }
@@ -699,7 +707,7 @@ namespace Mafia2Tool
             items.Nodes.Add(node);
             ActorTreeView.SelectedNode = node;
             ActorTreeView.Focus();
-            Text = Language.GetString("$ACTOR_EDITOR_TITLE") + "*";
+            UpdateTitle(true);
             bIsFileEdited = true;
         }
 
