@@ -264,6 +264,12 @@ namespace Mafia2Tool
             ActorEntry cloned = actors.CreateActorEntry((ActorTypes)original.ActorTypeID, original.EntityName + "");
             cloned.DefinitionName = original.DefinitionName;
             cloned.FrameName = original.FrameName;
+            cloned.Position = original.Position;
+            cloned.Rotation = original.Rotation;
+            cloned.bActivateOnInit = original.bActivateOnInit;
+            cloned.Scale = original.Scale;
+            cloned.UnkString = original.UnkString;
+            cloned.Unk2String = original.Unk2String;
             if (original.DataID != -1 && original.Data != null)
             {
                 cloned.Data = new ActorExtraData()
@@ -290,6 +296,12 @@ namespace Mafia2Tool
             ActorEntry newEntry = actors.CreateActorEntry((ActorTypes)branchClipboard.ActorTypeID, branchClipboard.EntityName);
             newEntry.DefinitionName = branchClipboard.DefinitionName;
             newEntry.FrameName = branchClipboard.FrameName;
+            newEntry.Position = branchClipboard.Position;
+            newEntry.Rotation = branchClipboard.Rotation;
+            newEntry.Scale = branchClipboard.Scale;
+            newEntry.bActivateOnInit = branchClipboard.bActivateOnInit;
+            newEntry.UnkString = branchClipboard.UnkString;
+            newEntry.Unk2String = branchClipboard.Unk2String;
             if (branchClipboard.Data != null)
             {
                 ActorExtraData newData = new ActorExtraData()
