@@ -5627,10 +5627,7 @@ namespace Mafia2Tool
 
                     if (Parent.Tag is FrameHeaderScene parentScene)
                     {
-                        if (topLevelFrame != null && topLevelFrame != NewFrame)
-                        {
-                            SceneData.FrameResource.SetParentOfObject(ParentInfo.ParentType.ParentIndex2, NewFrame, topLevelFrame);
-                        }
+                        SceneData.FrameResource.SetParentOfObject(ParentInfo.ParentType.ParentIndex2, NewFrame, parentScene);
                     }
                     else if (Parent.Tag is FrameEntry parentEntry)
                     {

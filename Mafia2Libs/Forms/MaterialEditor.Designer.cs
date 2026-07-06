@@ -60,6 +60,7 @@
             MergeButton = new System.Windows.Forms.Button();
             OverwriteListBox = new System.Windows.Forms.CheckedListBox();
             MTLSaveDialog = new System.Windows.Forms.SaveFileDialog();
+            importMaterialXBOXToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)GirdView_Materials).BeginInit();
             Panel_Main.SuspendLayout();
@@ -139,7 +140,7 @@
             // toolButton
             // 
             toolButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            toolButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { Button_AddMaterial, Button_Delete, dUPToolStripMenuItem, Button_MergeMTL, Button_ExportSelected });
+            toolButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { Button_AddMaterial, Button_Delete, dUPToolStripMenuItem, Button_MergeMTL, Button_ExportSelected, importMaterialXBOXToolStripMenuItem });
             toolButton.Image = (System.Drawing.Image)resources.GetObject("toolButton.Image");
             toolButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             toolButton.Name = "toolButton";
@@ -150,7 +151,7 @@
             // 
             Button_AddMaterial.Name = "Button_AddMaterial";
             Button_AddMaterial.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.A;
-            Button_AddMaterial.Size = new System.Drawing.Size(208, 22);
+            Button_AddMaterial.Size = new System.Drawing.Size(257, 22);
             Button_AddMaterial.Text = "Add Material";
             Button_AddMaterial.Click += Button_AddMaterial_Click;
             // 
@@ -158,28 +159,28 @@
             // 
             Button_Delete.Name = "Button_Delete";
             Button_Delete.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.D;
-            Button_Delete.Size = new System.Drawing.Size(208, 22);
+            Button_Delete.Size = new System.Drawing.Size(257, 22);
             Button_Delete.Text = "$DELETE_SEL_MAT";
             Button_Delete.Click += Button_Delete_Click;
             // 
             // dUPToolStripMenuItem
             // 
             dUPToolStripMenuItem.Name = "dUPToolStripMenuItem";
-            dUPToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            dUPToolStripMenuItem.Size = new System.Drawing.Size(257, 22);
             dUPToolStripMenuItem.Text = "Duplicate Material";
             dUPToolStripMenuItem.Click += DuplicateMaterial;
             // 
             // Button_MergeMTL
             // 
             Button_MergeMTL.Name = "Button_MergeMTL";
-            Button_MergeMTL.Size = new System.Drawing.Size(208, 22);
+            Button_MergeMTL.Size = new System.Drawing.Size(257, 22);
             Button_MergeMTL.Text = "$MERGE_MTL";
             Button_MergeMTL.Click += Button_MergeMTL_Click;
             // 
             // Button_ExportSelected
             // 
             Button_ExportSelected.Name = "Button_ExportSelected";
-            Button_ExportSelected.Size = new System.Drawing.Size(208, 22);
+            Button_ExportSelected.Size = new System.Drawing.Size(257, 22);
             Button_ExportSelected.Text = "$EXPORT_SELECTED";
             Button_ExportSelected.Click += Button_ExportedSelected_Click;
             // 
@@ -398,6 +399,13 @@
             // 
             MTLSaveDialog.Filter = "Material Library|*.mtl";
             // 
+            // importMaterialXBOXToolStripMenuItem
+            // 
+            importMaterialXBOXToolStripMenuItem.Name = "importMaterialXBOXToolStripMenuItem";
+            importMaterialXBOXToolStripMenuItem.Size = new System.Drawing.Size(257, 22);
+            importMaterialXBOXToolStripMenuItem.Text = "Importing materials from the Xbox";
+            importMaterialXBOXToolStripMenuItem.Click += Button_ImportXbox_Click;
+            // 
             // MaterialEditor
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -462,5 +470,6 @@
         private System.Windows.Forms.ToolStripMenuItem Button_DumpTextures;
         private System.Windows.Forms.ToolStripMenuItem dUPToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addMaterialsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem importMaterialXBOXToolStripMenuItem;
     }
 }

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows.Forms;
 using Utils.Helpers.Reflection;
+using System.Text.Json;
 using Utils.Language;
 using Utils.Settings;
 using XBOX.ActorFile;
@@ -319,15 +320,11 @@ namespace Mafia2Tool
 
             if (original.Data != null)
             {
-                clone.Data = new ActorExtraData()
+                clone.Data = new ActorExtraData
                 {
                     BufferType = original.Data.BufferType
                 };
-
-                Type dataType = original.Data.Data.GetType();
-                object clonedInternal = Activator.CreateInstance(dataType);
-                ReflectionHelpers.Copy(original.Data.Data, ref clonedInternal);
-                clone.Data.Data = clonedInternal as IActorExtraDataInterface;
+                clone.Data.Data = CloneObjectSafely(original.Data.Data) as IActorExtraDataInterface;
             }
 
             return clone;
@@ -395,9 +392,7 @@ namespace Mafia2Tool
                     {
                         BufferType = branch.Data.BufferType
                     };
-                    object clonedInternal = Activator.CreateInstance(branch.Data.Data.GetType());
-                    ReflectionHelpers.Copy(branch.Data.Data, ref clonedInternal);
-                    newData.Data = clonedInternal as IActorExtraDataInterface;
+                    newData.Data = CloneObjectSafely(branch.Data.Data) as IActorExtraDataInterface;
 
                     actors.ExtraData.Add(newData);
                     newEntry.DataID = (short)(actors.ExtraData.Count - 1);
@@ -683,19 +678,15 @@ namespace Mafia2Tool
         private object CloneObjectSafely(object src)
         {
             if (src == null) return null;
+
             Type t = src.GetType();
-            if (t.IsPrimitive || t == typeof(string) || t.IsEnum || t == typeof(decimal) || t == typeof(DateTime) || t == typeof(Guid))
+
+            if (t.IsPrimitive || t == typeof(string) || t.IsEnum ||
+                t == typeof(decimal) || t == typeof(DateTime) || t == typeof(Guid))
             {
                 return src;
             }
-            if (src is ICloneable clonable)
-            {
-                try
-                {
-                    return clonable.Clone();
-                }
-                catch { }
-            }
+
             if (t.IsArray)
             {
                 Array arr = (Array)src;
@@ -707,67 +698,22 @@ namespace Mafia2Tool
                 }
                 return cloneArr;
             }
-            if (t.IsValueType)
-            {
-                try
-                {
-                    object valCopy = Activator.CreateInstance(t);
-                    ReflectionHelpers.Copy(src, ref valCopy);
-                    return valCopy;
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"CloneObjectSafely: cannot Activator.CreateInstance value type {t.FullName}: {ex.Message}");
-                    return src;
-                }
-            }
-            object instance = null;
+
             try
             {
-                if (t != typeof(string))
+                var options = new JsonSerializerOptions
                 {
-                    var ctor = t.GetConstructor(Type.EmptyTypes);
-                    if (ctor != null)
-                    {
-                        instance = Activator.CreateInstance(t);
-                    }
-                }
+                    IncludeFields = true,
+                    WriteIndented = false
+                };
+                string json = JsonSerializer.Serialize(src, t, options);
+                return JsonSerializer.Deserialize(json, t, options);
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"CloneObjectSafely: Activator.CreateInstance failed for {t.FullName}: {ex.Message}");
-                instance = null;
+                Debug.WriteLine($"CloneObjectSafely: JSON cloning failed for {t.FullName}: {ex.Message}");
+                return src;
             }
-            if (instance == null)
-            {
-                try
-                {
-                    if (t != typeof(string))
-                    {
-                        instance = FormatterServices.GetUninitializedObject(t);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"CloneObjectSafely: FormatterServices.GetUninitializedObject failed for {t.FullName}: {ex.Message}");
-                    instance = null;
-                }
-            }
-            if (instance != null)
-            {
-                try
-                {
-                    ReflectionHelpers.Copy(src, ref instance);
-                    return instance;
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"CloneObjectSafely: ReflectionHelpers.Copy failed for {t.FullName}: {ex.Message}");
-                    return src;
-                }
-            }
-            Debug.WriteLine($"CloneObjectSafely: Unable to create clone for type {t.FullName}. Returning original reference as fallback.");
-            return src;
         }
 
         private void dUPToolStripMenuItem_Click(object sender, EventArgs e)

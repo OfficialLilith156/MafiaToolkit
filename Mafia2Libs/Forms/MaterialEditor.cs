@@ -87,6 +87,74 @@ namespace Mafia2Tool
                 GirdView_Materials.Rows.Add(BuildRowData(Pair.Value));
             }
         }
+        private void Button_ImportXbox_Click(object sender, EventArgs e)
+        {
+            if (!Panel_Main.Visible) return;
+
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.Filter = "MTL files (*.mtl)|*.mtl";
+                openFileDialog.Title = "Select Xbox MTL file";
+                if (openFileDialog.ShowDialog() != DialogResult.OK)
+                    return;
+
+                MaterialLibrary xboxLibrary = new MaterialLibrary(VersionsEnumerator.V_57);
+                try
+                {
+                    xboxLibrary.ReadMatFile(openFileDialog.FileName);
+                }
+                catch
+                {
+                    MessageBox.Show("Failed to read Xbox MTL file.");
+                    return;
+                }
+
+                if (xboxLibrary.Materials.Count == 0)
+                {
+                    MessageBox.Show("No materials found.");
+                    return;
+                }
+
+                VersionsEnumerator targetVersion = MaterialsManager.GetMTLVersionFromActiveGameType();
+
+                foreach (var kvp in xboxLibrary.Materials.ToList())
+                {
+                    IMaterial srcMat = kvp.Value;
+                    IMaterial destMat;
+
+                    if (srcMat.GetMTLVersion() != targetVersion)
+                    {
+                        destMat = MaterialFactory.ConvertMaterial(targetVersion, srcMat);
+                    }
+                    else
+                    {
+                        destMat = MaterialFactory.ConstructMaterial(targetVersion);
+                        destMat = MaterialFactory.ConvertMaterial(targetVersion, srcMat); 
+                    }
+             
+                    destMat.ShaderID = 4894707398632176459UL;
+                    destMat.ShaderHash = 3388704532U;            
+                    xboxLibrary.Materials[kvp.Key] = destMat;
+                }
+
+                foreach (var kvp in xboxLibrary.Materials)
+                {
+                    IMaterial mat = kvp.Value;
+                    if (mtl.Materials.ContainsKey(mat.GetMaterialHash()))
+                    {
+                        mtl.Materials[mat.GetMaterialHash()] = mat;
+                    }
+                    else
+                    {
+                        mtl.Materials.Add(mat.GetMaterialHash(), mat);
+                    }
+                }
+
+                FetchMaterials();
+                FileIsEdited();
+                MessageBox.Show($"Imported {xboxLibrary.Materials.Count} materials from Xbox file.");
+            }
+        }
 
         private void SearchForMaterials(string text = null)
         {
