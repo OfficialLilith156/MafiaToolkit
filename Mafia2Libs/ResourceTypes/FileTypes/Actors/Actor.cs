@@ -16,6 +16,13 @@ namespace ResourceTypes.Actors
         private bool _isBigEndian;
         public bool IsBigEndian => _isBigEndian;
 
+        // True when the primary ReadFromFile path threw and we fell back to the
+        // partial ReadFromFileNoPool path. In that case the in-memory model is
+        // incomplete and MUST NOT be written back out (it would produce a
+        // truncated/corrupt file).
+        public bool UsedFallbackRead { get; private set; }
+        public Exception PrimaryReadException { get; private set; }
+
         List<ActorDefinition> definitions;
         List<ActorEntry> items;
         string pool;
@@ -93,8 +100,10 @@ namespace ResourceTypes.Actors
                 {
                     ReadFromFile(reader);
                 }
-                catch
+                catch (Exception ex)
                 {
+                    UsedFallbackRead = true;
+                    PrimaryReadException = ex;
                     reader.BaseStream.Position = 4;
                     definitions.Clear();
                     items.Clear();
@@ -342,6 +351,19 @@ namespace ResourceTypes.Actors
 
             // Write the file
             using (EndianBinaryWriter writer = new EndianBinaryWriter(File.Open(fileName, FileMode.Create), _isBigEndian))
+            {
+                WriteToFile(writer);
+            }
+        }
+
+        // Writes this actor to an arbitrary file with an explicit byte order.
+        // Used to convert a loaded Xbox (Big Endian) actor into a PC (Little Endian) file.
+        public void WriteToFile(string OutputFileName, bool bBigEndian)
+        {
+            Sanitize();
+            pool = BuildDefinitions();
+
+            using (EndianBinaryWriter writer = new EndianBinaryWriter(File.Open(OutputFileName, FileMode.Create), bBigEndian))
             {
                 WriteToFile(writer);
             }

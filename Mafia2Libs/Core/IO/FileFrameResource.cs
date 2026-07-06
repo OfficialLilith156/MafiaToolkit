@@ -101,6 +101,43 @@ namespace Core.IO
             return leOk || beOk;
         }
 
+        public override bool CanConvertXboxToPC()
+        {
+            return true;
+        }
+
+        public override string ConvertXboxToPC()
+        {
+            if (!TryDetectEndianness(file.FullName, out bool isBigEndian))
+            {
+                throw new InvalidOperationException(
+                    string.Format("Could not determine the byte order of '{0}'.", GetName()));
+            }
+
+            if (!isBigEndian)
+            {
+                throw new InvalidOperationException(
+                    string.Format("'{0}' is already a PC (Little Endian) frame resource.", GetName()));
+            }
+
+            MaterialData.Load();
+
+            SceneData sceneData = new SceneData();
+            sceneData.ScenePath = file.DirectoryName;
+
+            // Read as Big Endian (Xbox); the data model is byte-order independent
+            // once loaded.
+            ResourceTypes.FrameResource.FrameResource frame =
+                new ResourceTypes.FrameResource.FrameResource(file.FullName, sceneData, true);
+
+            string outputPath = GetConvertedPCPath();
+
+            // WriteToFile always emits Little Endian (plain BinaryWriter).
+            frame.WriteToFile(outputPath);
+
+            return outputPath;
+        }
+
         public override void Save()
         {
             throw new NotImplementedException();

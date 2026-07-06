@@ -167,6 +167,19 @@ namespace ResourceTypes.FrameNameTable
                 names.Add(offset, name); //add offset as unique key and string
             }
 
+            // Rebuild the string buffer from the names we just read so WriteToFile
+            // can re-emit it (WriteToFile relies on m_buffer, which is otherwise
+            // only populated by BuildDataFromResource). Strings are stored in
+            // offset order as null-terminated entries, so this reproduces the
+            // original buffer byte-for-byte.
+            StringBuilder rebuilt = new StringBuilder();
+            foreach (KeyValuePair<int, string> entry in names.OrderBy(k => k.Key))
+            {
+                rebuilt.Append(entry.Value);
+                rebuilt.Append('\0');
+            }
+            m_buffer = rebuilt.ToString();
+
             dataSize = stream.ReadInt32(isBigEndian);
             frameData = new Data[dataSize];
 

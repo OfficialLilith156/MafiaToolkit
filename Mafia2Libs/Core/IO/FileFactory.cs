@@ -49,6 +49,12 @@ namespace Core.IO
                     break;
                 case "FR":
                     return new FileFrameResource(info);
+                case "FNT":
+                    return new FileFrameNameTable(info);
+                case "COL":
+                    return new FileCollision(info);
+                case "IBP":
+                    return new FileIndexBufferPool(info);
                 case "MTL":
                     return new FileMaterialLibrary(info);
                 case "LUA":

@@ -28,6 +28,7 @@
 	<String ID="$DELETE_SELECTED_OBJECTS">Удалить выбранные папки и файлы</String>
 	<String ID="$UNPACK_SELECTED_SDS">Распаковать выбранные SDS</String>
 	<String ID="$PACK_SELECTED_SDS">Запаковать выбранные SDS</String>
+	<String ID="$CONVERT_XBOX_TO_PC">Конвертировать Xbox -&gt; PC (Little Endian)</String>
 	<String ID="$OPEN_FOLDER_EXPLORER">Открыть папку в Проводнике</String>
 	<String ID="$PACK">Запаковать</String>
 	<String ID="$UNPACK">Распаковать</String>

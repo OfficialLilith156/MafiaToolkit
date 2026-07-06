@@ -89,6 +89,31 @@ namespace Core.IO
             return string.Empty;
         }
 
+        // Returns true if this file type supports converting an Xbox (Big Endian)
+        // file into a PC (Little Endian) file.
+        public virtual bool CanConvertXboxToPC()
+        {
+            return false;
+        }
+
+        // Converts this file from Xbox (Big Endian) to PC (Little Endian), writing
+        // the result to a new file next to the original. Returns the path of the
+        // newly created PC file, or null if nothing was written (e.g. the file is
+        // already Little Endian).
+        public virtual string ConvertXboxToPC()
+        {
+            throw new NotImplementedException("This file type does not support Xbox -> PC conversion.");
+        }
+
+        // Builds the output path for a converted PC file: "<name>_pc.<ext>".
+        protected string GetConvertedPCPath()
+        {
+            string directory = file.DirectoryName;
+            string name = GetNameWithoutExtension();
+            string ext = GetExtensionLower();
+            return Path.Combine(directory, $"{name}_pc.{ext}");
+        }
+
         public virtual void Delete()
         {
             if(file != null)

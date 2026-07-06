@@ -52,7 +52,9 @@ namespace ResourceTypes.Collisions
             bool isBigEndian = false;
             if (platformRaw > 2)
             {
-                platform = BitConverter.ToUInt32(BitConverter.GetBytes(platformRaw).Reverse().ToArray(), 0);
+                byte[] platformBytes = BitConverter.GetBytes(platformRaw);
+                Array.Reverse(platformBytes);
+                platform = BitConverter.ToUInt32(platformBytes, 0);
                 isBigEndian = true;
             }
             Platform = platform;

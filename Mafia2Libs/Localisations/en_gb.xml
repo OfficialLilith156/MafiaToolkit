@@ -35,6 +35,7 @@
 	<String ID="$DELETE_SELECTED_OBJECTS">Delete Selected Files and Folders</String>
 	<String ID="$UNPACK_SELECTED_SDS">Unpack Selected SDS's</String>
 	<String ID="$PACK_SELECTED_SDS">Pack Selected SDS's</String>
+	<String ID="$CONVERT_XBOX_TO_PC">Convert Xbox -&gt; PC (Little Endian)</String>
 	<String ID="$OPEN_FOLDER_EXPLORER">Open Folder in Explorer</String>
 	<String ID="$PACK">Pack</String>
 	<String ID="$UNPACK">Unpack</String>

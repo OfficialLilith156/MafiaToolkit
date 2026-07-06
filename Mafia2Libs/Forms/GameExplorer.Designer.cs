@@ -61,6 +61,7 @@ namespace Mafia2Tool
             ContextViewList = new ToolStripMenuItem();
             ContextViewTile = new ToolStripMenuItem();
             ContextForceBigEndian = new ToolStripMenuItem();
+            ContextConvertToPC = new ToolStripMenuItem();
             ContextSeperator = new ToolStripSeparator();
             ContextRemoveToCartFiles = new ToolStripMenuItem();
             ContextDeleteSelectedFiles = new ToolStripMenuItem();
@@ -268,7 +269,7 @@ namespace Mafia2Tool
             // 
             // GEContext
             // 
-            GEContext.Items.AddRange(new ToolStripItem[] { ContextSDSUnpack, ContextSDSPack, ContextFileExport, ContextFileImport, ContextOpenFolder, ContextSDSUnpackAll, ContextView, ContextForceBigEndian, ContextSeperator, ContextRemoveToCartFiles, ContextDeleteSelectedFiles, ContextUnpackSelectedSDS, ContextPackSelectedSDS });
+            GEContext.Items.AddRange(new ToolStripItem[] { ContextSDSUnpack, ContextSDSPack, ContextFileExport, ContextFileImport, ContextOpenFolder, ContextSDSUnpackAll, ContextView, ContextForceBigEndian, ContextConvertToPC, ContextSeperator, ContextRemoveToCartFiles, ContextDeleteSelectedFiles, ContextUnpackSelectedSDS, ContextPackSelectedSDS });
             GEContext.Name = "SDSContext";
             GEContext.Size = new System.Drawing.Size(294, 274);
             GEContext.Text = "$VIEW";
@@ -373,7 +374,14 @@ namespace Mafia2Tool
             ContextForceBigEndian.Size = new System.Drawing.Size(293, 22);
             ContextForceBigEndian.Text = "$FORCE_BIG_ENDIAN";
             ContextForceBigEndian.Click += ContextForceBigEndian_Click;
-            // 
+            //
+            // ContextConvertToPC
+            //
+            ContextConvertToPC.Name = "ContextConvertToPC";
+            ContextConvertToPC.Size = new System.Drawing.Size(293, 22);
+            ContextConvertToPC.Text = "$CONVERT_XBOX_TO_PC";
+            ContextConvertToPC.Click += ContextConvertToPC_Click;
+            //
             // ContextSeperator
             // 
             ContextSeperator.Name = "ContextSeperator";
@@ -815,6 +823,7 @@ namespace Mafia2Tool
         private ToolStripMenuItem ViewStripMenuTile;
         private ToolStripMenuItem UnpackAllSDSButton;
         private ToolStripMenuItem ContextForceBigEndian;
+        private ToolStripMenuItem ContextConvertToPC;
         private ToolStripMenuItem SelectGameButton;
         private ToolStripMenuItem ContextDeleteSelectedFiles;
         private ToolStripSeparator ContextSeperator;

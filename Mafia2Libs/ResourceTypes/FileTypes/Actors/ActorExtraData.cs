@@ -104,6 +104,13 @@ namespace ResourceTypes.Actors
             {
                 data = ActorFactory.LoadExtraData(bufferType, stream, isBigEndian);
             }
+
+            // If the buffer was parsed into a typed 'data' object, drop the raw
+            // bytes so WriteToFile re-serialises from 'data' using the writer's
+            // byte order. Otherwise (unknown type) keep the raw buffer as-is.
+            // Without this, a Big Endian (Xbox) buffer would be written back out
+            // verbatim and could not be read as Little Endian (PC).
+            buffer = (data == null ? buffer : null);
         }
 
         public override string ToString()
