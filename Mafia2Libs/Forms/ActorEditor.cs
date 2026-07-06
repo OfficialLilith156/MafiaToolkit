@@ -25,6 +25,7 @@ namespace Mafia2Tool
         private static ActorExtraData globalClipboard;
         private bool bIsFileEdited = false;
         private string baseTitle;
+        private static List<ActorEntry> allBranchClipboard;
 
         public ActorEditor(FileInfo file)
         {
@@ -288,6 +289,49 @@ namespace Mafia2Tool
                 branchClipboard = cloned;
             }
         }
+        private void CopyAllBranches()
+        {
+            if (actors == null || actors.Items.Count == 0)
+                return;
+
+            allBranchClipboard = new List<ActorEntry>();
+            var itemsCopy = actors.Items.ToList();
+
+            foreach (var original in itemsCopy)
+            {
+                ActorEntry clone = CloneActorEntry(original);
+                allBranchClipboard.Add(clone);
+            }
+        }
+        private ActorEntry CloneActorEntry(ActorEntry original)
+        {
+            ActorEntry clone = new ActorEntry();
+            clone.ActorTypeID = original.ActorTypeID;
+            clone.EntityName = original.EntityName;
+            clone.DefinitionName = original.DefinitionName;
+            clone.FrameName = original.FrameName;
+            clone.Position = original.Position;
+            clone.Rotation = original.Rotation;
+            clone.bActivateOnInit = original.bActivateOnInit;
+            clone.Scale = original.Scale;
+            clone.UnkString = original.UnkString;
+            clone.Unk2String = original.Unk2String;
+
+            if (original.Data != null)
+            {
+                clone.Data = new ActorExtraData()
+                {
+                    BufferType = original.Data.BufferType
+                };
+
+                Type dataType = original.Data.Data.GetType();
+                object clonedInternal = Activator.CreateInstance(dataType);
+                ReflectionHelpers.Copy(original.Data.Data, ref clonedInternal);
+                clone.Data.Data = clonedInternal as IActorExtraDataInterface;
+            }
+
+            return clone;
+        }
 
         private void PasteEntityBranch(object sender, System.EventArgs e)
         {
@@ -327,6 +371,71 @@ namespace Mafia2Tool
             UpdateTitle(true);
             bIsFileEdited = true;
         }
+
+        private void PasteAllBranches()
+        {
+            if (allBranchClipboard == null || allBranchClipboard.Count == 0)
+                return;
+
+            foreach (var branch in allBranchClipboard)
+            {
+                ActorEntry newEntry = actors.CreateActorEntry((ActorTypes)branch.ActorTypeID, branch.EntityName);
+                newEntry.DefinitionName = branch.DefinitionName;
+                newEntry.FrameName = branch.FrameName;
+                newEntry.Position = branch.Position;
+                newEntry.Rotation = branch.Rotation;
+                newEntry.Scale = branch.Scale;
+                newEntry.bActivateOnInit = branch.bActivateOnInit;
+                newEntry.UnkString = branch.UnkString;
+                newEntry.Unk2String = branch.Unk2String;
+
+                if (branch.Data != null)
+                {
+                    ActorExtraData newData = new ActorExtraData()
+                    {
+                        BufferType = branch.Data.BufferType
+                    };
+                    object clonedInternal = Activator.CreateInstance(branch.Data.Data.GetType());
+                    ReflectionHelpers.Copy(branch.Data.Data, ref clonedInternal);
+                    newData.Data = clonedInternal as IActorExtraDataInterface;
+
+                    actors.ExtraData.Add(newData);
+                    newEntry.DataID = (short)(actors.ExtraData.Count - 1);
+                    newEntry.Data = newData;
+                }
+
+                TreeNode node = new TreeNode(newEntry.EntityName) { Tag = newEntry };
+                if (newEntry.Data != null)
+                {
+                    TreeNode child = new TreeNode("Extra Data") { Tag = newEntry.Data };
+                    node.Nodes.Add(child);
+                }
+
+                ActorTypes type = (ActorTypes)newEntry.ActorTypeID;
+                TreeNode groupNode = null;
+                foreach (TreeNode n in items.Nodes)
+                {
+                    if (n.Tag is ActorTypes t && t == type)
+                    {
+                        groupNode = n;
+                        break;
+                    }
+                }
+                if (groupNode == null)
+                {
+                    groupNode = new TreeNode(type.ToString()) { Tag = type };
+                    items.Nodes.Add(groupNode);
+                }
+                groupNode.Nodes.Add(node);
+            }
+
+            UpdateTitle(true);
+            bIsFileEdited = true;
+            ActorTreeView.Refresh();
+        }
+
+        private void CopyAllBranches_Click(object sender, EventArgs e) => CopyAllBranches();
+        private void PasteAllBranches_Click(object sender, EventArgs e) => PasteAllBranches();
 
         private void AddDefinitionButton_Click(object sender, System.EventArgs e)
         {

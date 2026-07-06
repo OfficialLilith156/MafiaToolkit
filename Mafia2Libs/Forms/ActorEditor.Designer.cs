@@ -52,6 +52,8 @@
             pasteEntityBranchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             SearchBox = new System.Windows.Forms.TextBox();
             ActorTreeView = new Mafia2Tool.Controls.MTreeView();
+            pasteAllEntityBranchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            copyAllEntityBranchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ActorContext.SuspendLayout();
             toolStrip1.SuspendLayout();
             SuspendLayout();
@@ -147,7 +149,7 @@
             // 
             SaveButton.Name = "SaveButton";
             SaveButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S;
-            SaveButton.Size = new System.Drawing.Size(180, 22);
+            SaveButton.Size = new System.Drawing.Size(165, 22);
             SaveButton.Text = "$SAVE";
             SaveButton.Click += SaveButton_OnClick;
             // 
@@ -155,14 +157,14 @@
             // 
             ReloadButton.Name = "ReloadButton";
             ReloadButton.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R;
-            ReloadButton.Size = new System.Drawing.Size(180, 22);
+            ReloadButton.Size = new System.Drawing.Size(165, 22);
             ReloadButton.Text = "$RELOAD";
             ReloadButton.Click += ReloadButton_OnClick;
             // 
             // ExitButton
             // 
             ExitButton.Name = "ExitButton";
-            ExitButton.Size = new System.Drawing.Size(180, 22);
+            ExitButton.Size = new System.Drawing.Size(165, 22);
             ExitButton.Text = "$EXIT";
             ExitButton.Click += ExitButton_OnClick;
             // 
@@ -202,7 +204,7 @@
             // toolStripDropDownButton1
             // 
             toolStripDropDownButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { copyEntityBranchToolStripMenuItem, pasteEntityBranchToolStripMenuItem });
+            toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { copyEntityBranchToolStripMenuItem, pasteEntityBranchToolStripMenuItem, copyAllEntityBranchToolStripMenuItem, pasteAllEntityBranchToolStripMenuItem });
             toolStripDropDownButton1.Image = (System.Drawing.Image)resources.GetObject("toolStripDropDownButton1.Image");
             toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             toolStripDropDownButton1.Name = "toolStripDropDownButton1";
@@ -212,14 +214,14 @@
             // copyEntityBranchToolStripMenuItem
             // 
             copyEntityBranchToolStripMenuItem.Name = "copyEntityBranchToolStripMenuItem";
-            copyEntityBranchToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+            copyEntityBranchToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             copyEntityBranchToolStripMenuItem.Text = "Copy Entity Branch";
             copyEntityBranchToolStripMenuItem.Click += CopyEntityBranch;
             // 
             // pasteEntityBranchToolStripMenuItem
             // 
             pasteEntityBranchToolStripMenuItem.Name = "pasteEntityBranchToolStripMenuItem";
-            pasteEntityBranchToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+            pasteEntityBranchToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             pasteEntityBranchToolStripMenuItem.Text = "Paste Entity Branch";
             pasteEntityBranchToolStripMenuItem.Click += PasteEntityBranch;
             // 
@@ -241,6 +243,20 @@
             ActorTreeView.TabIndex = 17;
             ActorTreeView.AfterSelect += OnNodeSelectSelect;
             ActorTreeView.KeyUp += SearchBox_KeyDown;
+            // 
+            // pasteAllEntityBranchToolStripMenuItem
+            // 
+            pasteAllEntityBranchToolStripMenuItem.Name = "pasteAllEntityBranchToolStripMenuItem";
+            pasteAllEntityBranchToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            pasteAllEntityBranchToolStripMenuItem.Text = "Paste All Entity Branch";
+            pasteAllEntityBranchToolStripMenuItem.Click += PasteAllBranches_Click;
+            // 
+            // copyAllEntityBranchToolStripMenuItem
+            // 
+            copyAllEntityBranchToolStripMenuItem.Name = "copyAllEntityBranchToolStripMenuItem";
+            copyAllEntityBranchToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            copyAllEntityBranchToolStripMenuItem.Text = "Copy All Entity Branch";
+            copyAllEntityBranchToolStripMenuItem.Click += CopyAllBranches_Click;
             // 
             // ActorEditor
             // 
@@ -287,5 +303,7 @@
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
         private System.Windows.Forms.ToolStripMenuItem copyEntityBranchToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem pasteEntityBranchToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem copyAllEntityBranchToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem pasteAllEntityBranchToolStripMenuItem;
     }
 }
