@@ -64,13 +64,24 @@ namespace Gibbed.Mafia2.FileFormats
                 UnkInts1[i] = reader.ReadValueS32(endian);
                 indexes.Add(UnkInts1[i].ToString());
             }
+            // Version 1 patches (e.g. Xbox 360 .path files, big-endian) store only a single index
+            // set; the second set was added in version 2 (PC classic delta patches). Reading a
+            // second set on a version 1 file would consume UnkTotal as a bogus count and corrupt
+            // the rest of the parse.
             indexes.Add("/nUnkSet1:");
-            UnkCount2 = reader.ReadValueS32(endian);
-            UnkInts2 = new int[UnkCount2];
-            for (int i = 0; i != UnkCount2; i++)
+            if (version >= 2)
             {
-                UnkInts2[i] = reader.ReadValueS32(endian);
-                indexes.Add(UnkInts2[i].ToString());
+                UnkCount2 = reader.ReadValueS32(endian);
+                UnkInts2 = new int[UnkCount2];
+                for (int i = 0; i != UnkCount2; i++)
+                {
+                    UnkInts2[i] = reader.ReadValueS32(endian);
+                    indexes.Add(UnkInts2[i].ToString());
+                }
+            }
+            else
+            {
+                UnkInts2 = new int[0];
             }
 
             UnkTotal = reader.ReadValueS32(endian);
@@ -183,9 +194,12 @@ namespace Gibbed.Mafia2.FileFormats
                 return false;
             }
 
+            // The 26-byte resource header is stored in the file's endianness, but its trailing
+            // FNV32 checksum is written as the raw little-endian uint on both PC and Xbox 360
+            // (big-endian) patches. Accept either byte order to be safe.
             uint computed = Illusion.FileFormats.Hashing.FNV32.Hash(data, offset, 26);
-            uint stored = ReadU32(data, offset + 26, endian);
-            return computed == stored;
+            return computed == ReadU32(data, offset + 26, Endian.Little)
+                || computed == ReadU32(data, offset + 26, Endian.Big);
         }
 
         private static int FindNextHeader(byte[] data, int start, Endian endian)

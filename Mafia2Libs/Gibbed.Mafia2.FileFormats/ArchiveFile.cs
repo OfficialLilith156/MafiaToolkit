@@ -618,6 +618,8 @@ namespace Gibbed.Mafia2.FileFormats
                 var saveName = "";
                 resourceXML.WriteStartElement("ResourceEntry");
                 resourceXML.WriteElementString("Type", type);
+                try
+                {
                 switch (type)
                 {
                     case "Texture":
@@ -709,6 +711,18 @@ namespace Gibbed.Mafia2.FileFormats
                         saveName = name;
                         Console.WriteLine("Unhandled Resource Type {0}", type);
                         break;
+                }
+                }
+                catch (Exception ex)
+                {
+                    // Some resources (e.g. Xbox 360 big-endian data from .path patches) can't be
+                    // parsed by the little-endian PC extractors. Fall back to dumping the raw
+                    // resource bytes so extraction completes instead of aborting the whole patch.
+                    Log.WriteLine("Could not parse patch resource '" + name + "' (" + type + "): " + ex.Message + "; dumping raw bytes.");
+                    if (string.IsNullOrEmpty(saveName))
+                    {
+                        saveName = name;
+                    }
                 }
                 resourceXML.WriteElementString("Version", entry.Version.ToString());
                 File.WriteAllBytes(finalPath + "/" + saveName, entry.Data);
