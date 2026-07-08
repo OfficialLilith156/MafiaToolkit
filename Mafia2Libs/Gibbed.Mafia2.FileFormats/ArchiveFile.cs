@@ -494,16 +494,79 @@ namespace Gibbed.Mafia2.FileFormats
                 {
                     sortedResources[type].Add(i, name);
 
-                    if (patchFile.UnkInts1.Contains(i))
+                    // The patch stores the parent-SDS indices of the resources it replaces
+                    // in two sets. Mafia II (DE) uses UnkInts1; the classic Mafia II patches
+                    // put their indices in UnkInts2 (UnkInts1 is empty). Consider both so the
+                    // extracted resources get their real filenames on either game.
+                    if (patchFile.UnkInts1.Contains(i) || patchFile.UnkInts2.Contains(i))
                     {
                         resPatchAvailable[type].Add(new KeyValuePair<int, bool>(i, false));
                     }
                 }
             }
 
+            // Cursor into the base archive resources, used to map each classic delta patch entry
+            // back to the base resource it patches. The game applies patches in ascending base
+            // resource order, so we advance this cursor as we consume entries.
+            int baseResourceCursor = 0;
+
             for (int i = 0; i < patchFile.resources.Length; i++)
             {
                 var entry = patchFile.resources[i];
+                bool isDelta = patchFile.ResourceIsDelta != null
+                    && i < patchFile.ResourceIsDelta.Length
+                    && patchFile.ResourceIsDelta[i];
+
+                // Classic Mafia II delta entry: reconstruct the full resource by applying the
+                // binary delta to the matching base SDS resource. Once applied, it is extracted
+                // exactly like any full resource below.
+                if (isDelta)
+                {
+                    string deltaName = string.Format("{0}_{1}.delta", (entry.TypeId < ResourceTypes.Count ? ResourceTypes[entry.TypeId].Name : "Unknown"), i);
+                    try
+                    {
+                        uint sourceSize = PatchDelta.ReadSourceSize(entry.Data);
+                        int baseIndex = -1;
+                        for (int b = baseResourceCursor; b < ResourceEntries.Count; b++)
+                        {
+                            var candidate = ResourceEntries[b];
+                            if (candidate.TypeId == entry.TypeId && candidate.Data != null && candidate.Data.Length == sourceSize)
+                            {
+                                baseIndex = b;
+                                break;
+                            }
+                        }
+
+                        if (baseIndex >= 0)
+                        {
+                            entry.Data = PatchDelta.Apply(entry.Data, ResourceEntries[baseIndex].Data);
+                            entry.SlotRamRequired = (uint)entry.Data.Length;
+                            baseResourceCursor = baseIndex + 1;
+                            isDelta = false; // now a full resource; fall through to normal extraction
+                        }
+                        else
+                        {
+                            Log.WriteLine("Could not find base resource for patch delta entry " + i + " (type " + entry.TypeId + ", srcSize " + sourceSize + "); dumping raw .delta.");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.WriteLine("Failed to apply patch delta entry " + i + ": " + ex.Message + "; dumping raw .delta.");
+                    }
+
+                    if (isDelta)
+                    {
+                        // Fallback: could not apply the delta, dump the raw payload so nothing is lost.
+                        resourceXML.WriteStartElement("ResourceEntry");
+                        resourceXML.WriteElementString("Type", (entry.TypeId < ResourceTypes.Count ? ResourceTypes[entry.TypeId].Name : "Unknown"));
+                        resourceXML.WriteElementString("IsDelta", "true");
+                        resourceXML.WriteElementString("File", deltaName);
+                        resourceXML.WriteElementString("Version", entry.Version.ToString());
+                        File.WriteAllBytes(finalPath + "/" + deltaName, entry.Data);
+                        resourceXML.WriteEndElement();
+                        continue;
+                    }
+                }
 
                 string type = "";
                 if (entry.TypeId < ResourceTypes.Count)
@@ -523,7 +586,7 @@ namespace Gibbed.Mafia2.FileFormats
                     for (int z = 0; z < resPatchAvailable[type].Count; z++)
                     {
                         var res = resPatchAvailable[type][z];
-                        if (type == "Texture" || type == "Mipmap")
+                        if ((type == "Texture" || type == "Mipmap") && !isDelta)
                         {
                             TextureResource tRes = new TextureResource();
                             tRes.Deserialize(entry.Version, new MemoryStream(entry.Data), Endian.Little);

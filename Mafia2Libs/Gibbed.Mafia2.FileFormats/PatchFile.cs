@@ -11,6 +11,9 @@ namespace Gibbed.Mafia2.FileFormats
     {
         public FileInfo file;
         public ResourceEntry[] resources;
+        // Parallel to 'resources': true when the entry is a binary delta against the base SDS
+        // resource (classic Mafia II) rather than a standalone/full resource (Mafia II DE).
+        public bool[] ResourceIsDelta;
 
         public const uint Signature = 0xD010F0F;
         public const uint Signature2 = 0xF0F0010D;
@@ -83,32 +86,128 @@ namespace Gibbed.Mafia2.FileFormats
             var blockStream = BlockReaderStream.FromStream(reader, endian);
             reader.Position = pos;
 
-            resources = new ResourceEntry[UnkTotal];
-            for (uint i = 0; i < resources.Length; i++)
+            // Decompress the whole block stream into memory. Patch entries are laid out
+            // back-to-back as [26-byte resource header][4-byte FNV32 hash of that header][payload].
+            //
+            // Mafia II (DE) patches store a full resource, so payload == Size-30. But classic
+            // Mafia II patches store a *binary delta* against the base SDS resource: the 26-byte
+            // header (and its hash) are copied verbatim from the base resource (so Size stays the
+            // original, huge value) while the payload is much smaller. Trusting Size-30 there makes
+            // the reader run off the end of the stream (BlockReaderStream throws
+            // "Operation is not valid due to the current state of the object").
+            //
+            // Instead we split entries by locating the FNV32 header hashes, which works for both
+            // games and for full/delta payloads alike.
+            byte[] data;
+            using (var full = new MemoryStream())
             {
-                Archive.ResourceHeader resourceHeader;
-                //always complains about hash errors; had to mix it up.
+                blockStream.SaveUncompressed(full);
+                data = full.ToArray();
+            }
 
-                using (var data = blockStream.ReadToMemoryStream(26))
+            resources = new ResourceEntry[UnkTotal];
+            ResourceIsDelta = new bool[UnkTotal];
+
+            int offset = 0;
+            for (int i = 0; i < UnkTotal; i++)
+            {
+                if (offset + 30 > data.Length || IsHeaderAt(data, offset, endian) == false)
                 {
-                    resourceHeader = Archive.ResourceHeader.Read(data, endian, 19);
+                    throw new FormatException("Failed to locate patch resource entry header.");
                 }
-                blockStream.ReadBytes(4); //checksum i think
+
+                Archive.ResourceHeader resourceHeader;
+                using (var header = new MemoryStream(data, offset, 26, false))
+                {
+                    resourceHeader = Archive.ResourceHeader.Read(header, endian, 19);
+                }
                 if (resourceHeader.Size < 30)
                 {
                     throw new FormatException();
                 }
+
+                // Find where this entry ends (== start of the next header, or end of stream for
+                // the last entry). Fast path: full-resource entries end exactly at Size bytes.
+                int payloadStart = offset + 30;
+                int end;
+                if (i == UnkTotal - 1)
+                {
+                    end = data.Length;
+                }
+                else
+                {
+                    int fast = offset + (int)resourceHeader.Size;
+                    if (fast + 30 <= data.Length && IsHeaderAt(data, fast, endian))
+                    {
+                        end = fast; // full resource replacement
+                    }
+                    else
+                    {
+                        end = FindNextHeader(data, payloadStart, endian);
+                        if (end < 0)
+                        {
+                            throw new FormatException("Failed to locate next patch resource entry.");
+                        }
+                    }
+                }
+
+                int payloadLength = end - payloadStart;
+                byte[] payload = new byte[payloadLength];
+                Array.Copy(data, payloadStart, payload, 0, payloadLength);
+
+                // If the stored payload is smaller than the declared resource size, this is a
+                // binary delta against the base SDS resource rather than a standalone resource.
+                ResourceIsDelta[i] = payloadLength < (int)resourceHeader.Size - 30;
+
                 resources[i] = new Archive.ResourceEntry()
                 {
                     TypeId = (int)resourceHeader.TypeId,
                     Version = resourceHeader.Version,
-                    Data = blockStream.ReadBytes((int)resourceHeader.Size - 30),
+                    Data = payload,
                     SlotRamRequired = resourceHeader.SlotRamRequired,
                     SlotVramRequired = resourceHeader.SlotVramRequired,
                     OtherRamRequired = resourceHeader.OtherRamRequired,
                     OtherVramRequired = resourceHeader.OtherVramRequired,
                 };
+
+                offset = end;
             }
+        }
+
+        // True when the 26 bytes at 'offset' are a resource header immediately followed by their
+        // own FNV32 hash (the delimiter the engine writes between patch entries).
+        private static bool IsHeaderAt(byte[] data, int offset, Endian endian)
+        {
+            if (offset < 0 || offset + 30 > data.Length)
+            {
+                return false;
+            }
+
+            uint computed = Illusion.FileFormats.Hashing.FNV32.Hash(data, offset, 26);
+            uint stored = ReadU32(data, offset + 26, endian);
+            return computed == stored;
+        }
+
+        private static int FindNextHeader(byte[] data, int start, Endian endian)
+        {
+            for (int p = start; p + 30 <= data.Length; p++)
+            {
+                if (IsHeaderAt(data, p, endian))
+                {
+                    return p;
+                }
+            }
+            return -1;
+        }
+
+        private static uint ReadU32(byte[] data, int offset, Endian endian)
+        {
+            uint value = (uint)(data[offset] | (data[offset + 1] << 8) | (data[offset + 2] << 16) | (data[offset + 3] << 24));
+            if (endian == Endian.Big)
+            {
+                value = (value >> 24) | ((value >> 8) & 0xFF00) | ((value << 8) & 0xFF0000) | (value << 24);
+            }
+            return value;
         }
     }
 }
