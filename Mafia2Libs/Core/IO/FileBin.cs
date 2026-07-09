@@ -6,8 +6,6 @@ using ResourceTypes.Navigation;
 using ResourceTypes.SDSConfig;
 using ResourceTypes.Sound;
 using ResourceTypes.Tyres;
-using Gibbed.IO;
-using System;
 using System.IO;
 using System.Windows.Forms;
 
@@ -224,97 +222,6 @@ namespace Core.IO
             }
         }
 
-        // A .bin is a sound sector if it doesn't match any of the known typed-BIN
-        // magics and isn't gameparams. Those are the only .bin types that carry an
-        // Xbox (Big Endian) variant worth converting.
-        private bool IsSoundSectorBin()
-        {
-            uint[] knownMagics =
-            {
-                StreamMapMagic, TapIndicesMagic, SDSConfigMagic, CityShopsMagic,
-                CityAreasMagic, ShopMenu2Magic, EntityActivatorMagic, TyresMagic,
-                CGameMagic, FramePropsMagic
-            };
-
-            foreach (uint magic in knownMagics)
-            {
-                if (CheckFileMagic(file, magic)) return false;
-            }
-
-            return !IsGameParamsFile(file);
-        }
-
-        public override bool CanConvertXboxToPC()
-        {
-            return IsSoundSectorBin();
-        }
-
-        public override string ConvertXboxToPC()
-        {
-            if (!IsSoundSectorBin())
-            {
-                throw new InvalidOperationException(
-                    string.Format("'{0}' is not a sound sector .bin, so it cannot be converted.", GetName()));
-            }
-
-            if (!TryDetectSoundSectorEndianness(file.FullName, out bool isBigEndian))
-            {
-                throw new InvalidOperationException(
-                    string.Format("Could not determine the byte order of '{0}'.", GetName()));
-            }
-
-            if (!isBigEndian)
-            {
-                throw new InvalidOperationException(
-                    string.Format("'{0}' is already a PC (Little Endian) sound sector.", GetName()));
-            }
-
-            SoundSectorResource resource = new SoundSectorResource();
-            using (MemoryStream stream = new MemoryStream(File.ReadAllBytes(file.FullName)))
-            {
-                resource.ReadSDS(stream, Endian.Big);
-            }
-
-            string outputPath = GetConvertedPCPath();
-            using (MemoryStream stream = new MemoryStream())
-            {
-                resource.WriteSDS(stream, Endian.Little);
-                File.WriteAllBytes(outputPath, stream.ToArray());
-            }
-
-            return outputPath;
-        }
-
-        // Layout: [byte nameLen][name][uint32 NumHashes]... NumHashes is small,
-        // which distinguishes the byte order.
-        public static bool TryDetectSoundSectorEndianness(string filePath, out bool isBigEndian)
-        {
-            isBigEndian = false;
-
-            byte[] bytes = File.ReadAllBytes(filePath);
-            if (bytes.Length < 6) return false;
-
-            int nameLen = bytes[0];
-            int offset = 1 + nameLen;
-            if (offset + 4 > bytes.Length) return false;
-
-            int numHashesLE = BitConverter.ToInt32(bytes, offset);
-            byte[] be = new byte[4];
-            Array.Copy(bytes, offset, be, 0, 4);
-            Array.Reverse(be);
-            int numHashesBE = BitConverter.ToInt32(be, 0);
-
-            bool IsReasonable(int value) => value >= 0 && value < 1000000;
-
-            bool leOk = IsReasonable(numHashesLE);
-            bool beOk = IsReasonable(numHashesBE);
-
-            if (beOk && !leOk) { isBigEndian = true; return true; }
-            if (leOk && !beOk) { isBigEndian = false; return true; }
-
-            isBigEndian = false;
-            return leOk || beOk;
-        }
 
         /// <summary>
         /// Check if a file starts with the given magic number.

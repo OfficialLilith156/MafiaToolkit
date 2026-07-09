@@ -76,7 +76,6 @@ namespace Mafia2Tool
             ContextRemoveToCartFiles.Text = Language.GetString("$DELETE_FILES_TO_TRASH");
             ContextUnpackSelectedSDS.Text = Language.GetString("$UNPACK_SELECTED_SDS");
             ContextPackSelectedSDS.Text = Language.GetString("$PACK_SELECTED_SDS");
-            ContextConvertToPC.Text = Language.GetString("$CONVERT_XBOX_TO_PC");
             ContextView.Text = Language.GetString("$VIEW");
             ContextViewIcon.Text = Language.GetString("$ICON");
             ContextViewDetails.Text = Language.GetString("$DETAILS");
@@ -548,7 +547,6 @@ namespace Mafia2Tool
             ContextFileExport.Visible = false;
             ContextFileImport.Visible = false;
             ContextForceBigEndian.Visible = false;
-            ContextConvertToPC.Visible = false;
             ContextDeleteSelectedFiles.Visible = false;
             ContextRemoveToCartFiles.Visible = false;
             ContextUnpackSelectedSDS.Visible = false;
@@ -565,13 +563,6 @@ namespace Mafia2Tool
                     ContextSDSUnpack.Visible = true;
                     ContextSDSPack.Visible = true;
                 }
-                else if(Tag is FileFrameResource)
-                {
-                    if ((Tag as FileBase).CanConvertXboxToPC())
-                    {
-                        ContextConvertToPC.Visible = true;
-                    }
-                }
                 else if(Tag is FileBase)
                 {
                     FileBase CurrentFile = (Tag as FileBase);
@@ -585,10 +576,7 @@ namespace Mafia2Tool
                         ContextFileImport.Text = CurrentFile.GetContextMenuSaveTitle();
                         ContextFileImport.Visible = true;
                     }
-                    if (CurrentFile.CanConvertXboxToPC())
-                    {
-                        ContextConvertToPC.Visible = true;
-                    }
+                  
                 }
             }
             foreach (ListViewItem item in fileListView.Items)
@@ -817,33 +805,6 @@ namespace Mafia2Tool
             }
         }
 
-        private void ContextConvertToPC_Click(object sender, EventArgs e)
-        {
-            var file = (fileListView.SelectedItems[0].Tag as FileBase);
-            if (file == null || !file.CanConvertXboxToPC())
-            {
-                return;
-            }
-
-            try
-            {
-                string outputPath = file.ConvertXboxToPC();
-                if (currentDirectory != null)
-                {
-                    currentDirectory.Refresh();
-                    OpenDirectory(currentDirectory);
-                }
-                MessageBox.Show(
-                    string.Format("Converted to PC (Little Endian):\n{0}", outputPath),
-                    "Toolkit", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    string.Format("Failed to convert file:\n{0}", ex.Message),
-                    "Toolkit", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
 
         private void Button_SelectGame_OnClick(object sender, EventArgs e)
         {

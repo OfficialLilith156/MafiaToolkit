@@ -46,42 +46,5 @@ namespace Core.IO
             ActorEditor editor = new ActorEditor(file);
             return true;
         }
-
-        public override bool CanConvertXboxToPC()
-        {
-            return true;
-        }
-
-        public override string ConvertXboxToPC()
-        {
-            // Reading auto-detects the byte order from the header.
-            Actor actors = new Actor(file);
-
-            if (!actors.IsBigEndian)
-            {
-                throw new InvalidOperationException(
-                    string.Format("'{0}' is already a PC (Little Endian) actor.", GetName()));
-            }
-
-            if (actors.UsedFallbackRead)
-            {
-                // The full parse failed, so only a partial model was loaded. Writing
-                // it back would produce a corrupt file, so refuse and surface the
-                // underlying reason instead.
-                throw new InvalidOperationException(string.Format(
-                    "Could not fully parse the Xbox actor '{0}', so it cannot be safely converted.\nReason: {1}",
-                    GetName(),
-                    actors.PrimaryReadException != null ? actors.PrimaryReadException.Message : "unknown"));
-            }
-
-            string outputPath = GetConvertedPCPath();
-
-            // The write path always emits the canonical PC field layout; the byte
-            // order is controlled purely by the writer flag, so writing as Little
-            // Endian produces a valid PC file.
-            actors.WriteToFile(outputPath, false);
-
-            return outputPath;
-        }
     }
 }

@@ -61,7 +61,6 @@ namespace Mafia2Tool
             ContextViewList = new ToolStripMenuItem();
             ContextViewTile = new ToolStripMenuItem();
             ContextForceBigEndian = new ToolStripMenuItem();
-            ContextConvertToPC = new ToolStripMenuItem();
             ContextSeperator = new ToolStripSeparator();
             ContextRemoveToCartFiles = new ToolStripMenuItem();
             ContextDeleteSelectedFiles = new ToolStripMenuItem();
@@ -95,10 +94,10 @@ namespace Mafia2Tool
             dropdownAbout = new ToolStripDropDownButton();
             AboutButton = new ToolStripMenuItem();
             toolStripDropDownButton1 = new ToolStripDropDownButton();
+            convertXBOXDDSForPCToolStripMenuItem = new ToolStripMenuItem();
             bottomContainer = new ToolStripContainer();
             status = new StatusStrip();
             infoText = new ToolStripStatusLabel();
-            convertXBOXDDSForPCToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)mainContainer).BeginInit();
             mainContainer.Panel1.SuspendLayout();
             mainContainer.Panel2.SuspendLayout();
@@ -236,7 +235,7 @@ namespace Mafia2Tool
             fileListView.Location = new System.Drawing.Point(4, 35);
             fileListView.Margin = new Padding(4, 3, 4, 3);
             fileListView.Name = "fileListView";
-            fileListView.Size = new System.Drawing.Size(596, 391);
+            fileListView.Size = new System.Drawing.Size(595, 391);
             fileListView.SmallImageList = imageBank;
             fileListView.TabIndex = 0;
             fileListView.UseCompatibleStateImageBehavior = false;
@@ -269,9 +268,9 @@ namespace Mafia2Tool
             // 
             // GEContext
             // 
-            GEContext.Items.AddRange(new ToolStripItem[] { ContextSDSUnpack, ContextSDSPack, ContextFileExport, ContextFileImport, ContextOpenFolder, ContextSDSUnpackAll, ContextView, ContextForceBigEndian, ContextConvertToPC, ContextSeperator, ContextRemoveToCartFiles, ContextDeleteSelectedFiles, ContextUnpackSelectedSDS, ContextPackSelectedSDS });
+            GEContext.Items.AddRange(new ToolStripItem[] { ContextSDSUnpack, ContextSDSPack, ContextFileExport, ContextFileImport, ContextOpenFolder, ContextSDSUnpackAll, ContextView, ContextForceBigEndian, ContextSeperator, ContextRemoveToCartFiles, ContextDeleteSelectedFiles, ContextUnpackSelectedSDS, ContextPackSelectedSDS });
             GEContext.Name = "SDSContext";
-            GEContext.Size = new System.Drawing.Size(294, 274);
+            GEContext.Size = new System.Drawing.Size(294, 296);
             GEContext.Text = "$VIEW";
             GEContext.Opening += OnOpening;
             // 
@@ -374,14 +373,7 @@ namespace Mafia2Tool
             ContextForceBigEndian.Size = new System.Drawing.Size(293, 22);
             ContextForceBigEndian.Text = "$FORCE_BIG_ENDIAN";
             ContextForceBigEndian.Click += ContextForceBigEndian_Click;
-            //
-            // ContextConvertToPC
-            //
-            ContextConvertToPC.Name = "ContextConvertToPC";
-            ContextConvertToPC.Size = new System.Drawing.Size(293, 22);
-            ContextConvertToPC.Text = "$CONVERT_XBOX_TO_PC";
-            ContextConvertToPC.Click += ContextConvertToPC_Click;
-            //
+            // 
             // ContextSeperator
             // 
             ContextSeperator.Name = "ContextSeperator";
@@ -574,7 +566,7 @@ namespace Mafia2Tool
             ViewStripMenuIcon.CheckOnClick = true;
             ViewStripMenuIcon.Image = (System.Drawing.Image)resources.GetObject("ViewStripMenuIcon.Image");
             ViewStripMenuIcon.Name = "ViewStripMenuIcon";
-            ViewStripMenuIcon.Size = new System.Drawing.Size(151, 22);
+            ViewStripMenuIcon.Size = new System.Drawing.Size(180, 22);
             ViewStripMenuIcon.Text = "$ICON";
             ViewStripMenuIcon.Click += OnViewIconClicked;
             // 
@@ -582,7 +574,7 @@ namespace Mafia2Tool
             // 
             ViewStripMenuDetails.CheckOnClick = true;
             ViewStripMenuDetails.Name = "ViewStripMenuDetails";
-            ViewStripMenuDetails.Size = new System.Drawing.Size(151, 22);
+            ViewStripMenuDetails.Size = new System.Drawing.Size(180, 22);
             ViewStripMenuDetails.Text = "$DETAILS";
             ViewStripMenuDetails.Click += OnViewDetailsClicked;
             // 
@@ -591,7 +583,7 @@ namespace Mafia2Tool
             ViewStripMenuSmallIcon.CheckOnClick = true;
             ViewStripMenuSmallIcon.Image = (System.Drawing.Image)resources.GetObject("ViewStripMenuSmallIcon.Image");
             ViewStripMenuSmallIcon.Name = "ViewStripMenuSmallIcon";
-            ViewStripMenuSmallIcon.Size = new System.Drawing.Size(151, 22);
+            ViewStripMenuSmallIcon.Size = new System.Drawing.Size(180, 22);
             ViewStripMenuSmallIcon.Text = "$SMALL_ICON";
             ViewStripMenuSmallIcon.Click += OnViewSmallIconClicked;
             // 
@@ -600,7 +592,7 @@ namespace Mafia2Tool
             ViewStripMenuList.CheckOnClick = true;
             ViewStripMenuList.Image = (System.Drawing.Image)resources.GetObject("ViewStripMenuList.Image");
             ViewStripMenuList.Name = "ViewStripMenuList";
-            ViewStripMenuList.Size = new System.Drawing.Size(151, 22);
+            ViewStripMenuList.Size = new System.Drawing.Size(180, 22);
             ViewStripMenuList.Text = "$LIST";
             ViewStripMenuList.Click += OnViewListClicked;
             // 
@@ -608,7 +600,7 @@ namespace Mafia2Tool
             // 
             ViewStripMenuTile.CheckOnClick = true;
             ViewStripMenuTile.Name = "ViewStripMenuTile";
-            ViewStripMenuTile.Size = new System.Drawing.Size(151, 22);
+            ViewStripMenuTile.Size = new System.Drawing.Size(180, 22);
             ViewStripMenuTile.Text = "$TILE";
             ViewStripMenuTile.Click += OnViewTileClicked;
             // 
@@ -626,20 +618,20 @@ namespace Mafia2Tool
             // 
             OptionsItem.Image = (System.Drawing.Image)resources.GetObject("OptionsItem.Image");
             OptionsItem.Name = "OptionsItem";
-            OptionsItem.Size = new System.Drawing.Size(179, 22);
+            OptionsItem.Size = new System.Drawing.Size(180, 22);
             OptionsItem.Text = "$OPTIONS";
             OptionsItem.Click += OnOptionsItem_Clicked;
             // 
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new System.Drawing.Size(176, 6);
+            toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
             // 
             // PackCurrentSDSButton
             // 
             PackCurrentSDSButton.Image = (System.Drawing.Image)resources.GetObject("PackCurrentSDSButton.Image");
             PackCurrentSDSButton.Name = "PackCurrentSDSButton";
-            PackCurrentSDSButton.Size = new System.Drawing.Size(179, 22);
+            PackCurrentSDSButton.Size = new System.Drawing.Size(180, 22);
             PackCurrentSDSButton.Text = "$PACK_CUR_SDS";
             PackCurrentSDSButton.Click += ContextPackSelectedSDS_OnClick;
             // 
@@ -647,21 +639,21 @@ namespace Mafia2Tool
             // 
             UnpackCurrentSDSButton.Image = (System.Drawing.Image)resources.GetObject("UnpackCurrentSDSButton.Image");
             UnpackCurrentSDSButton.Name = "UnpackCurrentSDSButton";
-            UnpackCurrentSDSButton.Size = new System.Drawing.Size(179, 22);
+            UnpackCurrentSDSButton.Size = new System.Drawing.Size(180, 22);
             UnpackCurrentSDSButton.Text = "$UNPACK_CUR_SDS";
             UnpackCurrentSDSButton.Click += ContextUnpackSelectedSDS_OnClick;
             // 
             // UnpackAllSDSButton
             // 
             UnpackAllSDSButton.Name = "UnpackAllSDSButton";
-            UnpackAllSDSButton.Size = new System.Drawing.Size(179, 22);
+            UnpackAllSDSButton.Size = new System.Drawing.Size(180, 22);
             UnpackAllSDSButton.Text = "$UNPACK_ALL_SDS";
             UnpackAllSDSButton.Click += UnpackAllSDSButton_Click;
             // 
             // packAllSDSToolStripMenuItem
             // 
             packAllSDSToolStripMenuItem.Name = "packAllSDSToolStripMenuItem";
-            packAllSDSToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+            packAllSDSToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             packAllSDSToolStripMenuItem.Text = "Pack All SDS";
             packAllSDSToolStripMenuItem.Click += PackAllSDSButton_Click;
             // 
@@ -679,7 +671,7 @@ namespace Mafia2Tool
             // 
             AboutButton.Image = (System.Drawing.Image)resources.GetObject("AboutButton.Image");
             AboutButton.Name = "AboutButton";
-            AboutButton.Size = new System.Drawing.Size(118, 22);
+            AboutButton.Size = new System.Drawing.Size(180, 22);
             AboutButton.Text = "$ABOUT";
             AboutButton.Click += OnCredits_Pressed;
             // 
@@ -692,6 +684,13 @@ namespace Mafia2Tool
             toolStripDropDownButton1.Name = "toolStripDropDownButton1";
             toolStripDropDownButton1.Size = new System.Drawing.Size(77, 19);
             toolStripDropDownButton1.Text = "Xbox Tools";
+            // 
+            // convertXBOXDDSForPCToolStripMenuItem
+            // 
+            convertXBOXDDSForPCToolStripMenuItem.Name = "convertXBOXDDSForPCToolStripMenuItem";
+            convertXBOXDDSForPCToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            convertXBOXDDSForPCToolStripMenuItem.Text = "Convert XBOX DDS for PC";
+            convertXBOXDDSForPCToolStripMenuItem.Click += Button_ConvertAllDds_Click;
             // 
             // bottomContainer
             // 
@@ -728,13 +727,6 @@ namespace Mafia2Tool
             // 
             infoText.Name = "infoText";
             infoText.Size = new System.Drawing.Size(0, 25);
-            // 
-            // convertXBOXDDSForPCToolStripMenuItem
-            // 
-            convertXBOXDDSForPCToolStripMenuItem.Name = "convertXBOXDDSForPCToolStripMenuItem";
-            convertXBOXDDSForPCToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
-            convertXBOXDDSForPCToolStripMenuItem.Text = "Convert XBOX DDS for PC";
-            convertXBOXDDSForPCToolStripMenuItem.Click += Button_ConvertAllDds_Click;
             // 
             // GameExplorer
             // 
@@ -823,7 +815,6 @@ namespace Mafia2Tool
         private ToolStripMenuItem ViewStripMenuTile;
         private ToolStripMenuItem UnpackAllSDSButton;
         private ToolStripMenuItem ContextForceBigEndian;
-        private ToolStripMenuItem ContextConvertToPC;
         private ToolStripMenuItem SelectGameButton;
         private ToolStripMenuItem ContextDeleteSelectedFiles;
         private ToolStripSeparator ContextSeperator;

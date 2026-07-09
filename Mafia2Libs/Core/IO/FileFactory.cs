@@ -55,8 +55,6 @@ namespace Core.IO
                     return new FileCollision(info);
                 case "IBP":
                     return new FileIndexBufferPool(info);
-                case "VBP":
-                    return new FileVertexBufferPool(info);
                 case "MTL":
                     return new FileMaterialLibrary(info);
                 case "LUA":
