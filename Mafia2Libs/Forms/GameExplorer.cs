@@ -9,6 +9,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Utils.Extensions;
 using Utils.Language;
@@ -263,7 +264,7 @@ namespace Mafia2Tool
             }
             DirectoryBase directoryInfo = new DirectoryBase(directory);
 
-            var sortedDirs = directory.GetDirectories().OrderBy(d => d.Name, StringComparer.OrdinalIgnoreCase).ToArray();
+            var sortedDirs = directory.GetDirectories().OrderBy(d => d.Name, new NaturalStringComparer()).ToArray();
 
             foreach (DirectoryInfo dir in sortedDirs)
             {
@@ -285,7 +286,7 @@ namespace Mafia2Tool
                 fileListView.Items.Add(item);
             }
 
-            var sortedFiles = directory.GetFiles().OrderBy(f => f.Name, StringComparer.OrdinalIgnoreCase).ToArray();
+            var sortedFiles = directory.GetFiles().OrderBy(f => f.Name, new NaturalStringComparer()).ToArray();
 
             foreach (FileInfo info in sortedFiles)
             {
@@ -1004,6 +1005,20 @@ namespace Mafia2Tool
                     PackSDSRecurse(directory);
                 }
             }
+        }
+    }
+    public class NaturalStringComparer : IComparer<string>
+    {
+        [DllImport("shlwapi.dll", CharSet = CharSet.Unicode)]
+        private static extern int StrCmpLogicalW(string psz1, string psz2);
+
+        public int Compare(string x, string y)
+        {
+            if (x == null && y == null) return 0;
+            if (x == null) return -1;
+            if (y == null) return 1;
+
+            return StrCmpLogicalW(x, y);
         }
     }
 }
